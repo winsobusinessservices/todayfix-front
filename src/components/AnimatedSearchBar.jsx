@@ -62,9 +62,9 @@ const AnimatedSearchBar = () => {
         <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-full blur opacity-25 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div>
 
         {/* Main Input Wrapper */}
-        <div className="relative flex items-center w-full h-12 bg-zinc-700 rounded-full border border-zinc-800 focus-within:border-cyan-500 focus-within:ring-4 focus-within:ring-cyan-500/10 transition-all shadow-2xl overflow-hidden">
+        <div className="relative flex items-center w-full h-12 bg-zinc-700 rounded-full border border-border-dark focus-within:border-cyan-500 focus-within:ring-4 focus-within:ring-cyan-500/10 transition-all shadow-2xl overflow-hidden">
           {/* Search Icon */}
-          <div className="pl-6 pr-3 text-white group-focus-within:text-cyan-400 transition-colors">
+          <div className="pl-6 pr-3 text-text-inverted group-focus-within:text-cyan-400 transition-colors">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-7 w-7"
@@ -86,7 +86,7 @@ const AnimatedSearchBar = () => {
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            className="w-full h-full bg-transparent text-white outline-none placeholder-white text-xl truncate"
+            className="w-full h-full bg-transparent text-text-inverted outline-none placeholder-white text-xl truncate"
             placeholder={`Search ${inputValue === "" ? placeholderText : ""}`}
             spellCheck="false"
           />
@@ -97,7 +97,7 @@ const AnimatedSearchBar = () => {
             {inputValue && (
               <button
                 onClick={() => setInputValue("")}
-                className="p-2 text-white hover:text-white transition-colors focus:outline-none"
+                className="p-2 text-text-inverted hover:text-text-inverted transition-colors focus:outline-none"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -115,7 +115,7 @@ const AnimatedSearchBar = () => {
             )}
 
             {/* Submit Button */}
-            <button className="hidden sm:block bg-white hover:bg-black/70 hover:text-white text-black px-6 py-3 rounded-full font-bold text-lg tracking-wide transition-all duration-300 transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-zinc-900">
+            <button className="hidden sm:block bg-surface-primary hover:bg-black/70 hover:text-text-inverted text-text-primary px-6 py-3 rounded-full font-bold text-lg tracking-wide transition-all duration-300 transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-zinc-900">
               Search
             </button>
           </div>

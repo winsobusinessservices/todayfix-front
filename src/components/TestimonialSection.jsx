@@ -45,13 +45,13 @@ const TestimonialSection = () => {
         {/* Left Column: Heading & Controls */}
         <div className="w-full lg:w-[40%] flex flex-col z-10">
           {/* Main Title */}
-          <h2 className="text-4xl md:text-5xl lg:text-[56px] leading-[1.15] tracking-tight text-black mb-6">
+          <h2 className="text-4xl md:text-5xl lg:text-[56px] leading-[1.15] tracking-tight text-text-primary mb-6">
             From our <br className="hidden md:block" />
-            <span className="font-extrabold text-zinc-400">community.</span>
+            <span className="font-extrabold text-text-muted">community.</span>
           </h2>
 
           {/* Subtitle */}
-          <p className="text-zinc-500 text-base md:text-lg mb-4 max-w-sm leading-relaxed">
+          <p className="text-text-secondary text-base md:text-lg mb-4 max-w-sm leading-relaxed">
             Here's what other homeowners had to say about their experience with
             our professionals.
           </p>
@@ -60,7 +60,7 @@ const TestimonialSection = () => {
           <div className="flex gap-4">
             <button
               onClick={handlePrev}
-              className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center text-black hover:bg-black hover:text-white hover:border-black transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+              className="w-12 h-12 rounded-full border border-border-primary flex items-center justify-center text-text-primary hover:bg-surface-dark hover:text-text-inverted hover:border-black transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-zinc-900"
               aria-label="Previous testimonial"
             >
               <svg
@@ -79,7 +79,7 @@ const TestimonialSection = () => {
             </button>
             <button
               onClick={handleNext}
-              className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center text-black hover:bg-black hover:text-white hover:border-black transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+              className="w-12 h-12 rounded-full border border-border-primary flex items-center justify-center text-text-primary hover:bg-surface-dark hover:text-text-inverted hover:border-black transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-zinc-900"
               aria-label="Next testimonial"
             >
               <svg
@@ -126,14 +126,14 @@ const TestimonialSection = () => {
                 className="w-full flex flex-col"
               >
                 {/* Quote Text */}
-                <h3 className="text-2xl md:text-3xl lg:text-4xl font-normal leading-relaxed md:leading-[1.4] text-black mb-10 tracking-tight">
+                <h3 className="text-2xl md:text-3xl lg:text-4xl font-normal leading-relaxed md:leading-[1.4] text-text-primary mb-10 tracking-tight">
                   {testimonials[currentIndex].quote}&rdquo;
                 </h3>
 
                 {/* Author Info */}
                 <div className="flex items-center gap-5 mt-auto">
                   {/* Avatar Placeholder */}
-                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0 shadow-sm border border-zinc-200">
+                  <div className="w-14 h-14 md:w-16 md:h-16 rounded-full overflow-hidden bg-zinc-100 flex-shrink-0 shadow-sm border border-border-primary">
                     <img
                       src={testimonials[currentIndex].avatar}
                       alt={testimonials[currentIndex].name}
@@ -143,10 +143,10 @@ const TestimonialSection = () => {
 
                   {/* Name and Role */}
                   <div className="flex flex-col">
-                    <span className="text-lg font-bold text-black tracking-tight">
+                    <span className="text-lg font-bold text-text-primary tracking-tight">
                       {testimonials[currentIndex].name}
                     </span>
-                    <span className="text-sm md:text-base text-zinc-500 font-medium">
+                    <span className="text-sm md:text-base text-text-secondary font-medium">
                       {testimonials[currentIndex].role}
                     </span>
                   </div>

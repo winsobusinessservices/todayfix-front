@@ -12,7 +12,7 @@ import FAQSection from "../components/FAQSection";
 
 const Home = () => {
   return (
-    <div className="">
+    <div>
       <Hero />
       <FeatureMarquee />
       <Services />

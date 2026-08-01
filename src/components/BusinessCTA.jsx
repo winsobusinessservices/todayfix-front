@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const BusinessCTA = () => {
   return (
-    <section className="w-full bg-black py-20 md:py-20 px-6 md:px-12 lg:px-24 font-sans text-white overflow-hidden relative">
+    <section className="w-full bg-surface-dark py-20 md:py-20 px-6 md:px-12 lg:px-24 font-sans text-text-inverted overflow-hidden relative">
       {/* Background Subtle Gradient Glow */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-4xl h-full bg-gradient-to-b from-white/[0.03] to-transparent pointer-events-none rounded-full blur-3xl"></div>
 
@@ -26,10 +26,10 @@ const BusinessCTA = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-[1.1] tracking-tight text-white mb-6"
+            className="text-4xl md:text-5xl lg:text-[56px] font-extrabold leading-[1.1] tracking-tight text-text-inverted mb-6"
           >
             Grow Your Business & <br className="hidden lg:block" />
-            <span className="text-zinc-400">Receive Local Leads Daily.</span>
+            <span className="text-text-muted">Receive Local Leads Daily.</span>
           </motion.h2>
 
           <motion.p
@@ -37,7 +37,7 @@ const BusinessCTA = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-zinc-400 mb-10 leading-relaxed max-w-xl"
+            className="text-lg md:text-xl text-text-muted mb-10 leading-relaxed max-w-xl"
           >
             Join 2.4L+ verified suppliers across 50+ Indian cities. Showcase
             your services, receive direct customer calls, and increase your
@@ -52,10 +52,10 @@ const BusinessCTA = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
           >
-            <button className="px-8 py-4 bg-white text-black font-bold rounded-full text-base tracking-wide hover:bg-zinc-200 hover:scale-105 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]">
+            <button className="px-8 py-4 bg-surface-primary text-text-primary font-bold rounded-full text-base tracking-wide hover:bg-zinc-200 hover:scale-105 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]">
               List Your Business Now
             </button>
-            <button className="px-8 py-4 bg-transparent text-white border border-white/20 font-bold rounded-full text-base tracking-wide hover:bg-white/10 transition-all duration-300">
+            <button className="px-8 py-4 bg-transparent text-text-inverted border border-white/20 font-bold rounded-full text-base tracking-wide hover:bg-white/10 transition-all duration-300">
               Grow Business
             </button>
           </motion.div>
@@ -71,7 +71,7 @@ const BusinessCTA = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex gap-5 group"
           >
-            <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-colors duration-300">
+            <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-text-inverted group-hover:bg-surface-primary group-hover:text-text-primary transition-colors duration-300">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -87,10 +87,10 @@ const BusinessCTA = () => {
               </svg>
             </div>
             <div>
-              <h4 className="text-xl font-bold text-white mb-2 tracking-tight">
+              <h4 className="text-xl font-bold text-text-inverted mb-2 tracking-tight">
                 High-Converting Local Leads
               </h4>
-              <p className="text-zinc-400 text-sm leading-relaxed">
+              <p className="text-text-muted text-sm leading-relaxed">
                 Get instant customer enquiries directly on your mobile via SMS
                 and WhatsApp.
               </p>
@@ -105,7 +105,7 @@ const BusinessCTA = () => {
             transition={{ duration: 0.5, delay: 0.3 }}
             className="flex gap-5 group"
           >
-            <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-colors duration-300">
+            <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-text-inverted group-hover:bg-surface-primary group-hover:text-text-primary transition-colors duration-300">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -121,10 +121,10 @@ const BusinessCTA = () => {
               </svg>
             </div>
             <div>
-              <h4 className="text-xl font-bold text-white mb-2 tracking-tight">
+              <h4 className="text-xl font-bold text-text-inverted mb-2 tracking-tight">
                 Verified Business Trust Seal
               </h4>
-              <p className="text-zinc-400 text-sm leading-relaxed">
+              <p className="text-text-muted text-sm leading-relaxed">
                 Build customer trust with our official GST & Address
                 Verification badge.
               </p>
@@ -139,7 +139,7 @@ const BusinessCTA = () => {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="flex gap-5 group"
           >
-            <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:bg-white group-hover:text-black transition-colors duration-300">
+            <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-text-inverted group-hover:bg-surface-primary group-hover:text-text-primary transition-colors duration-300">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -155,10 +155,10 @@ const BusinessCTA = () => {
               </svg>
             </div>
             <div>
-              <h4 className="text-xl font-bold text-white mb-2 tracking-tight">
+              <h4 className="text-xl font-bold text-text-inverted mb-2 tracking-tight">
                 Top Google & Search Visibility
               </h4>
-              <p className="text-zinc-400 text-sm leading-relaxed">
+              <p className="text-text-muted text-sm leading-relaxed">
                 Rank high in city-specific searches and attract high-intent
                 buyers.
               </p>

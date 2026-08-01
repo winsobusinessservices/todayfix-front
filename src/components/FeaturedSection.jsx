@@ -6,7 +6,7 @@ const FeaturedSection = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   return (
-    <section className="w-full bg-surface-primary pt-16 pb-20 font-sans border-t border-zinc-100">
+    <section className="w-full bg-surface-primary pt-16 pb-20 font-sans border-t border-border-secondary">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header Section */}
         <motion.div
@@ -17,16 +17,16 @@ const FeaturedSection = () => {
           className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
         >
           <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-black tracking-tight leading-tight mb-6">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight leading-tight mb-6">
               Featured <br />
-              <span className="text-zinc-400">Businesses.</span>
+              <span className="text-text-muted">Businesses.</span>
             </h2>
-            <p className="text-lg text-zinc-500 leading-relaxed">
+            <p className="text-lg text-text-secondary leading-relaxed">
               Connect with highly vetted, top-performing local businesses. We've
               verified their credentials so you can hire with absolute confidence.
             </p>
           </div>
-          <button className="shrink-0 h-12 px-6 rounded-full bg-black text-white font-medium hover:scale-105 transition-transform duration-300">
+          <button className="shrink-0 h-12 px-6 rounded-full bg-surface-dark text-text-inverted font-medium hover:scale-105 transition-transform duration-300">
             View All Providers
           </button>
         </motion.div>
@@ -53,9 +53,9 @@ const FeaturedSection = () => {
                 }}
                 className={`group relative overflow-hidden rounded-[2rem] p-8 md:p-10 flex flex-col justify-between cursor-pointer border transition-all duration-500 h-full min-h-[420px] ${
                   isFeatured
-                    ? "bg-gradient-to-br border-transparent text-white " +
+                    ? "bg-gradient-to-br border-transparent text-text-inverted " +
                       business.bgGradient
-                    : "bg-gradient-to-br border-zinc-200 text-black shadow-sm hover:shadow-2xl hover:border-zinc-300 " +
+                    : "bg-gradient-to-br border-border-primary text-text-primary shadow-sm hover:shadow-2xl hover:border-border-tertiary " +
                       business.bgGradient
                 } ${
                   isDimmed
@@ -75,20 +75,20 @@ const FeaturedSection = () => {
                   <div
                     className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase ${
                       isFeatured
-                        ? "bg-white/10 text-white backdrop-blur-md"
-                        : "bg-black text-white"
+                        ? "bg-white/10 text-text-inverted backdrop-blur-md"
+                        : "bg-surface-dark text-text-inverted"
                     }`}
                   >
                     {business.category}
                   </div>
                   <div
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold ${
-                      isFeatured ? "bg-white/10 text-white" : "bg-zinc-100 text-black"
+                      isFeatured ? "bg-white/10 text-text-inverted" : "bg-zinc-100 text-text-primary"
                     }`}
                   >
                     <svg
                       className={`w-4 h-4 ${
-                        isFeatured ? "text-white" : "text-black"
+                        isFeatured ? "text-text-inverted" : "text-text-primary"
                       }`}
                       viewBox="0 0 20 20"
                       fill="currentColor"
@@ -110,7 +110,7 @@ const FeaturedSection = () => {
                   >
                     <svg
                       className={`w-10 h-10 ${
-                        isFeatured ? "text-white" : "text-black"
+                        isFeatured ? "text-text-inverted" : "text-text-primary"
                       }`}
                       fill="none"
                       viewBox="0 0 24 24"
@@ -129,7 +129,7 @@ const FeaturedSection = () => {
                   </h3>
                   <p
                     className={`text-sm leading-relaxed max-w-md ${
-                      isFeatured ? "text-zinc-300" : "text-zinc-500"
+                      isFeatured ? "text-zinc-300" : "text-text-secondary"
                     }`}
                   >
                     {business.description}
@@ -137,7 +137,7 @@ const FeaturedSection = () => {
                   <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
                     <span
                       className={`text-sm font-medium flex items-center gap-1.5 ${
-                        isFeatured ? "text-zinc-400" : "text-zinc-500"
+                        isFeatured ? "text-text-muted" : "text-text-secondary"
                       }`}
                     >
                       <svg
@@ -165,7 +165,7 @@ const FeaturedSection = () => {
                     <motion.div
                       animate={isHovered ? { x: 5 } : { x: 0 }}
                       className={`p-2 rounded-full ${
-                        isFeatured ? "bg-white text-black" : "bg-black text-white"
+                        isFeatured ? "bg-surface-primary text-text-primary" : "bg-surface-dark text-text-inverted"
                       }`}
                     >
                       <svg

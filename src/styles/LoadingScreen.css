@@ -18,7 +18,7 @@
   background: #ffffff;
 }
 
-.ls-bg-orange {
+.ls-bg-dark {
   z-index: 1;
   will-change: clip-path;
 }
@@ -92,7 +92,7 @@
   width: 110px;
   height: 96px;
   pointer-events: none;
-  animation: planeFlight 1.3s cubic-bezier(0.25, 0.1, 0.25, 1) 0.35s both;
+  animation: planeFlight 1.8s cubic-bezier(0.25, 0.1, 0.25, 1) 0.25s both;
   will-change: transform, opacity;
 }
 

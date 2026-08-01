@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import React, { useRef, useState } from "react";
 import { IconMenu2, IconX, IconChevronDown } from "@tabler/icons-react";
 import {
@@ -60,15 +61,15 @@ export default function Navbar() {
   ];
 
   const buttonBase =
-    "px-4 py-2 rounded-md bg-white button bg-black text-white text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
+    "px-4 py-2 rounded-md bg-surface-primary button bg-surface-dark text-text-inverted text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
   const buttonPrimary =
     "shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]";
-  const buttonSecondary = "bg-transparent shadow-none dark:text-black";
+  const buttonSecondary = "bg-transparent shadow-none dark:text-text-primary";
 
   const logoMarkup = (
-    <a
-      href="#"
-      className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
+    <Link
+      to="/"
+      className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary"
     >
       <img
         src="todayfix.png"
@@ -77,7 +78,7 @@ export default function Navbar() {
         height={30}
       />
       <Logo />
-    </a>
+    </Link>
   );
 
   return (
@@ -119,12 +120,12 @@ export default function Navbar() {
                       setHoveredItem(idx);
                       setDropdownOpen(true);
                     }}
-                    className="relative flex cursor-pointer items-center gap-1 px-2 py-1.5 text-white transition-colors hover:text-black dark:text-black dark:hover:text-white"
+                    className="relative flex cursor-pointer items-center gap-1 px-2 py-1.5 text-text-inverted transition-colors hover:text-text-primary dark:text-text-primary dark:hover:text-text-inverted"
                   >
                     {hoveredItem === idx && (
                       <motion.div
                         layoutId="hovered"
-                        className="absolute inset-0 h-full w-full rounded-full bg-white dark:bg-neutral-800"
+                        className="absolute inset-0 h-full w-full rounded-full bg-surface-primary dark:bg-neutral-800"
                       />
                     )}
                     <span className="relative z-20">{item.name}</span>
@@ -144,16 +145,16 @@ export default function Navbar() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 10, scale: 0.95 }}
                           transition={{ duration: 0.2 }}
-                          className="absolute left-1/2 top-full mt-2 grid w-64 -translate-x-1/2 grid-cols-2 rounded-2xl bg-white p-2 shadow-[0_0_24px_rgba(34,_42,_53,_0.1)] ring-1 ring-black/5 z-50 dark:bg-neutral-950"
+                          className="absolute left-1/2 top-full mt-2 grid w-64 -translate-x-1/2 grid-cols-2 rounded-2xl bg-surface-primary p-2 shadow-[0_0_24px_rgba(34,_42,_53,_0.1)] ring-1 ring-black/5 z-50 dark:bg-neutral-950"
                         >
                           {item.items.map((subItem, subIdx) => (
-                            <a
+                            <Link
                               key={subIdx}
-                              href={subItem.link}
-                              className="px-4 py-2 text-sm text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-black rounded-xl dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-white"
+                              to={subItem.link}
+                              className="px-4 py-2 text-sm text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-text-primary rounded-xl dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-text-inverted"
                             >
                               {subItem.name}
-                            </a>
+                            </Link>
                           ))}
                         </motion.div>
                       )}
@@ -163,23 +164,23 @@ export default function Navbar() {
               }
 
               return (
-                <a
+                <Link
                   key={`link-${idx}`}
-                  href={item.link}
+                  to={item.link}
                   onMouseEnter={() => {
                     setHoveredItem(idx);
                     setDropdownOpen(false);
                   }}
-                  className="relative px-4 py-2 text-white transition-colors hover:text-black dark:text-black dark:hover:text-white"
+                  className="relative px-4 py-2 text-text-inverted transition-colors hover:text-text-primary dark:text-text-primary dark:hover:text-text-inverted"
                 >
                   {hoveredItem === idx && (
                     <motion.div
                       layoutId="hovered"
-                      className="absolute inset-0 h-full w-full rounded-full bg-white dark:bg-black"
+                      className="absolute inset-0 h-full w-full rounded-full bg-surface-primary dark:bg-surface-dark"
                     />
                   )}
                   <span className="relative z-20">{item.name}</span>
-                </a>
+                </Link>
               );
             })}
           </motion.div>
@@ -244,12 +245,12 @@ export default function Navbar() {
             {logoMarkup}
             {isMobileMenuOpen ? (
               <IconX
-                className="cursor-pointer text-black dark:text-white"
+                className="cursor-pointer text-text-primary dark:text-text-inverted"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               />
             ) : (
               <IconMenu2
-                className="cursor-pointer text-black dark:text-white"
+                className="cursor-pointer text-text-primary dark:text-text-inverted"
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               />
             )}
@@ -262,7 +263,7 @@ export default function Navbar() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-2xl bg-white px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] dark:bg-neutral-950"
+                className="absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-2xl bg-surface-primary px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] dark:bg-neutral-950"
               >
                 {navItems.map((item, idx) => {
                   if (item.type === "dropdown") {
@@ -295,14 +296,14 @@ export default function Navbar() {
                               className="grid grid-cols-2 gap-2 overflow-hidden pl-4 pt-2 border-y pb-2 border-neutral-200 dark:border-neutral-800"
                             >
                               {item.items.map((subItem, subIdx) => (
-                                <a
+                                <Link
                                   key={subIdx}
-                                  href={subItem.link}
+                                  to={subItem.link}
                                   onClick={() => setIsMobileMenuOpen(false)}
-                                  className="block py-1 text-sm text-neutral-500 hover:text-black dark:text-neutral-400 dark:hover:text-white"
+                                  className="block py-1 text-sm text-neutral-500 hover:text-text-primary dark:text-neutral-400 dark:hover:text-text-inverted"
                                 >
                                   {subItem.name}
-                                </a>
+                                </Link>
                               ))}
                             </motion.div>
                           )}
@@ -312,14 +313,14 @@ export default function Navbar() {
                   }
 
                   return (
-                    <a
+                    <Link
                       key={`mobile-link-${idx}`}
-                      href={item.link}
+                      to={item.link}
                       onClick={() => setIsMobileMenuOpen(false)}
                       className="relative w-full py-1 text-neutral-600 dark:text-neutral-300"
                     >
                       <span className="block">{item.name}</span>
-                    </a>
+                    </Link>
                   );
                 })}
                 <div className="flex w-full flex-col gap-4 mt-2">
@@ -328,7 +329,7 @@ export default function Navbar() {
                     className={cn(
                       buttonBase,
                       buttonSecondary,
-                      "w-full shadow-sm ring-1 ring-black/5 text-black",
+                      "w-full shadow-sm ring-1 ring-black/5 text-text-primary",
                     )}
                   >
                     <span className="flex items-end gap-1 justify-center">

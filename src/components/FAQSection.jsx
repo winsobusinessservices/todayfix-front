@@ -11,7 +11,7 @@ const FAQSection = () => {
   const activeFaqs = faqData[activeCategory] || [];
 
   return (
-    <div className="min-h-screen bg-surface-secondary text-black font-sans relative overflow-hidden py-24 border-t border-zinc-100">
+    <div className="bg-surface-secondary text-text-primary font-sans relative overflow-hidden py-24 border-t border-border-secondary">
       {/* --- Main Content --- */}
       <div className="max-w-6xl mx-auto px-6">
         {/* Header Section */}
@@ -20,7 +20,7 @@ const FAQSection = () => {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center justify-center px-4 py-1.5 bg-black text-white text-xs font-bold rounded-full mb-6 tracking-widest uppercase shadow-sm"
+            className="inline-flex items-center justify-center px-4 py-1.5 bg-surface-dark text-text-inverted text-xs font-bold rounded-full mb-6 tracking-widest uppercase shadow-sm"
           >
             Support & Resources
           </motion.div>
@@ -29,16 +29,16 @@ const FAQSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-5xl lg:text-[56px] font-extrabold tracking-tight text-black mb-6 leading-[1.15]"
+            className="text-4xl md:text-5xl lg:text-[56px] font-extrabold tracking-tight text-text-primary mb-6 leading-[1.15]"
           >
-            Frequently Asked <span className="text-zinc-400">Questions.</span>
+            Frequently Asked <span className="text-text-muted">Questions.</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-zinc-500 text-lg max-w-xl"
+            className="text-text-secondary text-lg max-w-xl"
           >
             Find answers to common questions about Sirona and how our trusted
             platform works.
@@ -49,7 +49,7 @@ const FAQSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8">
           {/* Left Sidebar: Categories */}
           <div className="lg:col-span-4 flex flex-col">
-            <h3 className="text-zinc-400 text-xs font-bold uppercase tracking-widest mb-6 px-4">
+            <h3 className="text-text-muted text-xs font-bold uppercase tracking-widest mb-6 px-4">
               Categories
             </h3>
             <ul className="flex flex-col space-y-2">
@@ -62,8 +62,8 @@ const FAQSection = () => {
                     }}
                     className={`w-full text-left px-5 py-3 text-[15px] transition-all duration-300 rounded-xl font-semibold ${
                       activeCategory === category
-                        ? "bg-black text-white shadow-md"
-                        : "bg-transparent text-zinc-500 hover:bg-zinc-200/50 hover:text-black"
+                        ? "bg-surface-dark text-text-inverted shadow-md"
+                        : "bg-transparent text-text-secondary hover:bg-zinc-200/50 hover:text-text-primary"
                     }`}
                   >
                     {category}
@@ -90,8 +90,8 @@ const FAQSection = () => {
                       key={`${activeCategory}-${index}`} // Force re-render on category change
                       className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
                         isOpen
-                          ? "border-black bg-white shadow-xl shadow-black/5"
-                          : "border-zinc-200 bg-white hover:border-zinc-300 hover:shadow-md"
+                          ? "border-black bg-surface-primary shadow-xl shadow-black/5"
+                          : "border-border-primary bg-surface-primary hover:border-border-tertiary hover:shadow-md"
                       }`}
                     >
                       {/* Question Header */}
@@ -102,8 +102,8 @@ const FAQSection = () => {
                         <span
                           className={`text-lg font-bold pr-8 transition-colors duration-300 ${
                             isOpen
-                              ? "text-black"
-                              : "text-zinc-700 group-hover:text-black"
+                              ? "text-text-primary"
+                              : "text-zinc-700 group-hover:text-text-primary"
                           }`}
                         >
                           {faq.question}
@@ -112,8 +112,8 @@ const FAQSection = () => {
                         <div
                           className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-300 flex-shrink-0 ${
                             isOpen
-                              ? "bg-black border-black text-white rotate-180"
-                              : "bg-white border-zinc-200 text-zinc-400 group-hover:border-zinc-400 group-hover:text-zinc-600"
+                              ? "bg-surface-dark border-black text-text-inverted rotate-180"
+                              : "bg-surface-primary border-border-primary text-text-muted group-hover:border-zinc-400 group-hover:text-zinc-600"
                           }`}
                         >
                           <svg
@@ -149,7 +149,7 @@ const FAQSection = () => {
                         }`}
                       >
                         <div className="overflow-hidden">
-                          <p className="px-6 pb-6 text-base leading-relaxed text-zinc-500 font-medium">
+                          <p className="px-6 pb-6 text-base leading-relaxed text-text-secondary font-medium">
                             {faq.answer}
                           </p>
                         </div>
@@ -165,10 +165,10 @@ const FAQSection = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-black rounded-3xl p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-2xl relative overflow-hidden"
+              className="bg-surface-dark rounded-3xl p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-2xl relative overflow-hidden"
             >
               {/* Subtle Background Glow */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-surface-primary opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
 
               {/* Info Text */}
               <div className="flex gap-5 items-start relative z-10">
@@ -187,10 +187,10 @@ const FAQSection = () => {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-white mb-2">
+                  <h4 className="text-xl font-bold text-text-inverted mb-2">
                     Still have a question?
                   </h4>
-                  <p className="text-zinc-400 text-sm leading-relaxed max-w-sm">
+                  <p className="text-text-muted text-sm leading-relaxed max-w-sm">
                     If you didn't find your answer, feel free to reach out to
                     our dedicated support team.
                   </p>
@@ -199,7 +199,7 @@ const FAQSection = () => {
 
               {/* Action Button */}
               <div className="self-end sm:self-auto relative z-10">
-                <button className="px-6 py-3 bg-white text-black font-bold rounded-full hover:scale-105 hover:bg-zinc-200 transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] whitespace-nowrap">
+                <button className="px-6 py-3 bg-surface-primary text-text-primary font-bold rounded-full hover:scale-105 hover:bg-zinc-200 transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] whitespace-nowrap">
                   Contact Support
                 </button>
               </div>

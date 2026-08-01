@@ -6,7 +6,7 @@ export const howItWorksData = [
     title: "Search Service",
     mockupUI: (
       <div className="w-56 h-40 relative flex items-center justify-center mb-6">
-        <div className="w-52 h-36 bg-white rounded-md shadow-md border border-zinc-100 overflow-hidden transform group-hover:-translate-y-2 transition-transform duration-300">
+        <div className="w-52 h-36 bg-surface-primary rounded-md shadow-md border border-border-secondary overflow-hidden transform group-hover:-translate-y-2 transition-transform duration-300">
           <div className="w-full h-5 bg-zinc-900 flex items-center px-2 space-x-1.5">
             <div className="w-2 h-2 rounded-full bg-zinc-500"></div>
             <div className="w-2 h-2 rounded-full bg-zinc-500"></div>
@@ -16,17 +16,17 @@ export const howItWorksData = [
             <div className="w-full h-1.5 bg-zinc-100 rounded-full mb-3"></div>
             <div className="w-4/5 h-1.5 bg-zinc-100 rounded-full mb-5"></div>
             <div className="flex items-center gap-2 mb-3">
-              <div className="w-3 h-3 bg-zinc-100 border border-zinc-300 rounded-sm"></div>
+              <div className="w-3 h-3 bg-zinc-100 border border-border-tertiary rounded-sm"></div>
               <div className="w-20 h-1.5 bg-zinc-100 rounded-full"></div>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-zinc-100 border border-zinc-300 rounded-sm"></div>
+              <div className="w-3 h-3 bg-zinc-100 border border-border-tertiary rounded-sm"></div>
               <div className="w-14 h-1.5 bg-zinc-100 rounded-full"></div>
             </div>
-            <div className="absolute bottom-3 left-4 right-4 h-1 bg-zinc-50 rounded-full"></div>
+            <div className="absolute bottom-3 left-4 right-4 h-1 bg-surface-secondary rounded-full"></div>
           </div>
         </div>
-        <div className="absolute -top-4 -left-4 w-12 h-12 border border-zinc-300 border-dashed rounded-full pointer-events-none"></div>
+        <div className="absolute -top-4 -left-4 w-12 h-12 border border-border-tertiary border-dashed rounded-full pointer-events-none"></div>
       </div>
     ),
     mobileArrow: (
@@ -46,22 +46,22 @@ export const howItWorksData = [
     mockupUI: (
       <div className="w-56 h-40 relative flex items-center justify-center mb-6">
         <div className="relative w-full h-full transform group-hover:-translate-y-2 transition-transform duration-300">
-          <div className="absolute top-4 left-2 w-40 h-10 bg-white rounded shadow-sm border border-zinc-100 flex items-center p-2 gap-2 opacity-60">
+          <div className="absolute top-4 left-2 w-40 h-10 bg-surface-primary rounded shadow-sm border border-border-secondary flex items-center p-2 gap-2 opacity-60">
             <div className="w-4 h-4 bg-zinc-800 rounded-sm"></div>
             <div className="flex-1 space-y-1">
               <div className="h-1.5 w-12 bg-zinc-200 rounded-full"></div>
             </div>
             <div className="w-10 h-3 bg-zinc-900 rounded-sm"></div>
           </div>
-          <div className="absolute top-14 left-8 w-44 h-12 bg-white rounded shadow-lg border border-zinc-100 flex items-center p-2.5 gap-2 z-20">
+          <div className="absolute top-14 left-8 w-44 h-12 bg-surface-primary rounded shadow-lg border border-border-secondary flex items-center p-2.5 gap-2 z-20">
             <div className="w-5 h-5 bg-zinc-800 rounded-sm"></div>
             <div className="flex-1 space-y-1.5">
               <div className="h-1.5 w-14 bg-zinc-200 rounded-full"></div>
               <div className="h-1 w-8 bg-zinc-100 rounded-full"></div>
             </div>
-            <div className="w-12 h-3.5 bg-black rounded-sm"></div>
+            <div className="w-12 h-3.5 bg-surface-dark rounded-sm"></div>
           </div>
-          <div className="absolute bottom-4 left-4 w-40 h-10 bg-white rounded shadow-sm border border-zinc-100 flex items-center p-2 gap-2 z-10 opacity-80">
+          <div className="absolute bottom-4 left-4 w-40 h-10 bg-surface-primary rounded shadow-sm border border-border-secondary flex items-center p-2 gap-2 z-10 opacity-80">
             <div className="w-4 h-4 bg-zinc-800 rounded-sm"></div>
             <div className="flex-1 space-y-1">
               <div className="h-1.5 w-10 bg-zinc-200 rounded-full"></div>
@@ -84,7 +84,7 @@ export const howItWorksData = [
     mockupUI: (
       <div className="w-56 h-40 relative flex items-center justify-center mb-6">
         <div className="relative w-48 h-36 transform group-hover:-translate-y-2 transition-transform duration-300">
-          <div className="absolute top-0 left-0 w-36 h-32 bg-white rounded-md shadow-sm border border-zinc-100 overflow-hidden">
+          <div className="absolute top-0 left-0 w-36 h-32 bg-surface-primary rounded-md shadow-sm border border-border-secondary overflow-hidden">
             <div className="w-full h-4 bg-zinc-900"></div>
             <div className="p-3">
               <div className="w-8 h-8 bg-zinc-800 rounded-sm mb-3"></div>
@@ -97,13 +97,13 @@ export const howItWorksData = [
               </div>
             </div>
           </div>
-          <div className="absolute bottom-0 right-0 w-20 h-28 bg-white rounded-md shadow-xl border border-zinc-200 overflow-hidden z-20">
+          <div className="absolute bottom-0 right-0 w-20 h-28 bg-surface-primary rounded-md shadow-xl border border-border-primary overflow-hidden z-20">
             <div className="w-full h-3 bg-zinc-900"></div>
             <div className="p-2 flex flex-col items-center mt-2">
               <div className="w-12 h-1 bg-zinc-200 rounded-full mb-2"></div>
-              <div className="w-14 h-4 bg-black rounded-sm mb-3"></div>
+              <div className="w-14 h-4 bg-surface-dark rounded-sm mb-3"></div>
               <div className="w-14 h-1 bg-zinc-200 rounded-full mb-2"></div>
-              <div className="w-14 h-4 bg-black rounded-sm mb-3"></div>
+              <div className="w-14 h-4 bg-surface-dark rounded-sm mb-3"></div>
             </div>
           </div>
         </div>
@@ -125,27 +125,27 @@ export const howItWorksData = [
     title: "Hire & Relax",
     mockupUI: (
       <div className="w-56 h-40 relative flex items-end justify-center pb-2 mb-6 transform group-hover:-translate-y-2 transition-transform duration-300">
-        <div className="w-14 h-20 bg-white border border-zinc-100 shadow-sm transform -rotate-6 translate-x-3 opacity-60 p-2 flex flex-col items-center z-0">
+        <div className="w-14 h-20 bg-surface-primary border border-border-secondary shadow-sm transform -rotate-6 translate-x-3 opacity-60 p-2 flex flex-col items-center z-0">
           <div className="w-6 h-0.5 bg-zinc-200 mt-2 mb-1"></div>
           <div className="w-8 h-0.5 bg-zinc-200 mb-1"></div>
           <div className="w-4 h-0.5 bg-zinc-200"></div>
         </div>
-        <div className="w-20 h-28 bg-white border border-zinc-100 shadow-xl z-20 relative p-3 flex flex-col items-center">
+        <div className="w-20 h-28 bg-surface-primary border border-border-secondary shadow-xl z-20 relative p-3 flex flex-col items-center">
           <div className="absolute -top-3 -right-3 w-8 h-8 bg-zinc-100 rounded-full flex items-center justify-center shadow-sm">
-            <div className="w-6 h-6 bg-black rounded-full flex items-center justify-center text-white">
+            <div className="w-6 h-6 bg-surface-dark rounded-full flex items-center justify-center text-text-inverted">
               <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
               </svg>
             </div>
           </div>
-          <div className="flex items-end gap-1 mt-4 h-8 border-b border-zinc-100 w-full justify-center pb-1">
+          <div className="flex items-end gap-1 mt-4 h-8 border-b border-border-secondary w-full justify-center pb-1">
             <div className="w-2.5 h-3 bg-zinc-800 rounded-t-sm"></div>
             <div className="w-2.5 h-7 bg-zinc-800 rounded-t-sm"></div>
             <div className="w-2.5 h-5 bg-zinc-800 rounded-t-sm"></div>
           </div>
-          <div className="w-12 h-1.5 bg-black rounded-full mt-4"></div>
+          <div className="w-12 h-1.5 bg-surface-dark rounded-full mt-4"></div>
         </div>
-        <div className="w-14 h-20 bg-white border border-zinc-100 shadow-sm transform rotate-6 -translate-x-3 opacity-60 p-2 flex flex-col items-center z-10">
+        <div className="w-14 h-20 bg-surface-primary border border-border-secondary shadow-sm transform rotate-6 -translate-x-3 opacity-60 p-2 flex flex-col items-center z-10">
           <div className="w-8 h-0.5 bg-zinc-200 mt-3 mb-1"></div>
           <div className="w-6 h-0.5 bg-zinc-200"></div>
         </div>

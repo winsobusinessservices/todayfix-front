@@ -3,7 +3,7 @@ import { howItWorksData } from "../data/howItWorksData";
 
 const HowItWorks = () => {
   return (
-    <section className="w-full bg-surface-secondary py-20 px-4 md:px-8 font-sans overflow-hidden border-y border-zinc-100 relative">
+    <section className="w-full bg-surface-secondary py-20 px-4 md:px-8 font-sans overflow-hidden border-y border-border-secondary relative">
       
       {/* Global SVG Defs for markers to ensure they render on all screen sizes */}
       <svg className="w-0 h-0 absolute pointer-events-none">
@@ -24,13 +24,13 @@ const HowItWorks = () => {
       {/* Header Section */}
       <div className="max-w-3xl mx-auto text-center mb-16">
         {/* Top Black Dash */}
-        <div className="w-8 h-1 bg-black mx-auto mb-6 rounded-full"></div>
+        <div className="w-8 h-1 bg-surface-dark mx-auto mb-6 rounded-full"></div>
 
-        <h2 className="text-3xl md:text-4xl font-extrabold text-black mb-6">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-text-primary mb-6">
           How it works
         </h2>
 
-        <p className="text-zinc-500 text-sm md:text-base leading-relaxed">
+        <p className="text-text-secondary text-sm md:text-base leading-relaxed">
           Getting your work done by verified Indian professionals is quick and
           effortless.
         </p>
@@ -85,7 +85,7 @@ const HowItWorks = () => {
             >
               {step.mockupUI}
               <h3
-                className={`font-semibold text-black text-center ${
+                className={`font-semibold text-text-primary text-center ${
                   step.id === 2 || step.id === 4 ? "w-28 leading-snug" : ""
                 }`}
               >

@@ -29,7 +29,7 @@ const Services = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full font-sans overflow-hidden bg-surface-accent py-16 border-t border-zinc-100">
+    <div className="flex flex-col items-center justify-center w-full font-sans overflow-hidden bg-surface-accent py-16 border-t border-border-secondary">
       {/* Utility to hide the scrollbar but keep functionality */}
       <style>
         {`
@@ -49,7 +49,7 @@ const Services = () => {
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-sm font-bold text-zinc-500 uppercase tracking-widest"
+            className="text-sm font-bold text-text-secondary uppercase tracking-widest"
           >
             Our Services
           </motion.h2>
@@ -58,16 +58,16 @@ const Services = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl md:text-6xl font-extrabold text-black tracking-tight"
+            className="text-4xl md:text-6xl font-extrabold text-text-primary tracking-tight"
           >
-            What Do You Need <span className="text-zinc-400">Fixed?</span>
+            What Do You Need <span className="text-text-muted">Fixed?</span>
           </motion.h3>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-zinc-500 max-w-xl"
+            className="text-lg md:text-xl text-text-secondary max-w-xl"
           >
             Choose from 50+ professional home and business services tailored for
             you.
@@ -93,7 +93,7 @@ const Services = () => {
           {/* Desktop Left Navigation Arrow */}
           <button
             onClick={() => scroll("left")}
-            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-black text-white shadow-xl hover:bg-zinc-800 hover:scale-110 transition-all duration-300 transform active:scale-95 ${
+            className={`absolute left-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-surface-dark text-text-inverted shadow-xl hover:bg-zinc-800 hover:scale-110 transition-all duration-300 transform active:scale-95 ${
               isScrolled
                 ? "opacity-100 translate-x-2"
                 : "opacity-0 -translate-x-10 pointer-events-none"
@@ -119,7 +119,7 @@ const Services = () => {
           {/* Desktop Right Navigation Arrow */}
           <button
             onClick={() => scroll("right")}
-            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-black text-white shadow-xl hover:bg-zinc-800 hover:scale-110 transition-all duration-300 transform active:scale-95 ${
+            className={`absolute right-0 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-12 h-12 rounded-full bg-surface-dark text-text-inverted shadow-xl hover:bg-zinc-800 hover:scale-110 transition-all duration-300 transform active:scale-95 ${
               canScrollRight
                 ? "opacity-100 -translate-x-2"
                 : "opacity-0 translate-x-10 pointer-events-none"
@@ -155,13 +155,13 @@ const Services = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 key={service.id}
-                className="group relative flex-shrink-0 w-36 h-40 md:w-48 md:h-56 flex flex-col items-center justify-center gap-4 bg-white border border-zinc-200 rounded-[2rem] cursor-pointer snap-center hover:-translate-y-2 hover:bg-black hover:border-black shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                className="group relative flex-shrink-0 w-36 h-40 md:w-48 md:h-56 flex flex-col items-center justify-center gap-4 bg-surface-primary border border-border-primary rounded-[2rem] cursor-pointer snap-center hover:-translate-y-2 hover:bg-surface-dark hover:border-black shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden"
               >
                 {/* Background Glow on Hover */}
                 <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-black opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
 
                 {/* Icon Wrapper */}
-                <div className="relative z-10 p-3 md:p-4 rounded-full bg-zinc-100 text-zinc-900 transition-all duration-300 group-hover:bg-white/10 group-hover:text-white group-hover:scale-110 group-hover:shadow-lg">
+                <div className="relative z-10 p-3 md:p-4 rounded-full bg-zinc-100 text-zinc-900 transition-all duration-300 group-hover:bg-white/10 group-hover:text-text-inverted group-hover:scale-110 group-hover:shadow-lg">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-8 w-8 md:h-10 md:w-10"
@@ -175,7 +175,7 @@ const Services = () => {
                 </div>
 
                 {/* Text Label */}
-                <span className="relative z-10 text-sm md:text-lg font-bold text-zinc-800 group-hover:text-white transition-colors duration-300 tracking-tight text-center px-2">
+                <span className="relative z-10 text-sm md:text-lg font-bold text-zinc-800 group-hover:text-text-inverted transition-colors duration-300 tracking-tight text-center px-2">
                   {service.name}
                 </span>
               </motion.div>

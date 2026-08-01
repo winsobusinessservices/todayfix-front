@@ -20,6 +20,7 @@ export const footerData = [
       "Press",
       "Contact Us",
       "Partner With Us",
+      "Investors",
     ],
   },
   {

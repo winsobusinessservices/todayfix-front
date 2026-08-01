@@ -6,25 +6,25 @@ const PricingComponent = () => {
   const [flippedIndex, setFlippedIndex] = useState(null);
 
   return (
-    <div className="min-h-screen bg-surface-primary py-20 px-6 font-sans flex flex-col items-center overflow-hidden border-t border-zinc-100">
+    <div className="bg-surface-primary py-20 px-6 font-sans flex flex-col items-center overflow-hidden border-t border-border-secondary">
       {/* Header Section */}
-      <h2 className="text-4xl md:text-5xl lg:text-[56px] font-extrabold text-center text-black leading-[1.15] tracking-tight mb-10">
+      <h2 className="text-4xl md:text-5xl lg:text-[56px] font-extrabold text-center text-text-primary leading-[1.15] tracking-tight mb-10">
         Simple, transparent <br className="hidden sm:block" />
-        <span className="text-zinc-400">pricing plans.</span>
+        <span className="text-text-muted">pricing plans.</span>
       </h2>
 
       {/* Toggle Switch */}
       <div className="flex justify-center mb-16 relative z-20">
-        <div className="flex items-center bg-zinc-50 border border-zinc-200 rounded-full p-1.5 shadow-sm">
+        <div className="flex items-center bg-surface-secondary border border-border-primary rounded-full p-1.5 shadow-sm">
           <button
             onClick={() => setIsAnnual(false)}
-            className={`px-8 py-2 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${!isAnnual ? "bg-black text-white shadow-md" : "text-zinc-500 hover:text-black"}`}
+            className={`px-8 py-2 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${!isAnnual ? "bg-surface-dark text-text-inverted shadow-md" : "text-text-secondary hover:text-text-primary"}`}
           >
             Month
           </button>
           <button
             onClick={() => setIsAnnual(true)}
-            className={`px-8 py-2 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${isAnnual ? "bg-black text-white shadow-md" : "text-zinc-500 hover:text-black"}`}
+            className={`px-8 py-2 rounded-full text-sm font-bold tracking-wide transition-all duration-300 ${isAnnual ? "bg-surface-dark text-text-inverted shadow-md" : "text-text-secondary hover:text-text-primary"}`}
           >
             Year
           </button>
@@ -88,14 +88,14 @@ const PricingComponent = () => {
                 {/* Bottom Row (Description & Cutout Arrow) */}
                 <div className="flex justify-between items-end z-20 relative">
                   <p
-                    className={`text-sm font-medium max-w-[65%] leading-relaxed ${card.bgColor === "bg-zinc-50" ? "text-zinc-600" : "text-zinc-300"}`}
+                    className={`text-sm font-medium max-w-[65%] leading-relaxed ${card.bgColor === "bg-surface-secondary" ? "text-zinc-600" : "text-zinc-300"}`}
                   >
                     {card.description}
                   </p>
 
                   {/* Simulated "Cutout" Arrow Button */}
                   <div
-                    className={`absolute -bottom-4 -right-4 w-20 h-20 rounded-full flex items-center justify-center border-[8px] border-white ${card.bgColor === "bg-black" ? "bg-black" : card.bgColor === "bg-zinc-900" ? "bg-zinc-900" : "bg-zinc-50"}`}
+                    className={`absolute -bottom-4 -right-4 w-20 h-20 rounded-full flex items-center justify-center border-[8px] border-white ${card.bgColor === "bg-surface-dark" ? "bg-surface-dark" : card.bgColor === "bg-zinc-900" ? "bg-zinc-900" : "bg-surface-secondary"}`}
                   >
                     <svg
                       className={`w-6 h-6 ${card.textColor}`}
@@ -123,7 +123,7 @@ const PricingComponent = () => {
                 {/* Back Header */}
                 <div className="mb-8">
                   <span
-                    className={`text-xs font-bold tracking-widest uppercase ${card.bgColor === "bg-zinc-50" ? "text-zinc-400" : "text-zinc-500"}`}
+                    className={`text-xs font-bold tracking-widest uppercase ${card.bgColor === "bg-surface-secondary" ? "text-text-muted" : "text-text-secondary"}`}
                   >
                     What's Included
                   </span>
@@ -159,7 +159,7 @@ const PricingComponent = () => {
 
                 {/* Cutout Checkmark Button on Back */}
                 <div
-                  className={`absolute -bottom-4 -right-4 w-20 h-20 rounded-full flex items-center justify-center border-[8px] border-white ${card.bgColor === "bg-black" ? "bg-black" : card.bgColor === "bg-zinc-900" ? "bg-zinc-900" : "bg-zinc-50"}`}
+                  className={`absolute -bottom-4 -right-4 w-20 h-20 rounded-full flex items-center justify-center border-[8px] border-white ${card.bgColor === "bg-surface-dark" ? "bg-surface-dark" : card.bgColor === "bg-zinc-900" ? "bg-zinc-900" : "bg-surface-secondary"}`}
                 >
                   <svg
                     className={`w-6 h-6 ${card.textColor}`}

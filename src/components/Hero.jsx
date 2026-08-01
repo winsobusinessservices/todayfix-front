@@ -14,7 +14,7 @@ const Hero = () => {
   }, [services.length]);
 
   return (
-    <div className="mt-0 flex flex-col relative pt-16 lg:pt-20 bg-surface-primary overflow-hidden gap-10 lg:gap-0">
+    <div className="mt-0 flex flex-col relative bg-surface-primary overflow-hidden gap-10 lg:gap-0">
       {/* <div
         className="absolute inset-0 pointer-events-none z-0 opacity-40"
         style={{
@@ -36,7 +36,7 @@ const Hero = () => {
       </span>
       <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
         <div className="flex flex-col items-start space-y-10">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-extrabold text-black tracking-tight leading-[1.05]">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-extrabold text-text-primary tracking-tight leading-[1.05]">
             Find Verified <br />
             <div className="h-[1.2em] relative overflow-hidden my-2">
               <AnimatePresence mode="popLayout">
@@ -51,7 +51,7 @@ const Hero = () => {
                     stiffness: 120,
                     damping: 20,
                   }}
-                  className="block text-zinc-400 origin-bottom"
+                  className="block text-text-muted origin-bottom"
                 >
                   {services[currentIndex]}
                 </motion.span>
@@ -60,34 +60,34 @@ const Hero = () => {
             Across India.
           </h1>
 
-          <p className="text-lg md:text-xl text-zinc-500 max-w-lg leading-relaxed font-medium">
+          <p className="text-lg md:text-xl text-text-secondary max-w-lg leading-relaxed font-medium">
             The smarter, faster way to connect with highly vetted professionals
             and local service providers near you.
           </p>
-          <div className="flex items-center gap-8 md:gap-12 pt-6 border-t border-zinc-200">
+          <div className="flex items-center gap-8 md:gap-12 pt-6 border-t border-border-primary">
             <div className="flex flex-col">
-              <h4 className="text-3xl md:text-4xl font-extrabold text-black tracking-tight">
+              <h4 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight">
                 2.4L+
               </h4>
-              <p className="text-xs md:text-sm text-zinc-500 font-bold uppercase tracking-widest mt-2">
+              <p className="text-xs md:text-sm text-text-secondary font-bold uppercase tracking-widest mt-2">
                 Verified Pros
               </p>
             </div>
             <div className="w-px h-16 bg-zinc-200"></div>
             <div className="flex flex-col">
-              <h4 className="text-3xl md:text-4xl font-extrabold text-black tracking-tight">
+              <h4 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight">
                 500+
               </h4>
-              <p className="text-xs md:text-sm text-zinc-500 font-bold uppercase tracking-widest mt-2">
+              <p className="text-xs md:text-sm text-text-secondary font-bold uppercase tracking-widest mt-2">
                 Cities
               </p>
             </div>
             <div className="w-px h-16 bg-zinc-200"></div>
             <div className="flex flex-col">
-              <h4 className="text-3xl md:text-4xl font-extrabold text-black tracking-tight">
+              <h4 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight">
                 100+
               </h4>
-              <p className="text-xs md:text-sm text-zinc-500 font-bold uppercase tracking-widest mt-2">
+              <p className="text-xs md:text-sm text-text-secondary font-bold uppercase tracking-widest mt-2">
                 Categories
               </p>
             </div>
@@ -97,11 +97,11 @@ const Hero = () => {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-            className="absolute w-[320px] h-[320px] rounded-full border border-dashed border-zinc-300 flex items-center justify-center"
+            className="absolute w-[320px] h-[320px] rounded-full border border-dashed border-border-tertiary flex items-center justify-center"
           >
-            <div className="w-64 h-64 rounded-full border border-zinc-200 flex items-center justify-center">
-              <div className="w-40 h-40 bg-black rounded-full flex items-center justify-center shadow-2xl shadow-black/20">
-                <span className="text-white font-extrabold tracking-widest uppercase text-sm">
+            <div className="w-64 h-64 rounded-full border border-border-primary flex items-center justify-center">
+              <div className="w-40 h-40 bg-surface-dark rounded-full flex items-center justify-center shadow-2xl shadow-black/20">
+                <span className="text-text-inverted font-extrabold tracking-widest uppercase text-sm">
                   TodayFix
                 </span>
               </div>
@@ -110,10 +110,10 @@ const Hero = () => {
           <motion.div
             animate={{ y: [-15, 15, -15] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[15%] right-[5%] w-64 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-zinc-200 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
+            className="absolute top-[15%] right-[5%] w-64 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-zinc-100 rounded-2xl text-black">
+              <div className="p-3 bg-zinc-100 rounded-2xl text-text-primary">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -129,11 +129,11 @@ const Hero = () => {
                 </svg>
               </div>
               <div>
-                <h5 className="text-black font-bold text-sm tracking-tight">
+                <h5 className="text-text-primary font-bold text-sm tracking-tight">
                   Interior Design
                 </h5>
-                <p className="text-xs text-zinc-500 mt-1 flex items-center gap-1 font-medium">
-                  <span className="text-black">★</span> 4.9 (1.2k)
+                <p className="text-xs text-text-secondary mt-1 flex items-center gap-1 font-medium">
+                  <span className="text-text-primary">★</span> 4.9 (1.2k)
                 </p>
               </div>
             </div>
@@ -146,10 +146,10 @@ const Hero = () => {
               ease: "easeInOut",
               delay: 1,
             }}
-            className="absolute top-[50%] left-[-10%] w-72 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-zinc-200 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
+            className="absolute top-[50%] left-[-10%] w-72 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-black rounded-2xl text-white">
+              <div className="p-3 bg-surface-dark rounded-2xl text-text-inverted">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -165,10 +165,10 @@ const Hero = () => {
                 </svg>
               </div>
               <div>
-                <h5 className="text-black font-bold text-sm tracking-tight">
+                <h5 className="text-text-primary font-bold text-sm tracking-tight">
                   Verified Providers
                 </h5>
-                <p className="text-xs text-zinc-500 mt-1 font-medium">
+                <p className="text-xs text-text-secondary mt-1 font-medium">
                   Background checked
                 </p>
               </div>
@@ -182,10 +182,10 @@ const Hero = () => {
               ease: "easeInOut",
               delay: 2,
             }}
-            className="absolute bottom-[10%] right-[15%] w-60 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-zinc-200 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
+            className="absolute bottom-[10%] right-[15%] w-60 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-zinc-100 rounded-2xl text-black">
+              <div className="p-3 bg-zinc-100 rounded-2xl text-text-primary">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -201,10 +201,10 @@ const Hero = () => {
                 </svg>
               </div>
               <div>
-                <h5 className="text-black font-bold text-sm tracking-tight">
+                <h5 className="text-text-primary font-bold text-sm tracking-tight">
                   Digital Marketing
                 </h5>
-                <p className="text-xs text-zinc-500 mt-1 font-medium">
+                <p className="text-xs text-text-secondary mt-1 font-medium">
                   Grow your reach
                 </p>
               </div>
