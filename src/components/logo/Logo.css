@@ -1,0 +1,85 @@
+/* New: Subtle ripple wave for standard letters */
+@keyframes letter-wave {
+  0%,
+  75% {
+    transform: translateY(0) scale(1);
+    color: #8E7692;
+  }
+  80% {
+    transform: translateY(-8px) scale(1.05);
+    color: #8E7692; /* slate-200 */
+  }
+  85% {
+    transform: translateY(2px) scale(0.98);
+  }
+  90%,
+  100% {
+    transform: translateY(0) scale(1);
+    color: #8E7692;
+  }
+}
+
+/* The unique 'f' bend-and-stand animation */
+@keyframes f-bend-stand {
+  0%,
+  70% {
+    transform: translateY(0) scaleY(1) rotate(0deg);
+    color: #8E7692;
+  }
+  75% {
+    transform: translateY(10px) scaleY(0.05) scaleX(1.8);
+    transform-origin: bottom center;
+    color: #8E7692;
+  }
+  82% {
+    transform: translateY(0) scaleY(1.15) rotate(24deg);
+    transform-origin: bottom center;
+    color: #8E7692;
+  }
+  88% {
+    transform: translateY(0) scaleY(0.95) rotate(-12deg);
+    transform-origin: bottom center;
+  }
+  94% {
+    transform: translateY(0) scaleY(1.02) rotate(4deg);
+    transform-origin: bottom center;
+  }
+  100% {
+    transform: translateY(0) scaleY(1) rotate(0deg);
+    color: #8E7692;
+  }
+}
+
+/* The line the 'f' squashes into */
+@keyframes bottom-line-burst {
+  0%,
+  70%,
+  100% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  75% {
+    opacity: 1;
+    transform: scaleX(1);
+    box-shadow: 0 0 12px #8E7692;
+  }
+  82% {
+    opacity: 0;
+    transform: scaleX(0.2);
+  }
+}
+
+.animate-letter {
+  display: inline-block;
+  /* 6s loop ensures they pause and wait, just like the 'f' */
+  animation: letter-wave 6s ease-in-out infinite;
+}
+
+.animate-f-special {
+  display: inline-block;
+  animation: f-bend-stand 6s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
+}
+
+.animate-bottom-line {
+  animation: bottom-line-burst 6s ease-in-out infinite;
+}
