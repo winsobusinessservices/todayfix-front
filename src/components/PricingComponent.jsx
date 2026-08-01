@@ -1,102 +1,12 @@
 import React, { useState } from "react";
+import { pricingData } from "../data/pricingData";
 
 const PricingComponent = () => {
   const [isAnnual, setIsAnnual] = useState(false);
   const [flippedIndex, setFlippedIndex] = useState(null);
 
-  // Data for the pricing cards (Monochrome Premium Theme)
-  const cards = [
-    {
-      tier: "Basic",
-      price: "$12",
-      annualPrice: "$120",
-      description: "Introduction to our premium local services platform.",
-      bgColor: "bg-zinc-50",
-      textColor: "text-zinc-900",
-      borderColor: "border-zinc-200",
-      plusBg: "bg-zinc-900",
-      plusText: "text-white",
-      hoverTransform: "group-hover:[transform:rotateY(180deg)_rotateZ(-4deg)]",
-      details: [
-        "Access to verified professionals",
-        "Standard customer support",
-        "Basic job tracking",
-        "Email notifications",
-      ],
-    },
-    {
-      tier: "Premium",
-      price: "$24",
-      annualPrice: "$240",
-      description:
-        "Perfect for households needing regular maintenance and priority support.",
-      bgColor: "bg-zinc-100", // Middle card gets slightly different shade or black? Let's make it the prominent one.
-      // Wait, let's make the center card pure black to stand out, and left/right white/zinc.
-      // Let's redefine center card as Black.
-      // Actually, array elements:
-    },
-  ];
-
-  const monochromeCards = [
-    {
-      tier: "Standard",
-      price: "$29",
-      annualPrice: "$290",
-      description: "Perfect for occasional home maintenance and quick fixes.",
-      bgColor: "bg-zinc-50",
-      textColor: "text-black",
-      borderColor: "border-zinc-200",
-      plusBg: "bg-black",
-      plusText: "text-white",
-      transformStyle: "[transform:rotateY(180deg)_rotateZ(-4deg)]",
-      details: [
-        "Access to verified professionals",
-        "Standard 24/7 support",
-        "Basic job tracking",
-        "Email notifications",
-      ],
-    },
-    {
-      tier: "Pro",
-      price: "$59",
-      annualPrice: "$590",
-      description: "Ideal for frequent service users needing priority booking.",
-      bgColor: "bg-black",
-      textColor: "text-white",
-      borderColor: "border-white/20",
-      plusBg: "bg-white",
-      plusText: "text-black",
-      transformStyle: "[transform:rotateY(180deg)_rotateZ(6deg)_scale(1.05)]",
-      details: [
-        "Everything in Standard",
-        "Priority booking & matching",
-        "Dedicated account manager",
-        "Free cancellation & rescheduling",
-      ],
-    },
-    {
-      tier: "Enterprise",
-      price: "$99",
-      annualPrice: "$990",
-      description:
-        "Ultimate comprehensive coverage for large properties and businesses.",
-      bgColor: "bg-zinc-900",
-      textColor: "text-white",
-      borderColor: "border-white/10",
-      plusBg: "bg-white",
-      plusText: "text-black",
-      transformStyle: "[transform:rotateY(180deg)_rotateZ(-4deg)]",
-      details: [
-        "Everything in Pro",
-        "Multiple property management",
-        "Customized monthly reports",
-        "VIP access to top-rated pros",
-      ],
-    },
-  ];
-
   return (
-    <div className="min-h-screen bg-white py-20 px-6 font-sans flex flex-col items-center overflow-hidden border-t border-zinc-100">
+    <div className="min-h-screen bg-surface-primary py-20 px-6 font-sans flex flex-col items-center overflow-hidden border-t border-zinc-100">
       {/* Header Section */}
       <h2 className="text-4xl md:text-5xl lg:text-[56px] font-extrabold text-center text-black leading-[1.15] tracking-tight mb-10">
         Simple, transparent <br className="hidden sm:block" />
@@ -123,7 +33,7 @@ const PricingComponent = () => {
 
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 max-w-6xl w-full">
-        {monochromeCards.map((card, index) => (
+        {pricingData.map((card, index) => (
           /* 3D Perspective Wrapper */
           <div
             key={index}

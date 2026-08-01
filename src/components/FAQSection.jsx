@@ -11,7 +11,7 @@ const FAQSection = () => {
   const activeFaqs = faqData[activeCategory] || [];
 
   return (
-    <div className="min-h-screen bg-zinc-50 text-black font-sans relative overflow-hidden py-24 border-t border-zinc-100">
+    <div className="min-h-screen bg-surface-secondary text-black font-sans relative overflow-hidden py-24 border-t border-zinc-100">
       {/* --- Main Content --- */}
       <div className="max-w-6xl mx-auto px-6">
         {/* Header Section */}

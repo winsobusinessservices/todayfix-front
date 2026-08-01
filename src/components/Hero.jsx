@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSearchBar from "./AnimatedSearchBar";
+import { heroData as services } from "../data/heroData";
+
 const Hero = () => {
-  const services = [
-    "Interior Designers",
-    "Packers & Movers",
-    "Civil Contractors",
-    "Solar Experts",
-    "Digital Marketers",
-    "Pest Control",
-  ];
   const [currentIndex, setCurrentIndex] = useState(0);
   useEffect(() => {
     // Cycles the service text every 3 seconds for a smoother reading experience
@@ -20,7 +14,7 @@ const Hero = () => {
   }, [services.length]);
 
   return (
-    <div className="mt-0 flex flex-col relative pt-16 lg:pt-20 bg-white overflow-hidden gap-10 lg:gap-0">
+    <div className="mt-0 flex flex-col relative pt-16 lg:pt-20 bg-surface-primary overflow-hidden gap-10 lg:gap-0">
       {/* <div
         className="absolute inset-0 pointer-events-none z-0 opacity-40"
         style={{
@@ -35,7 +29,7 @@ const Hero = () => {
             "radial-gradient(circle at 50% 50%, black 20%, transparent 70%)",
         }}
       /> */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f46e520_1px,transparent_1px),linear-gradient(to_bottom,#4f46e520_1px,transparent_1px)] bg-[size:120px_120px] " />
+      <div className="absolute inset-0 opacity-70 bg-[linear-gradient(to_right,#4f46e520_1px,transparent_1px),linear-gradient(to_bottom,#4f46e520_1px,transparent_1px)] bg-[size:70px_70px] " />
       {/* <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-zinc-100 rounded-full mix-blend-multiply filter blur-[100px] z-0 pointer-events-none"></div> */}
       <span className="z-20 relative w-full flex justify-center mt-4 max-md:px-16">
         <AnimatedSearchBar />

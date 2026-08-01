@@ -2,9 +2,19 @@
 
 @theme {
   --font-outfit: 'Outfit', sans-serif;
+  
+  /* Unified Theme Colors */
+  --color-surface-primary: #ffffff;
+  --color-surface-secondary: var(--color-zinc-50);
+  --color-surface-tertiary: #f8f9fb;
+  --color-surface-accent: #d4d4d8;
+  --color-surface-dark: #000000;
+  
+  --color-border-primary: var(--color-zinc-200);
+  --color-border-secondary: var(--color-zinc-100);
 }
 
 body {
   font-family: var(--font-outfit);
-  background: #ffffff;
+  background: var(--color-surface-primary);
 }

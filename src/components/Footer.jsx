@@ -6,47 +6,11 @@ import {
   IconBrandLinkedin,
 } from "@tabler/icons-react";
 import Logo from "./logo/Logo";
+import { footerData as footerLinkColumns } from "../data/footerData";
 
 const Footer = () => {
-  // Data structure for the footer links to keep the JSX clean
-  const footerLinkColumns = [
-    {
-      title: "Services",
-      links: [
-        "Plumbing",
-        "Electrician",
-        "Painting",
-        "Cleaning",
-        "AC Repair",
-        "Carpentry",
-        "Pest Control",
-      ],
-    },
-    {
-      title: "Company",
-      links: [
-        "About Us",
-        "Careers",
-        "Blog",
-        "Press",
-        "Contact Us",
-        "Partner With Us",
-      ],
-    },
-    {
-      title: "Support",
-      links: [
-        "Help Center",
-        "Safety",
-        "Terms of Service",
-        "Privacy Policy",
-        "Refund Policy",
-      ],
-    },
-  ];
-
   return (
-    <footer className="w-full bg-zinc-50 pt-16 pb-10 px-6 md:px-12 lg:px-24 font-sans border-t border-zinc-200">
+    <footer className="w-full bg-surface-secondary pt-16 pb-10 px-6 md:px-12 lg:px-24 font-sans border-t border-zinc-200">
       <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-12 lg:gap-20 mb-16">
         {/* Left Section: Brand & Newsletter */}
         <div className="flex-shrink-0 w-full lg:w-1/3 flex flex-col gap-4">

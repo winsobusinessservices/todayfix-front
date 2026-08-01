@@ -1,35 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-
-const testimonials = [
-  {
-    id: 1,
-    quote:
-      "Sirona has helped me find the perfect professionals faster than I ever thought possible. The quality of work is absolutely exceptional.",
-    name: "Kyle Weznick",
-    role: "Homeowner, Bengaluru",
-    avatar:
-      "https://api.dicebear.com/7.x/avataaars/svg?seed=Kyle&backgroundColor=18181b",
-  },
-  {
-    id: 2,
-    quote:
-      "I was skeptical at first, but the verified experts completely transformed my living space. The entire process was seamless and stress-free.",
-    name: "Sarah Jenkins",
-    role: "Interior Designer",
-    avatar:
-      "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah&backgroundColor=18181b",
-  },
-  {
-    id: 3,
-    quote:
-      "The easiest platform I've ever used to hire local help. Reliable, transparent pricing, and incredible customer support every step of the way.",
-    name: "David Chen",
-    role: "Property Manager",
-    avatar:
-      "https://api.dicebear.com/7.x/avataaars/svg?seed=David&backgroundColor=18181b",
-  },
-];
+import { testimonialData as testimonials } from "../data/testimonialData";
 
 const TestimonialSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -69,7 +40,7 @@ const TestimonialSection = () => {
   };
 
   return (
-    <section className="w-full bg-white py-14 md:py-16 px-6 md:px-12 lg:px-24 font-sans overflow-hidden">
+    <section className="w-full bg-surface-primary py-14 md:py-16 px-6 md:px-12 lg:px-24 font-sans overflow-hidden">
       <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-5 lg:gap-24 items-start">
         {/* Left Column: Heading & Controls */}
         <div className="w-full lg:w-[40%] flex flex-col z-10">

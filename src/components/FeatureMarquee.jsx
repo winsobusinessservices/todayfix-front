@@ -1,18 +1,9 @@
 import React from 'react';
+import { featureMarqueeData as features } from '../data/featureMarqueeData';
 
 const FeatureMarquee = () => {
   // Your requested text plus a few extra to ensure the banner is wide 
   // enough to loop seamlessly on large ultra-wide monitors.
-  const features = [
-    "Verified Business",
-    "Real Customer Reviews",
-    "Quick Quote Requests",
-    "Local Trusted Providers",
-    "Secure Payments",
-    "Instant Matching",
-    "Expert Contractors",
-    "24/7 Support"
-  ];
 
   return (
     <div className="w-full pt-4">
@@ -41,11 +32,11 @@ const FeatureMarquee = () => {
         </p> */}
 
         {/* Marquee Container */}
-        <div className="w-full relative flex items-center bg-[#f8f9fb] py-6 overflow-hidden font-sans border-y border-gray-100">
+        <div className="w-full relative flex items-center bg-surface-tertiary py-6 overflow-hidden font-sans border-y border-gray-100">
           
           {/* Left & Right Gradient Overlays for smooth fade effect */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#f8f9fb] to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#f8f9fb] to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-surface-tertiary to-transparent z-10 pointer-events-none"></div>
+          <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-surface-tertiary to-transparent z-10 pointer-events-none"></div>
 
           {/* Scrolling Track */}
           <div className="animate-marquee-ltr hover:[animation-play-state:paused] transition-all cursor-default">
