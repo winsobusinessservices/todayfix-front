@@ -1,18 +1,18 @@
 @import "tailwindcss";
 
 @theme {
-  --font-outfit: 'Outfit', sans-serif;
-  
+  --font-outfit: "Outfit", sans-serif;
+
   /* Unified Theme Colors */
   --color-surface-primary: #ffffff;
   --color-surface-secondary: #fafafa; /* zinc-50 */
   --color-surface-tertiary: #f8f9fb;
   --color-surface-accent: #d4d4d8; /* zinc-300 */
   --color-surface-dark: #000000;
-  
+
   --color-text-primary: #000000;
   --color-text-secondary: #71717a; /* zinc-500 */
-  --color-text-muted: #a1a1aa; /* zinc-400 */
+  --color-text-muted: #91919e; /* zinc-400 */ 
   --color-text-inverted: #ffffff;
 
   --color-border-primary: #e4e4e7; /* zinc-200 */

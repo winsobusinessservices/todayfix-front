@@ -6,7 +6,7 @@ const PricingComponent = () => {
   const [flippedIndex, setFlippedIndex] = useState(null);
 
   return (
-    <div className="bg-surface-primary py-20 px-6 font-sans flex flex-col items-center overflow-hidden border-t border-border-secondary">
+    <div id="pricing" className="bg-surface-primary py-20 px-6 font-sans flex flex-col items-center overflow-hidden border-t border-border-secondary">
       {/* Header Section */}
       <h2 className="text-4xl md:text-5xl lg:text-[56px] font-extrabold text-center text-text-primary leading-[1.15] tracking-tight mb-10">
         Simple, transparent <br className="hidden sm:block" />

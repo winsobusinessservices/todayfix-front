@@ -1,5 +1,5 @@
 import React from "react";
-import "./logo.css";
+import "./Logo.css";
 
 const Logo = () => {
   // Splitting the word to apply staggered animations to each letter

@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, useNavigate } from "react-router";
 import React, { useRef, useState } from "react";
 import { IconMenu2, IconX, IconChevronDown } from "@tabler/icons-react";
 import {
@@ -24,6 +24,7 @@ export default function Navbar() {
   // State for dropdowns
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const navigate = useNavigate();
 
   const { scrollY } = useScroll({
     target: ref,
@@ -41,21 +42,21 @@ export default function Navbar() {
       name: "Cities",
       type: "dropdown",
       items: [
-        { name: "MG Road", link: "#new-york" },
-        { name: "Cubbon Park", link: "#london" },
-        { name: "Majestic", link: "#tokyo" },
-        { name: "Indiranagar", link: "#paris" },
-        { name: "Whitefield", link: "#paris" },
-        { name: "KR Puram", link: "#paris" },
-        { name: "Koramangala", link: "#paris" },
-        { name: "Jayanagar", link: "#paris" },
-        { name: "HSR Layout", link: "#paris" },
-        { name: "BTM Layout", link: "#paris" },
-        { name: "Hebbal", link: "#paris" },
-        { name: "Yelahanka", link: "#paris" },
-        { name: "Malleswaram", link: "#paris" },
-        { name: "Rajajinagar", link: "#paris" },
-        { name: "Vijayanagar", link: "#paris" },
+        { name: "MG Road", link: "/mg-road" },
+        { name: "Cubbon Park", link: "/cubbon-park" },
+        { name: "Majestic", link: "/majestic" },
+        { name: "Indiranagar", link: "/indiranagar" },
+        { name: "Whitefield", link: "/whitefield" },
+        { name: "KR Puram", link: "/kr-puram" },
+        { name: "Koramangala", link: "/koramangala" },
+        { name: "Jayanagar", link: "/jayanagar" },
+        { name: "HSR Layout", link: "/hsr-layout" },
+        { name: "BTM Layout", link: "/btm-layout" },
+        { name: "Hebbal", link: "/hebbal" },
+        { name: "Yelahanka", link: "/yelahanka" },
+        { name: "Malleswaram", link: "/malleswaram" },
+        { name: "Rajajinagar", link: "/rajajinagar" },
+        { name: "Vijayanagar", link: "/vijayanagar" },
       ],
     },
   ];
@@ -71,12 +72,8 @@ export default function Navbar() {
       to="/"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary"
     >
-      <img
-        src="todayfix.png"
-        alt="logo"
-        width={30}
-        height={30}
-      />
+      <img src="logo.png" alt="logo" width={30} height={30} />
+      {/* <video src="vid.mp4" autoPlay muted loop height={30} width={30} className="rounded-md"></video> */}
       <Logo />
     </Link>
   );
@@ -150,7 +147,7 @@ export default function Navbar() {
                           {item.items.map((subItem, subIdx) => (
                             <Link
                               key={subIdx}
-                              to={subItem.link}
+                              to={"/cities" + subItem.link}
                               className="px-4 py-2 text-sm text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-text-primary rounded-xl dark:text-neutral-300 dark:hover:bg-neutral-800 dark:hover:text-text-inverted"
                             >
                               {subItem.name}
@@ -187,7 +184,10 @@ export default function Navbar() {
 
           {/* Desktop Buttons */}
           <div className="flex items-center gap-4">
-            <button className={cn(buttonBase, buttonSecondary)}>
+            <button
+              onClick={() => navigate("/login")}
+              className={cn(buttonBase, buttonSecondary)}
+            >
               <span className="flex items-end gap-1">
                 <svg
                   width="24px"
@@ -215,8 +215,11 @@ export default function Navbar() {
                 Login
               </span>
             </button>
-            <button className={cn(buttonBase, buttonPrimary)}>
-              List Your Business
+            <button
+              onClick={() => navigate("/register")}
+              className={cn(buttonBase, buttonPrimary)}
+            >
+              Register
             </button>
           </div>
         </motion.div>
@@ -298,7 +301,7 @@ export default function Navbar() {
                               {item.items.map((subItem, subIdx) => (
                                 <Link
                                   key={subIdx}
-                                  to={subItem.link}
+                                  to={"cities" + subItem.link}
                                   onClick={() => setIsMobileMenuOpen(false)}
                                   className="block py-1 text-sm text-neutral-500 hover:text-text-primary dark:text-neutral-400 dark:hover:text-text-inverted"
                                 >
@@ -325,7 +328,10 @@ export default function Navbar() {
                 })}
                 <div className="flex w-full flex-col gap-4 mt-2">
                   <button
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      navigate("/login");
+                    }}
                     className={cn(
                       buttonBase,
                       buttonSecondary,
@@ -360,10 +366,13 @@ export default function Navbar() {
                     </span>
                   </button>
                   <button
-                    onClick={() => setIsMobileMenuOpen(false)}
+                    onClick={() => {
+                      setIsMobileMenuOpen(false);
+                      navigate("/register");
+                    }}
                     className={cn(buttonBase, buttonPrimary, "w-full")}
                   >
-                    List Your Business
+                    Register
                   </button>
                 </div>
               </motion.div>

@@ -23,7 +23,7 @@ RUN npm install -g serve
 COPY --from=builder /app/dist ./dist
 
 # Expose the port the app runs on
-EXPOSE 3001
+EXPOSE 5173
 
 # Run 'serve' targeting the dist folder
-CMD ["serve", "-s", "dist", "-l", "3001"]
+CMD ["serve", "-s", "dist", "-l", "5173"]

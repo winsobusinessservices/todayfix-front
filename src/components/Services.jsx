@@ -29,7 +29,7 @@ const Services = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full font-sans overflow-hidden bg-surface-accent py-16 border-t border-border-secondary">
+    <div className="flex flex-col items-center justify-center w-full font-sans overflow-hidden bg-surface-primary py-16 border-t border-border-secondary">
       {/* Utility to hide the scrollbar but keep functionality */}
       <style>
         {`
@@ -78,14 +78,14 @@ const Services = () => {
         <div className="relative group/container mt-12">
           {/* Left Gradient Fade */}
           <div
-            className={`absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-surface-accent via-surface-accent/80 to-transparent z-10 pointer-events-none transition-opacity duration-500 ${
+            className={`absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-surface-primary via-surface-primary/80 to-transparent z-10 pointer-events-none transition-opacity duration-500 ${
               isScrolled ? "opacity-100" : "opacity-0"
             }`}
           ></div>
 
           {/* Right Gradient Fade */}
           <div
-            className={`absolute top-0 right-0 bottom-0 w-24 bg-gradient-to-l from-surface-accent via-surface-accent/80 to-transparent z-10 pointer-events-none transition-opacity duration-500 ${
+            className={`absolute top-0 right-0 bottom-0 w-24 bg-gradient-to-l from-surface-primary via-surface-primary/80 to-transparent z-10 pointer-events-none transition-opacity duration-500 ${
               canScrollRight ? "opacity-100" : "opacity-0"
             }`}
           ></div>
@@ -155,13 +155,13 @@ const Services = () => {
                 viewport={{ once: true, margin: "-50px" }}
                 transition={{ duration: 0.5, delay: index * 0.05 }}
                 key={service.id}
-                className="group relative flex-shrink-0 w-36 h-40 md:w-48 md:h-56 flex flex-col items-center justify-center gap-4 bg-surface-primary border border-border-primary rounded-[2rem] cursor-pointer snap-center hover:-translate-y-2 hover:bg-surface-dark hover:border-black shadow-sm hover:shadow-2xl transition-all duration-300 overflow-hidden"
+                className="group relative flex-shrink-0 w-36 h-40 md:w-48 md:h-56 flex flex-col items-center justify-center gap-4 bg-surface-primary border border-border-primary rounded-3xl cursor-pointer snap-center hover:-translate-y-2 hover:bg-surface-dark hover:border-surface-dark shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-[0_8px_40px_rgb(0,0,0,0.12)] transition-all duration-500 overflow-hidden"
               >
                 {/* Background Glow on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-br from-zinc-800 to-black opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-surface-dark to-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"></div>
 
                 {/* Icon Wrapper */}
-                <div className="relative z-10 p-3 md:p-4 rounded-full bg-zinc-100 text-zinc-900 transition-all duration-300 group-hover:bg-white/10 group-hover:text-text-inverted group-hover:scale-110 group-hover:shadow-lg">
+                <div className="relative z-10 p-3 md:p-4 rounded-full bg-surface-secondary text-text-primary transition-all duration-500 group-hover:bg-white/10 group-hover:text-text-inverted group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.2)]">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="h-8 w-8 md:h-10 md:w-10"
@@ -175,7 +175,7 @@ const Services = () => {
                 </div>
 
                 {/* Text Label */}
-                <span className="relative z-10 text-sm md:text-lg font-bold text-zinc-800 group-hover:text-text-inverted transition-colors duration-300 tracking-tight text-center px-2">
+                <span className="relative z-10 text-sm md:text-base font-bold text-text-primary group-hover:text-text-inverted transition-colors duration-500 tracking-tight text-center px-2">
                   {service.name}
                 </span>
               </motion.div>

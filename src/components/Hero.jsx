@@ -6,7 +6,6 @@ import { heroData as services } from "../data/heroData";
 const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   useEffect(() => {
-    // Cycles the service text every 3 seconds for a smoother reading experience
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % services.length);
     }, 3000);
@@ -113,7 +112,7 @@ const Hero = () => {
             className="absolute top-[15%] right-[5%] w-64 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-zinc-100 rounded-2xl text-text-primary">
+              <div className="p-3 bg-orange-300 rounded-2xl text-text-primary">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -149,7 +148,7 @@ const Hero = () => {
             className="absolute top-[50%] left-[-10%] w-72 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-surface-dark rounded-2xl text-text-inverted">
+              <div className="p-3 bg-green-400 rounded-2xl text-text-inverted">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -185,7 +184,7 @@ const Hero = () => {
             className="absolute bottom-[10%] right-[15%] w-60 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-zinc-100 rounded-2xl text-text-primary">
+              <div className="p-3 bg-blue-300 rounded-2xl text-text-primary">
                 <svg
                   className="w-6 h-6"
                   fill="none"

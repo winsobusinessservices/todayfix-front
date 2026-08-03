@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { featuredData as businesses } from "../data/featuredData";
+import { useNavigate } from "react-router";
 
 const FeaturedSection = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);
+  const navigate = useNavigate();
 
   return (
     <section className="w-full bg-surface-primary pt-16 pb-20 font-sans border-t border-border-secondary">
@@ -23,10 +25,14 @@ const FeaturedSection = () => {
             </h2>
             <p className="text-lg text-text-secondary leading-relaxed">
               Connect with highly vetted, top-performing local businesses. We've
-              verified their credentials so you can hire with absolute confidence.
+              verified their credentials so you can hire with absolute
+              confidence.
             </p>
           </div>
-          <button className="shrink-0 h-12 px-6 rounded-full bg-surface-dark text-text-inverted font-medium hover:scale-105 transition-transform duration-300">
+          <button
+            onClick={() => navigate("/services")}
+            className="shrink-0 h-12 px-6 rounded-full bg-surface-dark text-text-inverted font-medium hover:scale-105 transition-transform duration-300"
+          >
             View All Providers
           </button>
         </motion.div>
@@ -61,8 +67,8 @@ const FeaturedSection = () => {
                   isDimmed
                     ? "opacity-40 blur-[2px] scale-[0.98]"
                     : isHovered
-                    ? "scale-[1.02] z-10"
-                    : "scale-100"
+                      ? "scale-[1.02] z-10"
+                      : "scale-100"
                 }`}
               >
                 {/* Animated Background Overlay on Hover */}
@@ -83,7 +89,9 @@ const FeaturedSection = () => {
                   </div>
                   <div
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold ${
-                      isFeatured ? "bg-white/10 text-text-inverted" : "bg-zinc-100 text-text-primary"
+                      isFeatured
+                        ? "bg-white/10 text-text-inverted"
+                        : "bg-zinc-100 text-text-primary"
                     }`}
                   >
                     <svg
@@ -102,7 +110,11 @@ const FeaturedSection = () => {
                 {/* Middle: Empty space for layout balance, or custom illustration */}
                 <div className="flex-grow flex items-center justify-center my-6">
                   <motion.div
-                    animate={isHovered ? { scale: 1.1, rotate: 2 } : { scale: 1, rotate: 0 }}
+                    animate={
+                      isHovered
+                        ? { scale: 1.1, rotate: 2 }
+                        : { scale: 1, rotate: 0 }
+                    }
                     transition={{ type: "spring", stiffness: 300, damping: 20 }}
                     className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center ${
                       isFeatured ? "bg-white/10" : "bg-black/5"
@@ -160,12 +172,14 @@ const FeaturedSection = () => {
                       </svg>
                       {business.location}
                     </span>
-                    
+
                     {/* View Action - Translates on hover */}
                     <motion.div
                       animate={isHovered ? { x: 5 } : { x: 0 }}
                       className={`p-2 rounded-full ${
-                        isFeatured ? "bg-surface-primary text-text-primary" : "bg-surface-dark text-text-inverted"
+                        isFeatured
+                          ? "bg-surface-primary text-text-primary"
+                          : "bg-surface-dark text-text-inverted"
                       }`}
                     >
                       <svg

@@ -7,6 +7,12 @@ import PublicLayout from "./pages/PublicLayout";
 import Home from "./pages/Home";
 import { motion, AnimatePresence } from "framer-motion";
 import Services from "./pages/Services";
+import Vendor from "./pages/Vendor";
+import Service from "./pages/Service";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import Pricing from "./pages/Pricing";
+import Area from "./pages/Area";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -37,12 +43,18 @@ function App() {
             <LoadingScreen />
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> 
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
           {/* <Route path="/loader" element={<LoadingScreen />} /> */}
           <Route path="/services" element={<Services />} />
+          <Route path="/services/:slug" element={<Service />} />
+          <Route path="/vendor/:id" element={<Vendor />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/cities/:slug" element={<Area />} />
         </Route>
       </Routes>
     </>
