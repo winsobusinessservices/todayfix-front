@@ -72,8 +72,8 @@ export default function Navbar() {
       to="/"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary"
     >
-      <img src="logo.png" alt="logo" width={30} height={30} />
-      {/* <video src="vid.mp4" autoPlay muted loop height={30} width={30} className="rounded-md"></video> */}
+      <img src="tfix.png" alt="logo" width={55} height={55} />
+      {/* <video src="logo-vid.mp4" autoPlay muted loop height={55} width={55} className="rounded-md"></video> */}
       <Logo />
     </Link>
   );
@@ -239,7 +239,7 @@ export default function Navbar() {
           }}
           transition={{ type: "spring", stiffness: 200, damping: 50 }}
           className={cn(
-            "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 py-2 lg:hidden",
+            "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 lg:hidden",
             visible && "bg-white/80 dark:bg-neutral-950/80",
           )}
         >

@@ -47,7 +47,7 @@ function App() {
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
-          {/* <Route path="/loader" element={<LoadingScreen />} /> */}
+          <Route path="/loader" element={<LoadingScreen />} />
           <Route path="/services" element={<Services />} />
           <Route path="/services/:slug" element={<Service />} />
           <Route path="/vendor/:id" element={<Vendor />} />

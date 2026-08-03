@@ -29,7 +29,7 @@ const Services = () => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center w-full font-sans overflow-hidden bg-surface-primary py-16 border-t border-border-secondary">
+    <div className="flex flex-col items-center justify-center w-full font-sans overflow-hidden bg-surface-accent py-16 border-t border-border-secondary">
       {/* Utility to hide the scrollbar but keep functionality */}
       <style>
         {`
@@ -78,14 +78,14 @@ const Services = () => {
         <div className="relative group/container mt-12">
           {/* Left Gradient Fade */}
           <div
-            className={`absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-surface-primary via-surface-primary/80 to-transparent z-10 pointer-events-none transition-opacity duration-500 ${
+            className={`absolute top-0 left-0 bottom-0 w-24 bg-gradient-to-r from-surface-accent via-surface-accent/80 to-transparent z-10 pointer-events-none transition-opacity duration-500 ${
               isScrolled ? "opacity-100" : "opacity-0"
             }`}
           ></div>
 
           {/* Right Gradient Fade */}
           <div
-            className={`absolute top-0 right-0 bottom-0 w-24 bg-gradient-to-l from-surface-primary via-surface-primary/80 to-transparent z-10 pointer-events-none transition-opacity duration-500 ${
+            className={`absolute top-0 right-0 bottom-0 w-24 bg-gradient-to-l from-surface-accent via-surface-accent/80 to-transparent z-10 pointer-events-none transition-opacity duration-500 ${
               canScrollRight ? "opacity-100" : "opacity-0"
             }`}
           ></div>
