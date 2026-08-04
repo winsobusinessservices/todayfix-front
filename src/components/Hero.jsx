@@ -14,20 +14,6 @@ const Hero = () => {
 
   return (
     <div className="mt-0 flex flex-col relative bg-surface-primary overflow-hidden gap-10 lg:gap-0">
-      {/* <div
-        className="absolute inset-0 pointer-events-none z-0 opacity-40"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #e4e4e7 1px, transparent 1px),
-            linear-gradient(to bottom, #e4e4e7 1px, transparent 1px)
-          `,
-          backgroundSize: "40px 40px",
-          maskImage:
-            "radial-gradient(circle at 50% 50%, black 20%, transparent 70%)",
-          WebkitMaskImage:
-            "radial-gradient(circle at 50% 50%, black 20%, transparent 70%)",
-        }}
-      /> */}
       <div className="absolute inset-0 opacity-70 bg-[linear-gradient(to_right,#4f46e520_1px,transparent_1px),linear-gradient(to_bottom,#4f46e520_1px,transparent_1px)] bg-[size:70px_70px] " />
       {/* <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-zinc-100 rounded-full mix-blend-multiply filter blur-[100px] z-0 pointer-events-none"></div> */}
       <span className="z-20 relative w-full flex justify-center mt-4 max-md:px-16">
@@ -37,7 +23,7 @@ const Hero = () => {
         <div className="flex flex-col items-start space-y-10">
           <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-extrabold text-text-primary tracking-tight leading-[1.05]">
             Find Verified <br />
-            <div className="h-[1.2em] relative overflow-hidden my-2">
+            <div className="relative overflow-hidden my-2">
               <AnimatePresence mode="popLayout">
                 <motion.span
                   key={currentIndex}
@@ -50,7 +36,7 @@ const Hero = () => {
                     stiffness: 120,
                     damping: 20,
                   }}
-                  className="block text-text-muted origin-bottom"
+                  className="block text-text-muted origin-bottom text-6xl"
                 >
                   {services[currentIndex]}
                 </motion.span>
@@ -112,7 +98,7 @@ const Hero = () => {
             className="absolute top-[15%] right-[5%] w-64 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-orange-300 rounded-2xl text-text-primary">
+              <div className="p-3 bg-orange-300 rounded-2xl text-text-inverted">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -133,6 +119,35 @@ const Hero = () => {
                 </h5>
                 <p className="text-xs text-text-secondary mt-1 flex items-center gap-1 font-medium">
                   <span className="text-text-primary">★</span> 4.9 (1.2k)
+                </p>
+              </div>
+            </div>
+          </motion.div>
+          <motion.div
+            animate={{ y: [11, -11, 11] }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1,
+            }}
+            className="absolute top-[19%] left-[-10%] w-64 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-red-400 rounded-2xl text-text-inverted flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 16 16">
+                  <path
+                    fill="#ffff"
+                    d="M14.12 4L8.62.85a1.28 1.28 0 0 0-1.24 0L1.88 4a1.25 1.25 0 0 0-.63 1.09V11a1.25 1.25 0 0 0 .63 1l5.5 3.11a1.28 1.28 0 0 0 1.24 0l5.5-3.11a1.25 1.25 0 0 0 .63-1V5.05A1.25 1.25 0 0 0 14.12 4zm-6.74 9.71l-2.13-1.2v-5.3l2.13 1.16zM8 7.29L5.92 6.15l4.81-2.67l2.09 1.18zm0-5.35l1.46.82l-4.84 2.69l-1.44-.79zM2.5 5.71l1.5.82v5.27L2.5 11zm6.12 8V8.37l4.88-2.66V11z"
+                  />
+                </svg>
+              </div>
+              <div>
+                <h5 className="text-text-primary font-bold text-sm tracking-tight">
+                  Packer & Mover
+                </h5>
+                <p className="text-xs text-text-secondary mt-1 font-medium">
+                  Trusted by Many
                 </p>
               </div>
             </div>
@@ -174,6 +189,54 @@ const Hero = () => {
             </div>
           </motion.div>
           <motion.div
+            animate={{ y: [13, -13, 13] }}
+            transition={{
+              duration: 5,
+              repeat: Infinity,
+              ease: "easeInOut",
+              delay: 1,
+            }}
+            className="absolute top-[45%] left-[66%] w-60 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
+          >
+            <div className="flex items-center gap-4">
+              <div className="p-3 bg-purple-400 rounded-2xl text-text-inverted flex items-center justify-center">
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="lucide lucide-boxes"
+                  aria-hidden="true"
+                >
+                  <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z"></path>
+                  <path d="m7 16.5-4.74-2.85"></path>
+                  <path d="m7 16.5 5-3"></path>
+                  <path d="M7 16.5v5.17"></path>
+                  <path d="M12 13.5V19l3.97 2.38a2 2 0 0 0 2.06 0l3-1.8a2 2 0 0 0 .97-1.71v-3.24a2 2 0 0 0-.97-1.71L17 10.5l-5 3Z"></path>
+                  <path d="m17 16.5-5-3"></path>
+                  <path d="m17 16.5 4.74-2.85"></path>
+                  <path d="M17 16.5v5.17"></path>
+                  <path d="M7.97 4.42A2 2 0 0 0 7 6.13v4.37l5 3 5-3V6.13a2 2 0 0 0-.97-1.71l-3-1.8a2 2 0 0 0-2.06 0l-3 1.8Z"></path>
+                  <path d="M12 8 7.26 5.15"></path>
+                  <path d="m12 8 4.74-2.85"></path>
+                  <path d="M12 13.5V8"></path>
+                </svg>
+              </div>
+              <div>
+                <h5 className="text-text-primary font-bold text-sm tracking-tight">
+                  Building Materials
+                </h5>
+                <p className="text-xs text-text-secondary mt-1 font-medium">
+                  Supply Chain
+                </p>
+              </div>
+            </div>
+          </motion.div>
+          <motion.div
             animate={{ y: [-10, 10, -10] }}
             transition={{
               duration: 7,
@@ -184,7 +247,7 @@ const Hero = () => {
             className="absolute bottom-[10%] right-[15%] w-60 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-300 rounded-2xl text-text-primary">
+              <div className="p-3 bg-blue-300 rounded-2xl text-text-inverted">
                 <svg
                   className="w-6 h-6"
                   fill="none"

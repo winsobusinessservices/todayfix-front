@@ -30,13 +30,33 @@ export const howItWorksData = [
       </div>
     ),
     mobileArrow: (
-      <svg className="block md:hidden absolute -bottom-10 left-1/2 -translate-x-1/2 w-12 h-10 pointer-events-none z-0" viewBox="0 0 48 40" fill="none">
-        <path d="M 24 0 C 44 16, 24 24, 24 35" stroke="#18181b" strokeWidth="1.5" strokeDasharray="4 4" markerEnd="url(#arrowhead)" />
+      <svg
+        className="block md:hidden absolute -bottom-10 left-1/2 -translate-x-1/2 w-12 h-10 pointer-events-none z-0"
+        viewBox="0 0 48 40"
+        fill="none"
+      >
+        <path
+          d="M 24 0 C 44 16, 24 24, 24 35"
+          stroke="#18181b"
+          strokeWidth="1.5"
+          strokeDasharray="4 4"
+          markerEnd="url(#arrowhead)"
+        />
       </svg>
     ),
     tabletArrow: (
-      <svg className="hidden md:block lg:hidden absolute top-[35%] -right-12 w-12 h-10 pointer-events-none z-0" viewBox="0 0 48 40" fill="none">
-        <path d="M 0 20 C 16 40, 32 20, 41 20" stroke="#18181b" strokeWidth="1.5" strokeDasharray="4 4" markerEnd="url(#arrowhead)" />
+      <svg
+        className="hidden md:block lg:hidden absolute top-[35%] -right-12 w-12 h-10 pointer-events-none z-0"
+        viewBox="0 0 48 40"
+        fill="none"
+      >
+        <path
+          d="M 0 20 C 16 40, 32 20, 41 20"
+          stroke="#18181b"
+          strokeWidth="1.5"
+          strokeDasharray="4 4"
+          markerEnd="url(#arrowhead)"
+        />
       </svg>
     ),
   },
@@ -72,8 +92,18 @@ export const howItWorksData = [
       </div>
     ),
     mobileArrow: (
-      <svg className="block md:hidden absolute -bottom-10 left-1/2 -translate-x-1/2 w-12 h-10 pointer-events-none z-0" viewBox="0 0 48 40" fill="none">
-        <path d="M 24 0 C 4 16, 24 24, 24 35" stroke="#18181b" strokeWidth="1.5" strokeDasharray="4 4" markerEnd="url(#arrowhead)" />
+      <svg
+        className="block md:hidden absolute -bottom-10 left-1/2 -translate-x-1/2 w-12 h-10 pointer-events-none z-0"
+        viewBox="0 0 48 40"
+        fill="none"
+      >
+        <path
+          d="M 24 0 C 4 16, 24 24, 24 35"
+          stroke="#18181b"
+          strokeWidth="1.5"
+          strokeDasharray="4 4"
+          markerEnd="url(#arrowhead)"
+        />
       </svg>
     ),
     tabletArrow: null,
@@ -110,13 +140,33 @@ export const howItWorksData = [
       </div>
     ),
     mobileArrow: (
-      <svg className="block md:hidden absolute -bottom-10 left-1/2 -translate-x-1/2 w-12 h-10 pointer-events-none z-0" viewBox="0 0 48 40" fill="none">
-        <path d="M 24 0 C 44 16, 24 24, 24 35" stroke="#18181b" strokeWidth="1.5" strokeDasharray="4 4" markerEnd="url(#arrowhead)" />
+      <svg
+        className="block md:hidden absolute -bottom-10 left-1/2 -translate-x-1/2 w-12 h-10 pointer-events-none z-0"
+        viewBox="0 0 48 40"
+        fill="none"
+      >
+        <path
+          d="M 24 0 C 44 16, 24 24, 24 35"
+          stroke="#18181b"
+          strokeWidth="1.5"
+          strokeDasharray="4 4"
+          markerEnd="url(#arrowhead)"
+        />
       </svg>
     ),
     tabletArrow: (
-      <svg className="hidden md:block lg:hidden absolute top-[35%] -right-12 w-12 h-10 pointer-events-none z-0" viewBox="0 0 48 40" fill="none">
-        <path d="M 0 20 C 16 0, 32 20, 41 20" stroke="#18181b" strokeWidth="1.5" strokeDasharray="4 4" markerEnd="url(#arrowhead)" />
+      <svg
+        className="hidden md:block lg:hidden absolute top-[35%] -right-12 w-12 h-10 pointer-events-none z-0"
+        viewBox="0 0 48 40"
+        fill="none"
+      >
+        <path
+          d="M 0 20 C 16 0, 32 20, 41 20"
+          stroke="#18181b"
+          strokeWidth="1.5"
+          strokeDasharray="4 4"
+          markerEnd="url(#arrowhead)"
+        />
       </svg>
     ),
   },
@@ -133,8 +183,18 @@ export const howItWorksData = [
         <div className="w-20 h-28 bg-surface-primary border border-border-secondary shadow-xl z-20 relative p-3 flex flex-col items-center">
           <div className="absolute -top-3 -right-3 w-8 h-8 bg-zinc-100 rounded-full flex items-center justify-center shadow-sm">
             <div className="w-6 h-6 bg-surface-dark rounded-full flex items-center justify-center text-text-inverted">
-              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+              <svg
+                className="w-3.5 h-3.5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
               </svg>
             </div>
           </div>

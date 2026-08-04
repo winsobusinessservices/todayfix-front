@@ -13,6 +13,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Pricing from "./pages/Pricing";
 import Area from "./pages/Area";
+import AboutUs from "./pages/AboutUs";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -43,7 +44,7 @@ function App() {
             <LoadingScreen />
           </motion.div>
         )}
-      </AnimatePresence> 
+      </AnimatePresence>
       <Routes>
         <Route element={<PublicLayout />}>
           <Route path="/" element={<Home />} />
@@ -55,6 +56,8 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/cities/:slug" element={<Area />} />
+          <Route path="/about" element={<AboutUs />} />
+          <Route path="*" element={<h1>404 Not Found</h1>} />
         </Route>
       </Routes>
     </>
