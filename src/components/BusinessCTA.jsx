@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router";
 
 const BusinessCTA = () => {
   return (
@@ -52,9 +53,12 @@ const BusinessCTA = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
           >
-            <button className="px-8 py-4 bg-surface-primary text-text-primary font-bold rounded-full text-base tracking-wide hover:bg-zinc-200 hover:scale-105 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]">
+            <Link
+              to="/list-business"
+              className="px-8 py-4 bg-surface-primary text-text-primary font-bold rounded-full text-base tracking-wide hover:bg-zinc-200 hover:scale-105 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]"
+            >
               List Your Business Now
-            </button>
+            </Link>
             <button className="px-8 py-4 bg-transparent text-text-inverted border border-white/20 font-bold rounded-full text-base tracking-wide hover:bg-white/10 transition-all duration-300">
               Grow Business
             </button>

@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link } from "react-router";
 import React from "react";
 import {
   IconBrandFacebook,
@@ -64,7 +64,7 @@ const Footer = () => {
                 {column.links.map((link) => (
                   <li key={link}>
                     <Link
-                      to={`#${link.toLowerCase().replace(/ /g, "-")}`}
+                      to={`/services/${link.toLowerCase().replace(/ /g, "-")}`}
                       className="text-text-secondary hover:text-text-primary transition-colors text-[15px] font-medium"
                     >
                       {link}
@@ -120,13 +120,22 @@ const Footer = () => {
           © 2026 Todayfix. All rights reserved.
         </p>
         <div className="flex gap-6 text-sm text-text-muted font-medium">
-          <Link to="#terms" className="hover:text-text-primary transition-colors">
+          <Link
+            to="#terms"
+            className="hover:text-text-primary transition-colors"
+          >
             Terms
           </Link>
-          <Link to="#privacy" className="hover:text-text-primary transition-colors">
+          <Link
+            to="#privacy"
+            className="hover:text-text-primary transition-colors"
+          >
             Privacy
           </Link>
-          <Link to="#cookies" className="hover:text-text-primary transition-colors">
+          <Link
+            to="#cookies"
+            className="hover:text-text-primary transition-colors"
+          >
             Cookies
           </Link>
         </div>

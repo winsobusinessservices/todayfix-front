@@ -9,6 +9,7 @@ export const footerData = [
       "AC Repair",
       "Carpentry",
       "Pest Control",
+      "Interior Design",
     ],
   },
   {

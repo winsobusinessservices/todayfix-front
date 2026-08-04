@@ -3,15 +3,17 @@ import React from "react";
 export const featuredData = [
   {
     id: 1,
-    name: "Elite Space Interiors",
+    name: "Jai Maa Modular Interiors",
     category: "Interior Design",
-    location: "Indiranagar, Bengaluru",
+    location: "Bangalore",
     rating: "4.9",
     reviews: "245",
     description:
-      "Award-winning residential and commercial interior designers specializing in modern, minimalist, and sustainable spaces. We transform your vision into reality with premium materials and flawless execution.",
+      "Transforming 2BHK and 3BHK homes with bespoke modular kitchens, living spaces, and wardrobes — crafted to perfection, priced for everyone.",
     // Large Image Placeholder or gradient for Bento
     bgGradient: "from-zinc-900 to-black",
+    bg: "jmm_bg.jpeg",
+    logo: "jmm_logo.png",
     icon: (
       <path
         strokeLinecap="round"
@@ -22,14 +24,16 @@ export const featuredData = [
   },
   {
     id: 2,
-    name: "SwiftRelocate Movers",
-    category: "Packers & Movers",
-    location: "Koramangala",
+    name: "Kalavathi Tours & Travels",
+    category: "Corporate Travels",
+    location: "Bangalore",
     rating: "4.8",
     reviews: "189",
     description:
-      "Damage-free packing and moving services with real-time tracking.",
+      "Reliable Airport Transfers, Corporate Transportation, Executive Travel, Employee Transportation and Event Travel Services.",
     bgGradient: "from-zinc-100 to-white",
+    bg: "ktt_bg.avif",
+    logo: "ktt_logo.png",
     icon: (
       <path
         strokeLinecap="round"
@@ -40,14 +44,16 @@ export const featuredData = [
   },
   {
     id: 3,
-    name: "EcoTech Solar Solutions",
-    category: "Solar Services",
-    location: "HSR Layout",
+    name: "DK Relocation",
+    category: "Packers & Movers",
+    location: "Bangalore",
     rating: "5.0",
     reviews: "94",
     description:
-      "Rooftop solar installations and government subsidy guidance.",
+      "Professional packing, secure transport & on-time delivery — door to door, anywhere in India. Trusted by 50,000+ families & businesses.",
     bgGradient: "from-zinc-100 to-white",
+    bg: "dk_bg.avif",
+    logo: "dkk_logo.png",
     icon: (
       <path
         strokeLinecap="round"

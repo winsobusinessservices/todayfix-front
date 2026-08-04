@@ -57,12 +57,7 @@ const FeaturedSection = () => {
                   delay: index * 0.1,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className={`group relative overflow-hidden rounded-[2rem] p-8 md:p-10 flex flex-col justify-between cursor-pointer border transition-all duration-500 h-full min-h-[420px] ${
-                  isFeatured
-                    ? "bg-gradient-to-br border-transparent text-text-inverted " +
-                      business.bgGradient
-                    : "bg-gradient-to-br border-border-primary text-text-primary shadow-sm hover:shadow-2xl hover:border-border-tertiary " +
-                      business.bgGradient
+                className={`group relative overflow-hidden rounded-[2rem] max-h-[490px] flex flex-col justify-between cursor-pointer border transition-all duration-500 h-full min-h-[420px]
                 } ${
                   isDimmed
                     ? "opacity-40 blur-[2px] scale-[0.98]"
@@ -71,13 +66,7 @@ const FeaturedSection = () => {
                       : "scale-100"
                 }`}
               >
-                {/* Animated Background Overlay on Hover */}
-                {isFeatured && (
-                  <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
-                )}
-
-                {/* Top: Category & Rating */}
-                <div className="flex items-center justify-between relative z-10">
+                <div className="flex items-center justify-between absolute left-8 right-10 z-10">
                   <div
                     className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase ${
                       isFeatured
@@ -107,95 +96,71 @@ const FeaturedSection = () => {
                   </div>
                 </div>
 
-                {/* Middle: Empty space for layout balance, or custom illustration */}
-                <div className="flex-grow flex items-center justify-center my-6">
-                  <motion.div
-                    animate={
-                      isHovered
-                        ? { scale: 1.1, rotate: 2 }
-                        : { scale: 1, rotate: 0 }
-                    }
-                    transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                    className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center ${
-                      isFeatured ? "bg-white/10" : "bg-black/5"
-                    }`}
-                  >
-                    <svg
-                      className={`w-10 h-10 ${
-                        isFeatured ? "text-text-inverted" : "text-text-primary"
-                      }`}
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={1.5}
-                    >
-                      {business.icon}
-                    </svg>
-                  </motion.div>
-                </div>
-
+                <img
+                  src={business.bg}
+                  alt={business.name}
+                  className="max-h-2/3 h-[58%] object-cover w-full"
+                />
                 {/* Bottom: Details & Action */}
-                <div className="relative z-10 flex flex-col gap-2">
-                  <h3 className="font-bold tracking-tight text-2xl md:text-3xl">
-                    {business.name}
-                  </h3>
-                  <p
-                    className={`text-sm leading-relaxed max-w-md ${
-                      isFeatured ? "text-zinc-300" : "text-text-secondary"
-                    }`}
-                  >
-                    {business.description}
-                  </p>
-                  <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
-                    <span
-                      className={`text-sm font-medium flex items-center gap-1.5 ${
-                        isFeatured ? "text-text-muted" : "text-text-secondary"
-                      }`}
+                <div className="bg-black h-full w-full text-text-inverted px-8 py-2">
+                  <div className="relative z-10 flex flex-col gap-2">
+                    <h3 className="font-bold tracking-tight text-2xl text-text-inverted">
+                      {business.name}
+                    </h3>
+                    <p
+                      className={`text-sm leading-relaxed max-w-md text-white`}
                     >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
+                      {business.description}
+                    </p>
+                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+                      <span
+                        className={`text-sm font-medium flex items-center gap-1.5 text-white/80`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-                      {business.location}
-                    </span>
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                        </svg>
+                        {business.location}
+                      </span>
 
-                    {/* View Action - Translates on hover */}
-                    <motion.div
-                      animate={isHovered ? { x: 5 } : { x: 0 }}
-                      className={`p-2 rounded-full ${
-                        isFeatured
-                          ? "bg-surface-primary text-text-primary"
-                          : "bg-surface-dark text-text-inverted"
-                      }`}
-                    >
-                      <svg
-                        className="w-4 h-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2.5}
+                      {/* View Action - Translates on hover */}
+                      <motion.div
+                        animate={isHovered ? { x: 5 } : { x: 0 }}
+                        className={`p-2 rounded-full ${
+                          isFeatured
+                            ? "bg-surface-primary text-text-primary"
+                            : "bg-surface-dark text-text-inverted"
+                        }`}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                        />
-                      </svg>
-                    </motion.div>
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                          />
+                        </svg>
+                      </motion.div>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -208,3 +173,96 @@ const FeaturedSection = () => {
 };
 
 export default FeaturedSection;
+
+{
+  /* Middle: Empty space for layout balance, or custom illustration */
+}
+// <div className="flex-grow flex items-center justify-center my-6 z-10">
+//   <motion.div
+//     animate={
+//       isHovered
+//         ? { scale: 1.1, rotate: 2 }
+//         : { scale: 1, rotate: 0 }
+//     }
+//     transition={{ type: "spring", stiffness: 300, damping: 20 }}
+//     className={`w-20 h-20 md:w-24 md:h-24 rounded-full flex items-center justify-center ${
+//       isFeatured ? "bg-white/10" : "bg-black/5"
+//     }`}
+//   >
+//     <img
+//       src={business.logo}
+//       alt={business.name}
+//       className="rounded-full h-full w-full"
+//     />
+//     {/* <svg
+//       className={`w-10 h-10 ${
+//         isFeatured ? "text-text-inverted" : "text-text-primary"
+//       }`}
+//       fill="none"
+//       viewBox="0 0 24 24"
+//       stroke="currentColor"
+//       strokeWidth={1.5}
+//     >
+//       {business.icon}
+//     </svg> */}
+//   </motion.div>
+// </div>
+
+// {/* Bottom: Details & Action */}
+// <div className="relative z-10 flex flex-col gap-2">
+//   <h3 className="font-bold tracking-tight text-2xl md:text-3xl text-text-inverted">
+//     {business.name}
+//   </h3>
+//   <p className={`text-sm leading-relaxed max-w-md text-white`}>
+//     {business.description}
+//   </p>
+//   <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+//     <span
+//       className={`text-sm font-medium flex items-center gap-1.5 text-white/80`}
+//     >
+//       <svg
+//         className="w-4 h-4"
+//         fill="none"
+//         viewBox="0 0 24 24"
+//         stroke="currentColor"
+//         strokeWidth={2}
+//       >
+//         <path
+//           strokeLinecap="round"
+//           strokeLinejoin="round"
+//           d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"
+//         />
+//         <path
+//           strokeLinecap="round"
+//           strokeLinejoin="round"
+//           d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+//         />
+//       </svg>
+//       {business.location}
+//     </span>
+
+//     {/* View Action - Translates on hover */}
+//     <motion.div
+//       animate={isHovered ? { x: 5 } : { x: 0 }}
+//       className={`p-2 rounded-full ${
+//         isFeatured
+//           ? "bg-surface-primary text-text-primary"
+//           : "bg-surface-dark text-text-inverted"
+//       }`}
+//     >
+//       <svg
+//         className="w-4 h-4"
+//         fill="none"
+//         viewBox="0 0 24 24"
+//         stroke="currentColor"
+//         strokeWidth={2.5}
+//       >
+//         <path
+//           strokeLinecap="round"
+//           strokeLinejoin="round"
+//           d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+//         />
+//       </svg>
+//     </motion.div>
+//   </div>
+// </div>

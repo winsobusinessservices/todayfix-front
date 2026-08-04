@@ -78,6 +78,9 @@ export default function Navbar() {
     </Link>
   );
 
+  const loggedIn = true; // Replace with actual authentication logic
+  const hasBusiness = false; // Replace with actual authentication logic
+
   return (
     <>
       <motion.div ref={ref} className="">
@@ -184,12 +187,12 @@ export default function Navbar() {
 
           {/* Desktop Buttons */}
           <div className="flex items-center gap-4">
-            <button
-              onClick={() => navigate("/login")}
-              className={cn(buttonBase, buttonSecondary)}
-            >
-              <span className="flex items-end gap-1">
-                <svg
+            {loggedIn ? (
+              <button
+                onClick={() => navigate("/profile")}
+                className={cn(buttonBase, buttonSecondary)}
+              >
+                {/* <svg
                   width="24px"
                   height="24px"
                   viewBox="0 0 24 24"
@@ -211,16 +214,41 @@ export default function Navbar() {
                     stroke-linecap="round"
                     stroke-linejoin="round"
                   ></path>
-                </svg>
-                Login
-              </span>
-            </button>
-            <button
-              onClick={() => navigate("/register")}
-              className={cn(buttonBase, buttonPrimary)}
-            >
-              Register
-            </button>
+                </svg> */}
+                Profile
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate("/login")}
+                className={cn(buttonBase, buttonSecondary)}
+              >
+                <span className="flex items-end gap-1">Login</span>
+              </button>
+            )}
+            {loggedIn ? (
+              hasBusiness ? (
+                <button
+                  onClick={() => navigate("/owner-dashboard")}
+                  className={cn(buttonBase, buttonPrimary)}
+                >
+                  Manage Business
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate("/list-business")}
+                  className={cn(buttonBase, buttonPrimary)}
+                >
+                  List Your Business
+                </button>
+              )
+            ) : (
+              <button
+                onClick={() => navigate("/register")}
+                className={cn(buttonBase, buttonPrimary)}
+              >
+                Register
+              </button>
+            )}
           </div>
         </motion.div>
 
@@ -327,53 +355,72 @@ export default function Navbar() {
                   );
                 })}
                 <div className="flex w-full flex-col gap-4 mt-2">
-                  <button
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      navigate("/login");
-                    }}
-                    className={cn(
-                      buttonBase,
-                      buttonSecondary,
-                      "w-full shadow-sm ring-1 ring-black/5 text-text-primary",
-                    )}
-                  >
-                    <span className="flex items-end gap-1 justify-center">
-                      <svg
-                        width="20px"
-                        height="20px"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                        color="#000000"
+                  {loggedIn ? (
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        navigate("/login");
+                      }}
+                      className={cn(
+                        buttonBase,
+                        buttonSecondary,
+                        "w-full shadow-sm ring-1 ring-black/5 text-text-primary",
+                      )}
+                    >
+                      <span className="flex items-end gap-1 justify-center">
+                        Profile
+                      </span>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        navigate("/login");
+                      }}
+                      className={cn(
+                        buttonBase,
+                        buttonSecondary,
+                        "w-full shadow-sm ring-1 ring-black/5 text-text-primary",
+                      )}
+                    >
+                      <span className="flex items-end gap-1 justify-center">
+                        Login
+                      </span>
+                    </button>
+                  )}
+                  {loggedIn ? (
+                    hasBusiness ? (
+                      <button
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          navigate("/owner-dashboard");
+                        }}
+                        className={cn(buttonBase, buttonPrimary, "w-full")}
                       >
-                        <path
-                          d="M5 20V19C5 15.134 8.13401 12 12 12V12C15.866 12 19 15.134 19 19V20"
-                          stroke="#000000"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        ></path>
-                        <path
-                          d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"
-                          stroke="#000000"
-                          stroke-width="1.5"
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                        ></path>
-                      </svg>
-                      Login
-                    </span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      setIsMobileMenuOpen(false);
-                      navigate("/register");
-                    }}
-                    className={cn(buttonBase, buttonPrimary, "w-full")}
-                  >
-                    Register
-                  </button>
+                        Manage Business
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          navigate("/list-business");
+                        }}
+                        className={cn(buttonBase, buttonPrimary, "w-full")}
+                      >
+                        List Your Business
+                      </button>
+                    )
+                  ) : (
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        navigate("/register");
+                      }}
+                      className={cn(buttonBase, buttonPrimary, "w-full")}
+                    >
+                      Register
+                    </button>
+                  )}
                 </div>
               </motion.div>
             )}
