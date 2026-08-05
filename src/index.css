@@ -25,3 +25,17 @@ body {
   font-family: var(--font-outfit);
   background: var(--color-surface-primary);
 }
+
+.styled-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.styled-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.styled-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--color-border-primary);
+  border-radius: 10px;
+}
+.styled-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-secondary);
+}

@@ -79,7 +79,7 @@ export default function Navbar() {
   );
 
   const loggedIn = true; // Replace with actual authentication logic
-  const hasBusiness = false; // Replace with actual authentication logic
+  const hasBusiness = true; // Replace with actual authentication logic
 
   return (
     <>
@@ -359,7 +359,7 @@ export default function Navbar() {
                     <button
                       onClick={() => {
                         setIsMobileMenuOpen(false);
-                        navigate("/login");
+                        navigate("/profile");
                       }}
                       className={cn(
                         buttonBase,

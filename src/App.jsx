@@ -19,6 +19,14 @@ import ListBusinessPage from "./pages/ListBusinessPage";
 import OwnerDashboard from "./pages/OwnerDashboard";
 import Profile from "./pages/Profile";
 
+import OverviewTab from "./components/owner/OverviewTab";
+import BookingsTab from "./components/owner/BookingsTab";
+import ServicesTab from "./components/owner/ServicesTab";
+import PortfolioTab from "./components/owner/PortfolioTab";
+import ReviewsTab from "./components/owner/ReviewsTab";
+import FinancialsTab from "./components/owner/FinancialsTab";
+import SettingsTab from "./components/owner/SettingsTab";
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -62,9 +70,18 @@ function App() {
           <Route path="/cities/:slug" element={<Area />} />
           <Route path="/about" element={<AboutUs />} />
           <Route path="/list-business" element={<ListBusinessPage />} />
-          <Route path="/owner-dashboard" element={<OwnerDashboard />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="*" element={<NotFound />} />
+        </Route>
+
+        <Route path="/owner-dashboard" element={<OwnerDashboard />}>
+          <Route index element={<OverviewTab />} />
+          <Route path="bookings" element={<BookingsTab />} />
+          <Route path="services" element={<ServicesTab />} />
+          <Route path="portfolio" element={<PortfolioTab />} />
+          <Route path="reviews" element={<ReviewsTab />} />
+          <Route path="financials" element={<FinancialsTab />} />
+          <Route path="settings" element={<SettingsTab />} />
         </Route>
       </Routes>
     </>
