@@ -13,8 +13,9 @@ import {
   Bell,
   CheckCircle2,
   Menu,
-  X
+  X,
 } from "lucide-react";
+import Logo from "../components/logo/Logo";
 
 const SIDEBAR_ITEMS = [
   { id: "", label: "Overview", icon: LayoutDashboard },
@@ -30,13 +31,23 @@ const OwnerDashboard = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  const logoMarkup = (
+    <Link
+      to="/owner-dashboard"
+      className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary"
+    >
+      <img src="tfix.png" alt="logo" width={55} height={55} />
+      {/* <video src="logo-vid.mp4" autoPlay muted loop height={55} width={55} className="rounded-md"></video> */}
+      <Logo />
+    </Link>
+  );
+
   return (
     <div className="bg-surface-secondary h-screen flex overflow-hidden font-sans">
-      
       {/* Mobile Backdrop */}
       <AnimatePresence>
         {isMobileMenuOpen && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -47,23 +58,12 @@ const OwnerDashboard = () => {
       </AnimatePresence>
 
       {/* 1. Left Side: Navigation Sidebar */}
-      <aside className={`w-72 bg-surface-primary border-r border-border-primary flex flex-col z-50 shadow-2xl shadow-black/5 shrink-0 fixed inset-y-0 left-0 transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}>
-        
+      <aside
+        className={`w-72 bg-surface-primary border-r border-border-primary flex flex-col z-50 shadow-2xl shadow-black/5 shrink-0 fixed inset-y-0 left-0 transform transition-transform duration-300 md:relative md:translate-x-0 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"}`}
+      >
         {/* Logo Section */}
-        <div className="p-6 md:p-8 border-b border-border-primary flex justify-between items-center">
-          <Link to="/owner-dashboard" className="flex items-center gap-3" onClick={() => setIsMobileMenuOpen(false)}>
-            <div className="w-10 h-10 bg-text-primary rounded-xl flex items-center justify-center">
-              <span className="text-surface-primary font-black text-xl tracking-tighter">
-                TF
-              </span>
-            </div>
-            <span className="text-2xl font-black tracking-tight text-text-primary">
-              Todayfix
-            </span>
-          </Link>
-          <button className="md:hidden text-zinc-500 hover:text-text-primary" onClick={() => setIsMobileMenuOpen(false)}>
-            <X size={24} />
-          </button>
+        <div className="p-4 border-b border-border-primary flex justify-between items-center">
+          {logoMarkup}
         </div>
 
         {/* Navigation Links */}
@@ -112,7 +112,7 @@ const OwnerDashboard = () => {
         {/* 2. Top Center: Header (Company Name & Data) */}
         <header className="bg-surface-primary border-b border-border-primary h-20 md:h-24 shrink-0 px-4 md:px-8 flex items-center justify-between z-10 shadow-sm">
           <div className="flex items-center gap-3 md:gap-4">
-            <button 
+            <button
               className="md:hidden p-2 -ml-2 text-zinc-500 hover:text-text-primary"
               onClick={() => setIsMobileMenuOpen(true)}
             >
@@ -145,7 +145,7 @@ const OwnerDashboard = () => {
         </header>
 
         {/* 3. Middle Part: Outlet Component */}
-        <main className="flex-1 overflow-y-auto styled-scrollbar p-4 md:p-6 lg:p-10 relative">
+        <main className="flex-1 overflow-y-auto styled-scrollbar p-4 md:p-6 lg:p-10 relative h-full">
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}

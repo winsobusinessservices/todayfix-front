@@ -17,6 +17,7 @@ import AboutUs from "./pages/AboutUs";
 import NotFound from "./pages/NotFound";
 import ListBusinessPage from "./pages/ListBusinessPage";
 import OwnerDashboard from "./pages/OwnerDashboard";
+import RequestService from "./pages/RequestService";
 import Profile from "./pages/Profile";
 
 import OverviewTab from "./components/owner/OverviewTab";
@@ -71,6 +72,7 @@ function App() {
           <Route path="/about" element={<AboutUs />} />
           <Route path="/list-business" element={<ListBusinessPage />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/request-service" element={<RequestService />} />
           <Route path="*" element={<NotFound />} />
         </Route>
 

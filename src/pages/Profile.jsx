@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ProfileDetails from "../components/ProfileDetails";
 import ProfileServicesHistory from "../components/ProfileServicesHistory";
 import ProfileReviews from "../components/ProfileReviews";
+import ProfileRequests from "../components/ProfileRequests";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("profile");
@@ -11,7 +12,7 @@ const Profile = () => {
   const [userData, setUserData] = useState({
     firstName: "Shree",
     lastName: "kanth",
-    email: "shree.kanth@example.com",
+    email: "shree.kanth@example.com", 
     phone: "+91 98765 43210",
     // bio: "Process & Production Associate",
   });
@@ -139,7 +140,7 @@ const Profile = () => {
         ></div>
       </div> */}
 
-      <div className="max-w-5xl mx-auto px-6 pt-20 relative z-10">
+      <div className="max-w-5xl mx-auto px-6 pt-12 md:pt-16 relative z-10">
         {/* --- Profile Header --- */}
         <div className="bg-surface-primary border border-border-primary rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 shadow-2xl shadow-black/5 mb-10">
           <div className="relative group">
@@ -216,7 +217,7 @@ const Profile = () => {
 
         {/* --- Navigation Tabs --- */}
         <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-10 bg-surface-primary border border-border-primary p-2 rounded-2xl shadow-sm">
-          {["profile", "history", "reviews"].map((tab) => (
+          {["requests", "profile", "history", "reviews"].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -226,6 +227,7 @@ const Profile = () => {
                   : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
               }`}
             >
+              {tab === "requests" && "My Requests"}
               {tab === "profile" && "Personal Details"}
               {tab === "history" && "Service History"}
               {tab === "reviews" && "My Reviews"}
@@ -235,6 +237,9 @@ const Profile = () => {
 
         {/* --- Tab Content Area --- */}
         <div className="bg-surface-primary border border-border-primary rounded-2xl p-8 md:p-12 shadow-2xl shadow-black/5 min-h-[500px]">
+          {/* TAB 0: My Requests */}
+          {activeTab === "requests" && <ProfileRequests addresses={addresses}/>}
+          
           {/* TAB 1: Profile & Addresses */}
           {activeTab === "profile" && (
             <ProfileDetails

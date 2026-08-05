@@ -37,9 +37,16 @@ const Service = () => {
             <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
               {serviceDetails.name}
             </h1>
-            <p className="text-text-muted text-base md:text-lg max-w-2xl leading-relaxed">
+            <p className="text-text-muted text-base md:text-lg max-w-2xl leading-relaxed mb-6">
               {serviceDetails.description}
             </p>
+            <Link
+              to="/request-service"
+              state={{ category: serviceDetails.name }}
+              className="inline-block px-8 py-3.5 bg-text-primary border text-surface-primary font-extrabold rounded-xl hover:scale-105 transition-transform shadow-lg"
+            >
+              Request this Service
+            </Link>
           </div>
         </div>
       </div>
@@ -175,37 +182,36 @@ const Service = () => {
                   {vendor.description}
                 </p>
 
-                <div className="flex flex-wrap gap-2">
-                  {vendor.tags.map((tag, idx) => (
-                    <span
-                      key={idx}
-                      className="bg-surface-secondary text-text-secondary px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider"
-                    >
-                      {tag}
-                    </span>
-                  ))}
-                </div>
-              </div>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-4 pt-4 border-t border-border-secondary">
+                  <div className="flex flex-wrap gap-2">
+                    {vendor.tags.map((tag, idx) => (
+                      <span
+                        key={idx}
+                        className="bg-surface-secondary text-text-secondary px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
 
-              <div className="flex flex-col justify-between md:items-end md:w-48 flex-shrink-0 pt-4 md:pt-0 border-t md:border-t-0 border-border-secondary md:border-l pl-0 md:pl-6 mt-2 md:mt-0">
-                <div className="flex flex-row md:flex-col justify-between items-center md:items-end mb-4 md:mb-0 w-full">
-                  <span className="text-xs font-bold text-text-muted uppercase tracking-wider mb-1">
-                    Starts From
-                  </span>
-                  <span className="text-xl md:text-2xl font-extrabold text-text-primary">
-                    {vendor.startingPrice}
-                  </span>
-                </div>
-
-                <div className="flex flex-col gap-2 w-full">
-                  <button className="w-full cursor-pointer bg-surface-dark hover:bg-zinc-800 text-white py-2.5 rounded-lg text-sm font-bold transition-colors shadow-md active:scale-95">
-                    Request Quote
-                  </button>
                   <Link
                     to={`/vendor/${vendor.id}`}
-                    className="w-full flex justify-center cursor-pointer bg-surface-primary hover:bg-surface-primary border border-border-primary text-text-primary py-2.5 rounded-lg text-sm font-semibold transition-colors active:scale-95"
+                    className="w-full sm:w-auto flex justify-center items-center gap-2 cursor-pointer bg-surface-dark hover:bg-zinc-800 text-text-inverted px-6 py-2.5 rounded-xl text-sm font-bold transition-transform hover:scale-[1.02] active:scale-95 shadow-md"
                   >
                     View Profile
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
                   </Link>
                 </div>
               </div>

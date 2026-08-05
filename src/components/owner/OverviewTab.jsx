@@ -165,7 +165,9 @@ const OverviewTab = () => {
                   </button>
                   <h4
                     className={`font-bold mb-1 ${
-                      alert.color === "orange" ? "text-orange-500" : "text-text-primary"
+                      alert.color === "orange"
+                        ? "text-orange-500"
+                        : "text-text-primary"
                     }`}
                   >
                     {alert.title}

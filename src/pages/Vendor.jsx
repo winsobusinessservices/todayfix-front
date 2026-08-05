@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router";
 
 const Vendor = () => {
   // Mock data for the vendor profile
@@ -138,10 +139,7 @@ const Vendor = () => {
 
           <div className="hidden md:flex flex-shrink-0 gap-3 mb-2">
             <button className="px-6 py-2.5 cursor-pointer bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded-xl hover:bg-surface-secondary shadow-[0_2px_10px_rgb(0,0,0,0.02)] transition-colors">
-              Share
-            </button>
-            <button className="px-6 py-2.5 cursor-pointer bg-surface-dark text-white font-semibold rounded-xl hover:bg-zinc-800 shadow-md shadow-[0_4px_20px_rgb(0,0,0,0.08)] transition-colors">
-              Contact Vendor
+              Share Profile
             </button>
           </div>
         </div>
@@ -342,35 +340,7 @@ const Vendor = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-8 space-y-6">
               <div className="bg-surface-primary p-6 rounded-2xl border border-border-primary shadow-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                <h3 className="text-xl font-bold text-text-primary mb-2">
-                  Request a Service
-                </h3>
-                <p className="text-text-secondary text-sm mb-6">
-                  Connect with {vendor.name} to discuss your requirements and
-                  get a free quote.
-                </p>
-
-                <button className="w-full cursor-pointer bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-md active:scale-95 mb-3">
-                  Request Free Quote
-                </button>
-                <button className="w-full cursor-pointer bg-surface-primary border border-border-secondary text-text-primary font-bold py-3.5 rounded-xl hover:bg-surface-secondary transition-colors active:scale-95 flex items-center justify-center gap-2">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                    />
-                  </svg>
-                  Send Message
-                </button>
-
-                <div className="mt-6 flex items-start gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-100">
+                <div className="flex items-start gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-100 mb-4">
                   <svg
                     className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"
                     fill="none"
@@ -384,9 +354,8 @@ const Vendor = () => {
                       d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                     />
                   </svg>
-                  <p className="text-xs text-emerald-800 font-medium">
-                    This vendor is highly responsive. Expect a reply within 2
-                    hours.
+                  <p className="text-sm text-emerald-800 font-medium">
+                    This is a Verified Professional. They maintain a high standard of quality and on-time delivery across the platform.
                   </p>
                 </div>
               </div>
@@ -404,9 +373,6 @@ const Vendor = () => {
                       <span className="font-semibold text-text-primary">
                         {service.name}
                       </span>
-                      <span className="text-sm text-text-secondary mt-0.5">
-                        {service.price}
-                      </span>
                     </li>
                   ))}
                 </ul>
@@ -416,15 +382,7 @@ const Vendor = () => {
         </div>
       </div>
 
-      {/* Mobile Fixed Action Bar */}
-      <div className="fixed bottom-0 left-0 w-full bg-surface-primary border-t border-border-primary p-4 shadow-[0_-10px_40px_rgba(0,0,0,0.1)] md:hidden z-50 flex gap-3">
-        <button className="flex-1 cursor-pointer bg-surface-primary border border-border-secondary text-text-primary font-bold py-3 rounded-xl active:bg-surface-secondary">
-          Message
-        </button>
-        <button className="flex-[2] cursor-pointer bg-surface-dark text-white font-bold py-3 rounded-xl active:bg-zinc-800">
-          Request Quote
-        </button>
-      </div>
+      {/* Mobile Fixed Action Bar (Removed for true blind marketplace UX) */}
     </div>
   );
 };
