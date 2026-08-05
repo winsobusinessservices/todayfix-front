@@ -9,7 +9,7 @@ export const featuredData = [
     rating: "4.9",
     reviews: "245",
     description:
-      "Transforming 2BHK and 3BHK homes with bespoke modular kitchens, living spaces, and wardrobes — crafted to perfection, priced for everyone.",
+      "Transforming 2BHK and 3BHK homes with bespoke modular kitchens, living spaces, and wardrobes.",
     // Large Image Placeholder or gradient for Bento
     bgGradient: "from-zinc-900 to-black",
     bg: "jmm_bg.jpeg",

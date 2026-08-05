@@ -66,27 +66,17 @@ const FeaturedSection = () => {
                       : "scale-100"
                 }`}
               >
-                <div className="flex items-center justify-between absolute left-8 right-10 z-10">
+                <div className="flex items-center justify-between bg-surface-dark px-3">
                   <div
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase ${
-                      isFeatured
-                        ? "bg-white/10 text-text-inverted backdrop-blur-md"
-                        : "bg-surface-dark text-text-inverted"
-                    }`}
+                    className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase bg-surface-dark text-text-inverted`}
                   >
                     {business.category}
                   </div>
                   <div
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold ${
-                      isFeatured
-                        ? "bg-white/10 text-text-inverted"
-                        : "bg-zinc-100 text-text-primary"
-                    }`}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold text-text-inverted`}
                   >
                     <svg
-                      className={`w-4 h-4 ${
-                        isFeatured ? "text-text-inverted" : "text-text-primary"
-                      }`}
+                      className={`w-4 h-4 text-text-inverted`}
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -95,11 +85,12 @@ const FeaturedSection = () => {
                     {business.rating}
                   </div>
                 </div>
+                {/* <div className="h-24"></div> */}
 
                 <img
                   src={business.bg}
                   alt={business.name}
-                  className="max-h-2/3 h-[58%] object-cover w-full"
+                  className="max-h-2/3 h-[50%] object-cover w-full"
                 />
                 {/* Bottom: Details & Action */}
                 <div className="bg-black h-full w-full text-text-inverted px-8 py-2">
