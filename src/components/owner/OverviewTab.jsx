@@ -3,7 +3,7 @@ import { IndianRupee, TrendingUp, Calendar, Star, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 const StatCard = ({ title, value, icon: Icon, trend, positive }) => (
-  <div className="bg-surface-primary rounded-3xl border border-border-primary p-6 shadow-2xl shadow-black/5">
+  <div className="bg-surface-primary rounded-2xl border border-border-primary p-6 shadow-2xl shadow-black/5">
     <div className="flex justify-between items-start mb-4">
       <div className="p-3 bg-surface-secondary rounded-2xl border border-border-primary">
         <Icon size={24} className="text-text-primary" />
@@ -61,7 +61,7 @@ const OverviewTab = () => {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6">
         <StatCard
           title="Total Revenue"
           value="₹45,200"

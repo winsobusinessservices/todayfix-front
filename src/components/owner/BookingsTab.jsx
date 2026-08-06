@@ -7,7 +7,15 @@ import {
   XCircle,
   ChevronRight,
   Calendar,
+  MessageSquare,
+  Phone,
+  ShieldAlert,
+  Send,
 } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Contact from "../pop-ups/Contact";
+import Chat from "../pop-ups/Chat";
+import Otp from "../pop-ups/Otp";
 
 const INITIAL_BOOKINGS = [
   {
@@ -17,7 +25,7 @@ const INITIAL_BOOKINGS = [
     date: "Oct 24, 2026",
     time: "10:00 AM",
     price: "4,500",
-    status: "pending",
+    status: "accepted",
     location: "123 Palm Avenue, Downtown",
   },
   {
@@ -47,17 +55,15 @@ const INITIAL_BOOKINGS = [
     date: "Oct 22, 2026",
     time: "11:00 AM",
     price: "2,100",
-    status: "cancelled",
+    status: "completed",
     location: "12 North Street",
   },
 ];
 
 const StatusBadge = ({ status }) => {
   const styles = {
-    pending: "bg-orange-500/10 text-orange-500 border-orange-500/20",
     accepted: "bg-blue-500/10 text-blue-500 border-blue-500/20",
     completed: "bg-green-500/10 text-green-500 border-green-500/20",
-    cancelled: "bg-red-500/10 text-red-500 border-red-500/20",
   };
 
   return (
@@ -70,21 +76,35 @@ const StatusBadge = ({ status }) => {
 };
 
 const BookingsTab = () => {
-  const [filter, setFilter] = useState("all");
-  const [bookings, setBookings] = useState(INITIAL_BOOKINGS);
+  const [filter, setFilter] = useState("accepted");
+  const [bookingsList, setBookingsList] = useState(INITIAL_BOOKINGS);
+  const [activeModal, setActiveModal] = useState(null); // { type: 'otp' | 'contact' | 'chat', bookingId: string }
+  const [otpValue, setOtpValue] = useState("");
+  const [otpError, setOtpError] = useState(false);
 
   const updateBookingStatus = (id, newStatus) => {
-    setBookings((prev) =>
+    setBookingsList((prev) =>
       prev.map((booking) =>
-        booking.id === id ? { ...booking, status: newStatus } : booking
-      )
+        booking.id === id ? { ...booking, status: newStatus } : booking,
+      ),
     );
+  };
+
+  const handleVerifyOtp = () => {
+    if (otpValue === "1234") {
+      updateBookingStatus(activeModal.bookingId, "completed");
+      setActiveModal(null);
+      setOtpValue("");
+      setOtpError(false);
+    } else {
+      setOtpError(true);
+    }
   };
 
   const filteredBookings =
     filter === "all"
-      ? bookings
-      : bookings.filter((b) => b.status === filter);
+      ? bookingsList
+      : bookingsList.filter((b) => b.status === filter);
 
   return (
     <div className="space-y-6">
@@ -101,7 +121,7 @@ const BookingsTab = () => {
 
         {/* Filter Pills */}
         <div className="flex flex-wrap gap-2 bg-surface-primary p-1 rounded-2xl border border-border-primary">
-          {["all", "pending", "accepted", "completed"].map((f) => (
+          {["all", "accepted", "completed"].map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
@@ -122,10 +142,9 @@ const BookingsTab = () => {
         {filteredBookings.map((booking) => (
           <div
             key={booking.id}
-            className="bg-surface-primary rounded-3xl border border-border-primary p-6 shadow-2xl shadow-black/5 hover:border-text-primary transition-all duration-300 group"
+            className="bg-surface-primary rounded-2xl border border-border-primary p-6 shadow-2xl shadow-black/5 hover:border-text-primary transition-all duration-300 group"
           >
             <div className="flex flex-col md:flex-row justify-between gap-6">
-              {/* Left Side: Info */}
               <div className="flex-grow space-y-4">
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-medium text-zinc-500">
@@ -157,44 +176,36 @@ const BookingsTab = () => {
                 </div>
               </div>
 
-              {/* Right Side: Price & Actions */}
-              <div className="flex flex-col justify-between items-start md:items-end md:min-w-[150px] border-t md:border-t-0 md:border-l border-border-primary pt-4 md:pt-0 md:pl-6">
-                <div className="flex items-center gap-1 text-2xl font-black tracking-tight text-text-primary mb-4 md:mb-0">
+              <div className="flex flex-col justify-end items-start md:items-end md:min-w-[150px] border-t md:border-t-0 md:border-l border-border-primary pt-4 md:pt-0 md:pl-6">
+                <div className="flex items-center gap-1 text-2xl font-black tracking-tight text-text-primary md:self-center md: mb-3">
                   <IndianRupee className="w-5 h-5 text-zinc-400" />
                   {booking.price}
                 </div>
 
                 {/* Conditional Actions based on status */}
                 <div className="w-full flex flex-wrap md:justify-end gap-2">
-                  {booking.status === "pending" && (
+                  {booking.status === "accepted" && (
                     <>
-                      <button 
-                        onClick={() => updateBookingStatus(booking.id, "accepted")}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:scale-[0.98] transition-transform shadow-md"
+                      <button
+                        onClick={() =>
+                          setActiveModal({
+                            type: "contact",
+                            bookingId: booking.id,
+                          })
+                        }
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-secondary text-text-primary border border-border-primary font-bold text-sm rounded-xl hover:bg-zinc-800 transition-colors"
                       >
-                        <CheckCircle2 className="w-4 h-4" /> Accept
+                        <MessageSquare className="w-4 h-4" /> Contact
                       </button>
-                      <button 
-                        onClick={() => updateBookingStatus(booking.id, "cancelled")}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-secondary text-text-primary border border-border-primary font-bold text-sm rounded-xl hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-colors"
+                      <button
+                        onClick={() =>
+                          setActiveModal({ type: "otp", bookingId: booking.id })
+                        }
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark text-white font-bold text-sm rounded-xl hover:bg-emerald-600 transition-colors shadow-md cursor-pointer"
                       >
-                        <XCircle className="w-4 h-4" /> Decline
+                        <CheckCircle2 className="w-4 h-4" /> Finish Job
                       </button>
                     </>
-                  )}
-                  {booking.status === "accepted" && (
-                    <button 
-                      onClick={() => updateBookingStatus(booking.id, "completed")}
-                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark text-text-inverted border border-border-primary font-bold text-sm rounded-xl hover:scale-[0.98] transition-transform shadow-md"
-                    >
-                      Mark Complete
-                    </button>
-                  )}
-                  {(booking.status === "completed" ||
-                    booking.status === "cancelled") && (
-                    <button className="flex items-center gap-1 text-sm font-bold text-zinc-500 hover:text-text-primary transition-colors">
-                      View Details <ChevronRight className="w-4 h-4" />
-                    </button>
                   )}
                 </div>
               </div>
@@ -214,6 +225,31 @@ const BookingsTab = () => {
           </div>
         )}
       </div>
+
+      <AnimatePresence>
+        {activeModal?.type === "contact" && (
+          <Contact activeModal={activeModal} setActiveModal={setActiveModal} />
+        )}
+
+        {activeModal?.type === "chat" && (
+          <Chat
+            activeModal={activeModal}
+            setActiveModal={setActiveModal}
+            bookingsList={bookingsList}
+          />
+        )}
+
+        {activeModal?.type === "otp" && (
+          <Otp
+            otpValue={otpValue}
+            setOtpValue={setOtpValue}
+            otpError={otpError}
+            setOtpError={setOtpError}
+            handleVerifyOtp={handleVerifyOtp}
+            setActiveModal={setActiveModal}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 };

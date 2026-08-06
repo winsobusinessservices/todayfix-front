@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router";
 import CustomDropdown from "../components/CustomDropdown";
 import { Map } from "lucide-react";
 
 const ListBusinessPage = () => {
+  const navigate = useNavigate();
+  const [providerType, setProviderType] = useState("business"); // "business" | "individual"
   const [services, setServices] = useState([{ name: "", price: "" }]);
   const [businessName, setBusinessName] = useState("");
   const [category, setCategory] = useState("");
@@ -62,6 +65,7 @@ const ListBusinessPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const payload = {
+      providerType,
       businessName,
       category,
       phone,
@@ -77,7 +81,8 @@ const ListBusinessPage = () => {
       googleMapEmbed,
     };
     console.log("Form Submitted with payload:", payload);
-    // Handle API submission here
+    // Move to step 2 (documents) and pass the providerType
+    navigate("/list-business/documents", { state: { providerType } });
   };
 
   const categoryOptions = [
@@ -138,14 +143,84 @@ const ListBusinessPage = () => {
               Basic Information
             </h2>
 
+            {/* Provider Type Selection */}
+            <div className="mb-10">
+              <label className="block text-sm font-bold text-text-secondary mb-4 uppercase tracking-wide">
+                I am signing up as a...
+              </label>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <button
+                  type="button"
+                  onClick={() => setProviderType("business")}
+                  className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all ${providerType === "business" ? "border-text-primary bg-surface-secondary shadow-md" : "border-border-secondary bg-surface-primary hover:border-text-primary/50"}`}
+                >
+                  <svg
+                    className={`w-8 h-8 mb-2 ${providerType === "business" ? "text-text-primary" : "text-text-muted"}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                    />
+                  </svg>
+                  <span
+                    className={`font-bold text-lg ${providerType === "business" ? "text-text-primary" : "text-text-secondary"}`}
+                  >
+                    Registered Business
+                  </span>
+                  <span className="text-xs text-text-muted mt-1 font-medium">
+                    Company or Agency
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setProviderType("individual")}
+                  className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all ${providerType === "individual" ? "border-text-primary bg-surface-secondary shadow-md" : "border-border-secondary bg-surface-primary hover:border-text-primary/50"}`}
+                >
+                  <svg
+                    className={`w-8 h-8 mb-2 ${providerType === "individual" ? "text-text-primary" : "text-text-muted"}`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                    />
+                  </svg>
+                  <span
+                    className={`font-bold text-lg ${providerType === "individual" ? "text-text-primary" : "text-text-secondary"}`}
+                  >
+                    Individual Professional
+                  </span>
+                  <span className="text-xs text-text-muted mt-1 font-medium">
+                    Freelancer (Solo)
+                  </span>
+                </button>
+              </div>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="col-span-1 md:col-span-2">
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Business Name <span className="text-text-primary">*</span>
+                  {providerType === "business"
+                    ? "Business Name"
+                    : "Your Full Name"}{" "}
+                  <span className="text-text-primary">*</span>
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Aura Spaces Interior Design"
+                  placeholder={
+                    providerType === "business"
+                      ? "e.g. Aura Spaces Interior Design"
+                      : "e.g. John Doe"
+                  }
                   value={businessName}
                   onChange={(e) => setBusinessName(e.target.value)}
                   className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400"
@@ -211,6 +286,7 @@ const ListBusinessPage = () => {
                 />
               </div>
 
+              {/* {providerType === "business" && ( */}
               <div>
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
                   Website URL
@@ -221,9 +297,10 @@ const ListBusinessPage = () => {
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
                   className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-1.5 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400"
-                  required
+                  required={providerType === "business"}
                 />
               </div>
+              {/* )} */}
 
               <div className="col-span-1 md:col-span-2">
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
@@ -476,13 +553,20 @@ const ListBusinessPage = () => {
               Media & Portfolio
             </h2>
             <p className="text-text-secondary font-medium mb-8 ml-14">
-              Upload a logo, a cover image, and photos of your past work to
-              create a cinematic profile.
+              Upload a profile photo,{" "}
+              {providerType === "business" && "a cover image, "} and photos of
+              your past work to create a cinematic profile.
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Profile/Logo Upload */}
-              <label className="col-span-1 flex flex-col items-center justify-center border-2 border-dashed border-border-secondary rounded-[2rem] bg-surface-secondary p-8 hover:bg-surface-dark hover:border-surface-dark hover:text-text-inverted transition-all cursor-pointer group relative overflow-hidden">
+              <label
+                className={
+                  providerType === "business"
+                    ? "col-span-1 flex flex-col items-center justify-center border-2 border-dashed border-border-secondary rounded-[2rem] bg-surface-secondary p-8 hover:bg-surface-dark hover:border-surface-dark hover:text-text-inverted transition-all cursor-pointer group relative overflow-hidden"
+                    : "col-span-1 md:col-span-3 flex flex-col items-center justify-center border-2 border-dashed border-border-secondary rounded-[2rem] bg-surface-secondary p-8 hover:bg-surface-dark hover:border-surface-dark hover:text-text-inverted transition-all cursor-pointer group relative overflow-hidden"
+                }
+              >
                 <input
                   type="file"
                   accept="image/*"
@@ -518,7 +602,9 @@ const ListBusinessPage = () => {
                       </svg>
                     </div>
                     <span className="text-base font-extrabold group-hover:text-text-inverted transition-colors">
-                      Upload Logo
+                      {providerType === "business"
+                        ? "Upload Logo"
+                        : "Upload Profile Photo"}
                     </span>
                     <span className="text-xs text-text-muted mt-2 font-bold uppercase tracking-wider group-hover:text-zinc-400">
                       JPG / PNG (2MB)
@@ -527,52 +613,54 @@ const ListBusinessPage = () => {
                 )}
               </label>
 
-              {/* Cover Image Upload (NEW) */}
-              <label className="col-span-1 md:col-span-2 flex flex-col items-center justify-center border-2 border-dashed border-border-secondary rounded-[2rem] bg-surface-secondary p-8 hover:bg-surface-dark hover:border-surface-dark hover:text-text-inverted transition-all cursor-pointer group relative overflow-hidden">
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      setCoverFile(e.target.files[0]);
-                      setCoverPreview(URL.createObjectURL(e.target.files[0]));
-                    }
-                  }}
-                />
-                {coverPreview ? (
-                  <img
-                    src={coverPreview}
-                    alt="Cover Preview"
-                    className="absolute inset-0 w-full h-full object-cover z-0"
+              {/* Cover Image Upload (Only for Business) */}
+              {providerType === "business" && (
+                <label className="col-span-1 md:col-span-2 flex flex-col items-center justify-center border-2 border-dashed border-border-secondary rounded-[2rem] bg-surface-secondary p-8 hover:bg-surface-dark hover:border-surface-dark hover:text-text-inverted transition-all cursor-pointer group relative overflow-hidden">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setCoverFile(e.target.files[0]);
+                        setCoverPreview(URL.createObjectURL(e.target.files[0]));
+                      }
+                    }}
                   />
-                ) : (
-                  <>
-                    <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')] bg-cover bg-center grayscale group-hover:scale-105 transition-transform duration-700"></div>
-                    <div className="relative z-10 flex flex-col items-center">
-                      <svg
-                        className="w-12 h-12 text-text-muted mb-4 group-hover:text-text-inverted transition-colors"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={1.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-                        />
-                      </svg>
-                      <span className="text-lg font-extrabold group-hover:text-text-inverted transition-colors">
-                        Upload Cover Image
-                      </span>
-                      <span className="text-sm text-text-muted mt-2 font-semibold group-hover:text-zinc-400">
-                        High-res wide image for your banner
-                      </span>
-                    </div>
-                  </>
-                )}
-              </label>
+                  {coverPreview ? (
+                    <img
+                      src={coverPreview}
+                      alt="Cover Preview"
+                      className="absolute inset-0 w-full h-full object-cover z-0"
+                    />
+                  ) : (
+                    <>
+                      <div className="absolute inset-0 opacity-10 bg-[url('https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')] bg-cover bg-center grayscale group-hover:scale-105 transition-transform duration-700"></div>
+                      <div className="relative z-10 flex flex-col items-center">
+                        <svg
+                          className="w-12 h-12 text-text-muted mb-4 group-hover:text-text-inverted transition-colors"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={1.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
+                          />
+                        </svg>
+                        <span className="text-lg font-extrabold group-hover:text-text-inverted transition-colors">
+                          Upload Cover Image
+                        </span>
+                        <span className="text-sm text-text-muted mt-2 font-semibold group-hover:text-zinc-400">
+                          High-res wide image for your banner
+                        </span>
+                      </div>
+                    </>
+                  )}
+                </label>
+              )}
 
               {/* Gallery Drag & Drop Zone */}
               <label className="col-span-1 md:col-span-3 flex flex-col items-center justify-center border-2 border-dashed border-border-secondary rounded-[2rem] bg-surface-secondary p-12 hover:bg-surface-dark hover:border-surface-dark hover:text-text-inverted transition-all cursor-pointer group min-h-[12rem]">

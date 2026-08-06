@@ -14,11 +14,13 @@ import {
   CheckCircle2,
   Menu,
   X,
+  ShieldAlert,
 } from "lucide-react";
 import Logo from "../components/logo/Logo";
 
 const SIDEBAR_ITEMS = [
   { id: "", label: "Overview", icon: LayoutDashboard },
+  { id: "job-board", label: "Job Board", icon: Bell },
   { id: "bookings", label: "Bookings", icon: CalendarCheck },
   { id: "services", label: "Services", icon: Wrench },
   { id: "portfolio", label: "Portfolio", icon: ImageIcon },
@@ -30,6 +32,8 @@ const SIDEBAR_ITEMS = [
 const OwnerDashboard = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [showMockPopup, setShowMockPopup] = useState(false); // For simulating WebSocket ping
+  const [isVerified, setIsVerified] = useState(false); // Mock lock state
 
   const logoMarkup = (
     <Link
@@ -129,9 +133,9 @@ const OwnerDashboard = () => {
               <h1 className="text-lg md:text-xl font-black text-text-primary tracking-tight">
                 AC Experts
               </h1>
-              <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-zinc-500">
-                <CheckCircle2 className="w-3 h-3 text-green-500" /> Verified Pro
-                Vendor
+              <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-zinc-500 mt-0.5">
+                <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Verified
+                Pro Vendor
               </div>
             </div>
           </div>
@@ -146,6 +150,34 @@ const OwnerDashboard = () => {
 
         {/* 3. Middle Part: Outlet Component */}
         <main className="flex-1 overflow-y-auto styled-scrollbar p-4 md:p-6 lg:p-10 relative h-full">
+          {/* VERIFICATION LOCK SCREEN OVERLAY */}
+          {/* <AnimatePresence>
+            {!isVerified && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute inset-0 z-40 bg-surface-secondary/80 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center"
+              >
+                <div className="w-24 h-24 bg-surface-primary border border-border-primary rounded-full flex items-center justify-center mb-6 shadow-2xl">
+                  <ShieldAlert size={40} className="text-orange-500 animate-pulse" />
+                </div>
+                <h2 className="text-3xl font-black text-text-primary tracking-tight mb-3">
+                  Account Pending Verification
+                </h2>
+                <p className="text-zinc-500 max-w-md mx-auto mb-8 font-medium leading-relaxed">
+                  Your business documents are currently being reviewed by our Admin team. You will unlock access to the Job Board and Bookings once verified. This usually takes 24-48 hours.
+                </p>
+                <button 
+                  className="px-8 py-4 bg-surface-primary border border-border-primary text-text-primary font-bold rounded-xl hover:bg-surface-secondary transition-colors shadow-lg"
+                  onClick={() => window.location.href = 'mailto:support@todayfix.com'}
+                >
+                  Contact Support
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence> */}
+
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -159,6 +191,84 @@ const OwnerDashboard = () => {
             </motion.div>
           </AnimatePresence>
         </main>
+      </div>
+
+      {/* --- MOCK WEBSOCKET INCOMING REQUEST FULL-SCREEN MODAL --- */}
+      <AnimatePresence>
+        {showMockPopup && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: -20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-surface-primary border border-border-primary shadow-2xl shadow-black/20 rounded-3xl p-8 w-full max-w-md relative overflow-hidden"
+            >
+              {/* Minimalist pulse background effect */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-zinc-500/10 rounded-full blur-3xl animate-pulse"></div>
+
+              <div className="relative z-10 text-center">
+                <div className="w-20 h-20 bg-surface-secondary border border-border-primary shadow-inner rounded-full flex items-center justify-center mx-auto mb-6 relative">
+                  {/* Subtle ring animation */}
+                  <div className="absolute inset-0 border border-text-primary rounded-full animate-ping opacity-20"></div>
+                  <Bell size={32} className="text-text-primary" />
+                </div>
+
+                <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 animate-pulse">
+                  New Service Request
+                </h2>
+                <h3 className="text-3xl font-black text-text-primary tracking-tight mb-2">
+                  Plumbing Fixes
+                </h3>
+                <p className="text-sm font-medium text-zinc-500 mb-8">
+                  Koramangala, Bengaluru (~3km away)
+                </p>
+
+                <div className="p-5 mb-8">
+                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                    Guaranteed Payout
+                  </p>
+                  <p className="text-5xl font-black text-text-primary">₹800</p>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => setShowMockPopup(false)}
+                    className="flex-1 py-4 text-center bg-surface-primary border border-border-primary text-text-primary font-bold rounded-xl hover:bg-surface-secondary transition-colors cursor-pointer"
+                  >
+                    Decline
+                  </button>
+                  <Link
+                    to="/owner-dashboard/job-board"
+                    onClick={() => setShowMockPopup(false)}
+                    className="flex-[2] py-4 text-center bg-text-primary text-surface-primary font-black rounded-xl hover:scale-[1.02] active:scale-95 transition-transform shadow-xl cursor-pointer flex items-center justify-center gap-2"
+                  >
+                    <CheckCircle2 size={20} />
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Dev Tool: Trigger Mock Popup */}
+      <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
+        {/* <button 
+            onClick={() => setIsVerified(!isVerified)}
+            className={`text-[10px] font-mono px-2 py-1 rounded-md opacity-50 hover:opacity-100 transition-opacity font-bold ${isVerified ? 'bg-orange-500 text-white' : 'bg-emerald-500 text-white'}`}
+            title="Toggle Verification State"
+          >
+            {isVerified ? "Revoke Verification" : "Verify Account"}
+          </button> */}
+        <button
+          onClick={() => setShowMockPopup(true)}
+          className="text-[10px] font-mono bg-zinc-800 text-white px-2 py-1 rounded-md opacity-50 hover:opacity-100 transition-opacity"
+          title="Simulate WebSocket Ping from Admin"
+        >
+          Ping Websocket
+        </button>
       </div>
     </div>
   );

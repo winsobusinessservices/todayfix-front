@@ -17,9 +17,11 @@ This document serves as the master checklist and workflow tracker for the Todayf
 - [x] **Financials Tab (`FinancialsTab.jsx`):** Functional "Withdraw Funds" modal that simulates processing, deducts balance, and adds a transaction record.
 - [x] **Global Styling Enforcement:** All owner components strictly follow the dark monochrome glass-shadow aesthetic (`rounded-3xl`, `shadow-2xl shadow-black/5`).
 
+- [x] **Job Board Tab (`JobBoardTab.jsx`):** Created the marketplace board where owners view broadcasted jobs with masked details and Admin's offered price. Added simulated WebSocket pop-up.
+- [x] **Verification Lock State:** Enforced a locked UI and routing isolation over the dashboard if the business's `isVerified` status is false.
+
 ### ⏳ Pending
-- [ ] **Job Board Tab (`JobBoardTab.jsx`):** Create the marketplace board where owners view broadcasted jobs (with masked customer details and Admin's offered price).
-- [ ] **Verification Lock State:** Enforce a locked UI over the dashboard if the business's `isVerified` status is false.
+- [ ] **Individual Provider Flow:** Modify `ListBusinessPage` and `BusinessDocumentsPage` to allow individuals (freelancers) to sign up without requiring a business name or trade license.
 
 ---
 
@@ -43,9 +45,9 @@ This document serves as the master checklist and workflow tracker for the Todayf
 - *(No dedicated Admin portal components built yet)*
 
 ### ⏳ Pending
-- [ ] **Admin App Shell (`AdminDashboard.jsx`):** Create the base layout (similar to Owner Dashboard but distinct, perhaps with a different accent color).
+- [ ] **Admin App Shell (`AdminDashboard.jsx`):** Create the base layout (similar to Owner Dashboard but distinct, using a Blue/Indigo accent color).
 - [ ] **Moderation Queue (`RequestsTab.jsx`):** UI to view incoming customer requests, input the platform commission to calculate the `Vendor Offer Price`, and click "Broadcast".
-- [ ] **Verification Queue (`VerificationTab.jsx`):** UI to view pending `ListBusinessPage` applications, review their uploaded documents, and approve/reject them.
+- [ ] **Verification Queue (`VerificationTab.jsx`):** UI to view pending onboarding applications (both Companies and Individuals), review their uploaded documents, and approve/reject them.
 
 ---
 

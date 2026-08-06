@@ -10,6 +10,7 @@ import {
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import Logo from "./logo/Logo";
+import { userData } from "../store/userStore";
 
 function cn(...inputs) {
   return twMerge(clsx(inputs));
@@ -78,8 +79,8 @@ export default function Navbar() {
     </Link>
   );
 
-  const loggedIn = true; // Replace with actual authentication logic
-  const hasBusiness = true; // Replace with actual authentication logic
+  const loggedIn = userData?.isAuthenticated; // Replace with actual authentication logic
+  const hasBusiness = userData?.role === "OWNER"; // Replace with actual authentication logic
 
   return (
     <>
