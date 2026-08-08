@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
 
 const Area = () => {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeService, setActiveService] = useState("All");
   const navigate = useNavigate();
 
   // Mock data for the specific Area
@@ -19,7 +19,7 @@ const Area = () => {
     },
   };
 
-  const categories = [
+  const popularServices = [
     "All",
     "Home Cleaning",
     "Plumbing",
@@ -35,7 +35,7 @@ const Area = () => {
       name: "Aura Spaces Studio",
       avatar:
         "https://api.dicebear.com/7.x/shapes/svg?seed=Aura&backgroundColor=0284c7",
-      category: "Interior Design",
+      service: "Interior Design",
       rating: 4.9,
       reviews: 128,
       distance: "0.5 km away",
@@ -47,7 +47,7 @@ const Area = () => {
       name: "QuickFix Plumbers",
       avatar:
         "https://api.dicebear.com/7.x/shapes/svg?seed=QuickFix&backgroundColor=ea580c",
-      category: "Plumbing",
+      service: "Plumbing",
       rating: 4.7,
       reviews: 412,
       distance: "1.2 km away",
@@ -59,7 +59,7 @@ const Area = () => {
       name: "Sparkle Clean Home",
       avatar:
         "https://api.dicebear.com/7.x/shapes/svg?seed=Sparkle&backgroundColor=059669",
-      category: "Home Cleaning",
+      service: "Home Cleaning",
       rating: 4.8,
       reviews: 305,
       distance: "In Indiranagar",
@@ -71,7 +71,7 @@ const Area = () => {
       name: "Volt Experts",
       avatar:
         "https://api.dicebear.com/7.x/shapes/svg?seed=Volt&backgroundColor=7c3aed",
-      category: "Electricians",
+      service: "Electricians",
       rating: 4.6,
       reviews: 189,
       distance: "2.0 km away",
@@ -183,23 +183,23 @@ const Area = () => {
       </div>
 
       <div className="max-w-6xl mx-auto px-6 py-10">
-        {/* --- CATEGORY SCROLL --- */}
+        {/* --- SERVICE SCROLL --- */}
         <div className="mb-10">
           <h3 className="text-sm font-bold text-text-muted uppercase tracking-widest mb-4">
             Browse {areaInfo.name} Services
           </h3>
           <div className="flex overflow-x-auto hide-scrollbar gap-3 pb-2 -mx-6 px-6 md:mx-0 md:px-0">
-            {categories.map((cat, idx) => (
+            {popularServices.map((srv, idx) => (
               <button
                 key={idx}
-                onClick={() => setActiveCategory(cat)}
+                onClick={() => setActiveService(srv)}
                 className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-bold transition-all active:scale-95 border ${
-                  activeCategory === cat
+                  activeService === srv
                     ? "bg-surface-dark text-white border-slate-900 shadow-md"
                     : "bg-surface-primary text-text-secondary border-border-primary hover:border-black hover:bg-surface-secondary"
                 }`}
               >
-                {cat}
+                {srv}
               </button>
             ))}
           </div>
@@ -248,7 +248,7 @@ const Area = () => {
                     )}
                   </div>
                   <p className="text-sm font-semibold text-text-secondary mb-3">
-                    {vendor.category}
+                    {vendor.service}
                   </p>
 
                   {/* Rating */}

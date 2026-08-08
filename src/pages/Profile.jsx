@@ -1,18 +1,18 @@
 import React, { useState } from "react";
-import ProfileDetails from "../components/ProfileDetails";
-import ProfileServicesHistory from "../components/ProfileServicesHistory";
-import ProfileReviews from "../components/ProfileReviews";
-import ProfileRequests from "../components/ProfileRequests";
+import ProfileDetails from "../features/profile/ProfileDetails";
+import ProfileServicesHistory from "../features/profile/ProfileServicesHistory";
+import ProfileReviews from "../features/profile/ProfileReviews";
+import ProfileRequests from "../features/profile/ProfileRequests";
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState("requests");
   const [isSaving, setIsSaving] = useState(false);
 
   // Mock User Data
   const [userData, setUserData] = useState({
     firstName: "Shree",
     lastName: "kanth",
-    email: "shree.kanth@example.com", 
+    email: "shree.kanth@example.com",
     phone: "+91 98765 43210",
     // bio: "Process & Production Associate",
   });

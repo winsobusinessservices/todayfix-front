@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
-import CustomDropdown from "../components/CustomDropdown";
+import CustomDropdown from "../components/ui/CustomDropdown";
 import { Map } from "lucide-react";
 
 const ListBusinessPage = () => {
@@ -8,7 +8,7 @@ const ListBusinessPage = () => {
   const [providerType, setProviderType] = useState("business"); // "business" | "individual"
   const [services, setServices] = useState([{ name: "", price: "" }]);
   const [businessName, setBusinessName] = useState("");
-  const [category, setCategory] = useState("");
+  const [service, setService] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [website, setWebsite] = useState("");
@@ -67,7 +67,7 @@ const ListBusinessPage = () => {
     const payload = {
       providerType,
       businessName,
-      category,
+      service,
       phone,
       email,
       website,
@@ -85,7 +85,7 @@ const ListBusinessPage = () => {
     navigate("/list-business/documents", { state: { providerType } });
   };
 
-  const categoryOptions = [
+  const serviceOptions = [
     "Interior Design",
     "Packers & Movers",
     "Solar Services",
@@ -230,14 +230,14 @@ const ListBusinessPage = () => {
 
               <div>
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Category <span className="text-text-primary">*</span>
+                  Service <span className="text-text-primary">*</span>
                 </label>
                 <div className="relative">
                   <CustomDropdown
-                    options={categoryOptions}
-                    value={category}
-                    onChange={setCategory}
-                    placeholder="Any Category"
+                    options={serviceOptions}
+                    value={service}
+                    onChange={setService}
+                    placeholder="Any Service"
                     variant="dark"
                     icon={
                       <svg

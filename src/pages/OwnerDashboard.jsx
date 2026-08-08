@@ -16,7 +16,7 @@ import {
   X,
   ShieldAlert,
 } from "lucide-react";
-import Logo from "../components/logo/Logo";
+import Logo from "../components/brand/Logo";
 
 const SIDEBAR_ITEMS = [
   { id: "", label: "Overview", icon: LayoutDashboard },

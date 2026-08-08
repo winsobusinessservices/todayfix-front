@@ -9,7 +9,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import CustomDropdown from "../components/CustomDropdown";
+import CustomDropdown from "../components/ui/CustomDropdown";
 
 const RequestService = () => {
   const navigate = useNavigate();

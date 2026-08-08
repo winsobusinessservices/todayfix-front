@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link, useParams } from "react-router";
 import { vendors } from "../data/Vendors";
-import CustomDropdown from "../components/CustomDropdown";
+import CustomDropdown from "../components/ui/CustomDropdown";
 
 const Service = () => {
   const { slug } = useParams();

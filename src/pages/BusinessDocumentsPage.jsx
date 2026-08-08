@@ -28,32 +28,51 @@ const BusinessDocumentsPage = () => {
             Verify Your Identity
           </h1>
           <p className="text-zinc-400 text-lg font-medium max-w-xl mx-auto">
-            To maintain a high-trust marketplace, we require valid government ID and business registration documents.
+            To maintain a high-trust marketplace, we require valid government ID
+            and business registration documents.
           </p>
         </div>
       </div>
 
       {/* Form */}
       <div className="max-w-3xl mx-auto px-6 -mt-12 relative z-20">
-        <form onSubmit={handleSubmit} className="bg-surface-primary rounded-3xl p-8 md:p-12 shadow-2xl border border-border-primary space-y-8">
-          
+        <form
+          onSubmit={handleSubmit}
+          className="bg-surface-primary rounded-3xl p-8 md:p-12 shadow-2xl border border-border-primary space-y-8"
+        >
           <div>
             <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-              Government ID (Aadhar/PAN/Passport) <span className="text-red-500">*</span>
+              Government ID (Aadhar/PAN/Passport){" "}
+              <span className="text-red-500">*</span>
             </label>
             <div className="border-2 border-dashed border-border-secondary rounded-2xl p-8 text-center hover:bg-surface-secondary transition-colors cursor-pointer group">
-              <input type="file" required className="hidden" id="govId" onChange={(e) => setGovId(e.target.files[0])} />
-              <label htmlFor="govId" className="cursor-pointer flex flex-col items-center">
+              <input
+                type="file"
+                required
+                className="hidden"
+                id="govId"
+                onChange={(e) => setGovId(e.target.files[0])}
+              />
+              <label
+                htmlFor="govId"
+                className="cursor-pointer flex flex-col items-center"
+              >
                 {govId ? (
                   <>
                     <FileText className="w-10 h-10 text-emerald-500 mb-3" />
-                    <span className="font-bold text-text-primary">{govId.name}</span>
+                    <span className="font-bold text-text-primary">
+                      {govId.name}
+                    </span>
                   </>
                 ) : (
                   <>
                     <UploadCloud className="w-10 h-10 text-zinc-400 mb-3 group-hover:text-text-primary transition-colors" />
-                    <span className="font-bold text-text-primary mb-1">Upload ID Proof</span>
-                    <span className="text-xs text-zinc-500 font-medium">PDF, JPG, PNG (Max 5MB)</span>
+                    <span className="font-bold text-text-primary mb-1">
+                      Upload ID Proof
+                    </span>
+                    <span className="text-xs text-zinc-500 font-medium">
+                      PDF, JPG, PNG (Max 5MB)
+                    </span>
                   </>
                 )}
               </label>
@@ -66,18 +85,32 @@ const BusinessDocumentsPage = () => {
                 Business Registration / Trade License
               </label>
               <div className="border-2 border-dashed border-border-secondary rounded-2xl p-8 text-center hover:bg-surface-secondary transition-colors cursor-pointer group">
-                <input type="file" className="hidden" id="license" onChange={(e) => setLicense(e.target.files[0])} />
-                <label htmlFor="license" className="cursor-pointer flex flex-col items-center">
+                <input
+                  type="file"
+                  className="hidden"
+                  id="license"
+                  onChange={(e) => setLicense(e.target.files[0])}
+                />
+                <label
+                  htmlFor="license"
+                  className="cursor-pointer flex flex-col items-center"
+                >
                   {license ? (
                     <>
                       <FileText className="w-10 h-10 text-emerald-500 mb-3" />
-                      <span className="font-bold text-text-primary">{license.name}</span>
+                      <span className="font-bold text-text-primary">
+                        {license.name}
+                      </span>
                     </>
                   ) : (
                     <>
                       <UploadCloud className="w-10 h-10 text-zinc-400 mb-3 group-hover:text-text-primary transition-colors" />
-                      <span className="font-bold text-text-primary mb-1">Upload License</span>
-                      <span className="text-xs text-zinc-500 font-medium">GST / MSME / Trade License</span>
+                      <span className="font-bold text-text-primary mb-1">
+                        Upload License
+                      </span>
+                      <span className="text-xs text-zinc-500 font-medium">
+                        GST / MSME / Trade License
+                      </span>
                     </>
                   )}
                 </label>
@@ -88,7 +121,8 @@ const BusinessDocumentsPage = () => {
           <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-2xl p-4 flex items-start gap-4">
             <ShieldCheck className="w-6 h-6 text-emerald-500 shrink-0 mt-0.5" />
             <p className="text-sm font-medium text-emerald-600/90 leading-relaxed">
-              Your documents are securely encrypted and only accessible by our verification team. They will never be shared with customers.
+              Your documents are securely encrypted and only accessible by our
+              verification team. They will never be shared with customers.
             </p>
           </div>
 

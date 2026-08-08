@@ -1,13 +1,13 @@
 import React from "react";
-import AdvancedSearch from "../components/AdvancedSearch";
-import ServicesCards from "../components/ServiceCards";
+import AdvancedSearch from "../components/ui/AdvancedSearch";
+import ServicesCards from "../features/home/ServiceCards";
 import { servicesPageData } from "../data/ServicePageData";
 
 const Services = () => {
   return (
     <div className="w-full max-w-6xl mx-auto relative flex flex-col gap-4">
       <AdvancedSearch />
-      <div className="w-full bg-transparent py-14 font-sans flex justify-center relative z-10">
+      <div className="w-full bg-transparent py-14 font-sans flex justify-center relative">
         <div className="max-w-[1400px] w-full">
           {/* Section Header */}
           <div className="mb-8 text-center md:text-left">
@@ -18,7 +18,6 @@ const Services = () => {
               Find and compare the best professionals for your needs.
             </p>
           </div>
-
           {/* Cards Grid: Increased columns and reduced gap for smaller cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-5">
             {servicesPageData.map((service) => (

@@ -53,9 +53,9 @@ export const faqData = {
       question: "Is there any warranty on the service?",
       answer:
         "Yes! We provide a 30-day comprehensive service warranty on all jobs booked through Sirona. If anything goes wrong, we will fix it at no additional cost.",
-    }
+    },
   ],
-  "Professionals": [
+  Professionals: [
     {
       question: "What happens if I'm not satisfied with the work?",
       answer:

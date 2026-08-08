@@ -1,14 +1,14 @@
 import React from "react";
-import Hero from "../components/Hero";
-import Services from "../components/Services";
-import CallToAction from "../components/CallToAction";
-import FeatureMarquee from "../components/FeatureMarquee";
-import FeaturedSection from "../components/FeaturedSection";
-import HowItWorks from "../components/HowItWorks";
-import TestimonialSection from "../components/TestimonialSection";
-import BusinessCTA from "../components/BusinessCTA";
-import PricingComponent from "../components/PricingComponent";
-import FAQSection from "../components/FAQSection";
+import Hero from "../features/home/Hero";
+import Services from "../features/home/Services";
+import CallToAction from "../features/home/CallToAction";
+import FeatureMarquee from "../features/home/FeatureMarquee";
+import FeaturedSection from "../features/home/FeaturedSection";
+import HowItWorks from "../features/home/HowItWorks";
+import TestimonialSection from "../features/home/TestimonialSection";
+import BusinessCTA from "../features/home/BusinessCTA";
+import PricingComponent from "../features/pricing/PricingComponent";
+import FAQSection from "../features/home/FAQSection";
 
 const Home = () => {
   return (
