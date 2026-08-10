@@ -1,145 +1,68 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProfileDetails from "../features/profile/ProfileDetails";
 import ProfileServicesHistory from "../features/profile/ProfileServicesHistory";
 import ProfileReviews from "../features/profile/ProfileReviews";
 import ProfileRequests from "../features/profile/ProfileRequests";
+import { useQuery } from "@tanstack/react-query";
+import {
+  userDetails,
+  userPendingServices,
+  userReviews,
+  userServicesHistory,
+} from "../services/userApi";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("requests");
-  const [isSaving, setIsSaving] = useState(false);
 
-  // Mock User Data
-  const [userData, setUserData] = useState({
-    firstName: "Shree",
-    lastName: "kanth",
-    email: "shree.kanth@example.com",
-    phone: "+91 98765 43210",
-    // bio: "Process & Production Associate",
+  const {
+    data: userData,
+    isLoading: userDataLoading,
+    error: userDataError,
+  } = useQuery({
+    queryKey: ["user"],
+    queryFn: userDetails,
   });
 
-  // Address Management State
-  const [addresses, setAddresses] = useState([
-    {
-      id: 1,
-      label: "Home",
-      street: "123 Cross Road, Indiranagar",
-      city: "Bengaluru",
-      state: "Karnataka",
-      zip: "560038",
-      isDefault: true,
-    },
-    {
-      id: 2,
-      label: "Work",
-      street: "Block 4, Tech Park, Whitefield",
-      city: "Bengaluru",
-      state: "Karnataka",
-      zip: "560066",
-      isDefault: false,
-    },
-  ]);
+  // console.log(userData);
+  
 
-  const [editingAddressId, setEditingAddressId] = useState(null);
-  const [editForm, setEditForm] = useState({});
+  const {
+    data: serviceHistory,
+    isLoading: serviceHistoryLoading,
+    error: serviceHistoryError,
+  } = useQuery({
+    queryKey: ["serviceHistory"],
+    queryFn: userServicesHistory,
+  });
 
-  // Mock Service History & Reviews (Unchanged)
-  const serviceHistory = [
-    {
-      id: 1,
-      service: "Deep Home Cleaning",
-      vendor: "Sparkle Cleaners",
-      date: "Aug 1, 2026",
-      status: "Completed",
-      price: "₹2,500",
-    },
-    {
-      id: 2,
-      service: "AC Repair & Service",
-      vendor: "CoolBreeze Tech",
-      date: "Jul 15, 2026",
-      status: "Completed",
-      price: "₹850",
-    },
-  ];
-  const userReviews = [
-    {
-      id: 1,
-      vendor: "Sparkle Cleaners",
-      rating: 5,
-      date: "Aug 2, 2026",
-      comment: "Excellent team. They were on time and left the house spotless.",
-    },
-  ];
+  const {
+    data: userReview,
+    isLoading: userReviewLoading,
+    error: userReviewError,
+  } = useQuery({
+    queryKey: ["userReviews"],
+    queryFn: userReviews,
+  });
 
-  // User Profile Handlers
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setUserData((prev) => ({ ...prev, [name]: value }));
-  };
+  const {
+    data: userPendingService,
+    isLoading: userPendingServicesLoading,
+    error: userPendingServicesError,
+  } = useQuery({
+    queryKey: ["userPendingServices"],
+    queryFn: userPendingServices,
+  });
 
-  const handleSaveProfile = (e) => {
-    e.preventDefault();
-    setIsSaving(true);
-    setTimeout(() => setIsSaving(false), 1000);
-  };
+  if (userDataLoading) {
+    return <p>Loading...</p>;
+  }
 
-  // Address Handlers
-  const handleEditClick = (address) => {
-    setEditingAddressId(address.id);
-    setEditForm({ ...address });
-  };
-
-  const handleCancelEdit = () => {
-    setEditingAddressId(null);
-    setEditForm({});
-  };
-
-  const handleAddressChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setEditForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-
-  const handleSaveAddress = (id) => {
-    setAddresses((prev) => {
-      let updated = prev.map((addr) => (addr.id === id ? editForm : addr));
-      // If the newly edited address was set to default, remove default from others
-      if (editForm.isDefault) {
-        updated = updated.map((addr) => ({
-          ...addr,
-          isDefault: addr.id === id,
-        }));
-      }
-      return updated;
-    });
-    setEditingAddressId(null);
-  };
-
-  const handleSetDefault = (id) => {
-    setAddresses((prev) =>
-      prev.map((addr) => ({
-        ...addr,
-        isDefault: addr.id === id,
-      })),
-    );
-  };
+  if (userDataError) {
+    console.log(error.message);
+  }
 
   return (
     <div className="bg-surface-secondary text-text-primary font-sans relative overflow-hidden pb-20">
-      {/* Ambient glowing background is replaced by strict monochrome grid */}
-      {/* <div className="fixed inset-0 pointer-events-none z-0">
-        <div
-          className="absolute inset-0 opacity-[0.02]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 2px 2px, black 1px, transparent 0)",
-            backgroundSize: "32px 32px",
-          }}
-        ></div>
-      </div> */}
-
       <div className="max-w-5xl mx-auto px-6 pt-12 md:pt-16 relative z-10">
         {/* --- Profile Header --- */}
         <div className="bg-surface-primary border border-border-primary rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 shadow-2xl shadow-black/5 mb-10">
@@ -193,7 +116,8 @@ const Profile = () => {
                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                {addresses.find((a) => a.isDefault)?.city || "Location not set"}
+                {userData.addresses.find((a) => a.default)?.city ||
+                  "Location not set"}
               </span>
               <span className="flex items-center gap-2 bg-surface-secondary px-4 py-2 rounded-full border border-border-secondary">
                 <svg
@@ -209,7 +133,7 @@ const Profile = () => {
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                Joined Jan 2024
+                Joined {userData.createdAt}
               </span>
             </div>
           </div>
@@ -238,25 +162,15 @@ const Profile = () => {
         {/* --- Tab Content Area --- */}
         <div className="bg-surface-primary border border-border-primary rounded-2xl p-8 md:p-12 shadow-2xl shadow-black/5 min-h-[500px]">
           {/* TAB 0: My Requests */}
-          {activeTab === "requests" && <ProfileRequests addresses={addresses}/>}
-          
-          {/* TAB 1: Profile & Addresses */}
-          {activeTab === "profile" && (
-            <ProfileDetails
-              userData={userData}
-              handleInputChange={handleInputChange}
-              handleSaveProfile={handleSaveProfile}
-              isSaving={isSaving}
-              addresses={addresses}
-              handleEditClick={handleEditClick}
-              editingAddressId={editingAddressId}
-              editForm={editForm}
-              handleAddressChange={handleAddressChange}
-              handleSaveAddress={handleSaveAddress}
-              handleCancelEdit={handleCancelEdit}
-              handleSetDefault={handleSetDefault}
+          {activeTab === "requests" && (
+            <ProfileRequests
+              addresses={userData.addresses}
+              userPendingServices={userPendingService}
             />
           )}
+
+          {/* TAB 1: Profile & Addresses */}
+          {activeTab === "profile" && <ProfileDetails userData={userData} />}
 
           {/* TAB 2: Service History */}
           {activeTab === "history" && (
@@ -265,7 +179,7 @@ const Profile = () => {
 
           {/* TAB 3: User Reviews */}
           {activeTab === "reviews" && (
-            <ProfileReviews userReviews={userReviews} />
+            <ProfileReviews userReviews={userReview} />
           )}
         </div>
       </div>

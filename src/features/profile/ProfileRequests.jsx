@@ -45,21 +45,21 @@ const INITIAL_REQUESTS = [
 ];
 
 const StatusBadge = ({ status }) => {
-  if (status === "pending") {
+  if (status == "pending") {
     return (
       <div className="flex items-center gap-1.5 text-orange-500 bg-orange-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-500/20 w-fit">
         <Clock size={14} /> Pending Admin Review
       </div>
     );
   }
-  if (status === "looking") {
+  if (status == "looking") {
     return (
       <div className="flex items-center gap-1.5 text-blue-500 bg-blue-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-blue-500/20 w-fit">
         <Search size={14} className="animate-pulse" /> Looking for Vendors
       </div>
     );
   }
-  if (status === "accepted") {
+  if (status == "accepted") {
     return (
       <div className="flex items-center gap-1.5 text-green-500 bg-green-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-green-500/20 w-fit">
         <CheckCircle2 size={14} /> Accepted by Vendor
@@ -69,7 +69,9 @@ const StatusBadge = ({ status }) => {
   return null;
 };
 
-const ProfileRequests = ({ addresses }) => {
+const ProfileRequests = ({ addresses, userPendingServices }) => {
+  // console.log(userPendingServices);
+  
   const navigate = useNavigate();
   const [requests, setRequests] = useState(INITIAL_REQUESTS);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -86,6 +88,7 @@ const ProfileRequests = ({ addresses }) => {
       },
     });
   };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">

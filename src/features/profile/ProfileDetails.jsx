@@ -1,20 +1,65 @@
 import React, { useState } from "react";
 
-const ProfileDetails = ({
-  userData,
-  handleInputChange,
-  handleSaveProfile,
-  isSaving,
-  addresses,
-  handleEditClick,
-  editingAddressId,
-  editForm,
-  handleAddressChange,
-  handleSaveAddress,
-  handleCancelEdit,
-  handleSetDefault,
-}) => {
+const ProfileDetails = ({ userData }) => {
   const [addAddress, setAddAddress] = useState(false);
+  const [editingAddressId, setEditingAddressId] = useState(null);
+  const [editForm, setEditForm] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
+  // console.log(userData);
+
+  // User Profile Handlers
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUserData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSaveProfile = (e) => {
+    e.preventDefault();
+    setIsSaving(true);
+    setTimeout(() => setIsSaving(false), 1000);
+  };
+
+  const handleEditClick = (address) => {
+    setEditingAddressId(address.id);
+    setEditForm({ ...address });
+  };
+
+  const handleSaveAddress = (id) => {
+    setAddresses((prev) => {
+      let updated = prev.map((addr) => (addr.id === id ? editForm : addr));
+      // If the newly edited address was set to default, remove default from others
+      if (editForm.isDefault) {
+        updated = updated.map((addr) => ({
+          ...addr,
+          isDefault: addr.id === id,
+        }));
+      }
+      return updated;
+    });
+    setEditingAddressId(null);
+  };
+
+  const handleSetDefault = (id) => {
+    setAddresses((prev) =>
+      prev.map((addr) => ({
+        ...addr,
+        isDefault: addr.id === id,
+      })),
+    );
+  };
+
+  const handleCancelEdit = () => {
+    setEditingAddressId(null);
+    setEditForm({});
+  };
+
+  const handleAddressChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEditForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
 
   return (
     <>
@@ -93,7 +138,7 @@ const ProfileDetails = ({
               <input
                 type="tel"
                 name="phone"
-                value={userData.phone}
+                value={userData.phoneNo}
                 onChange={handleInputChange}
                 className="w-full md:w-1/2 bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold"
               />
@@ -265,7 +310,7 @@ const ProfileDetails = ({
                 </div>
               )}
             </>
-            {addresses.map((address) => (
+            {userData?.addresses.map((address) => (
               <div
                 key={address.id}
                 className="bg-surface-secondary border border-border-secondary rounded-2xl transition-all hover:border-text-primary group"
@@ -310,7 +355,7 @@ const ProfileDetails = ({
                           <h3 className="font-black text-xl text-text-primary">
                             {address.label}
                           </h3>
-                          {address.isDefault && (
+                          {address.default && (
                             <span className="px-2.5 py-1 bg-surface-dark text-text-inverted rounded text-[10px] font-black uppercase tracking-widest shadow-sm">
                               Default
                             </span>
@@ -326,7 +371,7 @@ const ProfileDetails = ({
 
                     {/* Actions (Edit / Make Default) */}
                     <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto max-md:justify-between justify-end mt-4 sm:mt-0">
-                      {!address.isDefault ? (
+                      {!address.default ? (
                         <button
                           onClick={() => handleSetDefault(address.id)}
                           className="text-xs font-bold text-text-secondary hover:text-text-primary transition-colors underline underline-offset-4 decoration-border-secondary hover:decoration-text-primary"

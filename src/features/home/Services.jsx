@@ -8,10 +8,12 @@ import { servicesData as services } from "../../data/collectedData";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import { useNavigate } from "react-router";
 
 const Services = () => {
   const [isPaused, setIsPaused] = useState(false);
   const swiperRef = useRef(null);
+  const navigate = useNavigate();
 
   return (
     <div className="flex flex-col items-center justify-center w-full font-sans overflow-hidden bg-surface-accent py-20 md:py-28 border-t border-border-secondary">
@@ -45,7 +47,7 @@ const Services = () => {
             viewport={{ once: true }}
             className="inline-flex items-center gap-2 bg-surface-primary border border-border-primary rounded-full px-5 py-2 shadow-sm"
           >
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            {/* <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> */}
             <span className="text-xs font-bold text-text-secondary uppercase tracking-[0.2em]">
               Our Services
             </span>
@@ -172,7 +174,10 @@ const Services = () => {
             >
               {services.map((service, index) => (
                 <SwiperSlide key={`${service.id}-${index}`}>
-                  <div className="py-4">
+                  <div
+                    onClick={() => navigate("/services/" + service.link)}
+                    className="py-4"
+                  >
                     <div className="group relative h-44 sm:h-52 md:h-64 flex flex-col items-center justify-center gap-3 sm:gap-5 bg-surface-primary border border-border-primary rounded-2xl sm:rounded-3xl cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.1)] transition-all duration-500 overflow-hidden transform hover:-translate-y-2">
                       {/* Hover Background */}
                       <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />

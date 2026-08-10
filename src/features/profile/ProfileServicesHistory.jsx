@@ -8,7 +8,7 @@ const ProfileServicesHistory = ({ serviceHistory }) => {
         <div className="space-y-4 max-w-4xl">
           {serviceHistory.map((service) => (
             <div
-              key={service.id}
+              key={service.serviceId}
               className="bg-surface-secondary border border-border-secondary rounded-[1.5rem] p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-text-primary transition-all group shadow-sm hover:shadow-md"
             >
               <div className="flex items-center gap-5">
@@ -29,12 +29,12 @@ const ProfileServicesHistory = ({ serviceHistory }) => {
                 </div>
                 <div>
                   <h3 className="text-lg font-black text-text-primary mb-1">
-                    {service.service}
+                    {service.serviceName}
                   </h3>
                   <p className="text-sm font-medium text-text-secondary">
                     Provided by{" "}
                     <span className="text-text-primary font-bold underline decoration-border-secondary underline-offset-2">
-                      {service.vendor}
+                      {service.businessName}
                     </span>
                   </p>
                 </div>

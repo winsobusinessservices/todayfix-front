@@ -8,12 +8,12 @@ const ProfileReviews = ({ userReviews }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl">
           {userReviews.map((review) => (
             <div
-              key={review.id}
+              key={review.providerId}
               className="bg-surface-secondary border border-border-secondary rounded-[1.5rem] p-8 hover:border-text-primary transition-all group shadow-sm hover:shadow-md"
             >
               <div className="flex justify-between items-start mb-5">
                 <h3 className="font-black text-lg text-text-primary">
-                  {review.vendor}
+                  {review.businessName}
                 </h3>
                 <span className="text-xs font-bold text-text-muted bg-surface-primary px-3 py-1 rounded-full border border-border-primary">
                   {review.date}

@@ -10,9 +10,10 @@
     "email": "shree.kanth@example.com",
     "profile": "",
     "phoneNo": 9876543210,
-    "joinedate": "Jan 2024",
+    "createdAt": "Jan 2024",
     "addresses": [
       {
+        "id": 1,
         "label": "Home",
         "street": "123 Cross Road",
         "area": "Indiranagar",
@@ -22,6 +23,7 @@
         "default": true
       },
       {
+        "id": 2,
         "label": "Work",
         "street": "Block 4, Tech Park",
         "area": "Whitefield",
@@ -32,20 +34,115 @@
       }
     ]
   },
+  "vendorProfile": [
+    {
+      "id": 1,
+      "userId": 2,
+      "providerType": "BUSINESS",
+      "businessName": "Sparkle Cleaners",
+      "service": "Home Cleaning",
+      "location": "Indiranagar, Bangaluru",
+      "documents": ["url-to-gst.jpg", "url-to-pan.jpg"],
+      "status": "APPROVED"
+    },
+    {
+      "id": 2,
+      "userId": 3,
+      "providerType": "INDIVIDUAL",
+      "businessName": "John Doe Plumbing",
+      "service": "Plumbing",
+      "location": "Whitefield, Bangaluru",
+      "documents": ["url-to-aadhar.jpg"],
+      "status": "PENDING"
+    },
+    {
+      "id": 3,
+      "userId": 4,
+      "providerType": "BUSINESS",
+      "businessName": "CoolBreeze Tech",
+      "service": "AC Servicing & Repair",
+      "location": "Koramangala, Bangaluru",
+      "documents": ["url-to-gst.jpg"],
+      "status": "APPROVED"
+    }
+  ],
+  "serviceRequests": [
+    {
+      "id": 1,
+      "customerId": 1,
+      "serviceCategory": "AC Servicing & Repair",
+      "description": "My split AC is not cooling properly and making a loud noise. It's a 1.5 ton Voltas AC.",
+      "budget": 1500,
+      "location": "Work : Block 4, Tech Park - 560066",
+      "status": "BROADCASTED",
+      "assignedVendorId": null
+    },
+    {
+      "id": 2,
+      "customerId": 5,
+      "serviceCategory": "Plumbing",
+      "description": "Leaking kitchen sink pipe that needs immediate replacement.",
+      "budget": 500,
+      "location": "Home : 45th Street, Jayanagar - 560041",
+      "status": "PENDING_ADMIN",
+      "assignedVendorId": null
+    },
+    {
+      "id": 3,
+      "customerId": 1,
+      "serviceCategory": "Deep Home Cleaning",
+      "description": "Need deep cleaning for a 2BHK empty apartment before moving in.",
+      "budget": 2500,
+      "location": "Home : 123 Cross Road - 560038",
+      "status": "COMPLETED",
+      "assignedVendorId": 1
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "requestId": 3,
+      "customerId": 1,
+      "vendorId": 1,
+      "scheduledDate": "2026-08-01T10:00:00Z",
+      "finalPrice": 2500,
+      "paymentStatus": "PAID"
+    }
+  ],
+  "reviews": [
+    {
+      "id": 1,
+      "vendorId": 1,
+      "customerId": 1,
+      "rating": 5,
+      "comment": "Excellent team. They were on time and left the house spotless. Highly recommend Sparkle Cleaners!",
+      "createdAt": "2026-08-01T15:30:00Z"
+    },
+    {
+      "id": 2,
+      "vendorId": 3,
+      "customerId": 6,
+      "rating": 4,
+      "comment": "Good service, fixed the AC issue but arrived 30 mins late.",
+      "createdAt": "2026-07-15T12:00:00Z"
+    }
+  ],
   "servicesHistory": [
     {
       "serviceId": 1,
       "serviceName": "Deep Home Cleaning",
       "businessName": "Sparkle Cleaners",
       "date": "1-Aug-2026",
-      "price": 2500
+      "price": 2500,
+      "status": "Completed"
     },
     {
       "serviceId": 2,
       "serviceName": "AC Repair & Service",
       "businessName": "CoolBreeze Tech",
       "date": "15-July-2026",
-      "price": 850
+      "price": 850,
+      "status": "Completed"
     }
   ],
   "pendingServices": [
@@ -76,7 +173,7 @@
       "providerId": 1,
       "businessName": "Sparkle Cleaners",
       "rating": 5,
-      "description": "Excellent team. They were on time and left the house spotless.",
+      "comment": "Excellent team. They were on time and left the house spotless.",
       "date": "1-Aug-2026"
     }
   ]

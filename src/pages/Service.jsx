@@ -5,8 +5,6 @@ import CustomDropdown from "../components/ui/CustomDropdown";
 
 const Service = () => {
   const { slug } = useParams();
-  console.log(slug);
-
   const [sortBy, setSortBy] = useState("recommended");
 
   // Mock data for the specific service
@@ -34,8 +32,9 @@ const Service = () => {
             <span className="inline-block px-3 py-1 mb-4 bg-white/20 border border-white/30 text-white text-xs font-bold uppercase tracking-wider rounded-full backdrop-blur-sm">
               {serviceDetails.category}
             </span>
-            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight">
-              {serviceDetails.name}
+            <h1 className="text-4xl md:text-5xl font-extrabold text-white mb-4 tracking-tight capitalize">
+              {/* {serviceDetails.name} */}
+              {slug}
             </h1>
             <p className="text-text-muted text-base md:text-lg max-w-2xl leading-relaxed mb-6">
               {serviceDetails.description}

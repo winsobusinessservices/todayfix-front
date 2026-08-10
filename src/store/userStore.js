@@ -9,6 +9,8 @@
  * Business Statuses: "NONE" | "VERIFY" | "PENDING" | "VERIFIED"
  */
 
+import { create } from "zustand";
+
 export const userData = {
   isAuthenticated: true,
   role: "OWNER", // Change to "USER", "OWNER", or "ADMIN" for testing
@@ -17,3 +19,9 @@ export const userData = {
   email: "santo@todayfix.com",
   avatar: null,
 };
+
+export const useUserStoreData = create((set) => ({
+  user: null,
+  setUser: (user) => set({ user }),
+  clearUser: () => set({ user: null }),
+}));
