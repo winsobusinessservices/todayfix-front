@@ -22,14 +22,16 @@ const Vendor = () => {
         const [vendorData, reviewsData, bookingsData] = await Promise.all([
           api.getVendorById(id),
           api.getReviewsByVendorId(id),
-          api.getBookingsByCustomerId(currentUserId)
+          api.getBookingsByCustomerId(currentUserId),
         ]);
         setVendor(vendorData);
         setReviews(reviewsData);
-        
+
         // Check if user has taken a service from this vendor
         const hasCompletedBooking = bookingsData.some(
-          booking => String(booking.vendorId) === String(id) && booking.status === "COMPLETED"
+          (booking) =>
+            String(booking.vendorId) === String(id) &&
+            booking.status === "COMPLETED",
         );
         setCanReview(hasCompletedBooking);
       } catch (err) {
@@ -49,7 +51,8 @@ const Vendor = () => {
       const reviewData = {
         vendorId: id,
         user: "Current User", // Mock user for now
-        avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser&backgroundColor=fca5a5",
+        avatar:
+          "https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser&backgroundColor=fca5a5",
         rating: Number(newReview.rating),
         text: newReview.text,
       };
@@ -64,38 +67,63 @@ const Vendor = () => {
     }
   };
 
-  if (isLoading) return <div className="min-h-screen bg-surface-secondary text-text-primary p-10 flex items-center justify-center">Loading vendor profile...</div>;
-  if (!vendor) return <div className="min-h-screen bg-surface-secondary text-text-primary p-10 flex items-center justify-center">Vendor not found.</div>;
+  if (isLoading)
+    return (
+      <div className="min-h-screen bg-surface-secondary text-text-primary p-10 flex items-center justify-center">
+        Loading vendor profile...
+      </div>
+    );
+  if (!vendor)
+    return (
+      <div className="min-h-screen bg-surface-secondary text-text-primary p-10 flex items-center justify-center">
+        Vendor not found.
+      </div>
+    );
 
   // Map API properties to UI properties
   const displayVendor = {
     ...vendor,
-    banner: vendor.bg || "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    avatar: vendor.logo || `https://api.dicebear.com/7.x/shapes/svg?seed=${vendor.name}&backgroundColor=0284c7`,
+    banner:
+      vendor.bg ||
+      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
+    avatar:
+      vendor.logo ||
+      `https://api.dicebear.com/7.x/shapes/svg?seed=${vendor.name}&backgroundColor=0284c7`,
     memberSince: "2024",
     address: vendor.location,
     about: vendor.description || "No description provided.",
-    services: [{ id: 1, name: vendor.service || "General Service", price: "Contact for pricing" }],
+    services: [
+      {
+        id: 1,
+        name: vendor.service || "General Service",
+        price: "Contact for pricing",
+      },
+    ],
     gallery: [
       "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1616137422495-1e9e46e2aa77?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     ],
-    mapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31104.23456!2d77.615!3d12.978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae16a50614532b%3A0x7d28711e5ab37dcb!2sIndiranagar%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+    mapEmbedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31104.23456!2d77.615!3d12.978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae16a50614532b%3A0x7d28711e5ab37dcb!2sIndiranagar%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
     stats: {
       rating: vendor.rating || "4.5",
       reviews: vendor.reviews || reviews.length,
       tasksCompleted: 450,
       responseTime: "Under 2 hours",
       onTimeRate: "98%",
-    }
+    },
   };
 
   return (
     <div className="min-h-screen bg-surface-secondary font-sans pb-24 lg:pb-12">
-      <SEO 
+      <SEO
         title={`${displayVendor.name} - ${displayVendor.category} | TodayFix`}
-        description={displayVendor.about ? `${displayVendor.about.substring(0, 150)}...` : `Book ${displayVendor.name} for premium ${displayVendor.category} services in ${displayVendor.address}.`}
+        description={
+          displayVendor.about
+            ? `${displayVendor.about.substring(0, 150)}...`
+            : `Book ${displayVendor.name} for premium ${displayVendor.category} services in ${displayVendor.address}.`
+        }
         ogImage={displayVendor.avatar}
       />
       {/* Banner */}
@@ -165,8 +193,14 @@ const Vendor = () => {
           </div>
 
           <div className="hidden md:flex flex-shrink-0 gap-3 mb-2">
-            <button className="px-6 py-2.5 cursor-pointer bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded-xl hover:bg-surface-secondary shadow-[0_2px_10px_rgb(0,0,0,0.02)] transition-colors">
+            {/* <button className="px-6 py-2.5 cursor-pointer bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded-xl hover:bg-surface-secondary shadow-[0_2px_10px_rgb(0,0,0,0.02)] transition-colors">
               Share Profile
+            </button> */}
+            <button
+              className="px-6 py-2.5 cursor-pointer bg-red-500/10 border border-red-500/20 text-red-600 font-semibold rounded-xl hover:bg-red-500/20 transition-colors"
+              onClick={() => alert("Vendor reported to admin support.")}
+            >
+              Report Vendor
             </button>
           </div>
         </div>
@@ -392,7 +426,9 @@ const Vendor = () => {
                     />
                   </svg>
                   <p className="text-sm text-emerald-800 font-medium">
-                    This is a Verified Professional. They maintain a high standard of quality and on-time delivery across the platform.
+                    This is a Verified Professional. They maintain a high
+                    standard of quality and on-time delivery across the
+                    platform.
                   </p>
                 </div>
               </div>
@@ -426,15 +462,21 @@ const Vendor = () => {
       {isReviewModalOpen && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-surface-primary rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl">
-            <h2 className="text-2xl font-bold text-text-primary mb-6">Write a Review</h2>
+            <h2 className="text-2xl font-bold text-text-primary mb-6">
+              Write a Review
+            </h2>
             <form onSubmit={handleSubmitReview} className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-text-secondary mb-2">Rating</label>
+                <label className="block text-sm font-bold text-text-secondary mb-2">
+                  Rating
+                </label>
                 <div className="flex gap-2 text-amber-500">
                   {[1, 2, 3, 4, 5].map((star) => (
                     <svg
                       key={star}
-                      onClick={() => setNewReview({ ...newReview, rating: star })}
+                      onClick={() =>
+                        setNewReview({ ...newReview, rating: star })
+                      }
                       className={`w-8 h-8 cursor-pointer transition-transform hover:scale-110 ${star <= newReview.rating ? "fill-current" : "text-slate-200 fill-current"}`}
                       viewBox="0 0 20 20"
                     >
@@ -443,14 +485,18 @@ const Vendor = () => {
                   ))}
                 </div>
               </div>
-              
+
               <div>
-                <label className="block text-sm font-bold text-text-secondary mb-2">Review Details</label>
+                <label className="block text-sm font-bold text-text-secondary mb-2">
+                  Review Details
+                </label>
                 <textarea
                   required
                   rows="4"
                   value={newReview.text}
-                  onChange={(e) => setNewReview({ ...newReview, text: e.target.value })}
+                  onChange={(e) =>
+                    setNewReview({ ...newReview, text: e.target.value })
+                  }
                   placeholder="Share your experience working with this professional..."
                   className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-text-primary resize-none"
                 />

@@ -10,9 +10,11 @@ import {
   userReviews,
   userServicesHistory,
 } from "../services/userApi";
+import { useNavigate } from "react-router";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("requests");
+  const navigate = useNavigate();
 
   const {
     data: userData,
@@ -67,7 +69,23 @@ const Profile = () => {
     <div className="bg-surface-secondary text-text-primary font-sans relative overflow-hidden pb-20">
       <div className="max-w-5xl mx-auto px-6 pt-12 md:pt-16 relative z-10">
         {/* --- Profile Header --- */}
-        <div className="bg-surface-primary border border-border-primary rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 shadow-2xl shadow-black/5 mb-10">
+        <div className="bg-surface-primary border border-border-primary rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 shadow-2xl shadow-black/5 mb-10 relative">
+          
+          <div className="absolute top-6 right-6">
+            <button 
+              onClick={() => {
+                alert("Successfully logged out");
+                navigate("/");
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 font-bold rounded-xl border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Logout
+            </button>
+          </div>
+
           <div className="relative group">
             <div className="w-36 h-36 rounded-full p-1.5 bg-border-secondary group-hover:bg-text-primary transition-colors duration-500">
               <img
@@ -154,7 +172,7 @@ const Profile = () => {
               }`}
             >
               {tab === "requests" && "My Requests"}
-              {tab === "profile" && "Personal Details"}
+              {tab === "profile" && "Profile"}
               {tab === "history" && "Service History"}
               {tab === "reviews" && "My Reviews"}
             </button>

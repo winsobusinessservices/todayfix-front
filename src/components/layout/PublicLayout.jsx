@@ -5,7 +5,12 @@ import Footer from "./Footer";
 
 const PublicLayout = () => {
   const location = useLocation();
-  const shouldHideFooter = ["/login", "/register"].includes(location.pathname);
+  const shouldHideFooter = [
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+  ].includes(location.pathname);
 
   return (
     <div className="flex min-h-screen flex-col">

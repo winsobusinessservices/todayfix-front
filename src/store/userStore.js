@@ -13,7 +13,7 @@ import { create } from "zustand";
 
 export const userData = {
   isAuthenticated: true,
-  role: "OWNER", // Change to "USER", "OWNER", or "ADMIN" for testing
+  role: "ADMIN", // Change to "USER", "OWNER", or "ADMIN" for testing
   businessStatus: "VERIFIED", // "NONE" | "VERIFY" | "PENDING" | "VERIFIED"
   name: "Santo",
   email: "santo@todayfix.com",

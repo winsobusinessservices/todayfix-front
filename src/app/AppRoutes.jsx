@@ -6,6 +6,8 @@ import Vendor from "../pages/Vendor";
 import Service from "../pages/Service";
 import Login from "../pages/Login";
 import Register from "../pages/Register";
+import ForgotPassword from "../pages/ForgotPassword";
+import ResetPassword from "../pages/ResetPassword";
 import Pricing from "../pages/Pricing";
 import Area from "../pages/Area";
 import AboutUs from "../pages/AboutUs";
@@ -40,6 +42,12 @@ import FinancialsTab from "../features/owner/FinancialsTab";
 import SettingsTab from "../features/owner/SettingsTab";
 import ProtectedRoute from "../components/layout/ProtectedRoute";
 
+import AdminDashboard from "../pages/AdminDashboard";
+import AdminOverviewTab from "../features/admin/AdminOverviewTab";
+import AdminVerificationTab from "../features/admin/AdminVerificationTab";
+import AdminRequestsTab from "../features/admin/AdminRequestsTab";
+import AdminDisputesTab from "../features/admin/AdminDisputesTab";
+
 function AppRoutes() {
   return (
     <Routes>
@@ -50,6 +58,8 @@ function AppRoutes() {
         <Route path="/vendor/:id" element={<Vendor />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/cities/:slug" element={<Area />} />
         <Route path="/about" element={<AboutUs />} />
@@ -86,6 +96,16 @@ function AppRoutes() {
           <Route path="reviews" element={<ReviewsTab />} />
           <Route path="financials" element={<FinancialsTab />} />
           <Route path="settings" element={<SettingsTab />} />
+        </Route>
+      </Route>
+
+      <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
+        <Route path="/admin" element={<AdminDashboard />}>
+          <Route index element={<AdminOverviewTab />} />
+          <Route path="verifications" element={<AdminVerificationTab />} />
+          <Route path="requests" element={<AdminRequestsTab />} />
+          <Route path="disputes" element={<AdminDisputesTab />} />
+          <Route path="settings" element={<div className="p-8 font-bold text-text-primary text-xl">Admin Settings (Coming Soon)</div>} />
         </Route>
       </Route>
     </Routes>

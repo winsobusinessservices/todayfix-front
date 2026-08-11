@@ -104,7 +104,13 @@ const OwnerDashboard = () => {
 
         {/* Footer Actions */}
         <div className="p-6 border-t border-border-primary">
-          <button className="flex items-center gap-4 px-5 py-3.5 w-full text-left text-red-500 hover:bg-red-500/10 rounded-2xl transition-colors duration-300 font-bold text-sm">
+          <button 
+            onClick={() => {
+              alert("Successfully logged out");
+              window.location.href = "/";
+            }}
+            className="flex items-center gap-4 px-5 py-3.5 w-full text-left text-red-500 hover:bg-red-500/10 rounded-2xl transition-colors duration-300 font-bold text-sm cursor-pointer"
+          >
             <LogOut size={20} />
             Log Out
           </button>

@@ -62,6 +62,7 @@ export default function Navbar() {
 
   const loggedIn = userData?.isAuthenticated; // Replace with actual authentication logic
   const hasBusiness = userData?.role === "OWNER"; // Replace with actual authentication logic
+  const isAdmin = userData?.role === "ADMIN";
 
   return (
     <>
@@ -180,30 +181,24 @@ export default function Navbar() {
                 onClick={() => navigate("/profile")}
                 className={cn(buttonBase, buttonSecondary)}
               >
-                {/* <svg
-                  width="24px"
-                  height="24px"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  color="#000000"
-                >
-                  <path
-                    d="M5 20V19C5 15.134 8.13401 12 12 12V12C15.866 12 19 15.134 19 19V20"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>
-                  <path
-                    d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z"
-                    stroke="#000000"
-                    stroke-width="1.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                  ></path>
-                </svg> */}
-                Profile
+                <span className="">
+                  <svg viewBox="0 0 16 16" fill="#000000" height={30}>
+                    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      {" "}
+                      <path
+                        fill="#000000"
+                        fillRule="evenodd"
+                        d="M8,16 C12.4183,16 16,12.4183 16,8 C16,3.58172 12.4183,0 8,0 C3.58172,0 0,3.58172 0,8 C0,12.4183 3.58172,16 8,16 Z M12.9533,11.387 C13.6137,10.4231 14,9.25665 14,8 C14,4.68629 11.3137,2 8,2 C4.68629,2 2,4.68629 2,8 C2,9.25665 2.38632,10.4231 3.04668,11.387 C3.25368,10.0411 4.13147,8.91649 5.32791,8.36519 C5.11827,7.95568 5,7.49165 5,7 C5,5.34315 6.34315,4 8,4 C9.65685,4 11,5.34315 11,7 C11,7.49165 10.8817,7.95568 10.6721,8.36519 C11.8685,8.91649 12.7463,10.0411 12.9533,11.387 Z M11,13.1973 L11,12 C11,10.8954 10.1046,10 9,10 L7,10 C5.89543,10 5,10.8954 5,12 L5,13.1973 C5.88252,13.7078 6.90714,14 8,14 C9.09286,14 10.1175,13.7078 11,13.1973 Z M8,8 C8.55228,8 9,7.55228 9,7 C9,6.44772 8.55228,6 8,6 C7.44772,6 7,6.44772 7,7 C7,7.55228 7.44772,8 8,8 Z"
+                      ></path>{" "}
+                    </g>
+                  </svg>
+                </span>
               </button>
             ) : (
               <button
@@ -214,7 +209,14 @@ export default function Navbar() {
               </button>
             )}
             {loggedIn ? (
-              hasBusiness ? (
+              isAdmin ? (
+                <button
+                  onClick={() => navigate("/admin")}
+                  className={cn(buttonBase, buttonPrimary)}
+                >
+                  Admin Panel
+                </button>
+              ) : hasBusiness ? (
                 <button
                   onClick={() => navigate("/owner-dashboard")}
                   className={cn(buttonBase, buttonPrimary)}
@@ -377,7 +379,17 @@ export default function Navbar() {
                     </button>
                   )}
                   {loggedIn ? (
-                    hasBusiness ? (
+                    isAdmin ? (
+                      <button
+                        onClick={() => {
+                          setIsMobileMenuOpen(false);
+                          navigate("/admin");
+                        }}
+                        className={cn(buttonBase, buttonPrimary, "w-full")}
+                      >
+                        Admin Panel
+                      </button>
+                    ) : hasBusiness ? (
                       <button
                         onClick={() => {
                           setIsMobileMenuOpen(false);
