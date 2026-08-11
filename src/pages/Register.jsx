@@ -5,7 +5,8 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     accountType: "customer", // 'customer' or 'vendor'
-    fullName: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
   });
@@ -82,20 +83,36 @@ const Register = () => {
               <div className="flex-1 h-px bg-slate-200"></div>
             </div>
 
-            {/* Full Name Input */}
-            <div className="animate-fade-in-up delay-300 space-y-1.5">
-              <label className="text-sm font-bold text-text-primary">
-                Full Name
-              </label>
-              <input
-                type="text"
-                name="fullName"
-                value={formData.fullName}
-                onChange={handleInputChange}
-                required
-                placeholder="e.g. John Doe"
-                className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 px-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-text-muted"
-              />
+            <div className="flex gap-5 w-full">
+              {/* Full Name Input */}
+              <div className="animate-fade-in-up delay-300 space-y-1.5 w-1/2">
+                <label className="text-sm font-bold text-text-primary">
+                  First Name
+                </label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="John"
+                  className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 px-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-text-muted"
+                />
+              </div>
+              <div className="animate-fade-in-up delay-300 space-y-1.5 w-1/2">
+                <label className="text-sm font-bold text-text-primary">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  required
+                  placeholder="Doe"
+                  className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 px-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-text-muted"
+                />
+              </div>
             </div>
 
             {/* Email Input */}

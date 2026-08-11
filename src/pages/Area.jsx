@@ -1,9 +1,26 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
+import { api } from "../api";
 
 const Area = () => {
   const [activeService, setActiveService] = useState("All");
+  const [localVendors, setLocalVendors] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const data = await api.getAllVendors();
+        setLocalVendors(data);
+      } catch (error) {
+        console.error("Failed to fetch vendors", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchVendors();
+  }, []);
 
   // Mock data for the specific Area
   const areaInfo = {
@@ -29,56 +46,7 @@ const Area = () => {
     "Packers & Movers",
   ];
 
-  const localVendors = [
-    {
-      id: 1,
-      name: "Aura Spaces Studio",
-      avatar:
-        "https://api.dicebear.com/7.x/shapes/svg?seed=Aura&backgroundColor=0284c7",
-      service: "Interior Design",
-      rating: 4.9,
-      reviews: 128,
-      distance: "0.5 km away",
-      verified: true,
-      tags: ["Free Consultation", "Top Rated"],
-    },
-    {
-      id: 2,
-      name: "QuickFix Plumbers",
-      avatar:
-        "https://api.dicebear.com/7.x/shapes/svg?seed=QuickFix&backgroundColor=ea580c",
-      service: "Plumbing",
-      rating: 4.7,
-      reviews: 412,
-      distance: "1.2 km away",
-      verified: true,
-      tags: ["24/7 Emergency", "Affordable"],
-    },
-    {
-      id: 3,
-      name: "Sparkle Clean Home",
-      avatar:
-        "https://api.dicebear.com/7.x/shapes/svg?seed=Sparkle&backgroundColor=059669",
-      service: "Home Cleaning",
-      rating: 4.8,
-      reviews: 305,
-      distance: "In Indiranagar",
-      verified: true,
-      tags: ["Deep Cleaning", "Eco-friendly"],
-    },
-    {
-      id: 4,
-      name: "Volt Experts",
-      avatar:
-        "https://api.dicebear.com/7.x/shapes/svg?seed=Volt&backgroundColor=7c3aed",
-      service: "Electricians",
-      rating: 4.6,
-      reviews: 189,
-      distance: "2.0 km away",
-      verified: false,
-      tags: ["Quick Response"],
-    },
-  ];
+
 
   return (
     <div className="min-h-screen bg-surface-secondary font-sans">
@@ -205,9 +173,9 @@ const Area = () => {
           </div>
         </div>
 
-        {/* --- LOCAL VENDORS LIST --- */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {localVendors.map((vendor) => (
+          {isLoading && <div className="col-span-2 text-center text-text-muted py-10">Loading local professionals...</div>}
+          {!isLoading && localVendors.map((vendor) => (
             <div
               key={vendor.id}
               className="bg-surface-primary rounded-md p-6 border border-border-primary hover:shadow-xl hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-black transition-all duration-300 group flex flex-col sm:flex-row gap-6"
@@ -216,7 +184,7 @@ const Area = () => {
               <div className="flex flex-col items-center gap-3 sm:w-28 flex-shrink-0">
                 <div className="relative w-24 h-24 rounded-2xl overflow-hidden bg-surface-secondary border border-border-secondary shadow-[0_4px_20px_rgb(0,0,0,0.03)] group-hover:scale-105 transition-transform">
                   <img
-                    src={vendor.avatar}
+                    src={vendor.logo || `https://api.dicebear.com/7.x/shapes/svg?seed=${vendor.name}&backgroundColor=0284c7`}
                     alt={vendor.name}
                     className="w-full h-full object-cover p-2"
                   />
@@ -233,7 +201,7 @@ const Area = () => {
                     <h3 className="text-xl font-extrabold text-text-primary group-hover:text-text-primary hover:underline transition-colors leading-tight">
                       {vendor.name}
                     </h3>
-                    {vendor.verified && (
+                    {vendor.status === "APPROVED" && (
                       <svg
                         className="w-5 h-5 text-emerald-500 flex-shrink-0"
                         fill="currentColor"
@@ -268,9 +236,8 @@ const Area = () => {
                     </span>
                   </div>
 
-                  {/* Tags */}
                   <div className="flex flex-wrap gap-2 mb-4 sm:mb-0">
-                    {vendor.tags.map((tag, idx) => (
+                    {(vendor.tags || []).map((tag, idx) => (
                       <span
                         key={idx}
                         className="bg-surface-secondary text-text-secondary px-2.5 py-1 rounded-md text-[11px] font-semibold uppercase tracking-wider"

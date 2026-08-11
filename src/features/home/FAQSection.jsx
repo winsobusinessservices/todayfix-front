@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { faqCategories, faqData } from "../../data/faqData";
+import { faqCategories, faqData } from "../../data/collectedData";
 
 const FAQSection = () => {
   // State for active category and active FAQ accordion

@@ -23,9 +23,6 @@ const Profile = () => {
     queryFn: userDetails,
   });
 
-  // console.log(userData);
-  
-
   const {
     data: serviceHistory,
     isLoading: serviceHistoryLoading,
@@ -53,7 +50,12 @@ const Profile = () => {
     queryFn: userPendingServices,
   });
 
-  if (userDataLoading) {
+  if (
+    userDataLoading ||
+    serviceHistoryLoading ||
+    userReviewLoading ||
+    userPendingServicesLoading
+  ) {
     return <p>Loading...</p>;
   }
 

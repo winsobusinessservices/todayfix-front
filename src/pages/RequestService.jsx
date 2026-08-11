@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomDropdown from "../components/ui/CustomDropdown";
+import { api } from "../api";
 
 const RequestService = () => {
   const navigate = useNavigate();
@@ -25,6 +26,28 @@ const RequestService = () => {
     : fallbackOptions;
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState([
+    "AC Servicing & Repair",
+    "Deep Home Cleaning",
+    "Plumbing & Pipes",
+    "Electrical Repairs",
+    "Pest Control",
+    "Painting & Decor",
+  ]);
+
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const data = await api.getServices();
+        if (data.length > 0) {
+          setCategories(data.map(s => s.name));
+        }
+      } catch (error) {
+        console.error("Failed to fetch services", error);
+      }
+    };
+    fetchServices();
+  }, []);
 
   // State structured for easy API submission later
   const [formData, setFormData] = useState({
@@ -45,14 +68,7 @@ const RequestService = () => {
     }
   }, [location]);
 
-  const categories = [
-    "AC Servicing & Repair",
-    "Deep Home Cleaning",
-    "Plumbing & Pipes",
-    "Electrical Repairs",
-    "Pest Control",
-    "Painting & Decor",
-  ];
+
 
   const handleNext = () => setStep((prev) => prev + 1);
   const handleBack = () => setStep((prev) => prev - 1);
@@ -62,9 +78,10 @@ const RequestService = () => {
     setIsSubmitting(true);
 
     try {
-      // TODO: Replace with actual backend API call
-      // await api.post('/service-requests', formData);
-      await new Promise((resolve) => setTimeout(resolve, 1500)); // Mock network delay
+      await api.createServiceRequest({
+        customerId: 1, // Mock user ID
+        ...formData,
+      });
 
       setStep(4); // Success step
     } catch (error) {

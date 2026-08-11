@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomDropdown from "./CustomDropdown";
-import { areasData, ratings, servicesData } from "../../data/collectedData";
+import { ratings } from "../../data/collectedData";
+import { api } from "../../api";
 
 const AdvancedSearch = () => {
   // State for search filters
@@ -11,10 +12,29 @@ const AdvancedSearch = () => {
   const [service, setService] = useState("");
   const [rating, setRating] = useState("");
 
+  const [servicesData, setServicesData] = useState([]);
+  const [areasData, setAreasData] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [servicesRes, areasRes] = await Promise.all([
+          api.getServices(),
+          api.getAreas()
+        ]);
+        setServicesData(servicesRes);
+        setAreasData(areasRes);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   // Mock data for dropdowns
   const cities = ["Bengaluru"];
-  const areas = areasData?.map((ar) => ar?.name);
-  const services = servicesData?.map((s) => s?.name);
+  const areas = areasData?.map((ar) => ar?.name) || [];
+  const services = servicesData?.map((s) => s?.name) || [];
 
   const handleSearch = (e) => {
     e.preventDefault();

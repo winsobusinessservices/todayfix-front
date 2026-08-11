@@ -25,7 +25,7 @@ export const userServicesHistory = async () => {
 };
 
 export const userPendingServices = async () => {
-  return await api.get("/pendingServices");
+  return await api.get("/userPendingServices");
 };
 
 export const userReviews = async () => {

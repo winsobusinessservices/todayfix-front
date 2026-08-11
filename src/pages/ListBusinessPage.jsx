@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import CustomDropdown from "../components/ui/CustomDropdown";
 import { Map } from "lucide-react";
+import { api } from "../api";
 
 const ListBusinessPage = () => {
   const navigate = useNavigate();
@@ -25,6 +26,25 @@ const ListBusinessPage = () => {
   const [galleryPreviews, setGalleryPreviews] = useState([]);
 
   const [errors, setErrors] = useState("");
+  const [servicesData, setServicesData] = useState([]);
+  const [areasData, setAreasData] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [servicesRes, areasRes] = await Promise.all([
+          api.getServices(),
+          api.getAreas()
+        ]);
+        setServicesData(servicesRes.map(s => s.name));
+        setAreasData(areasRes.map(a => a.name));
+      } catch (error) {
+        console.error("Failed to fetch initial data", error);
+      }
+    };
+    fetchData();
+  }, []);
 
   const handleFileChange = (e, type) => {
     const file = e.target.files[0];
@@ -62,44 +82,34 @@ const ListBusinessPage = () => {
     setServices(newServices);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
     const payload = {
       providerType,
-      businessName,
+      name: businessName,
       service,
       phone,
       email,
       website,
-      about,
-      address,
-      area,
-      services,
-      logoFile,
-      coverFile,
-      galleryFiles,
-      googleMapEmbed,
+      description: about,
+      location: `${address}, ${area}`,
+      // mock document processing
+      documents: ["document_pending.pdf"],
     };
-    console.log("Form Submitted with payload:", payload);
-    // Move to step 2 (documents) and pass the providerType
-    navigate("/list-business/documents", { state: { providerType } });
+    try {
+      await api.registerVendor(payload);
+      navigate("/list-business/documents", { state: { providerType } });
+    } catch (error) {
+      console.error("Failed to register vendor:", error);
+      setErrors("Failed to submit. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const serviceOptions = [
-    "Interior Design",
-    "Packers & Movers",
-    "Solar Services",
-    "Pest Control",
-    "Cleaning",
-  ];
-
-  const areas = [
-    "Indiranagar",
-    "Koramangala",
-    "Whitefield",
-    "HSR Layout",
-    "Jayanagar",
-  ];
+  const serviceOptions = servicesData.length > 0 ? servicesData : ["Interior Design"];
+  const areas = areasData.length > 0 ? areasData : ["Indiranagar"];
 
   return (
     <div className="bg-surface-secondary font-sans pb-10">
@@ -771,26 +781,29 @@ const ListBusinessPage = () => {
           <div className="pt-8 pb-10">
             <button
               type="submit"
-              className="w-full bg-surface-dark text-text-inverted font-black text-xl py-6 rounded-xl hover:bg-zinc-800 transition-all shadow-xl active:scale-[0.98] flex items-center justify-center gap-3 group relative overflow-hidden"
+              disabled={isSubmitting}
+              className="w-full bg-surface-dark text-text-inverted font-black text-xl py-6 rounded-xl hover:bg-zinc-800 transition-all shadow-xl active:scale-[0.98] flex items-center justify-center gap-3 group relative overflow-hidden disabled:opacity-70"
             >
               {/* Button Hover Shine Effect */}
               <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/10 to-transparent z-0"></div>
 
               <span className="relative z-10 flex items-center gap-3">
-                Submit Application
-                <svg
-                  className="w-6 h-6 group-hover:translate-x-1 transition-transform"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={3}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M14 5l7 7m0 0l-7 7m7-7H3"
-                  />
-                </svg>
+                {isSubmitting ? "Submitting..." : "Submit Application"}
+                {!isSubmitting && (
+                  <svg
+                    className="w-6 h-6 group-hover:translate-x-1 transition-transform"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={3}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M14 5l7 7m0 0l-7 7m7-7H3"
+                    />
+                  </svg>
+                )}
               </span>
             </button>
             <p className="text-center text-text-muted font-semibold text-sm mt-6 max-w-lg mx-auto">

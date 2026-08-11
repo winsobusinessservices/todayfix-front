@@ -1,5 +1,4 @@
 import React from "react";
-import { servicesPageData } from "../../data/ServicePageData";
 import { Link } from "react-router";
 
 const ServiceCards = ({ service }) => {
@@ -86,4 +85,3 @@ const ServiceCards = ({ service }) => {
 };
 
 export default ServiceCards;
-

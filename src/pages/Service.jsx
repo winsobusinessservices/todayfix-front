@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useParams } from "react-router";
-import { vendors } from "../data/Vendors";
+import { vendors } from "../data/collectedData";
 import CustomDropdown from "../components/ui/CustomDropdown";
 
 const Service = () => {

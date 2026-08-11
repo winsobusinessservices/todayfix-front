@@ -5,7 +5,7 @@ export const servicesPageData = [
     description:
       "Transform your living space with our top-rated, verified interior design professionals.",
     image:
-      "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://images.pexels.com/photos/32177962/pexels-photo-32177962.png?cs=srgb&dl=pexels-the-ghazi-2152398165-32177962.jpg&fm=jpg",
     category: "Home & Decor",
     vendorCount: 142,
     vendors: [
@@ -20,7 +20,7 @@ export const servicesPageData = [
     description:
       "Switch to renewable energy with certified solar panel installers and consultants.",
     image:
-      "https://images.unsplash.com/photo-1509391366360-519e372179a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://images.pexels.com/photos/29206488/pexels-photo-29206488/free-photo-of-technician-installing-solar-panels-on-rooftop.jpeg",
     category: "Green Energy",
     vendorCount: 86,
     vendors: [
@@ -34,8 +34,7 @@ export const servicesPageData = [
     name: "Packers & Movers",
     description:
       "Stress-free relocation services for your home or office with trusted moving teams.",
-    image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "https://images.pexels.com/photos/8962864/pexels-photo-8962864.jpeg",
     category: "Logistics",
     vendorCount: 215,
     vendors: [
@@ -49,8 +48,7 @@ export const servicesPageData = [
     name: "Home Cleaning",
     description:
       "Deep cleaning services for your entire home, keeping it spotless and hygienic.",
-    image:
-      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    image: "https://images.pexels.com/photos/4176036/pexels-photo-4176036.jpeg",
     category: "Maintenance",
     vendorCount: 310,
     vendors: [
@@ -65,7 +63,7 @@ export const servicesPageData = [
     description:
       "Quick and reliable AC servicing and repair to keep your home cool.",
     image:
-      "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://theclevelandhomecoming.com/wp-content/uploads/2025/05/trustworthy-blog17.jpg",
     category: "Appliances",
     vendorCount: 95,
     vendors: [
@@ -80,7 +78,7 @@ export const servicesPageData = [
     description:
       "Effective pest control solutions to protect your home and family from bugs.",
     image:
-      "https://images.unsplash.com/photo-1584820927498-cafe8c1c9695?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSoWG0pKblK1AfQlyI8VAUcbBU2lUiJJ94BO3vh4dLrz-2hu3oja7nHnJ8&s=10",
     category: "Maintenance",
     vendorCount: 154,
     vendors: [
@@ -95,7 +93,7 @@ export const servicesPageData = [
     description:
       "Expert electricians for wiring, fixing faults, and installing appliances safely.",
     image:
-      "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://media.istockphoto.com/id/1340404454/photo/electrician-engineer-tests-electrical-installations-and-wires-on-relay-protection-system.jpg?s=612x612&w=0&k=20&c=Uc7MB9mwrzyeeElhTxjZHqRbqAULO8n4uE2fyK9Alp8=",
     category: "Repairs",
     vendorCount: 220,
     vendors: [
@@ -110,7 +108,7 @@ export const servicesPageData = [
     description:
       "Fast and reliable plumbing services for leaks, pipes, and fixture installations.",
     image:
-      "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTmsTIsKVPt50f2zFrVhSF4ArEth3mRj7g1XtnUeqAHFVD3GlYOTHwBwW2&s=10",
     category: "Repairs",
     vendorCount: 185,
     vendors: [
@@ -125,7 +123,7 @@ export const servicesPageData = [
     description:
       "Custom furniture and repairs by skilled carpenters for your living spaces.",
     image:
-      "https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     category: "Repairs",
     vendorCount: 110,
     vendors: [
@@ -140,7 +138,7 @@ export const servicesPageData = [
     description:
       "Professional house painting services to give your home a fresh, new look.",
     image:
-      "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "https://mccoymart.com/post/wp-content/uploads/27-March-24-Painting-Contractor.jpg",
     category: "Home & Decor",
     vendorCount: 165,
     vendors: [

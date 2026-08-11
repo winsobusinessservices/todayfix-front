@@ -11,39 +11,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router";
 
-const INITIAL_REQUESTS = [
-  {
-    id: "REQ-001",
-    service: "AC Servicing & Repair",
-    date: "Aug 5, 2026",
-    budget: "1500",
-    location: "Indiranagar, Bengaluru",
-    status: "looking", // pending, looking, accepted
-    description:
-      "My split AC is not cooling properly and making a loud noise. It's a 1.5 ton Voltas AC.",
-  },
-  {
-    id: "REQ-002",
-    service: "Deep Home Cleaning",
-    date: "Aug 1, 2026",
-    budget: "2500",
-    location: "Whitefield, Bengaluru",
-    status: "accepted",
-    vendorName: "Sparkle Cleaners",
-    description:
-      "Full deep cleaning of a 2BHK unfurnished flat before moving in.",
-  },
-  {
-    id: "REQ-003",
-    service: "Plumbing Fixes",
-    date: "Jul 28, 2026",
-    budget: "800",
-    location: "Koramangala, Bengaluru",
-    status: "pending",
-    description: "Kitchen sink pipe is leaking heavily.",
-  },
-];
-
 const StatusBadge = ({ status }) => {
   if (status == "pending") {
     return (
@@ -70,10 +37,8 @@ const StatusBadge = ({ status }) => {
 };
 
 const ProfileRequests = ({ addresses, userPendingServices }) => {
-  // console.log(userPendingServices);
-  
   const navigate = useNavigate();
-  const [requests, setRequests] = useState(INITIAL_REQUESTS);
+  const [requests, setRequests] = useState(userPendingServices);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const handleDelete = (id) => {

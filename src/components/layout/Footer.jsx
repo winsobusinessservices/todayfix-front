@@ -55,19 +55,19 @@ const Footer = () => {
 
         {/* Right Section: Links Grid */}
         <div className="flex-grow grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-10 lg:gap-6 pt-2">
-          {footerLinkColumns.map((column) => (
-            <div key={column.title} className="flex flex-col gap-5">
+          {footerLinkColumns.map((column, index) => (
+            <div key={index} className="flex flex-col gap-5">
               <h4 className="font-bold text-text-primary text-sm tracking-widest uppercase">
                 {column.title}
               </h4>
               <ul className="flex flex-col gap-3">
-                {column.links.map((link) => (
-                  <li key={link}>
+                {column.links.map((link, idx) => (
+                  <li key={idx}>
                     <Link
-                      to={`/services/${link.toLowerCase().replace(/ /g, "-")}`}
+                      to={link.path}
                       className="text-text-secondary hover:text-text-primary transition-colors text-[15px] font-medium"
                     >
-                      {link}
+                      {link.label}
                     </Link>
                   </li>
                 ))}

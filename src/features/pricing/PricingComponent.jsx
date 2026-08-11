@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { pricingData } from "../../data/pricingData";
+import { pricingData } from "../../data/collectedData";
 import { StarIcon } from "lucide-react";
 
 const PricingComponent = () => {

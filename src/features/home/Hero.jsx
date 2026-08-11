@@ -11,7 +11,7 @@ const Hero = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, [services.length]);
-  
+
   return (
     <div className="mt-0 flex flex-col relative bg-surface-primary overflow-hidden gap-10 lg:gap-0">
       <div className="absolute inset-0 opacity-70 bg-[linear-gradient(to_right,#4f46e520_1px,transparent_1px),linear-gradient(to_bottom,#4f46e520_1px,transparent_1px)] bg-[size:70px_70px] " />
@@ -206,10 +206,10 @@ const Hero = () => {
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  stroke-width="2.2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="lucide lucide-boxes"
+                  strokeWidth="2.2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="lucide lucide-boxes"
                   aria-hidden="true"
                 >
                   <path d="M2.97 12.92A2 2 0 0 0 2 14.63v3.24a2 2 0 0 0 .97 1.71l3 1.8a2 2 0 0 0 2.06 0L12 19v-5.5l-5-3-4.03 2.42Z"></path>

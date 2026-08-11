@@ -2,7 +2,8 @@ import React, { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import { servicesData as services } from "../../data/collectedData";
+import { Wrench } from "lucide-react";
+import { servicesData } from "../../data/collectedData";
 
 // Import Swiper styles
 import "swiper/css";
@@ -172,7 +173,7 @@ const Services = () => {
               }}
               className="pb-4"
             >
-              {services.map((service, index) => (
+              {servicesData.map((service, index) => (
                 <SwiperSlide key={`${service.id}-${index}`}>
                   <div
                     onClick={() => navigate("/services/" + service.link)}
@@ -187,6 +188,7 @@ const Services = () => {
 
                       {/* Icon */}
                       <div className="relative z-10 p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-surface-secondary text-text-primary transition-all duration-500 group-hover:bg-white/10 group-hover:text-white group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.15)]">
+                        {/* <Wrench className="w-8 h-8 md:w-10 md:h-10" /> */}
                         {service.icon}
                       </div>
 

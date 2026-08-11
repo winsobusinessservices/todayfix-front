@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { featuredData as businesses } from "../../data/featuredData";
 import { useNavigate } from "react-router";
+import { featuredData as businesses } from "../../data/collectedData";
 
 const FeaturedSection = () => {
   const [hoveredIndex, setHoveredIndex] = useState(null);

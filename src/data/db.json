@@ -34,99 +34,208 @@
       }
     ]
   },
+
+  "areas": [
+    {
+      "id": "1",
+      "name": "Indiranagar"
+    },
+    {
+      "id": "2",
+      "name": "Whitefield"
+    },
+    {
+      "id": "3",
+      "name": "Koramangala"
+    },
+    {
+      "id": "4",
+      "name": "HSR Layout"
+    },
+    {
+      "id": "5",
+      "name": "Jayanagar"
+    },
+    {
+      "id": "6",
+      "name": "BTM Layout"
+    },
+    {
+      "id": "7",
+      "name": "Marathahalli"
+    },
+    {
+      "id": "8",
+      "name": "Bellandur"
+    }
+  ],
+
+  "services": [
+    {
+      "id": "1",
+      "name": "Interior Design",
+      "description": "Transform your living space with our top-rated, verified interior design professionals.",
+      "image": "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "category": "Home & Decor",
+      "vendorCount": 142,
+      "vendors": [
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice&backgroundColor=b6e3f4",
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob&backgroundColor=c0aede",
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie&backgroundColor=d1d4f9"
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Solar Installation",
+      "description": "Switch to renewable energy with certified solar panel installers and consultants.",
+      "image": "https://images.unsplash.com/photo-1509391366360-519e372179a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "category": "Green Energy",
+      "vendorCount": 86,
+      "vendors": [
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=David&backgroundColor=ffdfbf",
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Eva&backgroundColor=b6e3f4"
+      ]
+    },
+    {
+      "id": "3",
+      "name": "Packers & Movers",
+      "description": "Stress-free relocation services for your home or office with trusted moving teams.",
+      "image": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "category": "Logistics",
+      "vendorCount": 215,
+      "vendors": [
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Grace&backgroundColor=c0aede",
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Heidi&backgroundColor=d1d4f9"
+      ]
+    },
+    {
+      "id": "4",
+      "name": "Home Cleaning",
+      "description": "Deep cleaning services for your entire home, keeping it spotless and hygienic.",
+      "image": "https://images.unsplash.com/photo-1581578731548-c64695cc6952?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "category": "Maintenance",
+      "vendorCount": 310,
+      "vendors": [
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Jack&backgroundColor=ffdfbf",
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Karen&backgroundColor=c0aede"
+      ]
+    },
+    {
+      "id": "5",
+      "name": "AC Repair",
+      "description": "Quick and reliable AC servicing and repair to keep your home cool.",
+      "image": "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "category": "Appliances",
+      "vendorCount": 95,
+      "vendors": [
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Mona&backgroundColor=d1d4f9",
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Ned&backgroundColor=ffd5dc"
+      ]
+    },
+    {
+      "id": "6",
+      "name": "Pest Control",
+      "description": "Effective pest control solutions to protect your home and family from bugs.",
+      "image": "https://images.unsplash.com/photo-1584820927498-cafe8c1c9695?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "category": "Maintenance",
+      "vendorCount": 154,
+      "vendors": [
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Paul&backgroundColor=c0aede"
+      ]
+    },
+    {
+      "id": "7",
+      "name": "Electrician",
+      "description": "Expert electricians for wiring, fixing faults, and installing appliances safely.",
+      "image": "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "category": "Repairs",
+      "vendorCount": 220,
+      "vendors": [
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Sam&backgroundColor=b6e3f4"
+      ]
+    },
+    {
+      "id": "8",
+      "name": "Plumbing",
+      "description": "Fast and reliable plumbing services for leaks, pipes, and fixture installations.",
+      "image": "https://images.unsplash.com/photo-1585704032915-c3400ca199e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+      "category": "Repairs",
+      "vendorCount": 185,
+      "vendors": [
+        "https://api.dicebear.com/7.x/avataaars/svg?seed=Victor&backgroundColor=ffdfbf"
+      ]
+    }
+  ],
+
   "vendorProfile": [
     {
-      "id": 1,
+      "id": "1",
       "userId": 2,
       "providerType": "BUSINESS",
-      "businessName": "Sparkle Cleaners",
-      "service": "Home Cleaning",
-      "location": "Indiranagar, Bangaluru",
-      "documents": ["url-to-gst.jpg", "url-to-pan.jpg"],
-      "status": "APPROVED"
+      "name": "Jai Maa Modular Interiors",
+      "category": "Home & Decor",
+      "service": "Interior Design",
+      "location": "Bangalore",
+      "rating": "4.9",
+      "reviews": "245",
+      "description": "Transforming 2BHK and 3BHK homes with bespoke modular kitchens, living spaces, and wardrobes.",
+      "bgGradient": "from-zinc-900 to-black",
+      "bg": "/jmm_bg.jpeg",
+      "logo": "/jmm_logo.png",
+      "status": "APPROVED",
+      "isFeatured": true
     },
     {
-      "id": 2,
+      "id": "2",
       "userId": 3,
-      "providerType": "INDIVIDUAL",
-      "businessName": "John Doe Plumbing",
-      "service": "Plumbing",
-      "location": "Whitefield, Bangaluru",
-      "documents": ["url-to-aadhar.jpg"],
-      "status": "PENDING"
+      "providerType": "BUSINESS",
+      "name": "Kalavathi Tours & Travels",
+      "category": "Tours & Travels",
+      "service": "Corporate Travels",
+      "location": "Bangalore",
+      "rating": "4.8",
+      "reviews": "189",
+      "description": "Reliable Airport Transfers, Corporate Transportation, Executive Travel, Employee Transportation and Event Travel Services.",
+      "bgGradient": "from-zinc-100 to-white",
+      "bg": "/ktt_bg.avif",
+      "logo": "/ktt_logo.png",
+      "status": "APPROVED",
+      "isFeatured": true
     },
     {
-      "id": 3,
+      "id": "3",
       "userId": 4,
       "providerType": "BUSINESS",
-      "businessName": "CoolBreeze Tech",
-      "service": "AC Servicing & Repair",
-      "location": "Koramangala, Bangaluru",
-      "documents": ["url-to-gst.jpg"],
-      "status": "APPROVED"
-    }
-  ],
-  "serviceRequests": [
-    {
-      "id": 1,
-      "customerId": 1,
-      "serviceCategory": "AC Servicing & Repair",
-      "description": "My split AC is not cooling properly and making a loud noise. It's a 1.5 ton Voltas AC.",
-      "budget": 1500,
-      "location": "Work : Block 4, Tech Park - 560066",
-      "status": "BROADCASTED",
-      "assignedVendorId": null
+      "name": "DK Relocation",
+      "category": "Logistics",
+      "service": "Packers & Movers",
+      "location": "Bangalore",
+      "rating": "5.0",
+      "reviews": "94",
+      "description": "Professional packing, secure transport & on-time delivery — door to door, anywhere in India. Trusted by 50,000+ families & businesses.",
+      "bgGradient": "from-zinc-100 to-white",
+      "bg": "/dk_bg.avif",
+      "logo": "/dkk_logo.png",
+      "status": "APPROVED",
+      "isFeatured": true
     },
     {
-      "id": 2,
-      "customerId": 5,
-      "serviceCategory": "Plumbing",
-      "description": "Leaking kitchen sink pipe that needs immediate replacement.",
-      "budget": 500,
-      "location": "Home : 45th Street, Jayanagar - 560041",
-      "status": "PENDING_ADMIN",
-      "assignedVendorId": null
-    },
-    {
-      "id": 3,
-      "customerId": 1,
-      "serviceCategory": "Deep Home Cleaning",
-      "description": "Need deep cleaning for a 2BHK empty apartment before moving in.",
-      "budget": 2500,
-      "location": "Home : 123 Cross Road - 560038",
-      "status": "COMPLETED",
-      "assignedVendorId": 1
+      "id": "4",
+      "userId": 5,
+      "providerType": "INDIVIDUAL",
+      "name": "John Doe Plumbing",
+      "category": "Repairs",
+      "service": "Plumbing",
+      "location": "Whitefield, Bangaluru",
+      "rating": "4.5",
+      "reviews": "12",
+      "description": "Expert residential plumber.",
+      "documents": ["url-to-aadhar.jpg"],
+      "status": "PENDING",
+      "isFeatured": false
     }
   ],
-  "bookings": [
-    {
-      "id": 1,
-      "requestId": 3,
-      "customerId": 1,
-      "vendorId": 1,
-      "scheduledDate": "2026-08-01T10:00:00Z",
-      "finalPrice": 2500,
-      "paymentStatus": "PAID"
-    }
-  ],
-  "reviews": [
-    {
-      "id": 1,
-      "vendorId": 1,
-      "customerId": 1,
-      "rating": 5,
-      "comment": "Excellent team. They were on time and left the house spotless. Highly recommend Sparkle Cleaners!",
-      "createdAt": "2026-08-01T15:30:00Z"
-    },
-    {
-      "id": 2,
-      "vendorId": 3,
-      "customerId": 6,
-      "rating": 4,
-      "comment": "Good service, fixed the AC issue but arrived 30 mins late.",
-      "createdAt": "2026-07-15T12:00:00Z"
-    }
-  ],
+
   "servicesHistory": [
     {
       "serviceId": 1,
@@ -145,6 +254,69 @@
       "status": "Completed"
     }
   ],
+
+  "serviceRequests": [
+    {
+      "id": "1",
+      "customerId": 1,
+      "serviceCategory": "AC Repair",
+      "description": "My split AC is not cooling properly and making a loud noise.",
+      "budget": 1500,
+      "location": "Work : Block 4, Tech Park - 560066",
+      "status": "BROADCASTED",
+      "assignedVendorId": null
+    }
+  ],
+
+  "bookings": [
+    {
+      "id": "1",
+      "customerId": 1,
+      "vendorId": "1",
+      "status": "COMPLETED",
+      "date": "2026-08-01T10:00:00.000Z"
+    }
+  ],
+
+  "reviews": [
+    {
+      "vendorId": "1",
+      "user": "Priya Sharma",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya&backgroundColor=fca5a5",
+      "rating": 5,
+      "text": "Absolutely thrilled with the modular kitchen they designed for us. The team was highly professional, stuck to the timeline, and the finish is premium. Highly recommend!",
+      "date": "2026-07-25T10:00:00.000Z",
+      "id": "1"
+    },
+    {
+      "vendorId": "1",
+      "user": "Rahul Sharma",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Rahul&backgroundColor=93c5fd",
+      "rating": 5,
+      "text": "Aura Spaces transformed our bare 3BHK into a dream home. Their 3D renders were incredibly accurate to the final result. The project manager kept us updated daily.",
+      "date": "2026-07-10T10:00:00.000Z",
+      "id": "2"
+    },
+    {
+      "vendorId": "1",
+      "user": "Anita Desai",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=Anita&backgroundColor=d8b4fe",
+      "rating": 4,
+      "text": "Great design sense and very accommodating with changes. The only slight issue was a minor delay with the plumbing fixture delivery, but they handled it well.",
+      "date": "2026-05-10T10:00:00.000Z",
+      "id": "3"
+    },
+    {
+      "vendorId": "1",
+      "user": "Current User",
+      "avatar": "https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser&backgroundColor=fca5a5",
+      "rating": 5,
+      "text": "dfggdg",
+      "date": "2026-08-10T10:37:23.489Z",
+      "id": "CeedBsKGsgY"
+    }
+  ],
+
   "pendingServices": [
     {
       "serviceId": 4,
@@ -168,6 +340,38 @@
       }
     }
   ],
+
+  "userPendingServices": [
+    {
+      "id": "REQ-001",
+      "service": "AC Servicing & Repair",
+      "date": "Aug 5, 2026",
+      "budget": "1500",
+      "location": "Indiranagar, Bengaluru",
+      "status": "looking",
+      "description": "My split AC is not cooling properly and making a loud noise. It's a 1.5 ton Voltas AC."
+    },
+    {
+      "id": "REQ-002",
+      "service": "Deep Home Cleaning",
+      "date": "Aug 1, 2026",
+      "budget": "2500",
+      "location": "Whitefield, Bengaluru",
+      "status": "accepted",
+      "vendorName": "Sparkle Cleaners",
+      "description": "Full deep cleaning of a 2BHK unfurnished flat before moving in."
+    },
+    {
+      "id": "REQ-003",
+      "service": "Plumbing Fixes",
+      "date": "Jul 28, 2026",
+      "budget": "800",
+      "location": "Koramangala, Bengaluru",
+      "status": "pending",
+      "description": "Kitchen sink pipe is leaking heavily."
+    }
+  ],
+
   "userReviews": [
     {
       "providerId": 1,
@@ -176,5 +380,7 @@
       "comment": "Excellent team. They were on time and left the house spotless.",
       "date": "1-Aug-2026"
     }
-  ]
+  ],
+
+  "$schema": "./node_modules/json-server/schema.json"
 }

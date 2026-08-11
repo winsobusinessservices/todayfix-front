@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { testimonialData as testimonials } from "../../data/testimonialData";
+import { testimonialData as testimonials } from "../../data/collectedData";
 
 const TestimonialSection = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
