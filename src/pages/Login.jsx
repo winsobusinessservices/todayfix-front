@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
+import SEO from "../components/seo/SEO";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,6 +19,10 @@ const Login = () => {
 
   return (
     <div className="flex font-sans bg-surface-primary justify-center items-center">
+      <SEO 
+        title="Login | TodayFix"
+        description="Sign in to your TodayFix account to manage your bookings or business profile."
+      />
       {/* Right Panel - Login Form */}
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-12 md:p-16 relative">
         {/* Mobile-only background elements */}

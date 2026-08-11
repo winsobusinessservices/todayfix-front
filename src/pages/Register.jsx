@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
+import SEO from "../components/seo/SEO";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -28,6 +29,10 @@ const Register = () => {
 
   return (
     <div className="bg-surface-secondary font-sans flex items-center justify-center relative">
+      <SEO 
+        title="Register | TodayFix"
+        description="Create your TodayFix account to book premium home services or list your professional business."
+      />
       <div className="w-full md:w-7/12 p-8 md:p-16">
         <div className="max-w-md mx-auto">
           <div className="animate-fade-in-up delay-100 mb-8">

@@ -16,6 +16,19 @@ import VerificationPendingPage from "../pages/VerificationPendingPage";
 import OwnerDashboard from "../pages/OwnerDashboard";
 import RequestService from "../pages/RequestService";
 import Profile from "../pages/Profile";
+import Careers from "../pages/Careers";
+import Blog from "../pages/Blog";
+import Contact from "../pages/Contact";
+import Partner from "../pages/Partner";
+import Terms from "../pages/Terms";
+import Privacy from "../pages/Privacy";
+import CancellationPolicy from "../pages/CancellationPolicy";
+import RefundPolicy from "../pages/RefundPolicy";
+import Safety from "../pages/Safety";
+import BecomeProfessional from "../pages/BecomeProfessional";
+import HelpCenter from "../pages/HelpCenter";
+import FAQPage from "../pages/FAQPage";
+import ProFAQ from "../pages/ProFAQ";
 
 import JobBoardTab from "../features/owner/JobBoardTab";
 import OverviewTab from "../features/owner/OverviewTab";
@@ -40,6 +53,19 @@ function AppRoutes() {
         <Route path="/pricing" element={<Pricing />} />
         <Route path="/cities/:slug" element={<Area />} />
         <Route path="/about" element={<AboutUs />} />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/partner" element={<Partner />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/cancellation-policy" element={<CancellationPolicy />} />
+        <Route path="/refund-policy" element={<RefundPolicy />} />
+        <Route path="/safety" element={<Safety />} />
+        <Route path="/become-a-professional" element={<BecomeProfessional />} />
+        <Route path="/help" element={<HelpCenter />} />
+        <Route path="/faq" element={<FAQPage />} />
+        <Route path="/professionals/faq" element={<ProFAQ />} />
         <Route path="*" element={<NotFound />} />
         <Route element={<ProtectedRoute allowedRoles={["USER", "OWNER"]} />}>
           <Route path="/profile" element={<Profile />} />

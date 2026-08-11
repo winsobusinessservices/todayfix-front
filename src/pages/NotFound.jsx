@@ -1,10 +1,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
+import SEO from "../components/seo/SEO";
 
 const NotFound = () => {
   return (
     <div className="bg-surface-secondary flex flex-col items-center justify-center font-sans relative pb-12 pt-24 overflow-hidden px-6">
+      <SEO title="Page Not Found | TodayFix" description="The page you are looking for does not exist." />
       {/* Background Grid Pattern for a techy feel */}
       <div
         className="absolute inset-0 opacity-[0.03] pointer-events-none"

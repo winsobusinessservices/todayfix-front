@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import CustomDropdown from "../components/ui/CustomDropdown";
 import { Map } from "lucide-react";
 import { api } from "../api";
+import SEO from "../components/seo/SEO";
 
 const ListBusinessPage = () => {
   const navigate = useNavigate();
@@ -113,6 +114,10 @@ const ListBusinessPage = () => {
 
   return (
     <div className="bg-surface-secondary font-sans pb-10">
+      <SEO 
+        title="List Your Business | TodayFix"
+        description="Join thousands of premium professionals on TodayFix. List your services, get verified, and grow your business today."
+      />
       {/* --- Header --- */}
       <div className="bg-surface-dark pt-20 pb-36 px-6 relative overflow-hidden">
         {/* Subtle grid pattern for premium tech feel */}

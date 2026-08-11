@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { api } from "../api";
+import SEO from "../components/seo/SEO";
 
 const Area = () => {
   const [activeService, setActiveService] = useState("All");
@@ -50,6 +51,11 @@ const Area = () => {
 
   return (
     <div className="min-h-screen bg-surface-secondary font-sans">
+      <SEO 
+        title={`Top Professionals in ${areaInfo.name}, ${areaInfo.city} | TodayFix`}
+        description={`Connect with ${areaInfo.stats.activePros}+ verified professionals actively serving the ${areaInfo.name} neighborhood. Book premium home services today.`}
+        ogImage={areaInfo.heroImage}
+      />
       {/* --- BREADCRUMBS --- */}
       <div className="bg-surface-primary border-b border-border-primary py-3 px-6">
         <div className="max-w-6xl mx-auto flex items-center text-sm font-medium text-text-secondary gap-2">

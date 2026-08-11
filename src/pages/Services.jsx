@@ -2,10 +2,15 @@ import React from "react";
 import AdvancedSearch from "../components/ui/AdvancedSearch";
 import ServicesCards from "../features/home/ServiceCards";
 import { servicesPageData } from "../data/ServicePageData";
+import SEO from "../components/seo/SEO";
 
 const Services = () => {
   return (
     <div className="w-full max-w-6xl mx-auto relative flex flex-col gap-4">
+      <SEO 
+        title="All Services | TodayFix"
+        description="Browse all available services on TodayFix. Find the right professional for your plumbing, electrical, cleaning, and maintenance needs."
+      />
       <AdvancedSearch />
       <div className="w-full bg-transparent py-14 font-sans flex justify-center relative">
         <div className="max-w-[1400px] w-full">

@@ -1,41 +1,3 @@
-// export const footerData = [
-//   {
-//     title: "Services",
-//     links: [
-//       "Plumbing",
-//       "Electrician",
-//       "Painting",
-//       "Cleaning",
-//       "AC Repair",
-//       "Carpentry",
-//       "Pest Control",
-//       "Interior Design",
-//     ],
-//   },
-//   {
-//     title: "Company",
-//     links: [
-//       "About Us",
-//       "Careers",
-//       "Blog",
-//       "Press",
-//       "Contact Us",
-//       "Partner With Us",
-//       "Investors",
-//     ],
-//   },
-//   {
-//     title: "Support",
-//     links: [
-//       "Help Center",
-//       "Safety",
-//       "Terms of Service",
-//       "Privacy Policy",
-//       "Refund Policy",
-//     ],
-//   },
-// ];
-
 export const footerData = [
   {
     title: "Services",
@@ -57,7 +19,7 @@ export const footerData = [
       { label: "Home Services in Whitefield", path: "/cities/whitefield" },
       { label: "Home Services in Indiranagar", path: "/cities/indiranagar" },
       { label: "Home Services in Koramangala", path: "/cities/koramangala" },
-      { label: "Home Services in HSR Layout", path: "/citites/hsr-layout" },
+      { label: "Home Services in HSR Layout", path: "/cities/hsr-layout" },
       { label: "Home Services in Jayanagar", path: "/cities/jayanagar" },
     ],
   },
@@ -75,7 +37,7 @@ export const footerData = [
     title: "For Professionals",
     links: [
       { label: "Become a Professional", path: "/become-a-professional" },
-      { label: "Register Your Business", path: "/business/register" },
+      { label: "Register Your Business", path: "/list-business" },
       { label: "Professional FAQ", path: "/professionals/faq" },
       { label: "Pricing", path: "/pricing" },
     ],

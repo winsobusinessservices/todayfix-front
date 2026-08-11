@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { faqCategories, faqData } from "../../data/collectedData";
+import { Link } from "react-router";
 
 const FAQSection = () => {
   // State for active category and active FAQ accordion
@@ -199,9 +200,12 @@ const FAQSection = () => {
 
               {/* Action Button */}
               <div className="self-end sm:self-auto relative z-10">
-                <button className="px-6 py-3 bg-surface-primary text-text-primary font-bold rounded-full hover:scale-105 hover:bg-zinc-200 transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] whitespace-nowrap">
+                <Link
+                  to="/contact"
+                  className="px-6 py-3 bg-surface-primary text-text-primary font-bold rounded-full hover:scale-105 hover:bg-zinc-200 transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] whitespace-nowrap"
+                >
                   Contact Support
-                </button>
+                </Link>
               </div>
             </motion.div>
           </div>
@@ -212,4 +216,3 @@ const FAQSection = () => {
 };
 
 export default FAQSection;
-

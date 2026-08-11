@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router";
 import { api } from "../api";
+import SEO from "../components/seo/SEO";
 
 const Vendor = () => {
   const { id } = useParams();
@@ -92,6 +93,11 @@ const Vendor = () => {
 
   return (
     <div className="min-h-screen bg-surface-secondary font-sans pb-24 lg:pb-12">
+      <SEO 
+        title={`${displayVendor.name} - ${displayVendor.category} | TodayFix`}
+        description={displayVendor.about ? `${displayVendor.about.substring(0, 150)}...` : `Book ${displayVendor.name} for premium ${displayVendor.category} services in ${displayVendor.address}.`}
+        ogImage={displayVendor.avatar}
+      />
       {/* Banner */}
       <div className="relative w-full h-64 md:h-80 bg-surface-dark">
         <img

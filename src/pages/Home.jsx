@@ -1,4 +1,5 @@
 import React from "react";
+import SEO from "../components/seo/SEO";
 import Hero from "../features/home/Hero";
 import Services from "../features/home/Services";
 import CallToAction from "../features/home/CallToAction";
@@ -12,7 +13,11 @@ import FAQSection from "../features/home/FAQSection";
 
 const Home = () => {
   return (
-    <div>
+    <main>
+      <SEO 
+        title="TodayFix - Premium Home Services & Local Professionals"
+        description="Book verified local professionals for plumbing, cleaning, interior design, and more. Fast, reliable, and premium services."
+      />
       <Hero />
       <FeatureMarquee />
       <Services />
@@ -23,7 +28,7 @@ const Home = () => {
       <PricingComponent />
       <FAQSection />
       <CallToAction />
-    </div>
+    </main>
   );
 };
 

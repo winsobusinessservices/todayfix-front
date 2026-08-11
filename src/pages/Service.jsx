@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router";
 import { vendors } from "../data/collectedData";
 import CustomDropdown from "../components/ui/CustomDropdown";
+import SEO from "../components/seo/SEO";
 
 const Service = () => {
   const { slug } = useParams();
@@ -19,6 +20,11 @@ const Service = () => {
 
   return (
     <div className="min-h-screen bg-surface-primary font-sans pb-20">
+      <SEO 
+        title={`${slug || serviceDetails.name} Services | TodayFix`}
+        description={`Find the best ${slug || serviceDetails.name} professionals in your area. Verified, rated, and ready to work.`}
+        ogImage={serviceDetails.coverImage}
+      />
       <div className="relative w-full h-[350px] md:h-[400px] bg-surface-dark">
         <img
           src={serviceDetails.coverImage}

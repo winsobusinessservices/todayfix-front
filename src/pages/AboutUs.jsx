@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router";
+import SEO from "../components/seo/SEO";
 
 const AboutUs = () => {
   // Mock Data
@@ -78,6 +79,10 @@ const AboutUs = () => {
 
   return (
     <div className="min-h-screen bg-surface-secondary font-sans selection:bg-surface-dark selection:text-white pb-20 relative z-0">
+      <SEO 
+        title="About Us | TodayFix"
+        description="Learn about TodayFix's mission to redefine the standard of home services and connect you with verified local expertise."
+      />
       {/* Hero Section */}
       <section className="relative w-full pt-32 pb-24 px-6 overflow-hidden flex items-center justify-center bg-surface-primary border-b border-border-primary">
         <div
