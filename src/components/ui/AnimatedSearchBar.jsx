@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import CustomDropdown from "./CustomDropdown";
-import { ratings } from "../../data/collectedData";
+import { areasData, ratings, servicesData } from "../../data/collectedData";
 import { api } from "../../api";
 
 const AnimatedSearchBar = () => {
@@ -18,25 +18,6 @@ const AnimatedSearchBar = () => {
   const [area, setArea] = useState("");
   const [service, setService] = useState("");
   const [rating, setRating] = useState("");
-
-  const [servicesData, setServicesData] = useState([]);
-  const [areasData, setAreasData] = useState([]);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [servicesRes, areasRes] = await Promise.all([
-          api.getServices(),
-          api.getAreas(),
-        ]);
-        setServicesData(servicesRes);
-        setAreasData(areasRes);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchData();
-  }, []);
 
   const areas = areasData?.map((ar) => ar?.name) || [];
   const services = servicesData?.map((s) => s?.name) || [];

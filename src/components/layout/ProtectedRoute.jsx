@@ -1,11 +1,13 @@
 import React from "react";
 import { Navigate, Outlet, useLocation } from "react-router";
-import { userData } from "../../store/userStore";
+import { useUserStore } from "../../store/userStore";
 
 const ProtectedRoute = ({ allowedRoles }) => {
   const location = useLocation();
+  const userData = useUserStore((state) => state.user);
 
-  const isAuthenticated = userData?.isAuthenticated;
+  const isAuthenticated =
+    useUserStore((state) => state.isAuthenticated) || userData?.isAuthenticated;
   const userRole = userData?.role;
   const businessStatus = userData?.businessStatus;
 

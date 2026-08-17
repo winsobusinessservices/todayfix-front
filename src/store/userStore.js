@@ -1,27 +1,80 @@
-/**
- * Mock User Store
- *
- * Provides a simple exported object simulating the current authenticated user.
- * In production, this would be replaced by a Zustand store or React Context
- * backed by JWT token decoding and API calls.
- *
- * Roles: "USER" | "OWNER" | "ADMIN"
- * Business Statuses: "NONE" | "VERIFY" | "PENDING" | "VERIFIED"
- */
-
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
+import Cookies from "js-cookie";
 
-export const userData = {
-  isAuthenticated: true,
-  role: "ADMIN", // Change to "USER", "OWNER", or "ADMIN" for testing
-  businessStatus: "VERIFIED", // "NONE" | "VERIFY" | "PENDING" | "VERIFIED"
-  name: "Santo",
-  email: "santo@todayfix.com",
-  avatar: null,
-};
+export const useUserStore = create(
+  persist(
+    (set) => ({
+      user: null,
+      accessToken: Cookies.get("accessToken") || null,
+      refreshToken: Cookies.get("refreshToken") || null,
+      isAuthenticated: !!Cookies.get("accessToken"),
 
-export const useUserStoreData = create((set) => ({
-  user: null,
-  setUser: (user) => set({ user }),
-  clearUser: () => set({ user: null }),
-}));
+      // Initialize session with tokens and user details
+      setAuthData: ({ access, refresh, user }) => {
+        const isSecure = window.location.protocol === "https:";
+        const cookieOptions = {
+          expires: 7,
+          secure: isSecure,
+          sameSite: "Lax",
+          path: "/",
+        };
+        Cookies.set("accessToken", access, cookieOptions);
+        Cookies.set("refreshToken", refresh, { ...cookieOptions, expires: 30 });
+        set({
+          accessToken: access,
+          refreshToken: refresh,
+          user: user,
+          isAuthenticated: true,
+        });
+      },
+
+      // Update just the tokens (e.g. after refresh)
+      setTokens: ({ access, refresh }) => {
+        const isSecure = window.location.protocol === "https:";
+        const cookieOptions = {
+          expires: 7,
+          secure: isSecure,
+          sameSite: "Lax",
+          path: "/",
+        };
+        Cookies.set("accessToken", access, cookieOptions);
+        if (refresh) {
+          Cookies.set("refreshToken", refresh, {
+            ...cookieOptions,
+            expires: 30,
+          });
+        }
+        set((state) => ({
+          accessToken: access,
+          refreshToken: refresh || state.refreshToken,
+        }));
+      },
+
+      // Update just the user details (e.g. after profile update)
+      setUser: (user) => set({ user }),
+
+      // Clear session
+      clearAuth: () => {
+        Cookies.remove("accessToken", { path: "/" });
+        Cookies.remove("refreshToken", { path: "/" });
+        set({
+          user: null,
+          accessToken: null,
+          refreshToken: null,
+          isAuthenticated: false,
+        });
+      },
+    }),
+    {
+      name: "auth-storage", // key in localStorage
+      // Persist all necessary auth state so it isn't lost on refresh
+      partialize: (state) => ({
+        user: state.user,
+        accessToken: state.accessToken,
+        refreshToken: state.refreshToken,
+        isAuthenticated: state.isAuthenticated,
+      }),
+    },
+  ),
+);

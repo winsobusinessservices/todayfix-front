@@ -48,6 +48,24 @@ import AdminVerificationTab from "../features/admin/AdminVerificationTab";
 import AdminRequestsTab from "../features/admin/AdminRequestsTab";
 import AdminDisputesTab from "../features/admin/AdminDisputesTab";
 
+import AdminUsersTab from "../features/admin/AdminUsersTab";
+import AdminProvidersTab from "../features/admin/AdminProvidersTab";
+import AdminBusinessesTab from "../features/admin/AdminBusinessesTab";
+import AdminServicesTab from "../features/admin/AdminServicesTab";
+import AdminCategoriesTab from "../features/admin/AdminCategoriesTab";
+import AdminCitiesTab from "../features/admin/AdminCitiesTab";
+import AdminReviewsTab from "../features/admin/AdminReviewsTab";
+import AdminPaymentsTab from "../features/admin/AdminPaymentsTab";
+import AdminPayoutsTab from "../features/admin/AdminPayoutsTab";
+import AdminSubscriptionsTab from "../features/admin/AdminSubscriptionsTab";
+import AdminNotificationsTab from "../features/admin/AdminNotificationsTab";
+import AdminReportsTab from "../features/admin/AdminReportsTab";
+import AdminSupportTab from "../features/admin/AdminSupportTab";
+import AdminAuditLogTab from "../features/admin/AdminAuditLogTab";
+import AdminSettingsTab from "../features/admin/AdminSettingsTab";
+import VerificationPage from "../pages/VerificationPage";
+import VerificationSuccess from "../pages/VerificationSuccess";
+
 function AppRoutes() {
   return (
     <Routes>
@@ -58,6 +76,8 @@ function AppRoutes() {
         <Route path="/vendor/:id" element={<Vendor />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/verify-email" element={<VerificationSuccess />} />
+        <Route path="/otp" element={<VerificationPage/>} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/pricing" element={<Pricing />} />
@@ -77,7 +97,7 @@ function AppRoutes() {
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/professionals/faq" element={<ProFAQ />} />
         <Route path="*" element={<NotFound />} />
-        <Route element={<ProtectedRoute allowedRoles={["USER", "OWNER"]} />}>
+        <Route element={<ProtectedRoute allowedRoles={["USER", "OWNER", "ADMIN"]} />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/list-business" element={<ListBusinessPage />} />
           <Route path="/list-business/documents" element={<BusinessDocumentsPage />} />
@@ -86,7 +106,7 @@ function AppRoutes() {
         </Route>
       </Route>
 
-      <Route element={<ProtectedRoute allowedRoles={["OWNER"]} />}>
+      <Route element={<ProtectedRoute allowedRoles={["OWNER", "ADMIN"]} />}>
         <Route path="/owner-dashboard" element={<OwnerDashboard />}>
           <Route index element={<OverviewTab />} />
           <Route path="job-board" element={<JobBoardTab />} />
@@ -101,11 +121,34 @@ function AppRoutes() {
 
       <Route element={<ProtectedRoute allowedRoles={["ADMIN"]} />}>
         <Route path="/admin" element={<AdminDashboard />}>
+          {/* Main */}
           <Route index element={<AdminOverviewTab />} />
+          
+          {/* Management */}
+          <Route path="users" element={<AdminUsersTab />} />
+          <Route path="providers" element={<AdminProvidersTab />} />
+          <Route path="businesses" element={<AdminBusinessesTab />} />
           <Route path="verifications" element={<AdminVerificationTab />} />
+          
+          {/* Operations */}
           <Route path="requests" element={<AdminRequestsTab />} />
+          <Route path="services" element={<AdminServicesTab />} />
+          <Route path="categories" element={<AdminCategoriesTab />} />
+          <Route path="cities" element={<AdminCitiesTab />} />
+          <Route path="reviews" element={<AdminReviewsTab />} />
+          
+          {/* Financials */}
+          <Route path="payments" element={<AdminPaymentsTab />} />
+          <Route path="payouts" element={<AdminPayoutsTab />} />
+          <Route path="subscriptions" element={<AdminSubscriptionsTab />} />
+          
+          {/* System */}
+          <Route path="notifications" element={<AdminNotificationsTab />} />
+          <Route path="reports" element={<AdminReportsTab />} />
+          <Route path="support" element={<AdminSupportTab />} />
           <Route path="disputes" element={<AdminDisputesTab />} />
-          <Route path="settings" element={<div className="p-8 font-bold text-text-primary text-xl">Admin Settings (Coming Soon)</div>} />
+          <Route path="audit-logs" element={<AdminAuditLogTab />} />
+          <Route path="settings" element={<AdminSettingsTab />} />
         </Route>
       </Route>
     </Routes>

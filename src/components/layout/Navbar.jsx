@@ -9,7 +9,7 @@ import {
 } from "motion/react";
 import { cn } from "../../utils/cn";
 import Logo from "../brand/Logo";
-import { userData } from "../../store/userStore";
+import { useUserStore } from "../../store/userStore";
 import Icon from "../../assets/tfix.png";
 import { areasData } from "../../data/collectedData";
 
@@ -23,6 +23,13 @@ export default function Navbar() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
   const navigate = useNavigate();
+  const userData = useUserStore((state) => state.user);
+
+  const loggedIn =
+    useUserStore((state) => state.isAuthenticated) || userData?.isAuthenticated;
+  const hasBusiness = userData?.role === "OWNER";
+  const isAdmin = userData?.role === "ADMIN";
+  // console.log(userData);
 
   const { scrollY } = useScroll({
     target: ref,
@@ -59,10 +66,6 @@ export default function Navbar() {
       <Logo />
     </Link>
   );
-
-  const loggedIn = userData?.isAuthenticated; // Replace with actual authentication logic
-  const hasBusiness = userData?.role === "OWNER"; // Replace with actual authentication logic
-  const isAdmin = userData?.role === "ADMIN";
 
   return (
     <>

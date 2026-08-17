@@ -84,7 +84,7 @@ const ProfileDetails = ({ userData }) => {
                 <input
                   type="text"
                   name="firstName"
-                  value={userData.firstName}
+                  value={userData?.firstName}
                   onChange={handleInputChange}
                   className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold"
                 />
@@ -96,7 +96,7 @@ const ProfileDetails = ({ userData }) => {
                 <input
                   type="text"
                   name="lastName"
-                  value={userData.lastName}
+                  value={userData?.lastName}
                   onChange={handleInputChange}
                   className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold"
                 />
@@ -122,7 +122,7 @@ const ProfileDetails = ({ userData }) => {
               </label>
               <input
                 type="email"
-                value={userData.email}
+                value={userData?.email}
                 disabled
                 className="w-full bg-surface-secondary/50 border border-border-secondary rounded-2xl px-5 py-4 text-text-muted cursor-not-allowed select-none font-semibold"
               />
@@ -138,7 +138,7 @@ const ProfileDetails = ({ userData }) => {
               <input
                 type="tel"
                 name="phone"
-                value={userData.phoneNo}
+                value={userData?.phone}
                 onChange={handleInputChange}
                 className="w-full md:w-1/2 bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold"
               />
@@ -312,15 +312,15 @@ const ProfileDetails = ({ userData }) => {
             </>
             {userData?.addresses.map((address) => (
               <div
-                key={address.id}
+                key={address?.id}
                 className="bg-surface-secondary border border-border-secondary rounded-2xl transition-all hover:border-text-primary group"
               >
                 {/* VIEW MODE */}
-                {editingAddressId !== address.id ? (
+                {editingAddressId !== address?.id ? (
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-4 p-6">
                     <div className="flex gap-4">
                       <div className="w-12 h-12 rounded-full bg-surface-primary border border-border-primary flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 transition-transform">
-                        {address.label.toLowerCase() === "home" ? (
+                        {address?.label.toLowerCase() === "home" ? (
                           <svg
                             className="w-5 h-5 text-text-primary"
                             fill="none"
@@ -353,27 +353,27 @@ const ProfileDetails = ({ userData }) => {
                       <div>
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="font-black text-xl text-text-primary">
-                            {address.label}
+                            {address?.label}
                           </h3>
-                          {address.default && (
+                          {address?.default && (
                             <span className="px-2.5 py-1 bg-surface-dark text-text-inverted rounded text-[10px] font-black uppercase tracking-widest shadow-sm">
                               Default
                             </span>
                           )}
                         </div>
                         <p className="text-text-secondary text-sm leading-relaxed font-medium">
-                          {address.street}
+                          {address?.street}
                           <br />
-                          {address.city}, {address.state} {address.zip}
+                          {address?.city}, {address?.state} {address?.zip}
                         </p>
                       </div>
                     </div>
 
                     {/* Actions (Edit / Make Default) */}
                     <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto max-md:justify-between justify-end mt-4 sm:mt-0">
-                      {!address.default ? (
+                      {!address?.default ? (
                         <button
-                          onClick={() => handleSetDefault(address.id)}
+                          onClick={() => handleSetDefault(address?.id)}
                           className="text-xs font-bold text-text-secondary hover:text-text-primary transition-colors underline underline-offset-4 decoration-border-secondary hover:decoration-text-primary"
                         >
                           Set as Default
@@ -492,14 +492,14 @@ const ProfileDetails = ({ userData }) => {
                     <div className="flex items-center mt-4 bg-surface-secondary p-4 rounded-xl border border-border-secondary">
                       <input
                         type="checkbox"
-                        id={`default-${address.id}`}
+                        id={`default-${address?.id}`}
                         name="isDefault"
                         checked={editForm.isDefault}
                         onChange={handleAddressChange}
                         className="w-5 h-5 rounded border-border-secondary bg-surface-primary text-text-primary focus:ring-text-primary focus:ring-offset-0 cursor-pointer"
                       />
                       <label
-                        htmlFor={`default-${address.id}`}
+                        htmlFor={`default-${address?.id}`}
                         className="ml-3 text-sm font-bold text-text-primary cursor-pointer"
                       >
                         Make this my default address
@@ -508,7 +508,7 @@ const ProfileDetails = ({ userData }) => {
 
                     <div className="flex items-center gap-3 pt-5 mt-2">
                       <button
-                        onClick={() => handleSaveAddress(address.id)}
+                        onClick={() => handleSaveAddress(address?.id)}
                         className="px-6 py-3 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all text-sm shadow-md active:scale-95"
                       >
                         Save Changes

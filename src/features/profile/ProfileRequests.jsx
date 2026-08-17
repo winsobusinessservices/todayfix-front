@@ -42,7 +42,7 @@ const ProfileRequests = ({ addresses, userPendingServices }) => {
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
 
   const handleDelete = (id) => {
-    setRequests(requests.filter((req) => req.id !== id));
+    setRequests(requests?.filter((req) => req.id !== id));
     setConfirmDeleteId(null);
   };
 
@@ -53,7 +53,8 @@ const ProfileRequests = ({ addresses, userPendingServices }) => {
       },
     });
   };
-
+  // console.log(userPendingServices);
+  
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center mb-6">
@@ -74,7 +75,7 @@ const ProfileRequests = ({ addresses, userPendingServices }) => {
       </div>
 
       <div className="grid gap-6">
-        {requests.map((req, i) => (
+        {requests?.map((req, i) => (
           <motion.div
             key={req.id}
             initial={{ opacity: 0, y: 10 }}
@@ -146,7 +147,7 @@ const ProfileRequests = ({ addresses, userPendingServices }) => {
           </motion.div>
         ))}
 
-        {requests.length === 0 && (
+        {requests?.length === 0 && (
           <div className="text-center py-16 bg-surface-secondary rounded-3xl border border-border-primary">
             <Search className="w-12 h-12 text-zinc-600 mx-auto mb-4 opacity-50" />
             <h3 className="text-lg font-bold text-text-primary mb-2">

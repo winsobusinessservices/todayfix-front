@@ -1,16 +1,33 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
 import SEO from "../components/seo/SEO";
+import { useMutation } from "@tanstack/react-query";
+import { forgetPassword } from "../services/userApi";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: forgetPassword,
+    onSuccess: (response) => {
+      console.log(response);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
+  if (isError) {
+    console.log(error);
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Password reset requested for:", email);
     // Add logic to send reset email here
     setIsSubmitted(true);
+    mutate(email);
   };
 
   return (

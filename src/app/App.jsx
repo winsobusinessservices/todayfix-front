@@ -16,7 +16,7 @@ function App() {
 
   return (
     <>
-      <AnimatePresence>
+      {/* <AnimatePresence>
         {isLoading && (
           <motion.div
             key="loading-screen"
@@ -32,7 +32,7 @@ function App() {
             <LoadingScreen />
           </motion.div>
         )}
-      </AnimatePresence>
+      </AnimatePresence> */}
       <AppRoutes />
     </>
   );

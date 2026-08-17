@@ -1,33 +1,74 @@
 import api from "./axiosClient";
 
-export const register = async ({ userRegisterData }) => {
-  return await api.post("/auth/register", {
-    firstName: userRegisterData.firstName,
-    lastName: userRegisterData.lastName,
-    email: userRegisterData.email,
-    password: userRegisterData.password,
-  });
+export const register = async (userRegisterData) => {
+  return await api
+    .post("/api/auth/signup/register/", userRegisterData)
+    .then((data) => data.data);
 };
 
-export const login = async ({ loginData }) => {
-  return await api.post("/auth/login", {
-    email: loginData.email,
-    password: loginData.password,
-  });
+export const verifyEmail = async (data) => {
+  return await api
+    .post("/api/auth/signup/verify-email/", {
+      uuid: data.uuid,
+      token: data.token,
+    })
+    .then((data) => data.data);
+};
+
+export const verifyOTP = async (otp) => {
+  return await api
+    .post("/api/auth/signup/verify-otp/", {
+      otp: otp,
+    })
+    .then((data) => data.data);
+};
+
+export const login = async (loginData) => {
+  return await api
+    .post("/api/auth/login/", loginData)
+    .then((data) => data.data);
+};
+
+export const logout = async (refreshToken) => {
+  return await api
+    .post("/api/auth/logout/", {
+      refresh: refreshToken,
+    })
+    .then((data) => data.data);
+};
+
+export const forgetPassword = async (email) => {
+  return await api
+    .post("/api/auth/forgot-password/", {
+      email: email,
+    })
+    .then((data) => data.data);
 };
 
 export const userDetails = async () => {
-  return await api.get("/user");
+  return await api.get("/api/auth/profile/").then((data) => data.data.data);
 };
 
+const DUMMY_URL = "http://localhost:3001";
+
 export const userServicesHistory = async () => {
-  return await api.get("/servicesHistory");
+  // return await api.get("/servicesHistory").then((data) => data.data);
+  const res = await fetch(DUMMY_URL + "/servicesHistory");
+  const data = await res.json();
+  // console.log(data);
+  return data;
 };
 
 export const userPendingServices = async () => {
-  return await api.get("/userPendingServices");
+  // return await api.get("/userPendingServices").then((data) => data.data);
+  const res = await fetch(DUMMY_URL + "/userPendingServices");
+  const data = await res.json();
+  // console.log(data);
+  return data;
 };
 
 export const userReviews = async () => {
-  return await api.get("/userReviews");
+  // return await api.get("/userReviews").then((data) => data.data);
+  const res = await fetch(DUMMY_URL + "/userReviews");
+  return await res.json();
 };

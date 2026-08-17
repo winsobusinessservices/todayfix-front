@@ -3,18 +3,23 @@ import ProfileDetails from "../features/profile/ProfileDetails";
 import ProfileServicesHistory from "../features/profile/ProfileServicesHistory";
 import ProfileReviews from "../features/profile/ProfileReviews";
 import ProfileRequests from "../features/profile/ProfileRequests";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
+  logout,
   userDetails,
   userPendingServices,
   userReviews,
   userServicesHistory,
 } from "../services/userApi";
 import { useNavigate } from "react-router";
+import { useUserStore } from "../store/userStore";
+import { popup } from "../components/pop-up/pop-up";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("requests");
   const navigate = useNavigate();
+  const refreshToken = useUserStore((state) => state.refreshToken);
+  const clearAuth = useUserStore((state) => state.clearAuth);
 
   const {
     data: userData,
@@ -24,6 +29,7 @@ const Profile = () => {
     queryKey: ["user"],
     queryFn: userDetails,
   });
+  console.log(userData);
 
   const {
     data: serviceHistory,
@@ -52,6 +58,21 @@ const Profile = () => {
     queryFn: userPendingServices,
   });
 
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: logout,
+    onSuccess: (response) => {
+      if (response.success) {
+        navigate("/");
+        clearAuth();
+        popup("Logout Successful", "You've been safely logged out.", "logout");
+      }
+    },
+  });
+
+  const handleLogout = () => {
+    mutate(refreshToken);
+  };
+
   if (
     userDataLoading ||
     serviceHistoryLoading ||
@@ -70,17 +91,23 @@ const Profile = () => {
       <div className="max-w-5xl mx-auto px-6 pt-12 md:pt-16 relative z-10">
         {/* --- Profile Header --- */}
         <div className="bg-surface-primary border border-border-primary rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 shadow-2xl shadow-black/5 mb-10 relative">
-          
           <div className="absolute top-6 right-6">
-            <button 
-              onClick={() => {
-                alert("Successfully logged out");
-                navigate("/");
-              }}
+            <button
+              onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 font-bold rounded-xl border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2.5}
+                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                />
               </svg>
               Logout
             </button>
@@ -89,7 +116,11 @@ const Profile = () => {
           <div className="relative group">
             <div className="w-36 h-36 rounded-full p-1.5 bg-border-secondary group-hover:bg-text-primary transition-colors duration-500">
               <img
-                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.firstName}&backgroundColor=transparent`}
+                src={
+                  userData.profileImage === ""
+                    ? `https://api.dicebear.com/7.x/avataaars/svg?backgroundColor=transparent`
+                    : userData.profileImage
+                }
                 alt="User Avatar"
                 className="w-full h-full rounded-full bg-surface-secondary object-cover"
               />
@@ -113,7 +144,7 @@ const Profile = () => {
 
           <div className="flex-grow text-center md:text-left">
             <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
-              {userData.firstName} {userData.lastName}
+              {userData?.firstName} {userData?.lastName}
             </h1>
             <div className="flex flex-wrap items-center justify-center md:justify-start gap-6 text-text-secondary text-sm font-semibold">
               <span className="flex items-center gap-2 bg-surface-secondary px-4 py-2 rounded-full border border-border-secondary">
@@ -136,7 +167,7 @@ const Profile = () => {
                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                {userData.addresses.find((a) => a.default)?.city ||
+                {userData?.addresses?.find((a) => a.default)?.city ||
                   "Location not set"}
               </span>
               <span className="flex items-center gap-2 bg-surface-secondary px-4 py-2 rounded-full border border-border-secondary">
@@ -153,7 +184,7 @@ const Profile = () => {
                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                   />
                 </svg>
-                Joined {userData.createdAt}
+                Joined {userData?.joinedate}
               </span>
             </div>
           </div>
@@ -184,7 +215,7 @@ const Profile = () => {
           {/* TAB 0: My Requests */}
           {activeTab === "requests" && (
             <ProfileRequests
-              addresses={userData.addresses}
+              addresses={userData?.addresses}
               userPendingServices={userPendingService}
             />
           )}

@@ -1,10 +1,12 @@
-import api from "./axiosClient";
+import axios from "axios";
+import { useUserStore } from "../store/userStore";
+import api, { API_URL } from "./axiosClient";
 
 export const setupInterceptors = () => {
   // Automatically inject bearer tokens on every request
   api.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem("token");
+      const token = useUserStore.getState().accessToken;
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -13,17 +15,51 @@ export const setupInterceptors = () => {
     (error) => Promise.reject(error),
   );
 
-  // Catch global errors (like 401 Unauthorized or 500 Server Error)
   api.interceptors.response.use(
-    (response) => response.data, // Simplify response data handling
+    (response) => response,
     async (error) => {
       const originalRequest = error.config;
-      // Basic 401 handling for token expiration
+
+      // If error is 401 and we haven't already retried this request
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        // Implement token refresh logic here
-        return api(originalRequest);
+
+        const refreshToken = useUserStore.getState().refreshToken;
+
+        if (refreshToken) {
+          try {
+            // Note: using axios directly to avoid interceptor loops
+            const response = await axios.post(
+              `${API_URL}/api/auth/token/refresh/`,
+              {
+                refresh: refreshToken,
+              },
+            );
+
+            const newAccessToken = response.data.access;
+
+            // If the backend returns a new refresh token, we save that too.
+            // Otherwise, we keep using the old one.
+            useUserStore.getState().setTokens({
+              access: newAccessToken,
+              refresh: response.data.refresh || refreshToken,
+            });
+
+            // Retry the original request with the new token
+            originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            return api(originalRequest);
+          } catch (refreshError) {
+            // If refresh fails (e.g., refresh token is expired), log the user out
+            useUserStore.getState().clearAuth();
+            // Optionally redirect to login here, but React Router usually handles this
+            // via protected routes checking `isAuthenticated`.
+          }
+        } else {
+          // No refresh token available, logout
+          useUserStore.getState().clearAuth();
+        }
       }
+
       return Promise.reject(error);
     },
   );
