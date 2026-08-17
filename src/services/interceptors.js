@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useUserStore } from "../store/userStore";
 import api, { API_URL } from "./axiosClient";
+import { refreshTokenApi } from "./userApi";
 
 export const setupInterceptors = () => {
   // Automatically inject bearer tokens on every request
@@ -28,21 +29,16 @@ export const setupInterceptors = () => {
 
         if (refreshToken) {
           try {
-            // Note: using axios directly to avoid interceptor loops
-            const response = await axios.post(
-              `${API_URL}/api/auth/token/refresh/`,
-              {
-                refresh: refreshToken,
-              },
-            );
+            // Note: using axios directly inside refreshTokenApi to avoid interceptor loops
+            const responseData = await refreshTokenApi(refreshToken);
 
-            const newAccessToken = response.data.access;
+            const newAccessToken = responseData.access;
 
             // If the backend returns a new refresh token, we save that too.
             // Otherwise, we keep using the old one.
             useUserStore.getState().setTokens({
               access: newAccessToken,
-              refresh: response.data.refresh || refreshToken,
+              refresh: responseData.refresh || refreshToken,
             });
 
             // Retry the original request with the new token

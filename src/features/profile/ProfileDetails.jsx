@@ -1,10 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createAddress, getAddresses, updateAddress, deleteAddress } from "../../services/addressApi";
+import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "motion/react";
+import { AlertCircle } from "lucide-react";
+import { updateProfile } from "../../services/userApi";
 
-const ProfileDetails = ({ userData }) => {
+const ProfileDetails = ({ userData, setUserData }) => {
+  const queryClient = useQueryClient();
   const [addAddress, setAddAddress] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [editForm, setEditForm] = useState({});
   const [isSaving, setIsSaving] = useState(false);
+  const [address, setAddress] = useState([]);
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const initialAddressForm = {
+    address_line: "",
+    locality: "",
+    city: "",
+    state: "",
+    pincode: "",
+    latitude: "",
+    longitude: "",
+    address_type: "HOME",
+    is_default: false
+  };
+  const [addressForm, setAddressForm] = useState(initialAddressForm);
   // console.log(userData);
 
   // User Profile Handlers
@@ -13,39 +34,115 @@ const ProfileDetails = ({ userData }) => {
     setUserData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const {
+    data: addresses,
+    isLoading: addressesLoading,
+    error: addressesError,
+  } = useQuery({
+    queryKey: ["addresses"],
+    queryFn: getAddresses,
+  });
+
+  useEffect(() => {
+    if (addresses) {
+      setAddress(addresses);
+    }
+  }, [addresses]);
+
+  const { mutate: addAddressMutate, isPending: isAddingAddress } = useMutation({
+    mutationFn: createAddress,
+    onSuccess: (response) => {
+      toast.success("Address added successfully");
+      setAddAddress(false);
+      setAddressForm(initialAddressForm);
+      queryClient.invalidateQueries(["addresses"]);
+    },
+    onError: () => toast.error("Failed to add address")
+  });
+
+  const { mutate: updateAddressMutate, isPending: isUpdatingAddress } = useMutation({
+    mutationFn: updateAddress,
+    onSuccess: () => {
+      toast.success("Address updated successfully");
+      setEditingAddressId(null);
+      queryClient.invalidateQueries(["addresses"]);
+    },
+    onError: () => toast.error("Failed to update address")
+  });
+
+  const { mutate: deleteAddressMutate, isPending: isDeletingAddress } = useMutation({
+    mutationFn: deleteAddress,
+    onSuccess: () => {
+      toast.success("Address deleted successfully");
+      queryClient.invalidateQueries(["addresses"]);
+    },
+    onError: () => toast.error("Failed to delete address")
+  });
+
+  const { mutate: updateProfileMutate, isPending: isUpdatingProfile, error } = useMutation({
+    mutationFn: updateProfile,
+    onSuccess: (data) => {
+      toast.success(data?.message);
+      queryClient.invalidateQueries(["user"]);
+    },
+    onError: (data) => toast.error(data?.response?.data?.message)
+  })
+
+  const handleGetCurrentLocation = (formSetter) => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          formSetter((prev) => ({
+            ...prev,
+            latitude: position.coords.latitude.toString(),
+            longitude: position.coords.longitude.toString()
+          }));
+          toast.success("Location retrieved successfully");
+        },
+        (error) => {
+          toast.error("Error getting location. Please allow location access.");
+        }
+      );
+    } else {
+      toast.error("Geolocation is not supported by your browser");
+    }
+  };
+
   const handleSaveProfile = (e) => {
     e.preventDefault();
     setIsSaving(true);
-    setTimeout(() => setIsSaving(false), 1000);
+    // setTimeout(() => setIsSaving(false), 1000);
+    console.log(userData);
+    // updateProfileMutate(userData);
+    setIsSaving(false);
   };
 
-  const handleEditClick = (address) => {
-    setEditingAddressId(address.id);
-    setEditForm({ ...address });
+  const handleEditClick = (addr) => {
+    setEditingAddressId(addr.id);
+    setEditForm({ ...addr });
   };
 
-  const handleSaveAddress = (id) => {
-    setAddresses((prev) => {
-      let updated = prev.map((addr) => (addr.id === id ? editForm : addr));
-      // If the newly edited address was set to default, remove default from others
-      if (editForm.isDefault) {
-        updated = updated.map((addr) => ({
-          ...addr,
-          isDefault: addr.id === id,
-        }));
-      }
-      return updated;
-    });
-    setEditingAddressId(null);
+  const handleSaveNewAddress = () => {
+    addAddressMutate(addressForm);
   };
 
-  const handleSetDefault = (id) => {
-    setAddresses((prev) =>
-      prev.map((addr) => ({
-        ...addr,
-        isDefault: addr.id === id,
-      })),
-    );
+  const handleSaveEditAddress = (id) => {
+    updateAddressMutate({ addressId: id, addressData: editForm });
+  };
+
+  const handleSetDefault = (addr) => {
+    updateAddressMutate({ addressId: addr.id, addressData: { ...addr, is_default: true } });
+  };
+
+  const handleDeleteAddress = (id) => {
+    setConfirmDeleteId(id);
+  };
+
+  const executeDelete = () => {
+    if (confirmDeleteId) {
+      deleteAddressMutate(confirmDeleteId);
+      setConfirmDeleteId(null);
+    }
   };
 
   const handleCancelEdit = () => {
@@ -53,9 +150,17 @@ const ProfileDetails = ({ userData }) => {
     setEditForm({});
   };
 
-  const handleAddressChange = (e) => {
+  const handleEditAddressChange = (e) => {
     const { name, value, type, checked } = e.target;
     setEditForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleNewAddressChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setAddressForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
@@ -64,12 +169,8 @@ const ProfileDetails = ({ userData }) => {
   return (
     <>
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-        {/* SECTION: Basic Info */}
         <div className="mb-14">
           <h2 className="text-2xl font-black mb-8 flex items-center gap-3 ml-0 md:ml-11">
-            {/* <span className="w-8 h-8 rounded-full bg-surface-dark text-text-inverted flex items-center justify-center text-sm">
-                    1
-                  </span> */}
             Account Settings
           </h2>
           <form
@@ -156,14 +257,9 @@ const ProfileDetails = ({ userData }) => {
         </div>
 
         <div className="w-full h-px bg-border-primary my-12"></div>
-
-        {/* SECTION: Saved Addresses */}
         <div>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-8 max-w-4xl gap-4">
             <h2 className="text-2xl font-black flex items-center gap-3 ml-0 md:ml-11">
-              {/* <span className="w-8 h-8 rounded-full bg-surface-dark text-text-inverted flex items-center justify-center text-sm">
-                      2
-                    </span> */}
               Saved Addresses
             </h2>
             <button
@@ -189,10 +285,9 @@ const ProfileDetails = ({ userData }) => {
 
           <div className="space-y-6 max-w-4xl ml-0 md:ml-11">
             <>
-              {/* Add address card */}
               {addAddress && (
                 <div className="space-y-5 animate-in fade-in duration-300 bg-surface-primary p-3 md:p-6 rounded-2xl border border-border-primary shadow-inner">
-                  <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-2 mb-4 justify-between">
                     <h3 className="font-black text-lg text-text-primary flex items-center gap-2">
                       <svg
                         className="w-5 h-5"
@@ -207,32 +302,58 @@ const ProfileDetails = ({ userData }) => {
                           d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                         />
                       </svg>
-                      Edit Address
+                      Add New Address
                     </h3>
+                    <button
+                      type="button"
+                      onClick={() => handleGetCurrentLocation(setAddressForm)}
+                      className="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-blue-200 transition-colors"
+                    >
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Use Current Location
+                    </button>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <div className="md:col-span-2">
                       <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                        Label (e.g. Home, Office)
+                        Address Type
+                      </label>
+                      <select
+                        name="address_type"
+                        value={addressForm.address_type}
+                        onChange={handleNewAddressChange}
+                        className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
+                      >
+                        <option value="HOME">Home</option>
+                        <option value="WORK">Work</option>
+                        <option value="OTHER">Other</option>
+                      </select>
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                        Address Line
                       </label>
                       <input
                         type="text"
-                        name="label"
-                        //   value={editForm.label}
-                        //   onChange={handleAddressChange}
+                        name="address_line"
+                        value={addressForm.address_line}
+                        onChange={handleNewAddressChange}
                         className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                       />
                     </div>
                     <div className="md:col-span-2">
                       <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                        Street Address
+                        Locality
                       </label>
                       <input
                         type="text"
-                        name="street"
-                        //   value={editForm.street}
-                        //   onChange={handleAddressChange}
+                        name="locality"
+                        value={addressForm.locality}
+                        onChange={handleNewAddressChange}
                         className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                       />
                     </div>
@@ -243,8 +364,8 @@ const ProfileDetails = ({ userData }) => {
                       <input
                         type="text"
                         name="city"
-                        //   value={editForm.city}
-                        //   onChange={handleAddressChange}
+                        value={addressForm.city}
+                        onChange={handleNewAddressChange}
                         className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                       />
                     </div>
@@ -256,20 +377,20 @@ const ProfileDetails = ({ userData }) => {
                         <input
                           type="text"
                           name="state"
-                          // value={editForm.state}
-                          // onChange={handleAddressChange}
+                          value={addressForm.state}
+                          onChange={handleNewAddressChange}
                           className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                         />
                       </div>
                       <div>
                         <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                          Zip Code
+                          Pincode
                         </label>
                         <input
                           type="text"
-                          name="zip"
-                          // value={editForm.zip}
-                          // onChange={handleAddressChange}
+                          name="pincode"
+                          value={addressForm.pincode}
+                          onChange={handleNewAddressChange}
                           className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                         />
                       </div>
@@ -279,14 +400,14 @@ const ProfileDetails = ({ userData }) => {
                   <div className="flex items-center mt-4 bg-surface-secondary p-4 rounded-xl border border-border-secondary">
                     <input
                       type="checkbox"
-                      // id={`default-${address.id}`}
-                      name="isDefault"
-                      // checked={editForm.isDefault}
-                      // onChange={handleAddressChange}
+                      id="new-is-default"
+                      name="is_default"
+                      checked={addressForm.is_default}
+                      onChange={handleNewAddressChange}
                       className="w-5 h-5 rounded border-border-secondary bg-surface-primary text-text-primary focus:ring-text-primary focus:ring-offset-0 cursor-pointer"
                     />
                     <label
-                      // htmlFor={`default-${address.id}`}
+                      htmlFor="new-is-default"
                       className="ml-3 text-sm font-bold text-text-primary cursor-pointer"
                     >
                       Make this my default address
@@ -295,13 +416,14 @@ const ProfileDetails = ({ userData }) => {
 
                   <div className="flex items-center gap-3 pt-5 mt-2">
                     <button
-                      onClick={() => handleSaveAddress(address.id)}
-                      className="px-6 py-3 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all text-sm shadow-md active:scale-95"
+                      onClick={handleSaveNewAddress}
+                      disabled={isAddingAddress}
+                      className="px-6 py-3 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all text-sm shadow-md active:scale-95 disabled:opacity-70"
                     >
-                      Save Changes
+                      {isAddingAddress ? "Saving..." : "Save Address"}
                     </button>
                     <button
-                      onClick={handleCancelEdit}
+                      onClick={() => setAddAddress(false)}
                       className="px-6 py-3 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-surface-primary transition-all text-sm border border-border-secondary active:scale-95"
                     >
                       Cancel
@@ -310,17 +432,16 @@ const ProfileDetails = ({ userData }) => {
                 </div>
               )}
             </>
-            {userData?.addresses.map((address) => (
+            {addresses?.data?.map((address) => (
               <div
                 key={address?.id}
                 className="bg-surface-secondary border border-border-secondary rounded-2xl transition-all hover:border-text-primary group"
               >
-                {/* VIEW MODE */}
                 {editingAddressId !== address?.id ? (
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-4 p-6">
                     <div className="flex gap-4">
                       <div className="w-12 h-12 rounded-full bg-surface-primary border border-border-primary flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 transition-transform">
-                        {address?.label.toLowerCase() === "home" ? (
+                        {address?.address_type?.toUpperCase() === "HOME" ? (
                           <svg
                             className="w-5 h-5 text-text-primary"
                             fill="none"
@@ -353,37 +474,33 @@ const ProfileDetails = ({ userData }) => {
                       <div>
                         <div className="flex items-center gap-3 mb-2">
                           <h3 className="font-black text-xl text-text-primary">
-                            {address?.label}
+                            {address?.address_type}
                           </h3>
-                          {address?.default && (
+                          {address?.is_default && (
                             <span className="px-2.5 py-1 bg-surface-dark text-text-inverted rounded text-[10px] font-black uppercase tracking-widest shadow-sm">
                               Default
                             </span>
                           )}
                         </div>
                         <p className="text-text-secondary text-sm leading-relaxed font-medium">
-                          {address?.street}
+                          {address?.address_line} {address?.locality ? `, ${address.locality}` : ''}
                           <br />
-                          {address?.city}, {address?.state} {address?.zip}
+                          {address?.city}, {address?.state} {address?.pincode}
                         </p>
                       </div>
                     </div>
-
-                    {/* Actions (Edit / Make Default) */}
-                    <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto max-md:justify-between justify-end mt-4 sm:mt-0">
-                      {!address?.default ? (
+                    <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto max-md:justify-start justify-end mt-4 sm:mt-0">
+                      {!address?.is_default && (
                         <button
-                          onClick={() => handleSetDefault(address?.id)}
+                          onClick={() => handleSetDefault(address)}
                           className="text-xs font-bold text-text-secondary hover:text-text-primary transition-colors underline underline-offset-4 decoration-border-secondary hover:decoration-text-primary"
                         >
                           Set as Default
                         </button>
-                      ) : (
-                        <span></span>
                       )}
                       <button
                         onClick={() => handleEditClick(address)}
-                        className="w-10 h-10 rounded-full bg-surface-primary hover:bg-surface-dark  hover:text-text-inverted text-text-primary flex items-center justify-center transition-all border border-border-primary shadow-sm active:scale-95"
+                        className="w-10 h-10 rounded-full bg-surface-primary  hover:bg-surface-dark  hover:text-text-inverted text-text-primary flex items-center justify-center transition-all border border-border-primary shadow-sm active:scale-95"
                         title="Edit Address"
                       >
                         <svg
@@ -400,12 +517,22 @@ const ProfileDetails = ({ userData }) => {
                           />
                         </svg>
                       </button>
+                      <button
+                        onClick={() => handleDeleteAddress(address?.id)}
+                        disabled={isDeletingAddress}
+                        className="w-10 h-10 rounded-full bg-red-50 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition-all border border-red-100 shadow-sm active:scale-95"
+                        title="Delete Address"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
                     </div>
                   </div>
                 ) : (
                   /* EDIT MODE */
                   <div className="space-y-5 animate-in fade-in duration-300 bg-surface-primary p-3 md:p-6 rounded-2xl border border-border-primary shadow-inner">
-                    <div className="flex items-center gap-2 mb-4">
+                    <div className="flex items-center gap-2 mb-4 justify-between">
                       <h3 className="font-black text-lg text-text-primary flex items-center gap-2">
                         <svg
                           className="w-5 h-5"
@@ -422,30 +549,56 @@ const ProfileDetails = ({ userData }) => {
                         </svg>
                         Edit Address
                       </h3>
+                      <button
+                        type="button"
+                        onClick={() => handleGetCurrentLocation(setEditForm)}
+                        className="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-blue-200 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Use Current Location
+                      </button>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                       <div className="md:col-span-2">
                         <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                          Label (e.g. Home, Office)
+                          Address Type
+                        </label>
+                        <select
+                          name="address_type"
+                          value={editForm.address_type}
+                          onChange={handleEditAddressChange}
+                          className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
+                        >
+                          <option value="HOME">Home</option>
+                          <option value="WORK">Work</option>
+                          <option value="OTHER">Other</option>
+                        </select>
+                      </div>
+                      <div className="md:col-span-2">
+                        <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                          Address Line
                         </label>
                         <input
                           type="text"
-                          name="label"
-                          value={editForm.label}
-                          onChange={handleAddressChange}
+                          name="address_line"
+                          value={editForm.address_line}
+                          onChange={handleEditAddressChange}
                           className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                         />
                       </div>
                       <div className="md:col-span-2">
                         <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                          Street Address
+                          Locality
                         </label>
                         <input
                           type="text"
-                          name="street"
-                          value={editForm.street}
-                          onChange={handleAddressChange}
+                          name="locality"
+                          value={editForm.locality || ""}
+                          onChange={handleEditAddressChange}
                           className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                         />
                       </div>
@@ -457,7 +610,7 @@ const ProfileDetails = ({ userData }) => {
                           type="text"
                           name="city"
                           value={editForm.city}
-                          onChange={handleAddressChange}
+                          onChange={handleEditAddressChange}
                           className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                         />
                       </div>
@@ -470,19 +623,19 @@ const ProfileDetails = ({ userData }) => {
                             type="text"
                             name="state"
                             value={editForm.state}
-                            onChange={handleAddressChange}
+                            onChange={handleEditAddressChange}
                             className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                           />
                         </div>
                         <div>
                           <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                            Zip Code
+                            Pincode
                           </label>
                           <input
                             type="text"
-                            name="zip"
-                            value={editForm.zip}
-                            onChange={handleAddressChange}
+                            name="pincode"
+                            value={editForm.pincode}
+                            onChange={handleEditAddressChange}
                             className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                           />
                         </div>
@@ -493,9 +646,9 @@ const ProfileDetails = ({ userData }) => {
                       <input
                         type="checkbox"
                         id={`default-${address?.id}`}
-                        name="isDefault"
-                        checked={editForm.isDefault}
-                        onChange={handleAddressChange}
+                        name="is_default"
+                        checked={editForm.is_default}
+                        onChange={handleEditAddressChange}
                         className="w-5 h-5 rounded border-border-secondary bg-surface-primary text-text-primary focus:ring-text-primary focus:ring-offset-0 cursor-pointer"
                       />
                       <label
@@ -508,10 +661,11 @@ const ProfileDetails = ({ userData }) => {
 
                     <div className="flex items-center gap-3 pt-5 mt-2">
                       <button
-                        onClick={() => handleSaveAddress(address?.id)}
-                        className="px-6 py-3 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all text-sm shadow-md active:scale-95"
+                        onClick={() => handleSaveEditAddress(address?.id)}
+                        disabled={isUpdatingAddress}
+                        className="px-6 py-3 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all text-sm shadow-md active:scale-95 disabled:opacity-70"
                       >
-                        Save Changes
+                        {isUpdatingAddress ? "Saving..." : "Save Changes"}
                       </button>
                       <button
                         onClick={handleCancelEdit}
@@ -526,6 +680,43 @@ const ProfileDetails = ({ userData }) => {
             ))}
           </div>
         </div>
+        <AnimatePresence>
+          {confirmDeleteId && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm border">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                className="bg-surface-primary border border-border-primary rounded-3xl p-6 max-w-sm w-full shadow-2xl"
+              >
+                <div className="flex items-center gap-3 mb-4 text-red-500">
+                  <AlertCircle size={24} />
+                  <h3 className="text-xl font-bold text-text-primary">
+                    Delete Address?
+                  </h3>
+                </div>
+                <p className="text-text-secondary text-sm mb-6 leading-relaxed">
+                  Are you sure you want to delete this address? This
+                  action cannot be undone.
+                </p>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setConfirmDeleteId(null)}
+                    className="flex-1 px-4 py-2.5 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors cursor-pointer"
+                  >
+                    No, Keep it
+                  </button>
+                  <button
+                    onClick={executeDelete}
+                    className="flex-1 px-4 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors shadow-lg cursor-pointer"
+                  >
+                    Yes, Delete
+                  </button>
+                </div>
+              </motion.div>
+            </div>
+          )}
+        </AnimatePresence>
       </div>
     </>
   );

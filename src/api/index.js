@@ -97,5 +97,5 @@ export const api = {
     });
     if (!res.ok) throw new Error("Failed to add review");
     return res.json();
-  }
+  },
 };

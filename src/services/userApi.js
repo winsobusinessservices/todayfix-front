@@ -1,4 +1,5 @@
-import api from "./axiosClient";
+import axios from "axios";
+import api, { API_URL } from "./axiosClient";
 
 export const register = async (userRegisterData) => {
   return await api
@@ -39,14 +40,28 @@ export const logout = async (refreshToken) => {
 
 export const forgetPassword = async (email) => {
   return await api
-    .post("/api/auth/forgot-password/", {
+    .post("/api/auth/password/forgot/", {
       email: email,
+    })
+    .then((data) => data.data);
+};
+
+export const refreshTokenApi = async (refreshToken) => {
+  return await axios
+    .post(`${API_URL}/api/auth/token/refresh/`, {
+      refresh: refreshToken,
     })
     .then((data) => data.data);
 };
 
 export const userDetails = async () => {
   return await api.get("/api/auth/profile/").then((data) => data.data.data);
+};
+
+export const updateProfile = async (userData) => {
+  return await api
+    .post("/api/auth/profile/update/", userData)
+    .then((data) => data.data);
 };
 
 const DUMMY_URL = "http://localhost:3001";

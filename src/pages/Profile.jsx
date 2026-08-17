@@ -3,7 +3,7 @@ import ProfileDetails from "../features/profile/ProfileDetails";
 import ProfileServicesHistory from "../features/profile/ProfileServicesHistory";
 import ProfileReviews from "../features/profile/ProfileReviews";
 import ProfileRequests from "../features/profile/ProfileRequests";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   logout,
   userDetails,
@@ -20,6 +20,11 @@ const Profile = () => {
   const navigate = useNavigate();
   const refreshToken = useUserStore((state) => state.refreshToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
+  const queryClient = useQueryClient();
+
+  const setUserData = (updater) => {
+    queryClient.setQueryData(["user"], updater);
+  };
 
   const {
     data: userData,
@@ -29,7 +34,7 @@ const Profile = () => {
     queryKey: ["user"],
     queryFn: userDetails,
   });
-  console.log(userData);
+  // console.log(userData);
 
   const {
     data: serviceHistory,
@@ -221,7 +226,7 @@ const Profile = () => {
           )}
 
           {/* TAB 1: Profile & Addresses */}
-          {activeTab === "profile" && <ProfileDetails userData={userData} />}
+          {activeTab === "profile" && <ProfileDetails userData={userData} setUserData={setUserData} />}
 
           {/* TAB 2: Service History */}
           {activeTab === "history" && (
