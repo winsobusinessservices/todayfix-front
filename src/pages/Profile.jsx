@@ -34,7 +34,6 @@ const Profile = () => {
     queryKey: ["user"],
     queryFn: userDetails,
   });
-  // console.log(userData);
 
   const {
     data: serviceHistory,
@@ -84,6 +83,8 @@ const Profile = () => {
     userReviewLoading ||
     userPendingServicesLoading
   ) {
+    console.log("userDataLoading", userDataLoading);
+    
     return <p>Loading...</p>;
   }
 
