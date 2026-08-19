@@ -28,9 +28,8 @@ const ServiceCards = ({ service }) => {
           </p>
 
           {/* Vendors List (Facepile) */}
-          <div className="mt-4 pt-3 border-t border-border-secondary flex items-center justify-between">
+          {/* <div className="mt-4 pt-3 border-t border-border-secondary flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {/* Overlapping Avatars */}
               <div className="flex -space-x-2.5">
                 {service.vendors.map((avatar, idx) => (
                   <div
@@ -45,8 +44,6 @@ const ServiceCards = ({ service }) => {
                   </div>
                 ))}
               </div>
-
-              {/* Vendor Count Text */}
               <div className="text-[10px] font-medium text-text-muted flex flex-col leading-tight">
                 <span className="font-bold text-text-primary">
                   {service.vendorCount}+
@@ -54,7 +51,7 @@ const ServiceCards = ({ service }) => {
                 Vendors
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Action Button */}

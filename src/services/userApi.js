@@ -64,8 +64,7 @@ export const updateProfile = async (userData) => {
     .then((data) => data.data);
 };
 
-const DUMMY_URL = "http://localhost:3001";
-
+// Dummy data until given.
 export const userServicesHistory = async () => {
   const service = [
     {

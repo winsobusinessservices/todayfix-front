@@ -52,7 +52,7 @@ const Profile = () => {
     queryKey: ["userReviews"],
     queryFn: userReviews,
   });
-
+  
   const {
     data: userPendingService,
     isLoading: userPendingServicesLoading,
@@ -82,9 +82,7 @@ const Profile = () => {
     serviceHistoryLoading ||
     userReviewLoading ||
     userPendingServicesLoading
-  ) {
-    console.log("userDataLoading", userDataLoading);
-    
+  ) { 
     return <p>Loading...</p>;
   }
 

@@ -34,7 +34,6 @@
       }
     ]
   },
-
   "areas": [
     {
       "id": "1",
@@ -69,7 +68,6 @@
       "name": "Bellandur"
     }
   ],
-
   "services": [
     {
       "id": "1",
@@ -166,7 +164,6 @@
       ]
     }
   ],
-
   "vendorProfile": [
     {
       "id": "1",
@@ -230,12 +227,13 @@
       "rating": "4.5",
       "reviews": "12",
       "description": "Expert residential plumber.",
-      "documents": ["url-to-aadhar.jpg"],
+      "documents": [
+        "url-to-aadhar.jpg"
+      ],
       "status": "PENDING",
       "isFeatured": false
     }
   ],
-
   "servicesHistory": [
     {
       "serviceId": 1,
@@ -243,7 +241,8 @@
       "businessName": "Sparkle Cleaners",
       "date": "1-Aug-2026",
       "price": 2500,
-      "status": "Completed"
+      "status": "Completed",
+      "id": "FACcLe0E2-o"
     },
     {
       "serviceId": 2,
@@ -251,10 +250,10 @@
       "businessName": "CoolBreeze Tech",
       "date": "15-July-2026",
       "price": 850,
-      "status": "Completed"
+      "status": "Completed",
+      "id": "4t4ECezcPhs"
     }
   ],
-
   "serviceRequests": [
     {
       "id": "1",
@@ -265,9 +264,38 @@
       "location": "Work : Block 4, Tech Park - 560066",
       "status": "BROADCASTED",
       "assignedVendorId": null
+    },
+    {
+      "customerId": 1,
+      "serviceCategory": "Interior Design & Renovation",
+      "description": "hy",
+      "budget": "444",
+      "generalLocation": "Home : 123 Cross Road - 560038",
+      "status": "PENDING_ADMIN",
+      "assignedVendorId": null,
+      "id": "5hq5WMPqER8"
+    },
+    {
+      "customerId": 1,
+      "serviceCategory": "Interior Design & Renovation",
+      "description": "gfhfghg",
+      "budget": "525",
+      "generalLocation": "Home : 123 Cross Road - 560038",
+      "status": "PENDING_ADMIN",
+      "assignedVendorId": null,
+      "id": "YfPZWLwe_Uo"
+    },
+    {
+      "customerId": 1,
+      "serviceCategory": "AC Repair",
+      "description": "sds",
+      "budget": "8587",
+      "generalLocation": "Home : 123 Cross Road - 560038",
+      "status": "PENDING_ADMIN",
+      "assignedVendorId": null,
+      "id": "e2RoFmWLw0E"
     }
   ],
-
   "bookings": [
     {
       "id": "1",
@@ -277,7 +305,6 @@
       "date": "2026-08-01T10:00:00.000Z"
     }
   ],
-
   "reviews": [
     {
       "vendorId": "1",
@@ -316,7 +343,6 @@
       "id": "CeedBsKGsgY"
     }
   ],
-
   "pendingServices": [
     {
       "serviceId": 4,
@@ -337,10 +363,10 @@
       "acceptedVendor": {
         "businessId": 1,
         "businessName": "Sparkle Cleaners"
-      }
+      },
+      "id": "lQD_R1pOXbc"
     }
   ],
-
   "userPendingServices": [
     {
       "id": "REQ-001",
@@ -371,16 +397,15 @@
       "description": "Kitchen sink pipe is leaking heavily."
     }
   ],
-
   "userReviews": [
     {
       "providerId": 1,
       "businessName": "Sparkle Cleaners",
       "rating": 5,
       "comment": "Excellent team. They were on time and left the house spotless.",
-      "date": "1-Aug-2026"
+      "date": "1-Aug-2026",
+      "id": "awEjYVAN9FY"
     }
   ],
-
   "$schema": "./node_modules/json-server/schema.json"
 }
