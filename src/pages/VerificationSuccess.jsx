@@ -47,7 +47,7 @@ const VerifictionSuccess = () => {
 
   useEffect(() => {
     mutate({
-      uuid: searchParams.get("uuid"),
+      uuid: searchParams.get("pending_registration_uuid"),
       token: searchParams.get("token"),
     });
     if (isPending) {

@@ -10,7 +10,7 @@ export const register = async (userRegisterData) => {
 export const verifyEmail = async (data) => {
   return await api
     .post("/api/auth/signup/verify-email/", {
-      uuid: data.uuid,
+      pending_registration_uuid: data.uuid,
       token: data.token,
     })
     .then((data) => data.data);
