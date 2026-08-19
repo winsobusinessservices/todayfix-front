@@ -30,6 +30,21 @@ export const login = async (loginData) => {
     .then((data) => data.data);
 };
 
+export const sendLoginOTP = async (phone) => {
+  return await api
+    .post("/api/auth/login/send-otp/", { phone })
+    .then((data) => data.data);
+};
+
+export const verifyLoginOTP = async (data) => {
+  return await api
+    .post("/api/auth/login/verify-otp/", {
+      phone: data.phone,
+      otp: data.otp,
+    })
+    .then((data) => data.data);
+};
+
 export const logout = async (refreshToken) => {
   return await api
     .post("/api/auth/logout/", {
@@ -44,6 +59,12 @@ export const forgetPassword = async (email) => {
       email: email,
     })
     .then((data) => data.data);
+};
+
+export const resetPassword = async (data) => {
+  return await api
+    .post("/api/auth/password/reset/", data)
+    .then((res) => res.data);
 };
 
 export const refreshTokenApi = async (refreshToken) => {

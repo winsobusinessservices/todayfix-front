@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import SEO from "../components/seo/SEO";
 import { useMutation } from "@tanstack/react-query";
-import { login } from "../services/userApi";
+import { login, sendLoginOTP, verifyLoginOTP } from "../services/userApi";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
 
@@ -10,9 +10,25 @@ const Login = () => {
   const navigate = useNavigate();
   const setAuthData = useUserStore((state) => state.setAuthData);
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ email: "", password: "" });
+  const [formData, setFormData] = useState({ email: "", password: "", phone: "", otp: "" });
+  const [loginMethod, setLoginMethod] = useState("email");
+  const [otpSent, setOtpSent] = useState(false);
+  const [timer, setTimer] = useState(0);
 
-  const { mutate, isPending, isError, error } = useMutation({
+  useEffect(() => {
+    let interval;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
+
+  // Email Login Mutation
+  const { mutate, isPending: isLoginPending, isError: isLoginError, error: loginError } = useMutation({
     mutationFn: login,
     onSuccess: (response) => {
       const result = response;
@@ -44,6 +60,57 @@ const Login = () => {
     },
   });
 
+  // Send OTP Mutation
+  const sendOtpMutation = useMutation({
+    mutationFn: sendLoginOTP,
+    onSuccess: (response) => {
+      if (response.success) {
+        setOtpSent(true);
+        setTimer(60);
+        popup("OTP Sent", "An OTP has been sent to your phone number.", "success");
+      } else {
+        popup("Error", "Failed to send OTP.", "error");
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      popup("Error", error?.response?.data?.message || error.message || "Failed to send OTP", "error");
+    },
+  });
+
+  // Verify OTP Mutation
+  const verifyOtpMutation = useMutation({
+    mutationFn: verifyLoginOTP,
+    onSuccess: (response) => {
+      const result = response;
+      if (result.success && result.data) {
+        setAuthData({
+          access: result.data.access,
+          refresh: result.data.refresh,
+          user: {
+            id: result.data.id,
+            uuid: result.data.uuid,
+            first_name: result.data.first_name,
+            last_name: result.data.last_name,
+            email: result.data.email,
+            phone: result.data.phone,
+            role: result.data.role,
+          },
+        });
+        popup(
+          "Login Successful",
+          "Welcome back! You've successfully logged in.",
+          "login",
+        );
+        navigate("/");
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      popup("Error", error?.response?.data?.message || error.message || "Invalid OTP", "error");
+    },
+  });
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -51,8 +118,18 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    mutate(formData);
+    if (loginMethod === "email") {
+      mutate({ email: formData.email, password: formData.password });
+    } else if (loginMethod === "phone") {
+      if (!otpSent) {
+        sendOtpMutation.mutate(formData.phone);
+      } else {
+        verifyOtpMutation.mutate({ phone: formData.phone, otp: formData.otp });
+      }
+    }
   };
+
+  const isAnyPending = isLoginPending || sendOtpMutation.isPending || verifyOtpMutation.isPending;
 
   return (
     <div className="flex font-sans bg-surface-primary justify-center items-center">
@@ -78,10 +155,10 @@ const Login = () => {
                 Please enter your details to sign in.
               </p>
 
-              {isError && (
+              {isLoginError && loginMethod === "email" && (
                 <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm font-medium">
-                  {error?.response?.data?.detail?.[0] ||
-                    error?.response?.data?.non_field_errors?.[0] ||
+                  {loginError?.response?.data?.detail?.[0] ||
+                    loginError?.response?.data?.non_field_errors?.[0] ||
                     "Invalid email or password."}
                 </div>
               )}
@@ -122,156 +199,242 @@ const Login = () => {
               </button>
             </div>
 
-            <div className="flex items-center mb-8">
-              <div className="flex-1 h-px bg-slate-200"></div>
-              <span className="px-4 text-xs text-text-muted font-semibold uppercase tracking-wider">
-                Or continue with email
-              </span>
-              <div className="flex-1 h-px bg-slate-200"></div>
+            {/* Login Method Toggle */}
+            <div className="flex p-1 bg-surface-primary rounded-xl mb-8 border border-border-primary">
+              <button
+                type="button"
+                onClick={() => {
+                  setLoginMethod("email");
+                  setOtpSent(false); // Reset OTP state when switching tabs
+                  setTimer(0);
+                }}
+                className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                  loginMethod === "email"
+                    ? "bg-surface-dark text-text-inverted shadow-sm"
+                    : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
+                }`}
+              >
+                Email
+              </button>
+              <button
+                type="button"
+                onClick={() => setLoginMethod("phone")}
+                className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                  loginMethod === "phone"
+                    ? "bg-surface-dark text-text-inverted shadow-sm"
+                    : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
+                }`}
+              >
+                Phone Number
+              </button>
             </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
-              {/* Email Input */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-bold text-text-primary">
-                  Email Address
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg
-                      className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+              {loginMethod === "email" ? (
+                <>
+                  {/* Email Input */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-bold text-text-primary">
+                      Email Address
+                    </label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg
+                          className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                          />
+                        </svg>
+                      </div>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required={loginMethod === "email"}
+                        placeholder="name@company.com"
+                        className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400"
                       />
-                    </svg>
+                    </div>
                   </div>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="name@company.com"
-                    className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400"
-                  />
-                </div>
-              </div>
 
-              {/* Password Input */}
-              <div className="space-y-1.5">
-                <label className="text-sm font-bold text-text-primary">
-                  Password
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg
-                      className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  {/* Password Input */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-bold text-text-primary">
+                      Password
+                    </label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg
+                          className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={2}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                          />
+                        </svg>
+                      </div>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        name="password"
+                        value={formData.password}
+                        onChange={handleInputChange}
+                        required={loginMethod === "email"}
+                        placeholder="••••••••"
+                        className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-12 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400 tracking-wide"
                       />
-                    </svg>
+                      {/* Toggle Password Visibility */}
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-text-muted hover:text-text-secondary focus:outline-none"
+                      >
+                        {showPassword ? (
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.543 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
                   </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    value={formData.password}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="••••••••"
-                    className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-12 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400 tracking-wide"
-                  />
-                  {/* Toggle Password Visibility */}
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-text-muted hover:text-text-secondary focus:outline-none"
-                  >
-                    {showPassword ? (
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.543 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-              </div>
 
-              {/* Remember & Forgot Password */}
-              <div className="flex items-center justify-between mt-2">
-                <div className="flex items-center">
-                  <input
-                    id="remember-me"
-                    name="remember-me"
-                    type="checkbox"
-                    className="h-4 w-4 text-text-primary focus:ring-black border-border-secondary rounded cursor-pointer"
-                  />
-                  <label
-                    htmlFor="remember-me"
-                    className="ml-2 block text-sm text-text-secondary cursor-pointer select-none"
-                  >
-                    Remember me
-                  </label>
-                </div>
-                <div className="text-sm">
-                  <Link
-                    to="/forgot-password"
-                    className="font-bold text-text-primary hover:text-text-secondary hover:underline"
-                  >
-                    Forgot password?
-                  </Link>
-                </div>
-              </div>
+                  {/* Remember & Forgot Password */}
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center">
+                      <input
+                        id="remember-me"
+                        name="remember-me"
+                        type="checkbox"
+                        className="h-4 w-4 text-text-primary focus:ring-black border-border-secondary rounded cursor-pointer"
+                      />
+                      <label
+                        htmlFor="remember-me"
+                        className="ml-2 block text-sm text-text-secondary cursor-pointer select-none"
+                      >
+                        Remember me
+                      </label>
+                    </div>
+                    <div className="text-sm">
+                      <Link
+                        to="/forgot-password"
+                        className="font-bold text-text-primary hover:text-text-secondary hover:underline"
+                      >
+                        Forgot password?
+                      </Link>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <>
+                  {/* Phone Number Input */}
+                  <div className="space-y-1.5">
+                    <label className="text-sm font-bold text-text-primary">
+                      Phone Number
+                    </label>
+                    <div className="relative group">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                        <svg className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                        </svg>
+                      </div>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone || ""}
+                        onChange={handleInputChange}
+                        required={loginMethod === "phone"}
+                        placeholder="+1 (555) 000-0000"
+                        disabled={otpSent}
+                        className={`w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400 ${otpSent ? "opacity-60 cursor-not-allowed" : ""}`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* OTP Input - Only show when OTP is sent */}
+                  {otpSent && (
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-bold text-text-primary">
+                        OTP Code
+                      </label>
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <svg className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                          </svg>
+                        </div>
+                        <input
+                          type="text"
+                          name="otp"
+                          value={formData.otp || ""}
+                          onChange={handleInputChange}
+                          required={loginMethod === "phone" && otpSent}
+                          placeholder="Enter 6-digit code"
+                          maxLength={6}
+                          className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400 tracking-widest"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => sendOtpMutation.mutate(formData.phone)}
+                          disabled={timer > 0 || sendOtpMutation.isPending}
+                          className="absolute inset-y-0 right-0 pr-4 flex items-center text-xs font-bold text-text-primary hover:text-text-secondary focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {timer > 0 ? `Resend in ${timer}s` : "Resend"}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
 
               {/* Submit Button */}
               <button
                 type="submit"
-                disabled={isPending}
+                disabled={isAnyPending}
                 className="w-full mt-6 bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {isPending ? (
+                {isAnyPending ? (
                   <>
                     <svg
                       className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
@@ -293,11 +456,11 @@ const Login = () => {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Signing In...
+                    {loginMethod === "phone" && !otpSent ? "Sending..." : "Signing In..."}
                   </>
                 ) : (
                   <>
-                    Sign In
+                    {loginMethod === "phone" && !otpSent ? "Send OTP" : "Sign In"}
                     <svg
                       className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
                       fill="none"

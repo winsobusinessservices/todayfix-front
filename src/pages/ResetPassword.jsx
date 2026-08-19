@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router";
 import SEO from "../components/seo/SEO";
+import { useMutation } from "@tanstack/react-query";
+import { resetPassword } from "../services/userApi";
+import { popup } from "../components/pop-up/pop-up";
 
 const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,8 +14,23 @@ const ResetPassword = () => {
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
-  const [token, setToken] = useSearchParams();
-  // console.log(token.get("token"));
+  const [searchParam] = useSearchParams();
+  const user_uuid = searchParam.get("user_uuid");
+  const token = searchParam.get("token");
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: resetPassword,
+    onSuccess: (response) => {
+      if (response.success || response) {
+        setIsSubmitted(true);
+        popup("Success", "Your password has been successfully reset.", "success");
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      popup("Error", error?.response?.data?.message || error?.response?.data?.detail?.[0] || "Failed to reset password.", "error");
+    },
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -22,16 +40,19 @@ const ResetPassword = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
+      popup("Error", "Passwords do not match!", "error");
       return;
     }
-    console.log("Setting new password...");
-    // Add logic to save new password here
-    setIsSubmitted(true);
+    mutate({
+      user_uuid: user_uuid,
+      token: token,
+      new_password: formData.password,
+      confirm_password: formData.confirmPassword
+    });
   };
 
   return (
-    <div className="flex mt-32 font-sans justify-center items-center">
+    <div className="flex my-32 font-sans justify-center items-center">
       <SEO
         title="Create New Password | TodayFix"
         description="Set a new password for your TodayFix account."
@@ -172,9 +193,36 @@ const ResetPassword = () => {
 
             <button
               type="submit"
-              className="w-full bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group cursor-pointer mt-6"
+              disabled={isPending}
+              className="w-full bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group cursor-pointer mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Reset Password
+              {isPending ? (
+                <>
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    ></circle>
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    ></path>
+                  </svg>
+                  Resetting Password...
+                </>
+              ) : (
+                "Reset Password"
+              )}
             </button>
           </form>
         ) : (
