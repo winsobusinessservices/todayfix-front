@@ -70,10 +70,10 @@ const VerificationPage = () => {
       {/* <div className="absolute inset-0 opacity-70 bg-[linear-gradient(to_right,#4f46e520_1px,transparent_1px),linear-gradient(to_bottom,#4f46e520_1px,transparent_1px)] bg-[size:70px_70px] " /> */}
       <div className="max-w-xl w-full px-6 flex flex-col items-center relative mt-32 p-8 rounded-xl bg-surface-secondary border border-border-primary shadow-2xl">
         <h1 className="text-3xl font-bold text-text-primary mb-3 tracking-tight">
-          Check your email
+          Check your email or message
         </h1>
         <p className="text-text-muted text-center mb-10 text-[15px] leading-relaxed">
-          Please enter the four digit verification code we sent to
+          Please enter the six digit verification code we sent to
           <br />
           <span className="font-bold text-[#1F2328]">{email}</span>
         </p>

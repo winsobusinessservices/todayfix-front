@@ -4,6 +4,8 @@ import SEO from "../components/seo/SEO";
 import { useMutation } from "@tanstack/react-query";
 import { register } from "../services/userApi";
 import { popup } from "../components/pop-up/pop-up";
+import { validatePassword } from "../utils/passwordValidator";
+import { validatePhone } from "../utils/phoneValidator";
 
 const Register = () => {
   const navigate = useNavigate();
@@ -11,6 +13,7 @@ const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
+  const [registerMethod, setRegisterMethod] = useState("email");
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -24,14 +27,14 @@ const Register = () => {
     mutationFn: register,
     onSuccess: (response) => {
       if (response.success) {
-        if (formData.phone && formData.phone.trim() !== "") {
+        if (registerMethod === "phone") {
           popup(
             "Registration Successful",
             "Please verify your phone number using the OTP sent to you.",
             "info",
           );
           navigate("/otp", {
-            state: { email: formData.email },
+            state: { phone: formData.phone },
           });
         } else {
           popup(
@@ -53,31 +56,6 @@ const Register = () => {
     }
   };
 
-  const validatePassword = (password) => {
-    const errors = [];
-    if (password.length < 8) errors.push("at least 8 characters");
-    if (!/[A-Z]/.test(password)) errors.push("one uppercase letter");
-    if (!/[0-9]/.test(password)) errors.push("one number");
-    if (!/[^A-Za-z0-9]/.test(password)) errors.push("one special character");
-    return errors;
-  };
-
-  const validatePhone = (phone) => {
-    const cleanValue = phone.replace(/[^\d]/g, "");
-    phone.replace(" ", "");
-
-    if (cleanValue.length !== 10) {
-      return ["must be exactly 10 digits"];
-    }
-
-    const indianPhoneRegex = /^[6-9]\d{9}$/;
-    if (!indianPhoneRegex.test(cleanValue)) {
-      return ["must start with 6, 7, 8, or 9."];
-    }
-
-    return [];
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     setValidationErrors({});
@@ -92,7 +70,7 @@ const Register = () => {
       errors.password = "Password must contain " + pwdErrors.join(", ") + ".";
     }
 
-    if (formData.phone.length > 0) {
+    if (registerMethod === "phone" && formData.phone.length > 0) {
       setFormData((prev) => ({ ...prev, phone: prev.phone.replace(" ", "") }));
       const phoneErrors = validatePhone(formData.phone);
       if (phoneErrors.length > 0) {
@@ -105,7 +83,14 @@ const Register = () => {
       return;
     }
 
-    mutate(formData);
+    const payload = { ...formData };
+    if (registerMethod === "email") {
+      delete payload.phone;
+    } else {
+      delete payload.email;
+    }
+
+    mutate(payload);
   };
 
   const getFieldError = (fieldName) => {
@@ -148,7 +133,7 @@ const Register = () => {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Social Logins */}
-              <div className="flex flex-col sm:flex-row gap-3 mb-8">
+              {/* <div className="flex flex-col sm:flex-row gap-3 mb-8">
                 <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-surface-primary border border-border-primary rounded-xl text-sm font-bold text-text-primary hover:bg-surface-secondary hover:border-border-secondary transition-all shadow-sm active:scale-95">
                   <svg className="w-5 h-5" viewBox="0 0 24 24">
                     <path
@@ -180,14 +165,35 @@ const Register = () => {
                   </svg>
                   Apple
                 </button>
-              </div>
+              </div> */}
 
-              <div className="flex items-center mb-8">
-                <div className="flex-1 h-px bg-slate-200"></div>
-                <span className="px-4 text-xs text-text-muted font-semibold uppercase tracking-wider">
-                  Or continue with email
-                </span>
-                <div className="flex-1 h-px bg-slate-200"></div>
+              <div className="flex p-1 bg-surface-primary rounded-xl mb-8 border border-border-primary">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRegisterMethod("email");
+                  }}
+                  className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                    registerMethod === "email"
+                      ? "bg-surface-dark text-text-inverted shadow-sm"
+                      : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
+                  }`}
+                >
+                  Email
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRegisterMethod("phone");
+                  }}
+                  className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
+                    registerMethod === "phone"
+                      ? "bg-surface-dark text-text-inverted shadow-sm"
+                      : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
+                  }`}
+                >
+                  Phone Number
+                </button>
               </div>
 
               <div className="flex gap-5 w-full">
@@ -232,67 +238,70 @@ const Register = () => {
                 </div>
               </div>
 
-              {/* Email Input */}
-              <div className="animate-fade-in-up delay-300 space-y-1.5">
-                <label className="text-sm font-bold text-text-primary">
-                  Email Address
-                </label>
-                <div className="relative group">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <svg
-                      className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
-                      />
-                    </svg>
+              {registerMethod === "email" ? (
+                /* Email Input */
+                <div className="animate-fade-in-up delay-300 space-y-1.5">
+                  <label className="text-sm font-bold text-text-primary">
+                    Email Address
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      required={registerMethod === "email"}
+                      placeholder="name@example.com"
+                      className={`w-full bg-surface-secondary/50 border ${getFieldError("email") ? "border-red-500 focus:ring-red-500/20" : "border-border-primary focus:border-black focus:ring-black/10"} text-text-primary rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-4 transition-all font-medium placeholder-slate-400`}
+                    />
                   </div>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="name@example.com"
-                    className={`w-full bg-surface-secondary/50 border ${getFieldError("email") ? "border-red-500 focus:ring-red-500/20" : "border-border-primary focus:border-black focus:ring-black/10"} text-text-primary rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:ring-4 transition-all font-medium placeholder-slate-400`}
-                  />
+                  {getFieldError("email") && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {getFieldError("email")}
+                    </p>
+                  )}
                 </div>
-                {getFieldError("email") && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {getFieldError("email")}
-                  </p>
-                )}
-              </div>
-
-              <div className="animate-fade-in-up delay-300 space-y-1.5">
-                <label className="text-sm font-bold text-text-primary">
-                  Phone Number
-                </label>
-                <div className="relative group">
-                  <div className="absolute font-semibold inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted group-focus-within:text-black transition-colors">
-                    +91
+              ) : (
+                <div className="animate-fade-in-up delay-300 space-y-1.5">
+                  <label className="text-sm font-bold text-text-primary">
+                    Phone Number
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute font-semibold inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-text-muted group-focus-within:text-black transition-colors">
+                      +91
+                    </div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleInputChange}
+                      required={registerMethod === "phone"}
+                      placeholder="12345 67890"
+                      className={`w-full bg-surface-secondary/50 border ${getFieldError("phone") ? "border-red-500 focus:ring-red-500/20" : "border-border-primary focus:border-black focus:ring-black/10"} text-text-primary rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-4 transition-all font-medium placeholder-slate-400`}
+                    />
                   </div>
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleInputChange}
-                    placeholder="12345 67890"
-                    className={`w-full bg-surface-secondary/50 border ${getFieldError("phone") ? "border-red-500 focus:ring-red-500/20" : "border-border-primary focus:border-black focus:ring-black/10"} text-text-primary rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:ring-4 transition-all font-medium placeholder-slate-400`}
-                  />
+                  {getFieldError("phone") && (
+                    <p className="text-xs text-red-500 mt-1">
+                      {getFieldError("phone")}
+                    </p>
+                  )}
                 </div>
-                {getFieldError("phone") && (
-                  <p className="text-xs text-red-500 mt-1">
-                    {getFieldError("phone")}
-                  </p>
-                )}
-              </div>
+              )}
 
               {/* Password Input */}
               <div className="animate-fade-in-up delay-400 space-y-1.5">

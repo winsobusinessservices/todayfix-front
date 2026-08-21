@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createAddress, getAddresses, updateAddress, deleteAddress } from "../../services/addressApi";
+import {
+  createAddress,
+  getAddresses,
+  updateAddress,
+  deleteAddress,
+} from "../../services/addressApi";
 import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "motion/react";
 import { AlertCircle } from "lucide-react";
 import { updateProfile } from "../../services/userApi";
+import { validatePhone } from "../../utils/phoneValidator";
 
 const ProfileDetails = ({ userData, setUserData }) => {
   const queryClient = useQueryClient();
@@ -14,21 +20,30 @@ const ProfileDetails = ({ userData, setUserData }) => {
   const [isSaving, setIsSaving] = useState(false);
   const [address, setAddress] = useState([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [validationErrors, setValidationErrors] = useState({});
+  const [initialData, setInitialData] = useState(null);
+
+  useEffect(() => {
+    if (userData && !initialData) {
+      setInitialData({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        phone: userData.phone,
+        profileImage: userData.profileImage,
+      });
+    }
+  }, [userData, initialData]);
   const initialAddressForm = {
     address_line: "",
     locality: "",
     city: "",
     state: "",
     pincode: "",
-    latitude: "",
-    longitude: "",
+    location: "",
     address_type: "HOME",
-    is_default: false
+    is_default: false,
   };
   const [addressForm, setAddressForm] = useState(initialAddressForm);
-  // console.log(userData);
-
-  // User Profile Handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setUserData((prev) => ({ ...prev, [name]: value }));
@@ -57,36 +72,49 @@ const ProfileDetails = ({ userData, setUserData }) => {
       setAddressForm(initialAddressForm);
       queryClient.invalidateQueries(["addresses"]);
     },
-    onError: () => toast.error("Failed to add address")
+    onError: () => toast.error("Failed to add address"),
   });
 
-  const { mutate: updateAddressMutate, isPending: isUpdatingAddress } = useMutation({
-    mutationFn: updateAddress,
-    onSuccess: () => {
-      toast.success("Address updated successfully");
-      setEditingAddressId(null);
-      queryClient.invalidateQueries(["addresses"]);
-    },
-    onError: () => toast.error("Failed to update address")
-  });
+  const { mutate: updateAddressMutate, isPending: isUpdatingAddress } =
+    useMutation({
+      mutationFn: updateAddress,
+      onSuccess: () => {
+        toast.success("Address updated successfully");
+        setEditingAddressId(null);
+        queryClient.invalidateQueries(["addresses"]);
+      },
+      onError: () => toast.error("Failed to update address"),
+    });
 
-  const { mutate: deleteAddressMutate, isPending: isDeletingAddress } = useMutation({
-    mutationFn: deleteAddress,
-    onSuccess: () => {
-      toast.success("Address deleted successfully");
-      queryClient.invalidateQueries(["addresses"]);
-    },
-    onError: () => toast.error("Failed to delete address")
-  });
+  const { mutate: deleteAddressMutate, isPending: isDeletingAddress } =
+    useMutation({
+      mutationFn: deleteAddress,
+      onSuccess: () => {
+        toast.success("Address deleted successfully");
+        queryClient.invalidateQueries(["addresses"]);
+      },
+      onError: () => toast.error("Failed to delete address"),
+    });
 
-  const { mutate: updateProfileMutate, isPending: isUpdatingProfile, error } = useMutation({
+  const {
+    mutate: updateProfileMutate,
+    isPending: isUpdatingProfile,
+    error,
+    isError,
+  } = useMutation({
     mutationFn: updateProfile,
     onSuccess: (data) => {
       toast.success(data?.message);
+      setInitialData({
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        phone: userData.phone,
+        profileImage: userData.profileImage,
+      });
       queryClient.invalidateQueries(["user"]);
     },
-    onError: (data) => toast.error(data?.response?.data?.message)
-  })
+    onError: (data) => toast.error(data?.response?.data?.message),
+  });
 
   const handleGetCurrentLocation = (formSetter) => {
     if ("geolocation" in navigator) {
@@ -94,14 +122,18 @@ const ProfileDetails = ({ userData, setUserData }) => {
         (position) => {
           formSetter((prev) => ({
             ...prev,
-            latitude: position.coords.latitude.toString(),
-            longitude: position.coords.longitude.toString()
+            location:
+              position.coords.latitude.toString() +
+              "," +
+              position.coords.longitude.toString(),
+            // latitude: position.coords.latitude.toString(),
+            // longitude: position.coords.longitude.toString(),
           }));
           toast.success("Location retrieved successfully");
         },
         (error) => {
           toast.error("Error getting location. Please allow location access.");
-        }
+        },
       );
     } else {
       toast.error("Geolocation is not supported by your browser");
@@ -110,11 +142,46 @@ const ProfileDetails = ({ userData, setUserData }) => {
 
   const handleSaveProfile = (e) => {
     e.preventDefault();
-    setIsSaving(true);
-    // setTimeout(() => setIsSaving(false), 1000);
-    console.log(userData);
-    // updateProfileMutate(userData);
-    setIsSaving(false);
+    const errors = {};
+
+    const phoneErrors = validatePhone(userData.phone);
+    if (phoneErrors.length > 0) {
+      errors.phone = "Phone number " + phoneErrors[0] + ".";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    } else {
+      setValidationErrors({});
+    }
+
+    const hasChanged =
+      userData.firstName !== initialData?.firstName ||
+      userData.lastName !== initialData?.lastName ||
+      userData.phone !== initialData?.phone ||
+      (userData.profileImage || "") !== (initialData?.profileImage || "");
+
+    if (!hasChanged) {
+      toast.success("No changes detected in your profile.");
+      return;
+    }
+
+    updateProfileMutate({
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      phone: userData.phone,
+      profileImage: userData.profileImage || "",
+    });
+  };
+
+  const getFieldError = (fieldName) => {
+    if (validationErrors[fieldName]) return validationErrors[fieldName];
+    if (isError && error?.response?.data?.[fieldName]) {
+      const err = error.response.data[fieldName];
+      return Array.isArray(err) ? err[0] : err;
+    }
+    return null;
   };
 
   const handleEditClick = (addr) => {
@@ -131,7 +198,10 @@ const ProfileDetails = ({ userData, setUserData }) => {
   };
 
   const handleSetDefault = (addr) => {
-    updateAddressMutate({ addressId: addr.id, addressData: { ...addr, is_default: true } });
+    updateAddressMutate({
+      addressId: addr.id,
+      addressData: { ...addr, is_default: true },
+    });
   };
 
   const handleDeleteAddress = (id) => {
@@ -243,14 +313,20 @@ const ProfileDetails = ({ userData, setUserData }) => {
                 onChange={handleInputChange}
                 className="w-full md:w-1/2 bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold"
               />
+              {getFieldError("phone") && (
+                <p className="text-xs text-red-500 mt-1">
+                  {getFieldError("phone")}
+                </p>
+              )}
             </div>
 
             <div className="pt-4">
               <button
                 type="submit"
-                className="px-8 py-4 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all active:scale-95 flex items-center gap-2 shadow-lg"
+                disabled={isUpdatingProfile}
+                className="px-8 py-4 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all active:scale-95 flex items-center gap-2 shadow-lg disabled:opacity-70"
               >
-                {isSaving ? "Saving Changes..." : "Save Profile"}
+                {isUpdatingProfile ? "Saving Changes..." : "Save Profile"}
               </button>
             </div>
           </form>
@@ -309,9 +385,24 @@ const ProfileDetails = ({ userData, setUserData }) => {
                       onClick={() => handleGetCurrentLocation(setAddressForm)}
                       className="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-blue-200 transition-colors"
                     >
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
                       </svg>
                       Use Current Location
                     </button>
@@ -483,7 +574,8 @@ const ProfileDetails = ({ userData, setUserData }) => {
                           )}
                         </div>
                         <p className="text-text-secondary text-sm leading-relaxed font-medium">
-                          {address?.address_line} {address?.locality ? `, ${address.locality}` : ''}
+                          {address?.address_line}{" "}
+                          {address?.locality ? `, ${address.locality}` : ""}
                           <br />
                           {address?.city}, {address?.state} {address?.pincode}
                         </p>
@@ -523,8 +615,18 @@ const ProfileDetails = ({ userData, setUserData }) => {
                         className="w-10 h-10 rounded-full bg-red-50 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition-all border border-red-100 shadow-sm active:scale-95"
                         title="Delete Address"
                       >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                          />
                         </svg>
                       </button>
                     </div>
@@ -554,9 +656,24 @@ const ProfileDetails = ({ userData, setUserData }) => {
                         onClick={() => handleGetCurrentLocation(setEditForm)}
                         className="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-blue-200 transition-colors"
                       >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
                         </svg>
                         Use Current Location
                       </button>
@@ -696,8 +813,8 @@ const ProfileDetails = ({ userData, setUserData }) => {
                   </h3>
                 </div>
                 <p className="text-text-secondary text-sm mb-6 leading-relaxed">
-                  Are you sure you want to delete this address? This
-                  action cannot be undone.
+                  Are you sure you want to delete this address? This action
+                  cannot be undone.
                 </p>
                 <div className="flex gap-3">
                   <button

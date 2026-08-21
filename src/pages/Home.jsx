@@ -10,6 +10,7 @@ import TestimonialSection from "../features/home/TestimonialSection";
 import BusinessCTA from "../features/home/BusinessCTA";
 import PricingComponent from "../features/pricing/PricingComponent";
 import FAQSection from "../features/home/FAQSection";
+import ServicesOffered from "../features/home/ServicesOffered";
 
 const Home = () => {
   return (
@@ -19,6 +20,7 @@ const Home = () => {
         description="Book verified local professionals for plumbing, cleaning, interior design, and more. Fast, reliable, and premium services."
       />
       <Hero />
+      <ServicesOffered/>
       <FeatureMarquee />
       <Services />
       <FeaturedSection />

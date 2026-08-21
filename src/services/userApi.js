@@ -85,6 +85,16 @@ export const updateProfile = async (userData) => {
     .then((data) => data.data);
 };
 
+export const submitBusinessApplication = async (formData) => {
+  return await api
+    .post("/api/business/applications/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((data) => data.data);
+};
+
 // Dummy data until given.
 export const userServicesHistory = async () => {
   const service = [

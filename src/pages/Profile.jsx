@@ -26,6 +26,17 @@ const Profile = () => {
     queryClient.setQueryData(["user"], updater);
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setUserData((prev) => ({ ...prev, profileImage: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const {
     data: userData,
     isLoading: userDataLoading,
@@ -129,7 +140,13 @@ const Profile = () => {
                 className="w-full h-full rounded-full bg-surface-secondary object-cover"
               />
             </div>
-            <button className="absolute bottom-2 right-2 bg-surface-dark text-text-inverted p-2.5 rounded-full hover:scale-110 transition-transform shadow-lg border border-zinc-700">
+            <label className="absolute bottom-2 right-2 bg-surface-dark text-text-inverted p-2.5 rounded-full hover:scale-110 transition-transform shadow-lg border border-zinc-700 cursor-pointer">
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageChange}
+              />
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -143,7 +160,7 @@ const Profile = () => {
                   d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
                 />
               </svg>
-            </button>
+            </label>
           </div>
 
           <div className="flex-grow text-center md:text-left">

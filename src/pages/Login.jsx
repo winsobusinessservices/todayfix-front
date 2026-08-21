@@ -10,7 +10,7 @@ const Login = () => {
   const navigate = useNavigate();
   const setAuthData = useUserStore((state) => state.setAuthData);
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({ email: "", password: "", phone: "", otp: "" });
+  const [formData, setFormData] = useState({ email: "", password: "", phone: "", otp: "", remember_me: true });
   const [loginMethod, setLoginMethod] = useState("email");
   const [otpSent, setOtpSent] = useState(false);
   const [timer, setTimer] = useState(0);
@@ -83,18 +83,19 @@ const Login = () => {
     mutationFn: verifyLoginOTP,
     onSuccess: (response) => {
       const result = response;
+      console.log(response);
       if (result.success && result.data) {
         setAuthData({
           access: result.data.access,
           refresh: result.data.refresh,
           user: {
-            id: result.data.id,
-            uuid: result.data.uuid,
-            first_name: result.data.first_name,
-            last_name: result.data.last_name,
-            email: result.data.email,
-            phone: result.data.phone,
-            role: result.data.role,
+            id: result.data.user.id,
+            uuid: result.data.user.uuid,
+            first_name: result.data.user.first_name,
+            last_name: result.data.user.last_name,
+            email: result.data.user.email,
+            phone: result.data.user.phone,
+            role: result.data.user.role,
           },
         });
         popup(
@@ -112,8 +113,8 @@ const Login = () => {
   });
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
   };
 
   const handleSubmit = (e) => {
@@ -165,7 +166,7 @@ const Login = () => {
             </div>
 
             {/* Social Logins */}
-            <div className="flex flex-col sm:flex-row gap-3 mb-8">
+            {/* <div className="flex flex-col sm:flex-row gap-3 mb-8">
               <button className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-surface-primary border border-border-primary rounded-xl text-sm font-bold text-text-primary hover:bg-surface-secondary hover:border-border-secondary transition-all shadow-sm active:scale-95">
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -197,7 +198,7 @@ const Login = () => {
                 </svg>
                 Apple
               </button>
-            </div>
+            </div> */}
 
             {/* Login Method Toggle */}
             <div className="flex p-1 bg-surface-primary rounded-xl mb-8 border border-border-primary">
@@ -345,8 +346,11 @@ const Login = () => {
                     <div className="flex items-center">
                       <input
                         id="remember-me"
-                        name="remember-me"
+                        name="remember_me"
                         type="checkbox"
+                        checked={formData.remember_me}
+                        onChange={handleInputChange}
+                        value={true}
                         className="h-4 w-4 text-text-primary focus:ring-black border-border-secondary rounded cursor-pointer"
                       />
                       <label
