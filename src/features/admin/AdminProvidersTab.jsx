@@ -115,7 +115,7 @@ export default function AdminProvidersTab() {
           <button
             key={tab}
             onClick={() => setActiveFilter(tab)}
-            className={`text-sm font-bold pb-2 border-b-2 transition-all ${activeFilter === tab ? 'text-black border-black' : 'text-zinc-400 border-transparent hover:text-black hover:border-black'}`}
+            className={`text-sm font-bold pb-2 border-b-2 transition-all ${activeFilter === tab ? 'text-text-primary border-black' : 'text-zinc-400 border-transparent hover:text-text-primary hover:border-black'}`}
           >
             {tab}
           </button>
@@ -243,7 +243,7 @@ export default function AdminProvidersTab() {
             </button>
             <button 
               onClick={handleAddProvider}
-              className="px-4 py-2 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-500/20 cursor-pointer"
+              className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
             >
               Add Provider
             </button>
@@ -335,7 +335,7 @@ export default function AdminProvidersTab() {
             <div className="p-4 bg-surface-secondary rounded-xl border border-border-primary space-y-2">
               <div className="flex justify-between items-center">
                 <span className="text-xs font-bold uppercase text-zinc-500">Trade License / Certification</span>
-                <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">Uploaded</span>
+                <span className="text-xs font-bold text-emerald-600 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-200">Uploaded</span>
               </div>
               <p className="font-medium text-sm">License No: TRD-{docsModalProvider.id}-2024</p>
               <div className="h-28 bg-zinc-200 dark:bg-zinc-700/50 rounded-lg flex items-center justify-center text-xs font-bold text-zinc-500 gap-2">
@@ -363,7 +363,7 @@ export default function AdminProvidersTab() {
               </button>
               <button 
                 onClick={handleSendMessage}
-                className="px-4 py-2 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-500/20 cursor-pointer"
+                className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
               >
                 Send Message
               </button>

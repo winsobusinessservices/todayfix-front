@@ -103,7 +103,7 @@ const AdminRequestsTab = () => {
               {selectedRequest.status === "Pending Broadcast" ? (
                 <button 
                   onClick={() => handleBroadcast(selectedRequest.id)}
-                  className="w-full py-4 text-white bg-blue-600 font-bold rounded-xl shadow-lg hover:bg-blue-700 hover:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-4 text-text-inverted bg-blue-600 font-bold rounded-xl shadow-lg hover:bg-blue-700 hover:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <RadioTower size={20} /> Broadcast to Vendors
                 </button>

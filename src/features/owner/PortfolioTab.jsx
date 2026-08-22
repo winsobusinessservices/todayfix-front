@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, X, Camera, Plus, Check } from 'lucide-react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { businessApi } from '../../services/businessApi';
+import toast from 'react-hot-toast';
 
 const INITIAL_GALLERY = [
   'https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&q=80&w=400',
@@ -8,21 +11,52 @@ const INITIAL_GALLERY = [
 ];
 
 const PortfolioTab = () => {
+  const queryClient = useQueryClient();
   const [gallery, setGallery] = useState(INITIAL_GALLERY);
   const [details, setDetails] = useState({
-    name: "AC Experts",
-    about: "Professional AC repair and servicing with over 10 years of experience. Fast, reliable, and guaranteed work."
+    name: "",
+    description: ""
   });
-  const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [profileId, setProfileId] = useState(null);
+
+  const { data: profilesData, isLoading } = useQuery({
+    queryKey: ['businessProfiles'],
+    queryFn: businessApi.getProfiles
+  });
+
+  useEffect(() => {
+    const profiles = profilesData?.results || profilesData || [];
+    if (profiles.length > 0) {
+      const profile = profiles[0];
+      setProfileId(profile.business_profile_uuid);
+      setDetails({
+        name: profile.name || "",
+        description: profile.description || ""
+      });
+    }
+  }, [profilesData]);
+
+  const { mutate: updateProfile, isPending: isSaving, isSuccess: isSaved } = useMutation({
+    mutationFn: (data) => businessApi.updateProfile(profileId, data),
+    onSuccess: () => {
+      toast.success("Profile updated successfully!");
+      queryClient.invalidateQueries(['businessProfiles']);
+      setTimeout(() => queryClient.resetQueries(['businessProfiles']), 2000); // Hack to reset isSuccess
+    },
+    onError: () => {
+      toast.error("Failed to update profile");
+    }
+  });
 
   const handleSave = () => {
-    setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
-      setIsSaved(true);
-      setTimeout(() => setIsSaved(false), 2000);
-    }, 800);
+    if (profileId) {
+      updateProfile({
+        name: details.name,
+        description: details.description
+      });
+    } else {
+      toast.error("No business profile found to update.");
+    }
   };
 
   const deleteImage = (index) => {
@@ -61,7 +95,7 @@ const PortfolioTab = () => {
               <div className="flex flex-col items-center gap-4 mb-6">
                 <div className="w-24 h-24 rounded-full bg-surface-secondary border-2 border-dashed border-border-primary flex items-center justify-center relative group cursor-pointer overflow-hidden">
                   <span className="text-2xl font-bold text-text-primary group-hover:opacity-0 transition-opacity">
-                    {details.name.substring(0,2).toUpperCase()}
+                    {details.name ? details.name.substring(0,2).toUpperCase() : "BU"}
                   </span>
                   <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                     <Camera className="text-white w-6 h-6" />
@@ -84,9 +118,10 @@ const PortfolioTab = () => {
                 <label className="block text-sm font-bold text-text-primary mb-2">About Us</label>
                 <textarea 
                   rows={4}
-                  value={details.about}
-                  onChange={(e) => setDetails({...details, about: e.target.value})}
+                  value={details.description}
+                  onChange={(e) => setDetails({...details, description: e.target.value})}
                   className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:border-text-primary transition-colors resize-none font-medium"
+                  placeholder="Describe your business..."
                 />
               </div>
 

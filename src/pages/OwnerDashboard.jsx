@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import {
   LayoutDashboard,
   CalendarCheck,
@@ -17,6 +17,10 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import Logo from "../components/brand/Logo";
+import { useMutation } from "@tanstack/react-query";
+import { logout } from "../services/userApi";
+import { useUserStore } from "../store/userStore";
+import { popup } from "../components/pop-up/pop-up";
 
 const SIDEBAR_ITEMS = [
   { id: "", label: "Overview", icon: LayoutDashboard },
@@ -33,7 +37,9 @@ const OwnerDashboard = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showMockPopup, setShowMockPopup] = useState(false); // For simulating WebSocket ping
-  const [isVerified, setIsVerified] = useState(false); // Mock lock state
+  const navigate = useNavigate();
+  const refreshToken = useUserStore((state) => state.refreshToken);
+  const clearAuth = useUserStore((state) => state.clearAuth);
 
   const logoMarkup = (
     <Link
@@ -45,6 +51,22 @@ const OwnerDashboard = () => {
       <Logo />
     </Link>
   );
+
+  const { mutate, isPending, isError, error } = useMutation({
+    mutationFn: logout,
+    onSuccess: (response) => {
+      if (response.success) {
+        navigate("/");
+        clearAuth();
+        popup("Logout Successful", "You've been safely logged out.", "logout");
+        window.location.reload();
+      }
+    },
+  });
+
+  const handleLogout = () => {
+    mutate(refreshToken);
+  };
 
   return (
     <div className="bg-surface-secondary h-screen flex overflow-hidden font-sans">
@@ -104,11 +126,8 @@ const OwnerDashboard = () => {
 
         {/* Footer Actions */}
         <div className="p-6 border-t border-border-primary">
-          <button 
-            onClick={() => {
-              alert("Successfully logged out");
-              window.location.href = "/";
-            }}
+          <button
+            onClick={handleLogout}
             className="flex items-center gap-4 px-5 py-3.5 w-full text-left text-red-500 hover:bg-red-500/10 rounded-2xl transition-colors duration-300 font-bold text-sm cursor-pointer"
           >
             <LogOut size={20} />

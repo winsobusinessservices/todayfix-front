@@ -62,52 +62,52 @@ const REQUEST_STATUS_DATA = [
 
 const STATS_BY_RANGE = {
   "24h": [
-    { label: "Total Users", value: "24,592", trend: "+0.4%", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
-    { label: "Active Users", value: "2,142", trend: "+3.1%", icon: Activity, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Total Providers", value: "3,105", trend: "+0.8%", icon: Briefcase, color: "text-purple-500", bg: "bg-purple-50" },
-    { label: "Verified Providers", value: "2,840", trend: "+0.2%", icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-50" },
-    { label: "Pending Verifications", value: "18", trend: "-12.5%", icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-50" },
-    { label: "Total Businesses", value: "482", trend: "+0.6%", icon: Store, color: "text-indigo-500", bg: "bg-indigo-50" },
+    { label: "Total Users", value: "24,592", trend: "+0.4%", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
+    { label: "Active Users", value: "2,142", trend: "+3.1%", icon: Activity, color: "text-blue-600", bg: "bg-blue-500/10" },
+    { label: "Total Providers", value: "3,105", trend: "+0.8%", icon: Briefcase, color: "text-purple-500", bg: "bg-surface-secondary0/10" },
+    { label: "Verified Providers", value: "2,840", trend: "+0.2%", icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    { label: "Pending Verifications", value: "18", trend: "-12.5%", icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-500/10" },
+    { label: "Total Businesses", value: "482", trend: "+0.6%", icon: Store, color: "text-indigo-500", bg: "bg-indigo-500/10" },
     { label: "Active Requests", value: "342", trend: "+15.2%", icon: ClipboardList, color: "text-rose-500", bg: "bg-rose-50" },
-    { label: "Completed Services", value: "1,231", trend: "+8.4%", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { label: "Total Revenue", value: "₹4.8L", trend: "+18.9%", icon: IndianRupee, color: "text-emerald-700", bg: "bg-emerald-50" },
-    { label: "Pending Payouts", value: "₹85K", trend: "-5.0%", icon: Banknote, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Completed Services", value: "1,231", trend: "+8.4%", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-500/10" },
+    { label: "Total Revenue", value: "₹4.8L", trend: "+18.9%", icon: IndianRupee, color: "text-emerald-700", bg: "bg-emerald-500/10" },
+    { label: "Pending Payouts", value: "₹85K", trend: "-5.0%", icon: Banknote, color: "text-amber-600", bg: "bg-amber-500/10" },
   ],
   "7d": [
-    { label: "Total Users", value: "24,592", trend: "+12%", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
-    { label: "Active Users", value: "8,142", trend: "+5%", icon: Activity, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Total Providers", value: "3,105", trend: "+18%", icon: Briefcase, color: "text-purple-500", bg: "bg-purple-50" },
-    { label: "Verified Providers", value: "2,840", trend: "+2%", icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-50" },
-    { label: "Pending Verifications", value: "142", trend: "-5%", icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-50" },
-    { label: "Total Businesses", value: "482", trend: "+8%", icon: Store, color: "text-indigo-500", bg: "bg-indigo-50" },
+    { label: "Total Users", value: "24,592", trend: "+12%", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
+    { label: "Active Users", value: "8,142", trend: "+5%", icon: Activity, color: "text-blue-600", bg: "bg-blue-500/10" },
+    { label: "Total Providers", value: "3,105", trend: "+18%", icon: Briefcase, color: "text-purple-500", bg: "bg-surface-secondary0/10" },
+    { label: "Verified Providers", value: "2,840", trend: "+2%", icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    { label: "Pending Verifications", value: "142", trend: "-5%", icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-500/10" },
+    { label: "Total Businesses", value: "482", trend: "+8%", icon: Store, color: "text-indigo-500", bg: "bg-indigo-500/10" },
     { label: "Active Requests", value: "1,204", trend: "+24%", icon: ClipboardList, color: "text-rose-500", bg: "bg-rose-50" },
-    { label: "Completed Services", value: "45,231", trend: "+14%", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { label: "Total Revenue", value: "₹1.4Cr", trend: "+32%", icon: IndianRupee, color: "text-emerald-700", bg: "bg-emerald-50" },
-    { label: "Pending Payouts", value: "₹4.2L", trend: "-2%", icon: Banknote, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Completed Services", value: "45,231", trend: "+14%", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-500/10" },
+    { label: "Total Revenue", value: "₹1.4Cr", trend: "+32%", icon: IndianRupee, color: "text-emerald-700", bg: "bg-emerald-500/10" },
+    { label: "Pending Payouts", value: "₹4.2L", trend: "-2%", icon: Banknote, color: "text-amber-600", bg: "bg-amber-500/10" },
   ],
   "30d": [
-    { label: "Total Users", value: "24,592", trend: "+28%", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
-    { label: "Active Users", value: "14,890", trend: "+15%", icon: Activity, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Total Providers", value: "3,105", trend: "+22%", icon: Briefcase, color: "text-purple-500", bg: "bg-purple-50" },
-    { label: "Verified Providers", value: "2,840", trend: "+8%", icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-50" },
-    { label: "Pending Verifications", value: "412", trend: "+4%", icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-50" },
-    { label: "Total Businesses", value: "482", trend: "+14%", icon: Store, color: "text-indigo-500", bg: "bg-indigo-50" },
+    { label: "Total Users", value: "24,592", trend: "+28%", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
+    { label: "Active Users", value: "14,890", trend: "+15%", icon: Activity, color: "text-blue-600", bg: "bg-blue-500/10" },
+    { label: "Total Providers", value: "3,105", trend: "+22%", icon: Briefcase, color: "text-purple-500", bg: "bg-surface-secondary0/10" },
+    { label: "Verified Providers", value: "2,840", trend: "+8%", icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    { label: "Pending Verifications", value: "412", trend: "+4%", icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-500/10" },
+    { label: "Total Businesses", value: "482", trend: "+14%", icon: Store, color: "text-indigo-500", bg: "bg-indigo-500/10" },
     { label: "Active Requests", value: "4,890", trend: "+31%", icon: ClipboardList, color: "text-rose-500", bg: "bg-rose-50" },
-    { label: "Completed Services", value: "182,400", trend: "+22%", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { label: "Total Revenue", value: "₹5.8Cr", trend: "+45%", icon: IndianRupee, color: "text-emerald-700", bg: "bg-emerald-50" },
-    { label: "Pending Payouts", value: "₹18.5L", trend: "+3%", icon: Banknote, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Completed Services", value: "182,400", trend: "+22%", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-500/10" },
+    { label: "Total Revenue", value: "₹5.8Cr", trend: "+45%", icon: IndianRupee, color: "text-emerald-700", bg: "bg-emerald-500/10" },
+    { label: "Pending Payouts", value: "₹18.5L", trend: "+3%", icon: Banknote, color: "text-amber-600", bg: "bg-amber-500/10" },
   ],
   "1y": [
-    { label: "Total Users", value: "24,592", trend: "+140%", icon: Users, color: "text-blue-500", bg: "bg-blue-50" },
-    { label: "Active Users", value: "21,450", trend: "+85%", icon: Activity, color: "text-blue-600", bg: "bg-blue-50" },
-    { label: "Total Providers", value: "3,105", trend: "+95%", icon: Briefcase, color: "text-purple-500", bg: "bg-purple-50" },
-    { label: "Verified Providers", value: "2,840", trend: "+80%", icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-50" },
-    { label: "Pending Verifications", value: "1,840", trend: "+15%", icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-50" },
-    { label: "Total Businesses", value: "482", trend: "+60%", icon: Store, color: "text-indigo-500", bg: "bg-indigo-50" },
+    { label: "Total Users", value: "24,592", trend: "+140%", icon: Users, color: "text-blue-500", bg: "bg-blue-500/10" },
+    { label: "Active Users", value: "21,450", trend: "+85%", icon: Activity, color: "text-blue-600", bg: "bg-blue-500/10" },
+    { label: "Total Providers", value: "3,105", trend: "+95%", icon: Briefcase, color: "text-purple-500", bg: "bg-surface-secondary0/10" },
+    { label: "Verified Providers", value: "2,840", trend: "+80%", icon: CheckCircle, color: "text-emerald-500", bg: "bg-emerald-500/10" },
+    { label: "Pending Verifications", value: "1,840", trend: "+15%", icon: ShieldAlert, color: "text-amber-500", bg: "bg-amber-500/10" },
+    { label: "Total Businesses", value: "482", trend: "+60%", icon: Store, color: "text-indigo-500", bg: "bg-indigo-500/10" },
     { label: "Active Requests", value: "48,200", trend: "+110%", icon: ClipboardList, color: "text-rose-500", bg: "bg-rose-50" },
-    { label: "Completed Services", value: "1,840,200", trend: "+98%", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-50" },
-    { label: "Total Revenue", value: "₹62.4Cr", trend: "+135%", icon: IndianRupee, color: "text-emerald-700", bg: "bg-emerald-50" },
-    { label: "Pending Payouts", value: "₹1.2Cr", trend: "+12%", icon: Banknote, color: "text-amber-600", bg: "bg-amber-50" },
+    { label: "Completed Services", value: "1,840,200", trend: "+98%", icon: CheckCircle, color: "text-emerald-600", bg: "bg-emerald-500/10" },
+    { label: "Total Revenue", value: "₹62.4Cr", trend: "+135%", icon: IndianRupee, color: "text-emerald-700", bg: "bg-emerald-500/10" },
+    { label: "Pending Payouts", value: "₹1.2Cr", trend: "+12%", icon: Banknote, color: "text-amber-600", bg: "bg-amber-500/10" },
   ],
 };
 
@@ -219,7 +219,7 @@ const AdminOverviewTab = () => {
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
               <span
-                className={`text-xs font-bold px-2 py-1 rounded-md ${stat.trend.startsWith("+") ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"}`}
+                className={`text-xs font-bold px-2 py-1 rounded-md ${stat.trend.startsWith("+") ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-50 text-rose-600"}`}
               >
                 {stat.trend}
               </span>
@@ -249,7 +249,7 @@ const AdminOverviewTab = () => {
                 <button
                   key={t}
                   onClick={() => setChartPeriod(t)}
-                  className={`px-3 py-1 text-xs font-bold rounded-md cursor-pointer ${t === chartPeriod ? "bg-white shadow-sm text-black" : "text-zinc-500 hover:text-black"}`}
+                  className={`px-3 py-1 text-xs font-bold rounded-md cursor-pointer ${t === chartPeriod ? "bg-surface-dark shadow-sm text-text-inverted" : "text-zinc-500 hover:text-text-primary"}`}
                 >
                   {t}
                 </button>
@@ -366,7 +366,7 @@ const AdminOverviewTab = () => {
             </h3>
             <button
               onClick={() => toast("Viewing all top performing services")}
-              className="text-sm font-bold text-purple-600 hover:underline cursor-pointer"
+              className="text-sm font-bold text-text-primary hover:underline cursor-pointer"
             >
               View All
             </button>
@@ -413,9 +413,8 @@ const AdminOverviewTab = () => {
             <h3 className="text-lg font-bold text-text-primary">
               Recent Activity
             </h3>
-            <button
-              onClick={() => toast("Viewing full activity log")}
-              className="text-sm font-bold text-purple-600 hover:underline cursor-pointer"
+            <button 
+              className="text-sm font-bold text-text-primary hover:underline cursor-pointer"
             >
               View Log
             </button>
@@ -428,7 +427,7 @@ const AdminOverviewTab = () => {
                     activity.type === "user"
                       ? "bg-blue-500"
                       : activity.type === "provider"
-                        ? "bg-purple-500"
+                        ? "bg-surface-secondary0"
                         : activity.type === "payment"
                           ? "bg-emerald-500"
                           : "bg-amber-500"

@@ -23,7 +23,7 @@ const AdminAuditLogTab = () => {
     },
     { header: "Target", accessor: "target" },
     { header: "Date & Time", accessor: "date" },
-    { header: "IP Address", accessor: "ip", render: (row) => <span className="font-mono text-xs text-zinc-500 bg-zinc-100 px-2 py-1 rounded">{row.ip}</span> },
+    { header: "IP Address", accessor: "ip", render: (row) => <span className="font-mono text-xs text-zinc-500 bg-surface-secondary px-2 py-1 rounded">{row.ip}</span> },
   ];
 
   const handleExportLogs = () => {

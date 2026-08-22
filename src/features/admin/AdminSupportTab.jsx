@@ -130,9 +130,9 @@ const AdminSupportTab = () => {
       header: "Priority", 
       accessor: "priority",
       render: (row) => {
-        let color = "text-zinc-500 bg-zinc-100";
-        if(row.priority === "Critical") color = "text-red-600 bg-red-50 font-bold";
-        if(row.priority === "High") color = "text-amber-600 bg-amber-50 font-bold";
+        let color = "text-zinc-500 bg-surface-secondary";
+        if(row.priority === "Critical") color = "text-red-600 bg-red-500/10 font-bold";
+        if(row.priority === "High") color = "text-amber-600 bg-amber-500/10 font-bold";
         return <span className={`px-2 py-1 text-xs rounded-md ${color}`}>{row.priority}</span>;
       }
     },
@@ -156,10 +156,10 @@ const AdminSupportTab = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         {[
-          { label: "Open Tickets", value: tickets.filter(t => t.status === "Open").length, color: "text-amber-600", icon: AlertTriangle, bg: "bg-amber-50" },
-          { label: "Investigating", value: tickets.filter(t => t.status === "Investigating").length, color: "text-red-600", icon: LifeBuoy, bg: "bg-red-50" },
-          { label: "Avg Resolution", value: avgResolutionTime, color: "text-blue-600", icon: MessageSquare, bg: "bg-blue-50" },
-          { label: "Resolved Today", value: tickets.filter(t => t.status === "Resolved").length, color: "text-emerald-600", icon: CheckCircle2, bg: "bg-emerald-50" },
+          { label: "Open Tickets", value: tickets.filter(t => t.status === "Open").length, color: "text-amber-600", icon: AlertTriangle, bg: "bg-amber-500/10" },
+          { label: "Investigating", value: tickets.filter(t => t.status === "Investigating").length, color: "text-red-600", icon: LifeBuoy, bg: "bg-red-500/10" },
+          { label: "Avg Resolution", value: avgResolutionTime, color: "text-blue-600", icon: MessageSquare, bg: "bg-blue-500/10" },
+          { label: "Resolved Today", value: tickets.filter(t => t.status === "Resolved").length, color: "text-emerald-600", icon: CheckCircle2, bg: "bg-emerald-500/10" },
         ].map((stat, i) => (
            <div key={i} className="bg-surface-primary border border-border-primary rounded-2xl p-5 shadow-sm flex items-center gap-4">
              <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${stat.bg}`}>
@@ -291,7 +291,7 @@ const AdminSupportTab = () => {
             </button>
             <button
               onClick={handleComposeSubmit}
-              className="px-4 py-2 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-500/20 cursor-pointer"
+              className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
             >
               Send & Create Ticket
             </button>
@@ -378,7 +378,7 @@ const AdminSupportTab = () => {
                   className={`p-3 rounded-xl max-w-[85%] ${
                     msg.isUser
                       ? "bg-surface-secondary text-text-primary mr-auto"
-                      : "bg-purple-600 text-white ml-auto"
+                      : "bg-surface-dark text-text-inverted ml-auto"
                   }`}
                 >
                   <div className="flex justify-between items-center text-xs opacity-75 mb-1 gap-2">
@@ -401,7 +401,7 @@ const AdminSupportTab = () => {
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-colors flex items-center gap-1 cursor-pointer"
+                className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl font-bold hover:bg-zinc-800 transition-colors flex items-center gap-1 cursor-pointer"
               >
                 <Send className="w-4 h-4" /> Send
               </button>

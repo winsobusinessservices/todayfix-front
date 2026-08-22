@@ -13,7 +13,11 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomDropdown from "../components/ui/CustomDropdown";
-import { api } from "../api";
+import { bookingApi } from "../services/bookingApi";
+import { serviceApi } from "../services/serviceApi";
+import { getAddresses } from "../services/addressApi";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const serviceMockData = {
   "AC Servicing & Repair": {
@@ -56,67 +60,91 @@ const getServiceDetails = (category) => {
 const RequestService = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const fallbackOptions = [
-    "Home : 123 Cross Road - 560038",
-    "Work : Block 4, Tech Park - 560066"
-  ];
 
-  const address = location.state?.addresses;
-  const options = address?.length > 0
-    ? address.map((addr) => `${addr.label} : ${addr.street.slice(0, 30)} - ${addr.zip}`)
-    : fallbackOptions;
-    
   const [step, setStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categories, setCategories] = useState(Object.keys(serviceMockData));
   const [bookingId, setBookingId] = useState("");
 
-  // Expand form data to include new fields
   const [formData, setFormData] = useState({
-    serviceCategory: "",
-    date: "",
-    time: "",
-    description: "",
-    generalLocation: options[0],
+    service_uuid: "",
+    scheduled_date: "",
+    slot_type: "",
+    notes: "",
+    address_uuid: "",
+  });
+
+  // Fetch Services
+  const { data: servicesData } = useQuery({
+    queryKey: ["services"],
+    queryFn: async () => {
+      const response = await serviceApi.getServices();
+      return response.data || response; // Handle different response formats
+    }
+  });
+  const services = Array.isArray(servicesData) ? servicesData : (servicesData?.results || []);
+  const serviceOptions = services.map(s => s.name);
+
+  // Fetch Addresses
+  const { data: addressesData } = useQuery({
+    queryKey: ["addresses"],
+    queryFn: getAddresses
+  });
+  const addresses = addressesData?.data || addressesData || [];
+  const addressOptions = addresses.map(a => `${a.address_type} : ${a.address_line.slice(0, 30)} - ${a.pincode}`);
+
+  // Create Booking Mutation
+  const { mutate: createBooking, isPending: isSubmitting } = useMutation({
+    mutationFn: bookingApi.createBooking,
+    onSuccess: (data) => {
+      setBookingId(data?.uuid || "TF-SUCCESS");
+      setStep(3);
+    },
+    onError: (error) => {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Failed to create booking");
+    }
   });
 
   useEffect(() => {
     // If coming from a specific service page, pre-fill category
     if (location.state && location.state.category) {
-      setFormData((prev) => ({
-        ...prev,
-        serviceCategory: location.state.category,
-      }));
+      const matchedService = services.find(s => s.name === location.state.category);
+      if (matchedService) {
+        setFormData((prev) => ({
+          ...prev,
+          service_uuid: matchedService.uuid || matchedService.service_uuid,
+        }));
+      }
     }
-  }, [location]);
+  }, [location, services]);
 
   const handleNext = () => setStep((prev) => prev + 1);
   const handleBack = () => setStep((prev) => prev - 1);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      
-      // Generate a mock booking ID
-      const randomId = "TF-" + Math.random().toString(36).substr(2, 6).toUpperCase();
-      setBookingId(randomId);
-      
-      setStep(3); // Success step
-    } catch (error) {
-      console.error("Failed to submit request", error);
-    } finally {
-      setIsSubmitting(false);
+    if (!formData.service_uuid || !formData.address_uuid || !formData.scheduled_date || !formData.slot_type) {
+      toast.error("Please fill all required fields");
+      return;
     }
+    createBooking({
+      service_uuid: formData.service_uuid,
+      address_uuid: formData.address_uuid,
+      scheduled_date: formData.scheduled_date,
+      slot_type: formData.slot_type,
+      notes: formData.notes
+    });
   };
 
   const selectedServiceDetails = useMemo(() => {
-    if (!formData.serviceCategory) return null;
-    return getServiceDetails(formData.serviceCategory);
-  }, [formData.serviceCategory]);
+    if (!formData.service_uuid || services.length === 0) return null;
+    const service = services.find(s => (s.uuid || s.service_uuid) === formData.service_uuid);
+    if (!service) return null;
+    return {
+      name: service.name,
+      image: service.image || getServiceDetails(service.name).image,
+      startingPrice: service.price ? `Rs. ${service.price}` : getServiceDetails(service.name).startingPrice,
+    };
+  }, [formData.service_uuid, services]);
 
   return (
     <div className="min-h-screen bg-surface-secondary text-text-primary py-8 md:py-12 px-4 md:px-6 font-sans">
@@ -166,7 +194,7 @@ const RequestService = () => {
                 Booking Confirmed!
               </h2>
               <p className="text-text-secondary text-lg mb-8 max-w-md mx-auto">
-                Your request for <span className="font-bold text-text-primary">{formData.serviceCategory}</span> has been successfully placed.
+                Your request for <span className="font-bold text-text-primary">{selectedServiceDetails?.name}</span> has been successfully placed.
               </p>
               
               <div className="bg-surface-secondary rounded-2xl p-6 mb-8 border border-border-primary flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16">
@@ -177,7 +205,7 @@ const RequestService = () => {
                 <div className="hidden md:block w-px h-12 bg-border-primary"></div>
                 <div>
                   <p className="text-xs text-text-muted uppercase tracking-wider font-bold mb-1">Scheduled For</p>
-                  <p className="text-lg font-bold text-text-primary">{formData.date} at {formData.time}</p>
+                  <p className="text-lg font-bold text-text-primary">{formData.scheduled_date} • {formData.slot_type}</p>
                 </div>
               </div>
 
@@ -217,9 +245,14 @@ const RequestService = () => {
                           Select Service Type
                         </label>
                         <CustomDropdown
-                          options={categories}
-                          value={formData.serviceCategory}
-                          onChange={(val) => setFormData({ ...formData, serviceCategory: val })}
+                          options={serviceOptions}
+                          value={selectedServiceDetails?.name || ""}
+                          onChange={(val) => {
+                            const matched = services.find(s => s.name === val);
+                            if (matched) {
+                              setFormData({ ...formData, service_uuid: matched.uuid || matched.service_uuid });
+                            }
+                          }}
                           placeholder="Choose a service"
                         />
                       </div>
@@ -235,25 +268,29 @@ const RequestService = () => {
                             <input 
                               type="date"
                               required
-                              value={formData.date}
-                              onChange={(e) => setFormData({...formData, date: e.target.value})}
+                              value={formData.scheduled_date}
+                              onChange={(e) => setFormData({...formData, scheduled_date: e.target.value})}
                               className="w-full bg-surface-secondary border border-border-primary rounded-xl py-3 pl-12 pr-4 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors"
                             />
                           </div>
                         </div>
                         <div>
                           <label className="block text-sm font-bold text-text-secondary mb-3">
-                            Select Time
+                            Select Slot Type
                           </label>
                           <div className="relative">
                             <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
-                            <input 
-                              type="time"
+                            <select 
                               required
-                              value={formData.time}
-                              onChange={(e) => setFormData({...formData, time: e.target.value})}
-                              className="w-full bg-surface-secondary border border-border-primary rounded-xl py-3 pl-12 pr-4 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors"
-                            />
+                              value={formData.slot_type}
+                              onChange={(e) => setFormData({...formData, slot_type: e.target.value})}
+                              className="w-full bg-surface-secondary border border-border-primary rounded-xl py-3 pl-12 pr-4 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors appearance-none"
+                            >
+                              <option value="" disabled>Select a slot</option>
+                              <option value="MORNING">Morning (9 AM - 12 PM)</option>
+                              <option value="AFTERNOON">Afternoon (12 PM - 4 PM)</option>
+                              <option value="EVENING">Evening (4 PM - 8 PM)</option>
+                            </select>
                           </div>
                         </div>
                       </div>
@@ -265,8 +302,8 @@ const RequestService = () => {
                         </label>
                         <textarea
                           rows={4}
-                          value={formData.description}
-                          onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                          value={formData.notes}
+                          onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                           placeholder="Provide any details that might help the professional (e.g. 'AC making loud noise', '2 BHK full cleaning')"
                           className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:border-text-primary transition-colors resize-none font-medium"
                         />
@@ -275,7 +312,7 @@ const RequestService = () => {
 
                     <button
                       onClick={handleNext}
-                      disabled={!formData.serviceCategory || !formData.date || !formData.time}
+                      disabled={!formData.service_uuid || !formData.scheduled_date || !formData.slot_type}
                       className="w-full py-4 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md flex justify-center items-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
                     >
                       Continue to Address <ArrowRight size={20} />
@@ -304,9 +341,18 @@ const RequestService = () => {
                           </label>
                           <div className="bg-surface-secondary p-2 rounded-xl border border-border-primary">
                             <CustomDropdown
-                              options={options}
-                              value={formData.generalLocation}
-                              onChange={(val) => setFormData({ ...formData, generalLocation: val })}
+                              options={addressOptions}
+                              value={
+                                addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid)
+                                  ? `${addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid).address_type} : ${addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid).address_line.slice(0, 30)} - ${addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid).pincode}`
+                                  : ""
+                              }
+                              onChange={(val) => {
+                                const matched = addresses.find(a => `${a.address_type} : ${a.address_line.slice(0, 30)} - ${a.pincode}` === val);
+                                if (matched) {
+                                  setFormData({ ...formData, address_uuid: matched.uuid || matched.id || matched.add_uuid });
+                                }
+                              }}
                               icon={<MapPin className="h-5 w-5 text-zinc-500" />}
                               variant="transparent"
                             />
@@ -322,7 +368,7 @@ const RequestService = () => {
                     <form onSubmit={handleSubmit}>
                       <button
                         type="submit"
-                        disabled={isSubmitting || !formData.generalLocation}
+                        disabled={isSubmitting || !formData.address_uuid}
                         className="w-full py-4 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-lg flex justify-center items-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
                       >
                         {isSubmitting ? (
@@ -345,7 +391,7 @@ const RequestService = () => {
                   {selectedServiceDetails ? (
                     <img 
                       src={selectedServiceDetails.image} 
-                      alt={formData.serviceCategory} 
+                      alt={selectedServiceDetails.name} 
                       className="w-full h-full object-cover"
                     />
                   ) : (
@@ -357,7 +403,7 @@ const RequestService = () => {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                   <div className="absolute bottom-4 left-4 right-4 text-white">
                     <h3 className="text-xl font-extrabold tracking-tight truncate shadow-sm">
-                      {formData.serviceCategory || "Booking Summary"}
+                      {selectedServiceDetails?.name || "Booking Summary"}
                     </h3>
                   </div>
                 </div>
@@ -377,21 +423,23 @@ const RequestService = () => {
                       <Calendar className="w-5 h-5 text-zinc-400 mt-0.5 shrink-0" />
                       <div>
                         <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Date</p>
-                        <p className="font-semibold text-text-primary text-sm">{formData.date || "Not selected"}</p>
+                        <p className="font-semibold text-text-primary text-sm">{formData.scheduled_date || "Not selected"}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <Clock className="w-5 h-5 text-zinc-400 mt-0.5 shrink-0" />
                       <div>
                         <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Time</p>
-                        <p className="font-semibold text-text-primary text-sm">{formData.time || "Not selected"}</p>
+                        <p className="font-semibold text-text-primary text-sm">{formData.slot_type || "Not selected"}</p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 text-zinc-400 mt-0.5 shrink-0" />
                       <div>
                         <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Location</p>
-                        <p className="font-semibold text-text-primary text-sm line-clamp-2">{formData.generalLocation}</p>
+                        <p className="font-semibold text-text-primary text-sm line-clamp-2">
+                          {addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid)?.locality || "Not selected"}
+                        </p>
                       </div>
                     </div>
                   </div>

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomDropdown from "./CustomDropdown";
 import { ratings } from "../../data/collectedData";
+import { categoryApi } from "../../services/categoryApi";
 import { api } from "../../api";
 
 const AdvancedSearch = () => {
@@ -19,7 +20,7 @@ const AdvancedSearch = () => {
     const fetchData = async () => {
       try {
         const [servicesRes, areasRes] = await Promise.all([
-          api.getServices(),
+          categoryApi.getCategories(),
           api.getAreas()
         ]);
         setServicesData(servicesRes);

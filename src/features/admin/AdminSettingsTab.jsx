@@ -27,7 +27,7 @@ const AdminSettingsTab = () => {
 
   // Security & Roles State
   const [roles, setRoles] = useState([
-    { id: "1", name: "Super Admin", description: "Full access to all platform settings and financials.", users: 3, color: "text-purple-600" },
+    { id: "1", name: "Super Admin", description: "Full access to all platform settings and financials.", users: 3, color: "text-text-primary" },
     { id: "2", name: "Operations Admin", description: "Can manage providers, users, and disputes. No financial access.", users: 12, color: "text-blue-600" },
     { id: "3", name: "Finance Admin", description: "Access to payments, payouts, and subscriptions only.", users: 5, color: "text-emerald-600" },
   ]);
@@ -95,7 +95,7 @@ const AdminSettingsTab = () => {
       name: newRoleName,
       description: newRoleDesc || "Custom administrative role",
       users: 0,
-      color: "text-purple-600",
+      color: "text-text-primary",
     };
     setRoles([...roles, newRole]);
     setIsAddRoleOpen(false);
@@ -194,11 +194,11 @@ const AdminSettingsTab = () => {
                 onClick={() => setActiveTab(section.id)}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all font-bold text-sm cursor-pointer ${
                   isActive
-                    ? "bg-purple-600 text-white shadow-md shadow-purple-500/20"
+                    ? "bg-surface-dark text-text-inverted shadow-md shadow-black/20"
                     : "text-zinc-500 hover:text-text-primary hover:bg-surface-secondary"
                 }`}
               >
-                <Icon size={18} className={isActive ? "text-white" : "text-zinc-400"} />
+                <Icon size={18} className={isActive ? "text-text-inverted" : "text-zinc-400"} />
                 {section.label}
               </button>
             );
@@ -272,9 +272,9 @@ const AdminSettingsTab = () => {
                       onChange={handleChange}
                       className="sr-only peer" 
                     />
-                    <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600 transition-colors"></div>
+                    <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-primary after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-surface-dark transition-colors"></div>
                   </div>
-                  <span className="text-sm font-bold text-text-primary group-hover:text-purple-600 transition-colors">Enable Maintenance Mode</span>
+                  <span className="text-sm font-bold text-text-primary group-hover:text-text-primary transition-colors">Enable Maintenance Mode</span>
                 </label>
               </div>
             </div>
@@ -307,7 +307,7 @@ const AdminSettingsTab = () => {
                   <tbody className="divide-y divide-border-secondary">
                     {roles.map((r) => (
                       <tr key={r.id}>
-                        <td className={`px-4 py-4 font-bold ${r.color || "text-purple-600"}`}>{r.name}</td>
+                        <td className={`px-4 py-4 font-bold ${r.color || "text-text-primary"}`}>{r.name}</td>
                         <td className="px-4 py-4 text-sm text-text-secondary">{r.description}</td>
                         <td className="px-4 py-4 font-medium">{r.users}</td>
                       </tr>
@@ -394,7 +394,7 @@ const AdminSettingsTab = () => {
 
               <button 
                 type="submit" 
-                className="px-5 py-2.5 bg-purple-600 text-white font-bold rounded-xl text-sm hover:bg-purple-700 transition-colors cursor-pointer"
+                className="px-5 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl text-sm hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 Save Notification Settings
               </button>
@@ -410,7 +410,7 @@ const AdminSettingsTab = () => {
                 </div>
                 <button 
                   onClick={() => setIsAddKeyOpen(true)} 
-                  className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-bold hover:bg-purple-700 transition-colors cursor-pointer flex items-center gap-2"
+                  className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 transition-colors cursor-pointer flex items-center gap-2"
                 >
                   <Plus className="w-4 h-4" /> Generate New Key
                 </button>
@@ -432,12 +432,12 @@ const AdminSettingsTab = () => {
                       <tr key={key.id}>
                         <td className="px-4 py-4 font-bold text-text-primary">{key.name}</td>
                         <td className="px-4 py-4 font-mono text-xs text-zinc-600">{key.key}</td>
-                        <td className="px-4 py-4 text-xs font-bold text-purple-600">{key.environment}</td>
+                        <td className="px-4 py-4 text-xs font-bold text-text-primary">{key.environment}</td>
                         <td className="px-4 py-4 text-xs text-zinc-500">{key.created}</td>
                         <td className="px-4 py-4 text-right">
                           <button 
                             onClick={() => handleDeleteApiKey(key.id)} 
-                            className="p-1.5 text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                            className="p-1.5 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
                             title="Revoke Key"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -516,7 +516,7 @@ const AdminSettingsTab = () => {
 
               <button 
                 type="submit" 
-                className="px-5 py-2.5 bg-purple-600 text-white font-bold rounded-xl text-sm hover:bg-purple-700 transition-colors cursor-pointer"
+                className="px-5 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl text-sm hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 Save Billing Settings
               </button>
@@ -575,7 +575,7 @@ const AdminSettingsTab = () => {
 
               <button 
                 type="submit" 
-                className="px-5 py-2.5 bg-purple-600 text-white font-bold rounded-xl text-sm hover:bg-purple-700 transition-colors cursor-pointer"
+                className="px-5 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl text-sm hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 Save Localization Preferences
               </button>
@@ -600,7 +600,7 @@ const AdminSettingsTab = () => {
             </button>
             <button
               onClick={handleAddRole}
-              className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-bold hover:bg-purple-700 cursor-pointer"
+              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer"
             >
               Create Role
             </button>
@@ -647,7 +647,7 @@ const AdminSettingsTab = () => {
             </button>
             <button
               onClick={handleAddApiKey}
-              className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-bold hover:bg-purple-700 cursor-pointer"
+              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer"
             >
               Generate Key
             </button>

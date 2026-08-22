@@ -46,7 +46,7 @@ const AdminPaymentsTab = () => {
       render: (row) => (
         <div>
           <p className="font-bold text-text-primary">{row.amount}</p>
-          <p className="text-[10px] uppercase font-bold text-purple-600">Fee: {row.fee}</p>
+          <p className="text-[10px] uppercase font-bold text-text-primary">Fee: {row.fee}</p>
         </div>
       )
     },
@@ -113,7 +113,7 @@ const AdminPaymentsTab = () => {
         {[
           { label: "Total Volume", value: "₹42.5L", color: "text-blue-600" },
           { label: "Successful", value: "34.2L", color: "text-emerald-600" },
-          { label: "Platform Fees", value: "₹3.4L", color: "text-purple-600" },
+          { label: "Platform Fees", value: "₹3.4L", color: "text-text-primary" },
           { label: "Refunded", value: "₹1.2L", color: "text-amber-600" },
         ].map((stat, i) => (
            <div key={i} className="bg-surface-primary border border-border-primary rounded-2xl p-5 shadow-sm">
@@ -153,7 +153,7 @@ const AdminPaymentsTab = () => {
               {selectedPayment.status !== "Refunded" && (
                 <button
                   onClick={handleRefund}
-                  className="px-4 py-2 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors cursor-pointer"
+                  className="px-4 py-2 bg-red-600 text-text-inverted font-bold rounded-xl hover:bg-red-700 transition-colors cursor-pointer"
                 >
                   Refund Payment
                 </button>
@@ -192,7 +192,7 @@ const AdminPaymentsTab = () => {
               </div>
               <div>
                 <p className="text-xs text-zinc-400 font-bold uppercase">Platform Fee</p>
-                <p className="font-semibold text-purple-600">{selectedPayment.fee}</p>
+                <p className="font-semibold text-text-primary">{selectedPayment.fee}</p>
               </div>
             </div>
           </div>

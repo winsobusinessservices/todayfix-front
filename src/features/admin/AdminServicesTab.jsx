@@ -1,350 +1,455 @@
 import React, { useState } from "react";
-import { DataTable, StatusBadge, AdminModal } from "../../components/ui/AdminShared";
+import {
+  DataTable,
+  StatusBadge,
+  AdminModal,
+} from "../../components/ui/AdminShared";
+import { FolderTree, Plus, Settings } from "lucide-react";
 import toast from "react-hot-toast";
-import { Plus } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { categoryApi } from "../../services/categoryApi";
+import CustomDropdown from "../../components/ui/CustomDropdown";
 
-const MOCK_CATEGORIES = [
-  "Maintenance",
-  "Technical",
-  "Sanitation",
-  "Cleaning",
-  "Plumbing",
-  "Electrical",
-  "General",
-];
+const AdminServicesTab = () => {
+  const queryClient = useQueryClient();
+  const [selectedCategoryUuid, setSelectedCategoryUuid] = useState("");
 
-const MOCK_DATA = [
-  {
-    id: "SRV-001",
-    serviceName: "Home Cleaning",
-    category: "Maintenance",
-    price: "₹1,500",
-    providers: 12,
-    requests: 145,
-    revenue: "₹45,000",
-    rating: 4.8,
-    status: "Active",
-    created: "2026-01-15",
-  },
-  {
-    id: "SRV-002",
-    serviceName: "Electrical Repairs",
-    category: "Technical",
-    price: "₹800",
-    providers: 8,
-    requests: 89,
-    revenue: "₹32,500",
-    rating: 4.5,
-    status: "Active",
-    created: "2026-02-10",
-  },
-  {
-    id: "SRV-003",
-    serviceName: "Plumbing Services",
-    category: "Maintenance",
-    price: "₹1,200",
-    providers: 15,
-    requests: 210,
-    revenue: "₹58,200",
-    rating: 4.9,
-    status: "Active",
-    created: "2026-03-05",
-  },
-  {
-    id: "SRV-004",
-    serviceName: "Appliance Repair",
-    category: "Technical",
-    price: "₹950",
-    providers: 5,
-    requests: 42,
-    revenue: "₹18,900",
-    rating: 4.2,
-    status: "Pending",
-    created: "2026-07-20",
-  },
-  {
-    id: "SRV-005",
-    serviceName: "Pest Control",
-    category: "Sanitation",
-    price: "₹2,000",
-    providers: 3,
-    requests: 15,
-    revenue: "₹8,400",
-    rating: 4.7,
-    status: "Inactive",
-    created: "2026-05-12",
-  },
-];
-
-const columns = [
-  { header: "Service Name", accessor: "serviceName" },
-  { header: "Category", accessor: "category" },
-  { header: "Price", accessor: "price", render: (row) => row.price || "₹1,000" },
-  { header: "Providers", accessor: "providers" },
-  { header: "Requests", accessor: "requests" },
-  { header: "Revenue", accessor: "revenue" },
-  { header: "Rating", accessor: "rating" },
-  {
-    header: "Status",
-    accessor: "status",
-    render: (row) => <StatusBadge status={row.status} />,
-  },
-  { header: "Created", accessor: "created" },
-];
-
-export default function AdminServicesTab() {
-  const [data, setData] = useState(MOCK_DATA);
   const [selectedRow, setSelectedRow] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+  const [newSubcategory, setNewSubcategory] = useState({
+    name: "",
+    description: "",
+    icon: "",
+    is_active: true,
+  });
+
   const [isEditing, setIsEditing] = useState(false);
-  const [editForm, setEditForm] = useState({ serviceName: "", category: "Maintenance", price: "" });
-  const [newService, setNewService] = useState({ serviceName: "", category: "Maintenance", price: "₹1,000" });
+  const [editSubcategory, setEditSubcategory] = useState({
+    name: "",
+    description: "",
+    icon: "",
+    is_active: true,
+  });
 
-  const handleAddService = (e) => {
-    e?.preventDefault();
-    if (!newService.serviceName.trim()) {
-      toast.error("Please enter a service name");
-      return;
-    }
-
-    const serviceObj = {
-      id: `SRV-${String(data.length + 1).padStart(3, "0")}`,
-      serviceName: newService.serviceName.trim(),
-      category: newService.category || "Maintenance",
-      price: newService.price.trim() || "₹1,000",
-      providers: 0,
-      requests: 0,
-      revenue: "₹0",
-      rating: 5.0,
-      status: "Active",
-      created: new Date().toISOString().split("T")[0],
-    };
-
-    setData((prev) => [...prev, serviceObj]);
-    setNewService({ serviceName: "", category: "Maintenance", price: "₹1,000" });
-    setIsAddModalOpen(false);
-    toast.success(`Service "${serviceObj.serviceName}" added successfully!`);
+  const nameToSlug = (name) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9]/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-|-$/g, "");
   };
 
-  const handleSaveEdit = (e) => {
+  // 1. Fetch all categories for the dropdown
+  const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ["adminCategories"],
+    queryFn: categoryApi.getCategories,
+  });
+
+  const categories = categoriesData?.data || [];
+
+  // 2. Fetch subcategories for the selected category
+  const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
+    useQuery({
+      queryKey: ["adminSubcategories", selectedCategoryUuid],
+      queryFn: () => categoryApi.getSubcategories(selectedCategoryUuid),
+      enabled: !!selectedCategoryUuid,
+    });
+
+  const subcategories = subcategoriesData || [];
+
+  // 3. Mutations
+  const { mutate: createSubcategory, isPending: isCreating } = useMutation({
+    mutationFn: (data) =>
+      categoryApi.createSubcategory(selectedCategoryUuid, data),
+    onSuccess: () => {
+      toast.success("Subcategory added successfully!");
+      queryClient.invalidateQueries([
+        "adminSubcategories",
+        selectedCategoryUuid,
+      ]);
+      setNewSubcategory({
+        name: "",
+        description: "",
+        icon: "",
+        is_active: true,
+      });
+      setIsAddModalOpen(false);
+    },
+    onError: () => toast.error("Failed to create subcategory"),
+  });
+
+  const { mutate: updateSubcategory, isPending: isUpdating } = useMutation({
+    mutationFn: ({ uuid, data }) => categoryApi.updateSubcategory(uuid, data),
+    onSuccess: () => {
+      toast.success("Subcategory updated successfully!");
+      queryClient.invalidateQueries([
+        "adminSubcategories",
+        selectedCategoryUuid,
+      ]);
+      setIsEditing(false);
+      setIsModalOpen(false);
+    },
+    onError: () => toast.error("Failed to update subcategory"),
+  });
+
+  const columns = [
+    {
+      header: "Subcategory",
+      accessor: "name",
+      render: (row) => (
+        <div>
+          <p className="font-bold text-text-primary flex items-center gap-2">
+            {row.icon ? (
+              <span className="text-purple-500 w-4 h-4 flex items-center justify-center text-xs">
+                {row.icon}
+              </span>
+            ) : (
+              <FolderTree className="w-4 h-4 text-purple-500" />
+            )}
+            {row.name}
+          </p>
+          <p
+            className="text-xs text-text-secondary w-64 truncate"
+            title={row.description}
+          >
+            {row.description}
+          </p>
+        </div>
+      ),
+    },
+    {
+      header: "Category Name",
+      accessor: "category_name",
+      render: (row) => (
+        <span className="text-sm font-medium text-text-primary">
+          {row.category_name}
+        </span>
+      ),
+    },
+    {
+      header: "Status",
+      accessor: "is_active",
+      render: (row) => (
+        <StatusBadge status={row.is_active ? "Active" : "Inactive"} />
+      ),
+    },
+  ];
+
+  const handleAddSubcategory = (e) => {
     e?.preventDefault();
-    if (!editForm.serviceName.trim()) {
-      toast.error("Please enter a service name");
+    if (!newSubcategory.name.trim()) {
+      toast.error("Please enter a subcategory name");
       return;
     }
 
-    const updatedRow = {
-      ...selectedRow,
-      serviceName: editForm.serviceName.trim(),
-      category: editForm.category,
-      price: editForm.price.trim(),
-    };
+    if (!selectedCategoryUuid) {
+      toast.error("Please select a category first");
+      return;
+    }
 
-    setData((prev) =>
-      prev.map((item) => (item.id === selectedRow.id ? updatedRow : item))
-    );
-    setSelectedRow(updatedRow);
-    setIsEditing(false);
-    toast.success(`Service "${updatedRow.serviceName}" updated successfully!`);
+    createSubcategory({
+      name: newSubcategory.name.trim(),
+      slug: nameToSlug(newSubcategory.name.trim()),
+      description: newSubcategory.description.trim(),
+      icon: newSubcategory.icon.trim(),
+      is_active: newSubcategory.is_active,
+    });
+  };
+
+  const handleSaveEditSubcategory = (e) => {
+    e?.preventDefault();
+    if (!editSubcategory.name.trim()) {
+      toast.error("Please enter a subcategory name");
+      return;
+    }
+
+    updateSubcategory({
+      uuid: selectedRow.subCat_uuid,
+      data: {
+        name: editSubcategory.name.trim(),
+        slug: nameToSlug(editSubcategory.name.trim()),
+        description: editSubcategory.description.trim(),
+        icon: editSubcategory.icon.trim(),
+        is_active: editSubcategory.is_active,
+      },
+    });
   };
 
   return (
-    <div className="p-6 animate-in fade-in duration-500 bg-white border border-zinc-200 rounded-xl shadow-sm">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold text-zinc-900">
-          Services Management
-        </h2>
-        <button
-          onClick={() => setIsAddModalOpen(true)}
-          className="flex items-center gap-2 bg-zinc-900 text-white px-4 py-2 rounded-lg hover:bg-zinc-700 transition-colors text-sm font-medium cursor-pointer"
-        >
-          <Plus className="w-4 h-4" /> Add Service
-        </button>
+    <div className="space-y-6 animate-in fade-in duration-500 pb-10">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-black text-text-primary tracking-tight">
+            Subcategory Management
+          </h2>
+          <p className="text-text-secondary font-medium mt-1">
+            Organize and manage subcategories for a specific category.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => toast("Subcategory settings panel")}
+            className="flex items-center justify-center p-2.5 bg-surface-primary border border-border-primary text-text-primary rounded-xl hover:bg-surface-secondary transition-colors cursor-pointer"
+          >
+            <Settings className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => {
+              if (!selectedCategoryUuid) {
+                toast.error("Please select a category first");
+                return;
+              }
+              setIsAddModalOpen(true);
+            }}
+            className="flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer"
+          >
+            <Plus className="w-4 h-4" /> Add Subcategory
+          </button>
+        </div>
       </div>
 
-      <DataTable
-        data={data}
-        columns={columns}
-        onRowClick={(row) => {
-          setSelectedRow(row);
-          setIsEditing(false);
-          setIsModalOpen(true);
-        }}
-        onActionClick={(row) => {
-          setSelectedRow(row);
-          setIsEditing(false);
-          setIsModalOpen(true);
-        }}
-      />
+      {/* Category Selector */}
+      <div className="bg-surface-primary border border-border-primary rounded-[1.25rem] p-5 shadow-sm">
+        <label className="block text-sm font-bold text-text-primary mb-2">
+          Select a Category
+        </label>
+        {isLoadingCategories ? (
+          <div className="animate-pulse h-10 bg-surface-secondary rounded-xl w-full md:w-1/2"></div>
+        ) : (
+          <CustomDropdown
+            options={categories.map((cat) => cat.name)}
+            value={
+              categories.find((cat) => cat.cat_uuid === selectedCategoryUuid)
+                ?.name || ""
+            }
+            onChange={(name) => {
+              const cat = categories.find((c) => c.name === name);
+              if (cat) {
+                setSelectedCategoryUuid(cat.cat_uuid);
+              } else {
+                setSelectedCategoryUuid("");
+              }
+            }}
+            placeholder="-- Choose a category --"
+          />
+        )}
+      </div>
 
-      {/* Details / Edit Modal */}
+      {!selectedCategoryUuid ? (
+        <div className="text-center py-12 bg-surface-primary border border-border-primary rounded-[1.25rem]">
+          <FolderTree className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-text-primary">
+            No Category Selected
+          </h3>
+          <p className="text-sm text-text-secondary mt-1">
+            Please select a category from the dropdown above to view and manage
+            its subcategories.
+          </p>
+        </div>
+      ) : isLoadingSubcategories ? (
+        <div className="flex justify-center p-12">
+          <span className="w-8 h-8 border-4 border-text-primary border-t-transparent rounded-full animate-spin"></span>
+        </div>
+      ) : (
+        <DataTable
+          columns={columns}
+          data={subcategories}
+          searchPlaceholder="Search subcategories..."
+          onRowClick={(row) => {
+            setSelectedRow(row);
+            setIsEditing(false);
+            setIsModalOpen(true);
+          }}
+          onActionClick={(row) => {
+            setSelectedRow(row);
+            setIsEditing(false);
+            setIsModalOpen(true);
+          }}
+        />
+      )}
+
       {selectedRow && (
         <AdminModal
           isOpen={isModalOpen}
           onClose={() => {
             setIsModalOpen(false);
-            setSelectedRow(null);
             setIsEditing(false);
+            setSelectedRow(null);
           }}
-          title={isEditing ? "Edit Service" : "Service Details"}
+          title={isEditing ? "Edit Subcategory" : "Subcategory Details"}
           footer={
             isEditing ? (
               <div className="flex gap-2">
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="px-4 py-2 bg-zinc-100 text-zinc-700 rounded-lg hover:bg-zinc-200 text-sm font-medium cursor-pointer"
+                  className="px-4 py-2 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="button"
-                  onClick={handleSaveEdit}
-                  className="px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-700 text-sm font-medium cursor-pointer"
+                  onClick={handleSaveEditSubcategory}
+                  disabled={isUpdating}
+                  className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer disabled:opacity-50"
                 >
-                  Save Changes
+                  {isUpdating ? "Saving..." : "Save Changes"}
                 </button>
               </div>
             ) : (
-              <select
-                onChange={(e) => {
-                  const action = e.target.value;
-                  e.target.value = ""; // Reset dropdown
-                  if (action === "edit") {
-                    setEditForm({
-                      serviceName: selectedRow.serviceName,
-                      category: selectedRow.category,
-                      price: selectedRow.price || "₹1,500",
+              <CustomDropdown
+                options={[
+                  "Edit Subcategory",
+                  !selectedRow.is_active ? "Set Active" : null,
+                  selectedRow.is_active ? "Set Inactive" : null,
+                ].filter(Boolean)}
+                value=""
+                placeholder="Select Action..."
+                onChange={(action) => {
+                  if (action === "Edit Subcategory") {
+                    setEditSubcategory({
+                      name: selectedRow.name,
+                      slug: nameToSlug(selectedRow.name),
+                      description: selectedRow.description || "",
+                      icon: selectedRow.icon || "",
+                      is_active: selectedRow.is_active,
                     });
                     setIsEditing(true);
-                  } else if (action === "activate") {
-                    setData((prev) =>
-                      prev.map((item) =>
-                        item.id === selectedRow.id ? { ...item, status: "Active" } : item
-                      )
-                    );
-                    setSelectedRow((prev) => (prev ? { ...prev, status: "Active" } : prev));
-                    toast.success(`Service "${selectedRow.serviceName}" activated successfully`);
-                    setIsModalOpen(false);
-                  } else if (action === "suspend") {
-                    setData((prev) =>
-                      prev.map((item) =>
-                        item.id === selectedRow.id ? { ...item, status: "Inactive" } : item
-                      )
-                    );
-                    setSelectedRow((prev) => (prev ? { ...prev, status: "Inactive" } : prev));
-                    toast.error(`Service "${selectedRow.serviceName}" suspended successfully`);
-                    setIsModalOpen(false);
+                  } else if (action === "Set Active") {
+                    updateSubcategory({
+                      uuid: selectedRow.subCat_uuid,
+                      data: { is_active: true },
+                    });
+                    toast("Activating subcategory...");
+                  } else if (action === "Set Inactive") {
+                    updateSubcategory({
+                      uuid: selectedRow.subCat_uuid,
+                      data: { is_active: false },
+                    });
+                    toast("Deactivating subcategory...");
                   }
                 }}
-                className="w-full sm:w-auto px-4 py-2.5 bg-surface-secondary text-text-primary font-bold rounded-xl border border-border-primary outline-none focus:border-purple-500 cursor-pointer"
-                defaultValue=""
-              >
-                <option value="" disabled hidden>
-                  Select Action...
-                </option>
-                <option value="edit">Edit Service</option>
-                {selectedRow.status !== "Active" && (
-                  <option value="activate">Activate Service</option>
-                )}
-                {selectedRow.status !== "Inactive" && selectedRow.status !== "Suspended" && (
-                  <option value="suspend">Suspend Service</option>
-                )}
-              </select>
+              />
             )
           }
         >
           {isEditing ? (
-            <form className="space-y-4" onSubmit={handleSaveEdit}>
+            <form className="space-y-4" onSubmit={handleSaveEditSubcategory}>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-zinc-500 uppercase">
-                  Service Name
+                  Subcategory Name
                 </label>
                 <input
                   type="text"
-                  placeholder="e.g. Home Cleaning"
-                  value={editForm.serviceName}
+                  placeholder="e.g. Deep Cleaning"
+                  value={editSubcategory.name}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, serviceName: e.target.value })
+                    setEditSubcategory({
+                      ...editSubcategory,
+                      name: e.target.value,
+                    })
                   }
-                  className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-zinc-900"
+                  className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500"
                 />
               </div>
               <div className="space-y-1">
                 <label className="text-xs font-bold text-zinc-500 uppercase">
-                  Category
+                  Description
                 </label>
-                <select
-                  value={editForm.category}
+                <textarea
+                  placeholder="Brief description of subcategory services..."
+                  value={editSubcategory.description}
                   onChange={(e) =>
-                    setEditForm({ ...editForm, category: e.target.value })
+                    setEditSubcategory({
+                      ...editSubcategory,
+                      description: e.target.value,
+                    })
                   }
-                  className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-zinc-900 cursor-pointer"
+                  className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500 min-h-[80px]"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-zinc-500 uppercase">
+                  Icon
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. sparkle"
+                  value={editSubcategory.icon}
+                  onChange={(e) =>
+                    setEditSubcategory({
+                      ...editSubcategory,
+                      icon: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500"
+                />
+              </div>
+              <div className="flex items-center gap-2 pt-2">
+                <input
+                  type="checkbox"
+                  id="editIsActive"
+                  checked={editSubcategory.is_active}
+                  onChange={(e) =>
+                    setEditSubcategory({
+                      ...editSubcategory,
+                      is_active: e.target.checked,
+                    })
+                  }
+                  className="w-4 h-4 cursor-pointer"
+                />
+                <label
+                  htmlFor="editIsActive"
+                  className="text-sm font-bold text-text-primary cursor-pointer"
                 >
-                  {MOCK_CATEGORIES.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-zinc-500 uppercase">
-                  Price
+                  Active Subcategory
                 </label>
-                <input
-                  type="text"
-                  placeholder="e.g. ₹1,500"
-                  value={editForm.price}
-                  onChange={(e) =>
-                    setEditForm({ ...editForm, price: e.target.value })
-                  }
-                  className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-zinc-900"
-                />
               </div>
             </form>
           ) : (
             <div className="space-y-4 text-text-primary">
               <div className="flex justify-between items-center pb-3 border-b border-border-primary">
-                <div>
-                  <h4 className="text-lg font-bold">{selectedRow.serviceName}</h4>
-                  <p className="text-xs text-text-secondary">{selectedRow.category}</p>
+                <div className="flex items-center gap-3">
+                  {selectedRow.icon && (
+                    <div className="w-10 h-10 bg-surface-secondary flex items-center justify-center rounded-lg border border-border-primary text-xl">
+                      {selectedRow.icon}
+                    </div>
+                  )}
+                  <div>
+                    <h4 className="text-lg font-bold">{selectedRow.name}</h4>
+                    <p className="text-xs text-text-secondary">
+                      {selectedRow.description}
+                    </p>
+                  </div>
                 </div>
-                <StatusBadge status={selectedRow.status} />
+                <StatusBadge
+                  status={selectedRow.is_active ? "Active" : "Inactive"}
+                />
               </div>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="text-xs text-zinc-400 font-bold uppercase">Service ID</p>
-                  <p className="font-semibold">{selectedRow.id}</p>
+                  <p className="text-xs text-zinc-400 font-bold uppercase">
+                    Subcat UUID
+                  </p>
+                  <p className="font-semibold break-all text-[11px] mt-1">
+                    {selectedRow.subCat_uuid}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-400 font-bold uppercase">Category</p>
-                  <p className="font-semibold">{selectedRow.category}</p>
+                  <p className="text-xs text-zinc-400 font-bold uppercase">
+                    Category Name
+                  </p>
+                  <p className="font-semibold">{selectedRow.category_name}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-zinc-400 font-bold uppercase">Price</p>
-                  <p className="font-semibold">{selectedRow.price || "₹1,500"}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-400 font-bold uppercase">Providers</p>
-                  <p className="font-semibold">{selectedRow.providers}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-400 font-bold uppercase">Requests</p>
-                  <p className="font-semibold">{selectedRow.requests}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-400 font-bold uppercase">Revenue</p>
-                  <p className="font-semibold text-emerald-600">{selectedRow.revenue}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-400 font-bold uppercase">Rating</p>
-                  <p className="font-semibold">{selectedRow.rating}</p>
-                </div>
-                <div>
-                  <p className="text-xs text-zinc-400 font-bold uppercase">Created Date</p>
-                  <p className="font-semibold">{selectedRow.created}</p>
+                  <p className="text-xs text-zinc-400 font-bold uppercase">
+                    Slug
+                  </p>
+                  <p className="font-semibold break-all text-[11px] mt-1">
+                    {selectedRow.slug}
+                  </p>
                 </div>
               </div>
             </div>
@@ -352,77 +457,97 @@ export default function AdminServicesTab() {
         </AdminModal>
       )}
 
-      {/* Add Service Modal */}
       <AdminModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        title="Add New Service"
+        title="Add New Subcategory"
         footer={
-          <div className="flex gap-2">
+          <>
             <button
               onClick={() => setIsAddModalOpen(false)}
-              className="px-4 py-2 bg-zinc-100 text-zinc-700 rounded-lg hover:bg-zinc-200 text-sm font-medium cursor-pointer"
+              className="px-4 py-2 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 cursor-pointer"
             >
               Cancel
             </button>
             <button
-              onClick={handleAddService}
-              className="px-4 py-2 bg-zinc-900 text-white rounded-lg hover:bg-zinc-700 text-sm font-medium cursor-pointer"
+              onClick={handleAddSubcategory}
+              disabled={isCreating}
+              className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer disabled:opacity-50"
             >
-              Add Service
+              {isCreating ? "Adding..." : "Add Subcategory"}
             </button>
-          </div>
+          </>
         }
       >
-        <form className="space-y-4" onSubmit={handleAddService}>
+        <form className="space-y-4" onSubmit={handleAddSubcategory}>
           <div className="space-y-1">
             <label className="text-xs font-bold text-zinc-500 uppercase">
-              Service Name
+              Subcategory Name
             </label>
             <input
               type="text"
               placeholder="e.g. Deep Cleaning"
-              value={newService.serviceName}
+              value={newSubcategory.name}
               onChange={(e) =>
-                setNewService({ ...newService, serviceName: e.target.value })
+                setNewSubcategory({ ...newSubcategory, name: e.target.value })
               }
-              className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-zinc-900"
+              className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500"
             />
           </div>
           <div className="space-y-1">
             <label className="text-xs font-bold text-zinc-500 uppercase">
-              Category
+              Description
             </label>
-            <select
-              value={newService.category}
+            <textarea
+              placeholder="Brief description of subcategory services..."
+              value={newSubcategory.description}
               onChange={(e) =>
-                setNewService({ ...newService, category: e.target.value })
+                setNewSubcategory({
+                  ...newSubcategory,
+                  description: e.target.value,
+                })
               }
-              className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-zinc-900 cursor-pointer"
-            >
-              {MOCK_CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+              className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500 min-h-[80px]"
+            />
           </div>
           <div className="space-y-1">
             <label className="text-xs font-bold text-zinc-500 uppercase">
-              Price
+              Icon
             </label>
             <input
               type="text"
-              placeholder="e.g. ₹1,000"
-              value={newService.price}
+              placeholder="e.g. cleaning"
+              value={newSubcategory.icon}
               onChange={(e) =>
-                setNewService({ ...newService, price: e.target.value })
+                setNewSubcategory({ ...newSubcategory, icon: e.target.value })
               }
-              className="w-full px-4 py-2.5 bg-zinc-50 border border-zinc-200 rounded-lg text-sm text-zinc-900 focus:outline-none focus:border-zinc-900"
+              className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500"
             />
+          </div>
+          <div className="flex items-center gap-2 pt-2">
+            <input
+              type="checkbox"
+              id="newIsActive"
+              checked={newSubcategory.is_active}
+              onChange={(e) =>
+                setNewSubcategory({
+                  ...newSubcategory,
+                  is_active: e.target.checked,
+                })
+              }
+              className="w-4 h-4 cursor-pointer"
+            />
+            <label
+              htmlFor="newIsActive"
+              className="text-sm font-bold text-text-primary cursor-pointer"
+            >
+              Active Subcategory
+            </label>
           </div>
         </form>
       </AdminModal>
     </div>
   );
-}
+};
+
+export default AdminServicesTab;

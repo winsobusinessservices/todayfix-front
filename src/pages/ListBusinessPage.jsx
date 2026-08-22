@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import CustomDropdown from "../components/ui/CustomDropdown";
+import { categoryApi } from "../services/categoryApi";
 import { api } from "../api";
 import SEO from "../components/seo/SEO";
 
@@ -27,7 +28,7 @@ const ListBusinessPage = () => {
     const fetchData = async () => {
       try {
         const [servicesRes, areasRes] = await Promise.all([
-          api.getServices(),
+          categoryApi.getCategories(),
           api.getAreas()
         ]);
         setServicesData(servicesRes.map(s => s.name));

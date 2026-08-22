@@ -95,7 +95,7 @@ const AdminPayoutsTab = () => {
           >
             <History className="w-4 h-4" /> Payout History
           </button>
-          <button onClick={handleProcessBatch} className="flex items-center gap-2 px-4 py-2.5 bg-purple-600 text-white rounded-xl text-sm font-bold shadow-sm shadow-purple-500/20 hover:bg-purple-700 transition-colors cursor-pointer">
+          <button onClick={handleProcessBatch} className="flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm shadow-black/20 hover:bg-zinc-800 transition-colors cursor-pointer">
             <Send className="w-4 h-4" /> Process Batch
           </button>
         </div>
@@ -142,7 +142,7 @@ const AdminPayoutsTab = () => {
               {selectedPayout.status === "Failed" && (
                 <button 
                   onClick={handleRetryFailed}
-                  className="px-4 py-2 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-600 cursor-pointer"
+                  className="px-4 py-2 bg-emerald-500 text-text-inverted font-bold rounded-xl hover:bg-emerald-600 cursor-pointer"
                 >
                   Retry Payout
                 </button>

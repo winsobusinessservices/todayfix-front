@@ -138,18 +138,18 @@ export const DataTable = ({
     }
     return vals;
   };
-
-  const filteredData = data.filter((item) =>
+  
+  const filteredData = data.data?.filter((item) =>
     flattenValues(item).some((val) =>
       val.toLowerCase().includes(searchTerm.toLowerCase()),
     ),
   );
-
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const paginatedData = filteredData.slice(
+  
+  const totalPages = filteredData ? Math.ceil(filteredData.length / itemsPerPage) : 0;
+  const paginatedData = filteredData ? filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
-  );
+  ) : [];
 
   const handleFilterClick = () => {
     if (onFilter) {

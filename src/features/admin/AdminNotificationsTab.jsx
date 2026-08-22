@@ -33,7 +33,7 @@ const AdminNotificationsTab = () => {
       header: "Status", 
       accessor: "status",
       render: (row) => (
-        <span className={`px-2 py-1 text-xs rounded-md font-bold ${row.status === 'Sent' ? 'bg-emerald-50 text-emerald-600' : 'bg-zinc-100 text-zinc-500'}`}>
+        <span className={`px-2 py-1 text-xs rounded-md font-bold ${row.status === 'Sent' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-surface-secondary text-zinc-500'}`}>
           {row.status}
         </span>
       )
@@ -109,7 +109,7 @@ const AdminNotificationsTab = () => {
                     setIsModalOpen(true);
                     toast.success("Draft loaded for editing.");
                   }}
-                  className="px-4 py-2 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 transition-colors cursor-pointer"
+                  className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-colors cursor-pointer"
                 >
                   Edit Draft
                 </button>
@@ -120,7 +120,7 @@ const AdminNotificationsTab = () => {
                   setIsDetailsModalOpen(false);
                   toast.success("Notification deleted.");
                 }}
-                className="px-4 py-2 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors cursor-pointer"
+                className="px-4 py-2 bg-red-600 text-text-inverted font-bold rounded-xl hover:bg-red-700 transition-colors cursor-pointer"
               >
                 Delete
               </button>
@@ -133,7 +133,7 @@ const AdminNotificationsTab = () => {
                 <h4 className="text-lg font-bold">{selectedNotif.title}</h4>
                 <p className="text-xs text-text-secondary">{selectedNotif.id}</p>
               </div>
-              <span className={`px-2 py-1 text-xs rounded-md font-bold ${selectedNotif.status === 'Sent' ? 'bg-emerald-50 text-emerald-600' : 'bg-zinc-100 text-zinc-500'}`}>
+              <span className={`px-2 py-1 text-xs rounded-md font-bold ${selectedNotif.status === 'Sent' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-surface-secondary text-zinc-500'}`}>
                 {selectedNotif.status}
               </span>
             </div>
@@ -175,7 +175,7 @@ const AdminNotificationsTab = () => {
             </button>
             <button
               onClick={handleCreateCampaign}
-              className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-bold hover:bg-purple-700 cursor-pointer flex items-center gap-2"
+              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer flex items-center gap-2"
             >
               <Send className="w-4 h-4" /> Send Campaign
             </button>

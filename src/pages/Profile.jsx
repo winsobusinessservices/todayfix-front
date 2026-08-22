@@ -77,7 +77,8 @@ const Profile = () => {
     mutationFn: logout,
     onSuccess: (response) => {
       if (response.success) {
-        navigate("/");
+        // navigate("/");
+        window.location.href = "/";
         clearAuth();
         popup("Logout Successful", "You've been safely logged out.", "logout");
       }

@@ -2,24 +2,47 @@ import React, { useState, useMemo } from "react";
 import AdvancedSearch from "../components/ui/AdvancedSearch";
 import CustomDropdown from "../components/ui/CustomDropdown";
 import ServicesCards from "../features/home/ServiceCards";
-import { servicesPageData } from "../data/ServicePageData";
 import SEO from "../components/seo/SEO";
+import { useQuery } from "@tanstack/react-query";
+import { categoryApi } from "../services/categoryApi";
 
 const Services = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All Services");
+  const [selectedCategory, setSelectedCategory] = useState("All Categories");
 
-  const categories = useMemo(() => {
-    return ["All Services", "Cleaning", "Appliances", "Moving", ...new Set(servicesPageData.map((item) => item.category))];
-  }, []);
+  const { data: categoriesData, isLoading } = useQuery({
+    queryKey: ["publicCategories"],
+    queryFn: categoryApi.getCategories,
+  });
 
-  const filteredServices = useMemo(() => {
-    if (selectedCategory === "All Services") {
-      return servicesPageData;
+  const categoriesList = categoriesData?.data || categoriesData || [];
+  const activeCategories = categoriesList.filter((c) => c.is_active);
+
+  const selectedCategoryObj = useMemo(() => {
+    return activeCategories.find((c) => c.name === selectedCategory);
+  }, [activeCategories, selectedCategory]);
+
+  const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
+    useQuery({
+      queryKey: ["publicSubcategories", selectedCategoryObj?.cat_uuid],
+      queryFn: () => categoryApi.getSubcategories(selectedCategoryObj.cat_uuid),
+      enabled: !!selectedCategoryObj?.cat_uuid,
+    });
+
+  const subcategoriesList = subcategoriesData?.data || subcategoriesData || [];
+  const activeSubcategories = subcategoriesList.filter((sub) => sub.is_active);
+
+  const filterOptions = useMemo(() => {
+    return ["All Categories", ...activeCategories.map((item) => item.name)];
+  }, [activeCategories]);
+
+  const filteredCategories = useMemo(() => {
+    if (selectedCategory === "All Categories") {
+      return activeCategories;
     }
-    return servicesPageData.filter(
-      (service) => service.category === selectedCategory
+    return activeCategories.filter(
+      (category) => category.name === selectedCategory,
     );
-  }, [selectedCategory]);
+  }, [selectedCategory, activeCategories]);
 
   return (
     <div className="w-full max-w-6xl mx-auto relative flex flex-col gap-6 pt-4 md:pt-6">
@@ -29,7 +52,9 @@ const Services = () => {
       />
       <div className="text-center md:text-left hidden md:block">
         <h2 className="text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight">
-          {selectedCategory === "All Services" ? "Popular Services" : `${selectedCategory} Services`}
+          {selectedCategory === "All Categories"
+            ? "Explore Categories"
+            : `${selectedCategory} Categories`}
         </h2>
         <p className="text-text-muted mt-2 text-base">
           Find and compare the best professionals for your needs.
@@ -43,20 +68,24 @@ const Services = () => {
         <div className="max-w-[1400px] w-full flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-64 flex-shrink-0">
             <div className="bg-background-secondary bg-surface-primary rounded-lg md:shadow-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] md:border border-border-primary md:p-3 transition-all duration-300 hover:shadow-2xl hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] z-30">
-              <h3 className="text-lg font-bold text-text-primary tracking-tight hidden mb-2 md:block">Categories</h3>
+              <h3 className="text-lg font-bold text-text-primary tracking-tight hidden mb-2 md:block">
+                Categories
+              </h3>
 
               {/* Mobile Dropdown */}
               <div className="md:hidden relative mb-2">
                 <div className="text-center md:text-left mb-5">
                   <h2 className="text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight">
-                    {selectedCategory === "All Services" ? "Popular Services" : `${selectedCategory} Services`}
+                    {selectedCategory === "All Categories"
+                      ? "Explore Categories"
+                      : `${selectedCategory} Categories`}
                   </h2>
                   <p className="text-text-muted mt-2 text-base">
                     Find and compare the best professionals for your needs.
                   </p>
                 </div>
                 <CustomDropdown
-                  options={categories}
+                  options={filterOptions}
                   value={selectedCategory}
                   onChange={setSelectedCategory}
                   icon={
@@ -78,19 +107,20 @@ const Services = () => {
               </div>
 
               {/* Desktop List */}
-              <ul className="hidden md:flex flex-col gap-2">
-                {categories.map((category) => (
-                  <li key={category}>
+              <ul className="hidden md:flex flex-col gap-2 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                {filterOptions.map((catName) => (
+                  <li key={catName}>
                     <button
-                      onClick={() => setSelectedCategory(category)}
+                      onClick={() => setSelectedCategory(catName)}
                       className={`w-full text-left px-4 py-2.5 rounded-xl transition-all duration-200 font-medium text-sm
-                        ${selectedCategory === category
-                          ? "bg-surface-dark text-white shadow-md"
-                          : "text-text-secondary hover:bg-surface-accent hover:text-text-primary"
+                        ${
+                          selectedCategory === catName
+                            ? "bg-surface-dark text-white shadow-md"
+                            : "text-text-secondary hover:bg-surface-accent hover:text-text-primary"
                         }
                       `}
                     >
-                      {category}
+                      {catName}
                     </button>
                   </li>
                 ))}
@@ -100,24 +130,45 @@ const Services = () => {
 
           {/* Right Content */}
           <div className="flex-1 ">
-            {filteredServices.length > 0 ? (
+            {isLoading || isLoadingSubcategories ? (
+              <div className="flex justify-center py-20">
+                <span className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></span>
+              </div>
+            ) : selectedCategory === "All Categories" ? (
+              filteredCategories.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+                  {filteredCategories.map((category) => (
+                    <div key={category.cat_uuid || category.slug}>
+                      <ServicesCards service={category} />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12 bg-background-secondary rounded-2xl border border-border-light">
+                  <p className="text-text-muted text-lg">
+                    No categories found.
+                  </p>
+                </div>
+              )
+            ) : activeSubcategories.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-                {filteredServices.map((service) => (
-                  <span key={service.id}>
-                    <ServicesCards service={service} />
-                  </span>
+                {activeSubcategories.map((sub) => (
+                  <div key={sub.subCat_uuid || sub.slug}>
+                    <ServicesCards service={sub} isSubcategory={true} />
+                  </div>
                 ))}
               </div>
             ) : (
               <div className="text-center py-12 bg-background-secondary rounded-2xl border border-border-light">
-                <p className="text-text-muted text-lg">No services found in this category.</p>
+                <p className="text-text-muted text-lg">
+                  No services found in this category.
+                </p>
               </div>
             )}
           </div>
-
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 

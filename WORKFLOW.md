@@ -51,12 +51,14 @@ This document serves as the master checklist and workflow tracker for the Todayf
 
 ---
 
-## 4. Architecture & State Integration
+## 4. Backend API Integration & Architecture
 
 ### ✅ Completed
-- [x] Define `README.md` outlining the 3-sided marketplace architecture and entities.
+- [x] **API Wrapper Generation:** Created Axios wrappers for Categories, Services, Auth, Addresses, Business Profiles, Employees, Schedules, Bookings, and Admin endpoints.
+- [x] **Category API Integration:** Updated `ListBusinessPage.jsx` and `AdvancedSearch.jsx` to fetch real categories from the backend.
+- [x] **Role-Based Routing:** Basic UI protected routes implemented in `AppRoutes.jsx`.
 
 ### ⏳ Pending
-- [ ] **Mock Global State Engine:** Set up React Context or Zustand to manage a global `ServiceRequest` array and `Business` array. This is required to simulate a job moving from Customer -> Admin -> Owner without a backend.
-- [ ] **Role-Based Routing:** Implement protected routes ensuring Customers cannot access the Admin dashboard, and unverified Owners get restricted access.
-- [ ] **Backend Integration:** Replace the mock global state with actual API calls, websockets, and database architecture.
+- [ ] **User Side Integration (PRIORITY 1):** Connect all customer-facing components (`RequestService.jsx`, User Bookings, Auth, Profile) to the new backend API wrappers. Include Google Maps live location integration.
+- [ ] **Owner Side Integration (PRIORITY 2):** Connect `OwnerDashboard` tabs (Overview, Job Board, Bookings, Services) to the backend API wrappers.
+- [ ] **Admin Side Integration (PRIORITY 3):** Refactor `AdminDashboard.jsx` theme to match the app's dark monochrome glass-shadow aesthetic (using blue/indigo accents) and connect to `adminApi.js`.

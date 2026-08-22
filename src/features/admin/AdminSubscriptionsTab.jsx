@@ -43,7 +43,7 @@ const AdminSubscriptionsTab = () => {
       header: "Plan", 
       accessor: "plan",
       render: (row) => (
-        <span className="font-bold text-purple-600 bg-purple-50 px-2 py-1 rounded-md">
+        <span className="font-bold text-text-primary bg-surface-secondary px-2 py-1 rounded-md">
           {row.plan}
         </span>
       )
@@ -137,16 +137,16 @@ const AdminSubscriptionsTab = () => {
            <p className="text-3xl font-black mt-2 text-text-primary">1,245</p>
            <p className="text-xs font-medium text-emerald-600 mt-2">Active Subscribers</p>
         </div>
-        <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-6 shadow-md relative overflow-hidden text-white">
+        <div className="bg-gradient-to-br from-purple-600 to-purple-800 rounded-2xl p-6 shadow-md relative overflow-hidden text-text-inverted">
            <div className="absolute top-0 right-0 p-4 opacity-20"><Zap className="w-16 h-16" /></div>
-           <p className="text-sm font-bold text-white/80 uppercase tracking-widest">Pro Plan</p>
-           <p className="text-3xl font-black mt-2 text-white">482</p>
+           <p className="text-sm font-bold text-text-inverted/80 uppercase tracking-widest">Pro Plan</p>
+           <p className="text-3xl font-black mt-2 text-text-inverted">482</p>
            <p className="text-xs font-medium text-purple-200 mt-2">₹2.4L Monthly Recurring Revenue</p>
         </div>
-        <div className="bg-zinc-900 rounded-2xl p-6 shadow-md relative overflow-hidden text-white">
+        <div className="bg-zinc-900 rounded-2xl p-6 shadow-md relative overflow-hidden text-text-inverted">
            <div className="absolute top-0 right-0 p-4 opacity-10"><Crown className="w-16 h-16" /></div>
            <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest">Enterprise</p>
-           <p className="text-3xl font-black mt-2 text-white">45</p>
+           <p className="text-3xl font-black mt-2 text-text-inverted">45</p>
            <p className="text-xs font-medium text-emerald-400 mt-2">₹4.5L Annual Recurring Revenue</p>
         </div>
       </div>
@@ -192,7 +192,7 @@ const AdminSubscriptionsTab = () => {
             </button>
             <button
               onClick={handleCreatePlan}
-              className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-bold hover:bg-purple-700 cursor-pointer flex items-center gap-2"
+              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer flex items-center gap-2"
             >
               <Plus className="w-4 h-4" /> Create Plan
             </button>
@@ -263,7 +263,7 @@ const AdminSubscriptionsTab = () => {
             </button>
             <button
               onClick={handleSaveEditPlan}
-              className="px-4 py-2 bg-purple-600 text-white rounded-xl text-sm font-bold hover:bg-purple-700 cursor-pointer"
+              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer"
             >
               Save Changes
             </button>

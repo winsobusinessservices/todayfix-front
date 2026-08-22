@@ -299,7 +299,7 @@ const AdminReviewsTab = () => {
               <button
                 type="button"
                 onClick={handleSendMessage}
-                className="px-4 py-2 bg-purple-600 text-white font-bold rounded-xl hover:bg-purple-700 shadow-lg shadow-purple-500/20 cursor-pointer"
+                className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
               >
                 Send Message
               </button>

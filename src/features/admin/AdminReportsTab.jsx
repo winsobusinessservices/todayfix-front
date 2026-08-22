@@ -83,7 +83,7 @@ const AdminReportsTab = () => {
         <div className="bg-surface-primary border border-border-primary rounded-3xl p-6 shadow-sm">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-bold text-text-primary">Revenue Growth</h3>
-            <div className="text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded flex items-center gap-1">
+            <div className="text-sm font-bold text-emerald-600 bg-emerald-500/10 px-2 py-1 rounded flex items-center gap-1">
               <TrendingUp className="w-3 h-3" /> +24% YTD
             </div>
           </div>
