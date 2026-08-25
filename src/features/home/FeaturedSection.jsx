@@ -104,7 +104,7 @@ const FeaturedSection = () => {
                       {business.description}
                     </p>
                     <Link
-                      to={"/partners/" + "Kalavathi Tours & Travels"}
+                      to={"/partners/" + business.name.split(" ").join("-")}
                       className="flex items-center justify-between mt-4 pt-4 border-t border-white/10"
                     >
                       <span

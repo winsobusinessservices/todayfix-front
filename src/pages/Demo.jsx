@@ -18,7 +18,7 @@ const Demo = () => {
   const { name } = useParams();
 
   // Handle URL decoded names if needed, or exact matches
-  const decodedName = decodeURIComponent(name);
+  const decodedName = decodeURIComponent(name.split("-").join(" "));
   const partnerData = featuredData.find(
     (partner) =>
       partner.name.toLowerCase() === decodedName.toLowerCase() ||
@@ -137,7 +137,9 @@ const Demo = () => {
                 <div className="flex items-center gap-1.5 bg-surface-primary/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border-primary shadow-sm">
                   <Star className="w-5 h-5 text-text-primary fill-text-primary" />
                   <span className="font-bold">{partnerData.rating}</span>
-                  <span className="text-sm font-medium">({partnerData.reviews} reviews)</span>
+                  <span className="text-sm font-medium">
+                    ({partnerData.reviews} reviews)
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5 bg-surface-primary/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border border-border-primary shadow-sm">
                   <MapPin className="w-5 h-5 text-text-primary" />
@@ -150,9 +152,9 @@ const Demo = () => {
           </div>
 
           {/* Quick Action Button */}
-          {/* <div className="w-full md:w-auto flex justify-center md:justify-end">
+          <div className="w-full md:w-auto flex justify-center md:justify-end">
             <a
-              href={`https://www.example.com/${partnerData.name.replace(/\s+/g, "-").toLowerCase()}`}
+              href={partnerData.url}
               target="_blank"
               rel="noreferrer"
               className="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-surface-primary text-text-primary border border-border-primary font-black rounded-full overflow-hidden hover:scale-105 hover:bg-surface-secondary transition-all shadow-lg w-full md:w-auto"
@@ -162,7 +164,7 @@ const Demo = () => {
                 <ExternalLink className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               </span>
             </a>
-          </div> */}
+          </div>
         </div>
       </div>
 
