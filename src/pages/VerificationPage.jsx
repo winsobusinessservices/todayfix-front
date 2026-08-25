@@ -33,6 +33,7 @@ const VerificationPage = () => {
     mutationFn: verifyOTP,
     onSuccess: (response) => {
       const result = response;
+      console.log(result.data);
       if (result.success && result.data) {
         setAuthData({
           access: result.data.access,
@@ -62,7 +63,7 @@ const VerificationPage = () => {
   })
 
   const handleSubmit = () => {
-    mutate(otp.join(""))
+    mutate({ phone: location.state?.phone, otp: otp.join("") });
   };
 
   return (

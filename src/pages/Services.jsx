@@ -5,14 +5,14 @@ import ServicesCards from "../features/home/ServiceCards";
 import SEO from "../components/seo/SEO";
 import { useQuery } from "@tanstack/react-query";
 import { categoryApi } from "../services/categoryApi";
+import { useCategoryStore } from "../store/categoryStore";
 
 const Services = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const isLoading = false;
+  const categoriesData = useCategoryStore((state) => state.categories);
 
-  const { data: categoriesData, isLoading } = useQuery({
-    queryKey: ["publicCategories"],
-    queryFn: categoryApi.getCategories,
-  });
+  // console.log(categoriesData);
 
   const categoriesList = categoriesData?.data || categoriesData || [];
   const activeCategories = categoriesList.filter((c) => c.is_active);
@@ -23,26 +23,31 @@ const Services = () => {
 
   const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
     useQuery({
-      queryKey: ["publicSubcategories", selectedCategoryObj?.cat_uuid],
-      queryFn: () => categoryApi.getSubcategories(selectedCategoryObj.cat_uuid),
-      enabled: !!selectedCategoryObj?.cat_uuid,
+      queryKey: ["publicSubcategories", selectedCategoryObj?.cat_uuid || "all"],
+      queryFn: async () => {
+        if (selectedCategoryObj?.cat_uuid) {
+          return categoryApi.getSubcategories(selectedCategoryObj.cat_uuid);
+        } else {
+          // Fetch subcategories for all active categories
+          const promises = activeCategories.map((cat) =>
+            categoryApi.getSubcategories(cat.cat_uuid),
+          );
+          const results = await Promise.all(promises);
+          const allSubcategories = results.flatMap(
+            (res) => res?.data || res || [],
+          );
+          return { data: allSubcategories };
+        }
+      },
+      enabled: activeCategories.length > 0,
     });
 
   const subcategoriesList = subcategoriesData?.data || subcategoriesData || [];
-  const activeSubcategories = subcategoriesList.filter((sub) => sub.is_active);
+  const activeSubcategories = subcategoriesList.filter((sub) => sub.is_active).slice(0,10);
 
   const filterOptions = useMemo(() => {
     return ["All Categories", ...activeCategories.map((item) => item.name)];
   }, [activeCategories]);
-
-  const filteredCategories = useMemo(() => {
-    if (selectedCategory === "All Categories") {
-      return activeCategories;
-    }
-    return activeCategories.filter(
-      (category) => category.name === selectedCategory,
-    );
-  }, [selectedCategory, activeCategories]);
 
   return (
     <div className="w-full max-w-6xl mx-auto relative flex flex-col gap-6 pt-4 md:pt-6">
@@ -134,22 +139,6 @@ const Services = () => {
               <div className="flex justify-center py-20">
                 <span className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></span>
               </div>
-            ) : selectedCategory === "All Categories" ? (
-              filteredCategories.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-                  {filteredCategories.map((category) => (
-                    <div key={category.cat_uuid || category.slug}>
-                      <ServicesCards service={category} />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-12 bg-background-secondary rounded-2xl border border-border-light">
-                  <p className="text-text-muted text-lg">
-                    No categories found.
-                  </p>
-                </div>
-              )
             ) : activeSubcategories.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
                 {activeSubcategories.map((sub) => (
@@ -160,9 +149,7 @@ const Services = () => {
               </div>
             ) : (
               <div className="text-center py-12 bg-background-secondary rounded-2xl border border-border-light">
-                <p className="text-text-muted text-lg">
-                  No services found in this category.
-                </p>
+                <p className="text-text-muted text-lg">No services found.</p>
               </div>
             )}
           </div>

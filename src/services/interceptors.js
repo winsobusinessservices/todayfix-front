@@ -3,6 +3,21 @@ import { useUserStore } from "../store/userStore";
 import api, { API_URL } from "./axiosClient";
 import { refreshTokenApi } from "./userApi";
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
 export const setupInterceptors = () => {
   // Automatically inject bearer tokens on every request
   api.interceptors.request.use(
@@ -23,7 +38,21 @@ export const setupInterceptors = () => {
 
       // If error is 401 and we haven't already retried this request
       if (error.response?.status === 401 && !originalRequest._retry) {
+        if (isRefreshing) {
+          return new Promise(function (resolve, reject) {
+            failedQueue.push({ resolve, reject });
+          })
+            .then((token) => {
+              originalRequest.headers.Authorization = `Bearer ${token}`;
+              return api(originalRequest);
+            })
+            .catch((err) => {
+              return Promise.reject(err);
+            });
+        }
+
         originalRequest._retry = true;
+        isRefreshing = true;
 
         const refreshToken = useUserStore.getState().refreshToken;
 
@@ -41,16 +70,22 @@ export const setupInterceptors = () => {
               refresh: responseData.refresh || refreshToken,
             });
 
+            processQueue(null, newAccessToken);
+            isRefreshing = false;
+
             // Retry the original request with the new token
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
             return api(originalRequest);
           } catch (refreshError) {
+            processQueue(refreshError, null);
+            isRefreshing = false;
             // If refresh fails (e.g., refresh token is expired), log the user out
             useUserStore.getState().clearAuth();
             // Optionally redirect to login here, but React Router usually handles this
             // via protected routes checking `isAuthenticated`.
           }
         } else {
+          isRefreshing = false;
           // No refresh token available, logout
           useUserStore.getState().clearAuth();
         }

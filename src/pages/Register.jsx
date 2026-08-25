@@ -1,24 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import SEO from "../components/seo/SEO";
 import { useMutation } from "@tanstack/react-query";
-import { register } from "../services/userApi";
+import { register, verifyOTP } from "../services/userApi";
+import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
 import { validatePassword } from "../utils/passwordValidator";
 import { validatePhone } from "../utils/phoneValidator";
 
 const Register = () => {
   const navigate = useNavigate();
+  const setAuthData = useUserStore((state) => state.setAuthData);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [registerMethod, setRegisterMethod] = useState("email");
+  const [otpSent, setOtpSent] = useState(false);
+  const [timer, setTimer] = useState(0);
+
+  useEffect(() => {
+    let interval;
+    if (timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [timer]);
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
     email: "",
     phone: "",
+    otp: "",
     password: "",
     confirm_password: "",
   });
@@ -33,9 +50,8 @@ const Register = () => {
             "Please verify your phone number using the OTP sent to you.",
             "info",
           );
-          navigate("/otp", {
-            state: { phone: formData.phone },
-          });
+          setOtpSent(true);
+          setTimer(60);
         } else {
           popup(
             "Registration Successful",
@@ -45,6 +61,43 @@ const Register = () => {
           navigate("/login");
         }
       }
+    },
+  });
+
+  const verifyOtpMutation = useMutation({
+    mutationFn: verifyOTP,
+    onSuccess: (response) => {
+      const result = response;
+      console.log(response);
+      if (result.success && result.data) {
+        // setAuthData({
+        //   access: result.data.access,
+        //   refresh: result.data.refresh,
+        //   user: {
+        //     id: result.data.user.id,
+        //     uuid: result.data.user.uuid,
+        //     first_name: result.data.user.first_name,
+        //     last_name: result.data.user.last_name,
+        //     email: result.data.user.email,
+        //     phone: result.data.user.phone,
+        //     role: result.data.user.role,
+        //   },
+        // });
+        popup(
+          "Registration Successful",
+          "Your account has been created successfully.",
+          "success",
+        );
+        navigate("/");
+      }
+    },
+    onError: (error) => {
+      console.log(error);
+      popup(
+        "Error",
+        error?.response?.data?.message || error.message || "Invalid OTP",
+        "error",
+      );
     },
   });
 
@@ -59,6 +112,11 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setValidationErrors({});
+
+    if (registerMethod === "phone" && otpSent) {
+      verifyOtpMutation.mutate({ phone: formData.phone, otp: formData.otp });
+      return;
+    }
 
     const errors = {};
     if (formData.password !== formData.confirm_password) {
@@ -86,8 +144,10 @@ const Register = () => {
     const payload = { ...formData };
     if (registerMethod === "email") {
       delete payload.phone;
+      delete payload.otp;
     } else {
       delete payload.email;
+      delete payload.otp;
     }
 
     mutate(payload);
@@ -127,6 +187,13 @@ const Register = () => {
               {isError && !error?.response && (
                 <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm font-medium">
                   An unexpected error occurred. Please try again.
+                </div>
+              )}
+              {verifyOtpMutation.isError && registerMethod === "phone" && otpSent && (
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-lg text-sm font-medium">
+                  {verifyOtpMutation.error?.response?.data?.message ||
+                    verifyOtpMutation.error?.message ||
+                    "Invalid OTP"}
                 </div>
               )}
             </div>
@@ -172,6 +239,8 @@ const Register = () => {
                   type="button"
                   onClick={() => {
                     setRegisterMethod("email");
+                    setOtpSent(false);
+                    setTimer(0);
                   }}
                   className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
                     registerMethod === "email"
@@ -300,6 +369,57 @@ const Register = () => {
                       {getFieldError("phone")}
                     </p>
                   )}
+                </div>
+              )}
+
+              {registerMethod === "phone" && otpSent && (
+                <div className="animate-fade-in-up delay-300 space-y-1.5">
+                  <label className="text-sm font-bold text-text-primary">
+                    OTP Code
+                  </label>
+                  <div className="relative group">
+                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                      <svg
+                        className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        />
+                      </svg>
+                    </div>
+                    <input
+                      type="text"
+                      name="otp"
+                      value={formData.otp}
+                      onChange={handleInputChange}
+                      required={registerMethod === "phone" && otpSent}
+                      placeholder="Enter 6-digit code"
+                      maxLength={6}
+                      className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400 tracking-widest"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        // We construct a payload to resend the OTP.
+                        // For this implementation, we re-trigger the register mutation.
+                        // Assuming the backend handles duplicate attempts by re-sending OTP.
+                        const payload = { ...formData };
+                        delete payload.email;
+                        delete payload.otp;
+                        mutate(payload);
+                      }}
+                      disabled={timer > 0 || isPending}
+                      className="absolute inset-y-0 right-0 pr-4 flex items-center text-xs font-bold text-text-primary hover:text-text-secondary focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {timer > 0 ? `Resend in ${timer}s` : "Resend"}
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -491,10 +611,10 @@ const Register = () => {
 
               <button
                 type="submit"
-                disabled={isPending}
+                disabled={isPending || verifyOtpMutation.isPending}
                 className="animate-fade-in-up delay-500 w-full mt-6 bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
               >
-                {isPending ? (
+                {isPending || verifyOtpMutation.isPending ? (
                   <>
                     <svg
                       className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
@@ -516,11 +636,15 @@ const Register = () => {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    Creating Account...
+                    {registerMethod === "phone" && otpSent
+                      ? "Verifying OTP..."
+                      : "Creating Account..."}
                   </>
                 ) : (
                   <>
-                    Create Account
+                    {registerMethod === "phone" && otpSent
+                      ? "Verify OTP"
+                      : "Create Account"}
                     <svg
                       className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
                       fill="none"

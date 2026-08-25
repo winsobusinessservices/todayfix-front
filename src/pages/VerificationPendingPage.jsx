@@ -6,7 +6,7 @@ const VerificationPendingPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="font-sans flex flex-col items-center justify-center p-6">
+    <div className="font-sans flex flex-col items-center justify-center p-6 py-20">
       <div className="bg-surface-primary border border-border-primary rounded-xl p-10 md:p-14 max-w-xl w-full text-center shadow-2xl relative overflow-hidden">
         {/* Subtle background pulse */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -24,7 +24,7 @@ const VerificationPendingPage = () => {
           </h1>
 
           <p className="text-zinc-500 font-medium leading-relaxed mb-8">
-            Thank you for submitting your documents. Our admin team is carefully
+            Thank you for submitting your documents. Our team is carefully
             reviewing your profile to ensure marketplace quality.
             <br />
             <br />
@@ -45,14 +45,6 @@ const VerificationPendingPage = () => {
           </button>
         </div>
       </div>
-
-      {/* DEV SIMULATOR BUTTON */}
-      <button
-        onClick={() => navigate("/owner-dashboard")}
-        className="fixed bottom-6 right-6 flex items-center gap-2 bg-emerald-500 text-white font-bold text-sm px-6 py-3 rounded-full shadow-lg hover:scale-105 transition-transform"
-      >
-        [Dev] Simulate Admin Approval <ChevronRight className="w-4 h-4" />
-      </button>
     </div>
   );
 };

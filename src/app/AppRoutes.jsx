@@ -1,5 +1,6 @@
 import { Route, Routes } from "react-router";
 import PublicLayout from "../components/layout/PublicLayout";
+import ScrollToTop from "../components/layout/ScrollToTop";
 import Home from "../pages/Home";
 import Services from "../pages/Services";
 import Vendor from "../pages/Vendor";
@@ -65,11 +66,14 @@ import AdminAuditLogTab from "../features/admin/AdminAuditLogTab";
 import AdminSettingsTab from "../features/admin/AdminSettingsTab";
 import VerificationPage from "../pages/VerificationPage";
 import VerificationSuccess from "../pages/VerificationSuccess";
+import Demo from "../pages/Demo";
 
 function AppRoutes() {
   return (
-    <Routes>
-      <Route element={<PublicLayout />}>
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
         <Route path="/services/:slug" element={<Service />} />
@@ -77,7 +81,7 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-email" element={<VerificationSuccess />} />
-        <Route path="/otp" element={<VerificationPage/>} />
+        {/* <Route path="/otp" element={<VerificationPage/>} /> */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/pricing" element={<Pricing />} />
@@ -96,6 +100,7 @@ function AppRoutes() {
         <Route path="/help" element={<HelpCenter />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/professionals/faq" element={<ProFAQ />} />
+        <Route path="/partners/:name" element={<Demo />} />
         <Route path="*" element={<NotFound />} />
         <Route element={<ProtectedRoute allowedRoles={["USER", "OWNER", "ADMIN"]} />}>
           <Route path="/profile" element={<Profile />} />
@@ -152,6 +157,7 @@ function AppRoutes() {
         </Route>
       </Route>
     </Routes>
+    </>
   );
 }
 

@@ -116,9 +116,15 @@ const Footer = () => {
 
       {/* Bottom Copyright */}
       <div className="w-full flex flex-col md:flex-row justify-between items-center border-t border-border-primary pt-8 mt-8 gap-4">
-        <p className="text-sm text-text-secondary font-medium">
-          © 2026 Todayfix. All rights reserved.
-        </p>
+        <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-center md:text-left">
+          <p className="text-sm text-text-secondary font-medium">
+            © 2026 Todayfix. All rights reserved.
+          </p>
+          <span className="hidden md:block text-border-tertiary">•</span>
+          <p className="text-sm text-text-secondary font-medium">
+            Designed and Developed By <span className="font-bold text-text-primary">Winso Business Services Private Limited</span>
+          </p>
+        </div>
         <div className="flex gap-6 text-sm text-text-muted font-medium">
           <Link
             to="#terms"

@@ -26,7 +26,8 @@ const StatusBadge = ({ status }) => {
   if (status === "CONFIRMED" || status === "IN_PROGRESS") {
     return (
       <div className="flex items-center gap-1.5 text-blue-500 bg-blue-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-blue-500/20 w-fit">
-        <Search size={14} className="animate-pulse" /> {status === "CONFIRMED" ? "Confirmed" : "In Progress"}
+        <Search size={14} className="animate-pulse" />{" "}
+        {status === "CONFIRMED" ? "Confirmed" : "In Progress"}
       </div>
     );
   }
@@ -40,7 +41,8 @@ const StatusBadge = ({ status }) => {
   if (status === "CANCELLED" || status === "REJECTED") {
     return (
       <div className="flex items-center gap-1.5 text-red-500 bg-red-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-red-500/20 w-fit">
-        <AlertCircle size={14} /> {status === "CANCELLED" ? "Cancelled" : "Rejected"}
+        <AlertCircle size={14} />{" "}
+        {status === "CANCELLED" ? "Cancelled" : "Rejected"}
       </div>
     );
   }
@@ -51,10 +53,11 @@ const ProfileRequests = ({ addresses }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  
+
   // Review Modal State
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
-  const [selectedBookingForReview, setSelectedBookingForReview] = useState(null);
+  const [selectedBookingForReview, setSelectedBookingForReview] =
+    useState(null);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
@@ -76,7 +79,7 @@ const ProfileRequests = ({ addresses }) => {
     onError: () => {
       toast.error("Failed to cancel booking");
       setConfirmDeleteId(null);
-    }
+    },
   });
 
   const handleDelete = (id) => {
@@ -96,7 +99,7 @@ const ProfileRequests = ({ addresses }) => {
       toast.error("Please select a rating");
       return;
     }
-    
+
     // MOCK API CALL for Reviews
     toast.success("Thank you for your review!");
     setReviewModalOpen(false);
@@ -145,7 +148,8 @@ const ProfileRequests = ({ addresses }) => {
                   {req.service?.name || "Service Request"}
                 </h3>
                 <p className="text-sm text-zinc-500 font-medium">
-                  ID: {req.uuid.split('-')[0].toUpperCase()} • {req.scheduled_date} ({req.slot_type})
+                  ID: {req.uuid.split("-")[0].toUpperCase()} •{" "}
+                  {req.scheduled_date} ({req.slot_type})
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -176,7 +180,9 @@ const ProfileRequests = ({ addresses }) => {
               </div>
               <div className="flex items-center gap-2 text-text-primary font-bold">
                 <MapPin className="w-5 h-5 text-zinc-500" />
-                {req.address?.locality || req.address?.city || "Location details"}
+                {req.address?.locality ||
+                  req.address?.city ||
+                  "Location details"}
               </div>
             </div>
 
@@ -195,13 +201,13 @@ const ProfileRequests = ({ addresses }) => {
                     <span className="text-text-primary font-bold">
                       {req.business.name}
                     </span>{" "}
-                    has been assigned to your request. They will contact you shortly on
-                    your registered mobile number.
+                    has been assigned to your request. They will contact you
+                    shortly on your registered mobile number.
                   </p>
                 </div>
               </div>
             )}
-            
+
             {/* Completed Review Box */}
             {req.status === "COMPLETED" && (
               <div className="mt-6 bg-surface-primary border border-green-500/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -210,7 +216,8 @@ const ProfileRequests = ({ addresses }) => {
                     <CheckCircle2 size={16} /> Job Completed!
                   </h4>
                   <p className="text-sm text-zinc-400">
-                    Hope you liked the service. Please leave a review for the professional.
+                    Hope you liked the service. Please leave a review for the
+                    professional.
                   </p>
                 </div>
                 <button
@@ -304,7 +311,12 @@ const ProfileRequests = ({ addresses }) => {
                   Rate your experience
                 </h3>
                 <p className="text-zinc-400 text-sm">
-                  How was the service provided by <span className="font-bold text-text-primary">{selectedBookingForReview?.business?.name || "the professional"}</span>?
+                  How was the service provided by{" "}
+                  <span className="font-bold text-text-primary">
+                    {selectedBookingForReview?.business?.name ||
+                      "the professional"}
+                  </span>
+                  ?
                 </p>
               </div>
 

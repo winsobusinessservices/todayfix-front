@@ -10,7 +10,8 @@ const PublicLayout = () => {
     "/register",
     "/forgot-password",
     "/reset-password",
-    "/otp"
+    "/otp",
+    "/verification-pending"
   ].includes(location.pathname);
 
   return (

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { featuredData as businesses } from "../../data/collectedData";
 
 const FeaturedSection = () => {
@@ -103,7 +103,10 @@ const FeaturedSection = () => {
                     >
                       {business.description}
                     </p>
-                    <div className="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
+                    <Link
+                      to={"/partners/" + "Kalavathi Tours & Travels"}
+                      className="flex items-center justify-between mt-4 pt-4 border-t border-white/10"
+                    >
                       <span
                         className={`text-sm font-medium flex items-center gap-1.5 text-white/80`}
                       >
@@ -151,7 +154,7 @@ const FeaturedSection = () => {
                           />
                         </svg>
                       </motion.div>
-                    </div>
+                    </Link>
                   </div>
                 </div>
               </motion.div>

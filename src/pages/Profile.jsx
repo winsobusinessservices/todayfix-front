@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import ProfileDetails from "../features/profile/ProfileDetails";
 import ProfileServicesHistory from "../features/profile/ProfileServicesHistory";
 import ProfileReviews from "../features/profile/ProfileReviews";
@@ -63,7 +63,7 @@ const Profile = () => {
     queryKey: ["userReviews"],
     queryFn: userReviews,
   });
-  
+
   const {
     data: userPendingService,
     isLoading: userPendingServicesLoading,
@@ -94,7 +94,7 @@ const Profile = () => {
     serviceHistoryLoading ||
     userReviewLoading ||
     userPendingServicesLoading
-  ) { 
+  ) {
     return <p>Loading...</p>;
   }
 
@@ -243,7 +243,9 @@ const Profile = () => {
           )}
 
           {/* TAB 1: Profile & Addresses */}
-          {activeTab === "profile" && <ProfileDetails userData={userData} setUserData={setUserData} />}
+          {activeTab === "profile" && (
+            <ProfileDetails userData={userData} setUserData={setUserData} />
+          )}
 
           {/* TAB 2: Service History */}
           {activeTab === "history" && (

@@ -1,4 +1,7 @@
 export const validatePhone = (phone) => {
+  if (phone === undefined || phone === null || phone === "") {
+    return ["is empthy"];
+  }
   const cleanValue = phone.replace(/[^\d]/g, "");
   phone.replace(" ", "");
 

@@ -11,6 +11,7 @@ const ListBusinessPage = () => {
   const [category, setCategory] = useState("");
   const [address, setAddress] = useState("");
   const [area, setArea] = useState("");
+  const [city, setCity] = useState("Bengaluru");
   const [website, setWebsite] = useState("");
 
   // Bank Details
@@ -230,8 +231,8 @@ const ListBusinessPage = () => {
                 </label>
                 <CustomDropdown
                   options={["Bengaluru"]}
-                  value={""}
-                  onChange={() => {}}
+                  value={city}
+                  onChange={setCity}
                   placeholder="Select City"
                   variant="dark"
                 />

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import SEO from "../components/seo/SEO";
 import { useMutation } from "@tanstack/react-query";
 import { resetPassword } from "../services/userApi";

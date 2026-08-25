@@ -14,7 +14,6 @@ const ProfileServicesHistory = ({ serviceHistory }) => {
   const [reviewRating, setReviewRating] = useState(5);
   const navigate = useNavigate();
 
-  // Derived metrics for the summary
   const completedServices = serviceHistory.filter(
     (s) => s.status === "Completed",
   );

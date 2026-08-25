@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Otp from "../../components/modals/Otp";
 import {
   createAddress,
   getAddresses,
@@ -17,11 +18,14 @@ const ProfileDetails = ({ userData, setUserData }) => {
   const [addAddress, setAddAddress] = useState(false);
   const [editingAddressId, setEditingAddressId] = useState(null);
   const [editForm, setEditForm] = useState({});
-  const [isSaving, setIsSaving] = useState(false);
   const [address, setAddress] = useState([]);
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
   const [validationErrors, setValidationErrors] = useState({});
   const [initialData, setInitialData] = useState(null);
+  const [showOtpModal, setShowOtpModal] = useState(false);
+  const [otpValue, setOtpValue] = useState("");
+  const [otpError, setOtpError] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
 
   useEffect(() => {
     if (userData && !initialData) {
@@ -29,6 +33,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
         firstName: userData.firstName,
         lastName: userData.lastName,
         phone: userData.phone,
+        email: userData.email,
         profileImage: userData.profileImage,
       });
     }
@@ -109,8 +114,10 @@ const ProfileDetails = ({ userData, setUserData }) => {
         firstName: userData.firstName,
         lastName: userData.lastName,
         phone: userData.phone,
+        email: userData.email,
         profileImage: userData.profileImage,
       });
+      setIsEditingProfile(false);
       queryClient.invalidateQueries(["user"]);
     },
     onError: (data) => toast.error(data?.response?.data?.message),
@@ -144,9 +151,11 @@ const ProfileDetails = ({ userData, setUserData }) => {
     e.preventDefault();
     const errors = {};
 
-    const phoneErrors = validatePhone(userData.phone);
-    if (phoneErrors.length > 0) {
-      errors.phone = "Phone number " + phoneErrors[0] + ".";
+    if (userData.phone) {
+      const phoneErrors = validatePhone(userData.phone);
+      if (phoneErrors.length > 0) {
+        errors.phone = "Phone number " + phoneErrors[0] + ".";
+      }
     }
 
     if (Object.keys(errors).length > 0) {
@@ -160,6 +169,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
       userData.firstName !== initialData?.firstName ||
       userData.lastName !== initialData?.lastName ||
       userData.phone !== initialData?.phone ||
+      userData.email !== initialData?.email ||
       (userData.profileImage || "") !== (initialData?.profileImage || "");
 
     if (!hasChanged) {
@@ -167,12 +177,33 @@ const ProfileDetails = ({ userData, setUserData }) => {
       return;
     }
 
+    if (!initialData?.phone && userData.phone) {
+      setShowOtpModal(true);
+      return;
+    }
+
+    executeProfileUpdate();
+  };
+
+  const executeProfileUpdate = () => {
     updateProfileMutate({
       firstName: userData.firstName,
       lastName: userData.lastName,
       phone: userData.phone,
+      email: userData.email,
       profileImage: userData.profileImage || "",
     });
+  };
+
+  const handleVerifyOtp = () => {
+    if (otpValue === "1234") {
+      setShowOtpModal(false);
+      setOtpValue("");
+      setOtpError(false);
+      executeProfileUpdate();
+    } else {
+      setOtpError(true);
+    }
   };
 
   const getFieldError = (fieldName) => {
@@ -185,7 +216,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
   };
 
   const handleEditClick = (addr) => {
-    setEditingAddressId(addr.id);
+    setEditingAddressId(addr.add_uuid);
     setEditForm({ ...addr });
   };
 
@@ -199,7 +230,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
 
   const handleSetDefault = (addr) => {
     updateAddressMutate({
-      addressId: addr.id,
+      addressId: addr.add_uuid,
       addressData: { ...addr, is_default: true },
     });
   };
@@ -238,6 +269,18 @@ const ProfileDetails = ({ userData, setUserData }) => {
 
   return (
     <>
+      <AnimatePresence>
+        {showOtpModal && (
+          <Otp
+            otpValue={otpValue}
+            setOtpValue={setOtpValue}
+            otpError={otpError}
+            setOtpError={setOtpError}
+            handleVerifyOtp={handleVerifyOtp}
+            setActiveModal={() => setShowOtpModal(false)}
+          />
+        )}
+      </AnimatePresence>
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="mb-14">
           <h2 className="text-2xl font-black mb-8 flex items-center gap-3 ml-0 md:ml-11">
@@ -255,9 +298,14 @@ const ProfileDetails = ({ userData, setUserData }) => {
                 <input
                   type="text"
                   name="firstName"
-                  value={userData?.firstName}
+                  value={userData?.firstName || ""}
                   onChange={handleInputChange}
-                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold"
+                  disabled={!isEditingProfile}
+                  className={`w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold ${
+                    !isEditingProfile
+                      ? "opacity-50 cursor-not-allowed select-none"
+                      : ""
+                  }`}
                 />
               </div>
               <div>
@@ -267,9 +315,14 @@ const ProfileDetails = ({ userData, setUserData }) => {
                 <input
                   type="text"
                   name="lastName"
-                  value={userData?.lastName}
+                  value={userData?.lastName || ""}
                   onChange={handleInputChange}
-                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold"
+                  disabled={!isEditingProfile}
+                  className={`w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold ${
+                    !isEditingProfile
+                      ? "opacity-50 cursor-not-allowed select-none"
+                      : ""
+                  }`}
                 />
               </div>
             </div>
@@ -293,13 +346,21 @@ const ProfileDetails = ({ userData, setUserData }) => {
               </label>
               <input
                 type="email"
-                value={userData?.email}
-                disabled
-                className="w-full bg-surface-secondary/50 border border-border-secondary rounded-2xl px-5 py-4 text-text-muted cursor-not-allowed select-none font-semibold"
+                name="email"
+                value={userData?.email || ""}
+                onChange={handleInputChange}
+                disabled={!isEditingProfile || !!initialData?.email}
+                className={`w-full bg-surface-secondary border border-border-secondary rounded-2xl px-5 py-4 text-text-primary font-semibold transition-all focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary ${
+                  !isEditingProfile || !!initialData?.email
+                    ? "opacity-50 cursor-not-allowed select-none"
+                    : ""
+                }`}
               />
-              <p className="text-xs text-text-muted mt-2 font-medium">
-                To change your email address, please contact support.
-              </p>
+              {!!initialData?.email && (
+                <p className="text-xs text-text-muted mt-2 font-medium">
+                  To change your email address, please contact support.
+                </p>
+              )}
             </div>
 
             <div>
@@ -309,10 +370,20 @@ const ProfileDetails = ({ userData, setUserData }) => {
               <input
                 type="tel"
                 name="phone"
-                value={userData?.phone}
+                value={userData?.phone || ""}
                 onChange={handleInputChange}
-                className="w-full md:w-1/2 bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold"
+                disabled={!isEditingProfile || !!initialData?.phone}
+                className={`w-full md:w-1/2 bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold ${
+                  !isEditingProfile || !!initialData?.phone
+                    ? "opacity-50 cursor-not-allowed select-none"
+                    : ""
+                }`}
               />
+              {!!initialData?.phone && (
+                <p className="text-xs text-text-muted mt-2 font-medium">
+                  To change your phone number, please contact support.
+                </p>
+              )}
               {getFieldError("phone") && (
                 <p className="text-xs text-red-500 mt-1">
                   {getFieldError("phone")}
@@ -320,14 +391,41 @@ const ProfileDetails = ({ userData, setUserData }) => {
               )}
             </div>
 
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={isUpdatingProfile}
-                className="px-8 py-4 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all active:scale-95 flex items-center gap-2 shadow-lg disabled:opacity-70"
-              >
-                {isUpdatingProfile ? "Saving Changes..." : "Save Profile"}
-              </button>
+            <div className="pt-4 flex gap-4">
+              {isEditingProfile ? (
+                <>
+                  <button
+                    type="submit"
+                    disabled={isUpdatingProfile}
+                    className="px-8 py-4 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all active:scale-95 flex items-center gap-2 shadow-lg disabled:opacity-70"
+                  >
+                    {isUpdatingProfile ? "Saving Changes..." : "Save Profile"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsEditingProfile(false);
+                      setUserData((prev) => ({ ...prev, ...initialData }));
+                      setValidationErrors({});
+                    }}
+                    className="px-8 py-4 bg-surface-secondary text-text-primary font-black rounded-xl hover:bg-surface-primary transition-all active:scale-95 flex items-center gap-2 border border-border-secondary"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsEditingProfile(true);
+                  }}
+                  className="px-8 py-4 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all active:scale-95 flex items-center gap-2 shadow-lg"
+                >
+                  Edit Profile
+                </button>
+              )}
             </div>
           </form>
         </div>
@@ -525,10 +623,10 @@ const ProfileDetails = ({ userData, setUserData }) => {
             </>
             {addresses?.data?.map((address) => (
               <div
-                key={address?.id}
+                key={address?.add_uuid}
                 className="bg-surface-secondary border border-border-secondary rounded-2xl transition-all hover:border-text-primary group"
               >
-                {editingAddressId !== address?.id ? (
+                {editingAddressId !== address?.add_uuid ? (
                   <div className="flex flex-col sm:flex-row justify-between items-start gap-4 p-6">
                     <div className="flex gap-4">
                       <div className="w-12 h-12 rounded-full bg-surface-primary border border-border-primary flex items-center justify-center flex-shrink-0 shadow-sm group-hover:scale-110 transition-transform">
@@ -610,7 +708,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
                         </svg>
                       </button>
                       <button
-                        onClick={() => handleDeleteAddress(address?.id)}
+                        onClick={() => handleDeleteAddress(address?.add_uuid)}
                         disabled={isDeletingAddress}
                         className="w-10 h-10 rounded-full bg-red-50 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition-all border border-red-100 shadow-sm active:scale-95"
                         title="Delete Address"
@@ -762,14 +860,14 @@ const ProfileDetails = ({ userData, setUserData }) => {
                     <div className="flex items-center mt-4 bg-surface-secondary p-4 rounded-xl border border-border-secondary">
                       <input
                         type="checkbox"
-                        id={`default-${address?.id}`}
+                        id={`default-${address?.add_uuid}`}
                         name="is_default"
                         checked={editForm.is_default}
                         onChange={handleEditAddressChange}
                         className="w-5 h-5 rounded border-border-secondary bg-surface-primary text-text-primary focus:ring-text-primary focus:ring-offset-0 cursor-pointer"
                       />
                       <label
-                        htmlFor={`default-${address?.id}`}
+                        htmlFor={`default-${address?.add_uuid}`}
                         className="ml-3 text-sm font-bold text-text-primary cursor-pointer"
                       >
                         Make this my default address
@@ -778,7 +876,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
 
                     <div className="flex items-center gap-3 pt-5 mt-2">
                       <button
-                        onClick={() => handleSaveEditAddress(address?.id)}
+                        onClick={() => handleSaveEditAddress(address?.add_uuid)}
                         disabled={isUpdatingAddress}
                         className="px-6 py-3 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all text-sm shadow-md active:scale-95 disabled:opacity-70"
                       >

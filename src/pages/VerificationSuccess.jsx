@@ -4,32 +4,35 @@ import { useNavigate, useSearchParams } from "react-router";
 import { verifyEmail } from "../services/userApi";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
+import saveLoginCredentials from "../utils/saveLoginCredentials";
 
 const VerifictionSuccess = () => {
   const [status, setStatus] = useState("verifying");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const setAuthData = useUserStore((state) => state.setAuthData);
+  // const setAuthData = useUserStore((state) => state.setAuthData);
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: verifyEmail,
     onSuccess: (response) => {
       const result = response;
+      console.log(response);
       if (result.success && result.data) {
         setStatus("success");
-        setAuthData({
-          access: result.data.access,
-          refresh: result.data.refresh,
-          user: {
-            id: result.data.user.id,
-            uuid: result.data.user.uuid,
-            first_name: result.data.user.first_name,
-            last_name: result.data.user.last_name,
-            email: result.data.user.email,
-            phone: result.data.user.phone,
-            role: result.data.user.role,
-          },
-        });
+        // setAuthData({
+        //   access: result.data.access,
+        //   refresh: result.data.refresh,
+        //   user: {
+        //     id: result.data.user.id,
+        //     uuid: result.data.user.uuid,
+        //     first_name: result.data.user.first_name,
+        //     last_name: result.data.user.last_name,
+        //     email: result.data.user.email,
+        //     phone: result.data.user.phone,
+        //     role: result.data.user.role,
+        //   },
+        // });
+        // saveLoginCredentials(result.data);
         popup(
           "Registration Successful",
           "Your account has been created successfully.",

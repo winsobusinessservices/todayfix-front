@@ -24,8 +24,6 @@ const ForgotPassword = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // console.log("Password reset requested for:", email);
-    // Add logic to send reset email here
     setIsSubmitted(true);
     mutate(email);
   };
