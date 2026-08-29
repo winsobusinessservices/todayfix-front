@@ -2,12 +2,11 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import SEO from "../components/seo/SEO";
 import { useMutation } from "@tanstack/react-query";
-import { login, sendLoginOTP, verifyLoginOTP } from "../services/userApi";
+import { login, sendLoginOTP, verifyLoginOTP } from "../services/authApi";
 import { popup } from "../components/pop-up/pop-up";
 import GoogleLogin from "../components/oauth/GoogleLogin";
 import AppleLogin from "../components/oauth/AppleLogin";
 import saveLoginCredentials from "../utils/saveLoginCredentials";
-import { useUserStore } from "../store/userStore";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -22,7 +21,7 @@ const Login = () => {
   const [loginMethod, setLoginMethod] = useState("email");
   const [otpSent, setOtpSent] = useState(false);
   const [timer, setTimer] = useState(0);
-  const setAuthData = useUserStore((state) => state.setAuthData);
+  const [viaOtp, setViaOtp] = useState(false);
 
   useEffect(() => {
     let interval;
@@ -36,7 +35,6 @@ const Login = () => {
     return () => clearInterval(interval);
   }, [timer]);
 
-  // Email Login Mutation
   const {
     mutate,
     isPending: isLoginPending,
@@ -46,9 +44,8 @@ const Login = () => {
     mutationFn: login,
     onSuccess: (response) => {
       const result = response;
-      // console.log(response);
       if (result.success && result.data) {
-        saveLoginCredentials(result.data);
+        saveLoginCredentials(result);
         popup(
           "Login Successful",
           "Welcome back! You've successfully logged in.",
@@ -58,8 +55,12 @@ const Login = () => {
       }
     },
     onError: (error) => {
-      console.log(error);
-      popup("Error", error.message, "error");
+      console.log(error?.response?.data?.detail[0]);
+      popup(
+        "Error",
+        error?.response?.data?.detail[0] || error.message,
+        "error",
+      );
     },
   });
 
@@ -70,6 +71,7 @@ const Login = () => {
       if (response.success) {
         setOtpSent(true);
         setTimer(60);
+        setViaOtp(true);
         popup(
           "OTP Sent",
           "An OTP has been sent to your phone number.",
@@ -96,20 +98,7 @@ const Login = () => {
       const result = response;
       // console.log(response);
       if (result.success && result.data) {
-        setAuthData({
-          access: result.data.access,
-          refresh: result.data.refresh,
-          user: {
-            id: result.data.user.id,
-            uuid: result.data.user.uuid,
-            first_name: result.data.user.first_name,
-            last_name: result.data.user.last_name,
-            email: result.data.user.email,
-            phone: result.data.user.phone,
-            role: result.data.user.role,
-          },
-        });
-        // saveLoginCredentials(result.data);
+        saveLoginCredentials(result);
         popup(
           "Login Successful",
           "Welcome back! You've successfully logged in.",
@@ -139,12 +128,12 @@ const Login = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (loginMethod === "email") {
-      mutate({ email: formData.email, password: formData.password });
+      mutate({ identifier: formData.email, password: formData.password });
     } else if (loginMethod === "phone") {
-      if (!otpSent) {
-        sendOtpMutation.mutate(formData.phone);
-      } else {
+      if (viaOtp) {
         verifyOtpMutation.mutate({ phone: formData.phone, otp: formData.otp });
+      } else {
+        mutate({ identifier: formData.phone, password: formData.password });
       }
     }
   };
@@ -211,6 +200,7 @@ const Login = () => {
                   setLoginMethod("email");
                   setOtpSent(false);
                   setTimer(0);
+                  setViaOtp(false);
                 }}
                 className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
                   loginMethod === "email"
@@ -222,7 +212,12 @@ const Login = () => {
               </button>
               <button
                 type="button"
-                onClick={() => setLoginMethod("phone")}
+                onClick={() => {
+                  setLoginMethod("phone");
+                  setOtpSent(false);
+                  setTimer(0);
+                  setViaOtp(false);
+                }}
                 className={`flex-1 py-2.5 text-sm font-bold rounded-lg transition-all ${
                   loginMethod === "phone"
                     ? "bg-surface-dark text-text-inverted shadow-sm"
@@ -339,8 +334,8 @@ const Login = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center">
+                  <div className="flex items-center justify-end mt-2">
+                    {/* <div className="flex items-center">
                       <input
                         id="remember-me"
                         name="remember_me"
@@ -356,7 +351,7 @@ const Login = () => {
                       >
                         Remember me
                       </label>
-                    </div>
+                    </div> */}
                     <div className="text-sm">
                       <Link
                         to="/forgot-password"
@@ -401,6 +396,102 @@ const Login = () => {
                       />
                     </div>
                   </div>
+                  {!viaOtp && (
+                    <div className="space-y-1.5">
+                      <label className="text-sm font-bold text-text-primary">
+                        Password
+                      </label>
+                      <div className="relative group">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                          <svg
+                            className="w-5 h-5 text-text-muted group-focus-within:text-black transition-colors"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                            />
+                          </svg>
+                        </div>
+                        <input
+                          type={showPassword ? "text" : "password"}
+                          name="password"
+                          value={formData.password}
+                          onChange={handleInputChange}
+                          required={loginMethod === "phone" && !viaOtp}
+                          placeholder="••••••••"
+                          className="w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-12 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400 tracking-wide"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-0 pr-4 flex items-center text-text-muted hover:text-text-secondary focus:outline-none"
+                        >
+                          {showPassword ? (
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                              />
+                            </svg>
+                          ) : (
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.543 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                              />
+                            </svg>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  {!viaOtp && (
+                    <div className="flex items-center justify-end mt-2 text-sm">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (!formData.phone) {
+                            popup(
+                              "Error",
+                              "Please enter your phone number first.",
+                              "error",
+                            );
+                            return;
+                          }
+                          sendOtpMutation.mutate(formData.phone);
+                        }}
+                        disabled={timer > 0 || sendOtpMutation.isPending}
+                        className="font-bold text-text-primary hover:text-text-secondary hover:underline"
+                      >
+                        Continue Via OTP
+                      </button>
+                    </div>
+                  )}
 
                   {otpSent && (
                     <div className="space-y-1.5">
@@ -456,7 +547,6 @@ const Login = () => {
                   <>
                     <svg
                       className="animate-spin -ml-1 mr-2 h-5 w-5 text-white"
-                      xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -474,15 +564,11 @@ const Login = () => {
                         d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                       ></path>
                     </svg>
-                    {loginMethod === "phone" && !otpSent
-                      ? "Sending..."
-                      : "Signing In..."}
+                    {sendOtpMutation.isPending ? "Sending..." : "Signing In..."}
                   </>
                 ) : (
                   <>
-                    {loginMethod === "phone" && !otpSent
-                      ? "Send OTP"
-                      : "Sign In"}
+                    Sign In
                     <svg
                       className="w-5 h-5 transform group-hover:translate-x-1 transition-transform"
                       fill="none"

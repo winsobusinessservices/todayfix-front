@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router";
 import SEO from "../components/seo/SEO";
 import { useMutation } from "@tanstack/react-query";
-import { forgetPassword } from "../services/userApi";
+import { forgetPassword } from "../services/authApi";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");

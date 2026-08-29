@@ -28,7 +28,7 @@ import toast, { Toaster } from "react-hot-toast";
 import Logo from "../components/brand/Logo";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
-import { logout } from "../services/userApi";
+import { logout } from "../services/authApi";
 import { useMutation } from "@tanstack/react-query";
 
 const SIDEBAR_SECTIONS = [

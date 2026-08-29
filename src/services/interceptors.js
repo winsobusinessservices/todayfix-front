@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useUserStore } from "../store/userStore";
 import api, { API_URL } from "./axiosClient";
-import { refreshTokenApi } from "./userApi";
+import { refreshTokenApi } from "./authApi";
 
 let isRefreshing = false;
 let failedQueue = [];

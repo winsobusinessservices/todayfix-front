@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import Logo from "../components/brand/Logo";
 import { useMutation } from "@tanstack/react-query";
-import { logout } from "../services/userApi";
+import { logout } from "../services/authApi";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
 

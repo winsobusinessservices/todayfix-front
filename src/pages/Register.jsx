@@ -2,15 +2,14 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import SEO from "../components/seo/SEO";
 import { useMutation } from "@tanstack/react-query";
-import { register, verifyOTP } from "../services/userApi";
-import { useUserStore } from "../store/userStore";
+import { register, verifyOTP } from "../services/authApi";
 import { popup } from "../components/pop-up/pop-up";
 import { validatePassword } from "../utils/passwordValidator";
 import { validatePhone } from "../utils/phoneValidator";
+import saveLoginCredentials from "../utils/saveLoginCredentials";
 
 const Register = () => {
   const navigate = useNavigate();
-  const setAuthData = useUserStore((state) => state.setAuthData);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -46,7 +45,7 @@ const Register = () => {
       if (response.success) {
         if (registerMethod === "phone") {
           popup(
-            "Registration Successful",
+            "OTP sent Successful",
             "Please verify your phone number using the OTP sent to you.",
             "info",
           );
@@ -54,7 +53,7 @@ const Register = () => {
           setTimer(60);
         } else {
           popup(
-            "Registration Successful",
+            "Email Sent Successful",
             "Please check your email and click the verification link to activate your account.",
             "info",
           );
@@ -68,21 +67,9 @@ const Register = () => {
     mutationFn: verifyOTP,
     onSuccess: (response) => {
       const result = response;
-      console.log(response);
+      // console.log(response);
       if (result.success && result.data) {
-        // setAuthData({
-        //   access: result.data.access,
-        //   refresh: result.data.refresh,
-        //   user: {
-        //     id: result.data.user.id,
-        //     uuid: result.data.user.uuid,
-        //     first_name: result.data.user.first_name,
-        //     last_name: result.data.user.last_name,
-        //     email: result.data.user.email,
-        //     phone: result.data.user.phone,
-        //     role: result.data.user.role,
-        //   },
-        // });
+        saveLoginCredentials(result)
         popup(
           "Registration Successful",
           "Your account has been created successfully.",

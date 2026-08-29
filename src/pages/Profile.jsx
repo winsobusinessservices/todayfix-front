@@ -4,8 +4,8 @@ import ProfileServicesHistory from "../features/profile/ProfileServicesHistory";
 import ProfileReviews from "../features/profile/ProfileReviews";
 import ProfileRequests from "../features/profile/ProfileRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { logout } from "../services/authApi";
 import {
-  logout,
   userDetails,
   userPendingServices,
   userReviews,

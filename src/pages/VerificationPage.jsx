@@ -1,7 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useState, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router";
-import { verifyOTP } from "../services/userApi";
+import { verifyOTP } from "../services/authApi";
 import { popup } from "../components/pop-up/pop-up";
 import { useUserStore } from "../store/userStore";
 
