@@ -1,6 +1,4 @@
-import axios from "axios";
-import api, { API_URL } from "./axiosClient";
-
+import api from "./axiosClient";
 
 export const userDetails = async () => {
   return await api.get("/api/auth/profile/").then((data) => data.data.data);

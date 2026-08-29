@@ -39,15 +39,11 @@ export const useUserStore = create(
           path: "/",
         };
         Cookies.set("accessToken", access, cookieOptions);
-        if (refresh) {
-          Cookies.set("refreshToken", refresh, {
-            ...cookieOptions,
-            expires: 30,
-          });
-        }
+        Cookies.set("refreshToken", refresh, { ...cookieOptions, expires: 30 });
         set((state) => ({
           accessToken: access,
           refreshToken: refresh || state.refreshToken,
+          isAuthenticated: true,
         }));
       },
 

@@ -1,4 +1,4 @@
-import api from "./axiosClient";
+import api, { API_URL } from "./axiosClient";
 
 export const register = async (userRegisterData) => {
   return await api

@@ -1,38 +1,20 @@
-import {
-  GoogleLogin as GoogleLoginButton,
-  useGoogleLogin,
-} from "@react-oauth/google";
+import { GoogleLogin as GoogleLoginButton } from "@react-oauth/google";
 import { useMutation } from "@tanstack/react-query";
 import { googleLogin } from "../../services/authApi";
 import { popup } from "../pop-up/pop-up";
 import { useNavigate } from "react-router";
 import saveLoginCredentials from "../../utils/saveLoginCredentials";
-import { useUserStore } from "../../store/userStore";
 
 const GoogleLogin = () => {
   const navigate = useNavigate();
-  const setAuthData = useUserStore((state) => state.setAuthData);
 
   const { mutate, isError, error, isPending, isSuccess } = useMutation({
     mutationFn: googleLogin,
     onSuccess: (response) => {
       const result = response;
-      console.log(result);
+      // console.log(result);
       if (result.success && result.data) {
-        // saveLoginCredentials(result.data);
-        // setAuthData({
-        //   access: result.data.access,
-        //   refresh: result.data.refresh,
-        //   user: {
-        //     id: result.data.user.id,
-        //     uuid: result.data.user.uuid,
-        //     first_name: result.data.user.first_name,
-        //     last_name: result.data.user.last_name,
-        //     email: result.data.user.email,
-        //     phone: result.data.user.phone,
-        //     role: result.data.user.role,
-        //   },
-        // });
+        saveLoginCredentials(result);
         popup(
           "Login Successful",
           "Welcome back! You've successfully logged in.",

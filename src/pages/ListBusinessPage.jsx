@@ -1,17 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router";
 import CustomDropdown from "../components/ui/CustomDropdown";
-import { categoryApi } from "../services/categoryApi";
-import { api } from "../api";
 import SEO from "../components/seo/SEO";
+import { useCategoryStore } from "../store/categoryStore";
 
 const ListBusinessPage = () => {
   const navigate = useNavigate();
   const [providerType, setProviderType] = useState("COMPANY"); // "COMPANY" | "INDIVIDUAL" | "INVESTOR"
   const [category, setCategory] = useState("");
-  const [address, setAddress] = useState("");
-  const [area, setArea] = useState("");
-  const [city, setCity] = useState("Bengaluru");
+  const [location, setLocation] = useState("");
   const [website, setWebsite] = useState("");
 
   // Bank Details
@@ -22,30 +19,38 @@ const ListBusinessPage = () => {
   const [branchName, setBranchName] = useState("");
 
   const [errors, setErrors] = useState("");
-  const [servicesData, setServicesData] = useState([]);
-  const [areasData, setAreasData] = useState([]);
 
-  React.useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [servicesRes, areasRes] = await Promise.all([
-          categoryApi.getCategories(),
-          api.getAreas()
-        ]);
-        setServicesData(servicesRes.map(s => s.name));
-        setAreasData(areasRes.map(a => a.name));
-      } catch (error) {
-        console.error("Failed to fetch initial data", error);
-      }
-    };
-    fetchData();
-  }, []);
+  // Get categories from the Zustand store (already fetched on app load)
+  const categoriesData = useCategoryStore((state) => state.categories);
+
+  const categoryOptions = useMemo(() => {
+    const list = Array.isArray(categoriesData) ? categoriesData : [];
+    return list.filter((c) => c.is_active).map((c) => c.name);
+  }, [categoriesData]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors("");
 
-    // Validation matching backend constraints
+    // --- Validations ---
+    if (!category) {
+      setErrors("Please select a business category.");
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    if (!location.trim()) {
+      setErrors("Please enter your business location.");
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    if (!accountHolderName.trim()) {
+      setErrors("Account holder name is required.");
+      window.scrollTo(0, 0);
+      return;
+    }
+
     const cleanAccount = accountNumber.trim();
     if (!/^\d{9,18}$/.test(cleanAccount)) {
       setErrors("Account number must contain between 9 and 18 digits.");
@@ -55,7 +60,15 @@ const ListBusinessPage = () => {
 
     const cleanIfsc = ifscCode.trim().toUpperCase();
     if (cleanIfsc.length !== 11 || cleanIfsc[4] !== "0") {
-      setErrors("Enter a valid 11-character IFSC code (5th character must be '0').");
+      setErrors(
+        "Enter a valid 11-character IFSC code (5th character must be '0').",
+      );
+      window.scrollTo(0, 0);
+      return;
+    }
+
+    if (!bankName.trim()) {
+      setErrors("Bank name is required.");
       window.scrollTo(0, 0);
       return;
     }
@@ -63,25 +76,22 @@ const ListBusinessPage = () => {
     const payload = {
       business_type: providerType,
       category,
-      location: `${address}, ${area}`,
-      website,
-      account_holder_name: accountHolderName,
+      location: location.trim(),
+      website: website.trim(),
+      account_holder_name: accountHolderName.trim(),
       account_number: cleanAccount,
       ifsc_code: cleanIfsc,
-      bank_name: bankName,
-      branch_name: branchName,
+      bank_name: bankName.trim(),
+      branch_name: branchName.trim(),
     };
 
     localStorage.setItem("businessAppDetails", JSON.stringify(payload));
     navigate("/list-business/documents", { state: { providerType } });
   };
 
-  const serviceOptions = servicesData.length > 0 ? servicesData : ["Interior Design"];
-  const areas = areasData.length > 0 ? areasData : ["Indiranagar"];
-
   return (
     <div className="bg-surface-secondary font-sans pb-10">
-      <SEO 
+      <SEO
         title="List Your Business | TodayFix"
         description="Join thousands of premium professionals on TodayFix. List your services, get verified, and grow your business today."
       />
@@ -174,11 +184,11 @@ const ListBusinessPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Category <span className="text-text-primary">*</span>
+                  Category <span className="text-red-500">*</span>
                 </label>
                 <div className="relative">
                   <CustomDropdown
-                    options={serviceOptions}
+                    options={categoryOptions}
                     value={category}
                     onChange={setCategory}
                     placeholder="Select Category"
@@ -211,44 +221,22 @@ const ListBusinessPage = () => {
               Location Details
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="col-span-1 md:col-span-2">
-                <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Full Address <span className="text-text-primary">*</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Street address, building, company..."
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  City
-                </label>
-                <CustomDropdown
-                  options={["Bengaluru"]}
-                  value={city}
-                  onChange={setCity}
-                  placeholder="Select City"
-                  variant="dark"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Area
-                </label>
-                <CustomDropdown
-                  options={areas}
-                  value={area}
-                  onChange={setArea}
-                  placeholder="Any Area"
-                  variant="dark"
-                />
-              </div>
+            <div>
+              <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
+                Location <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                placeholder="e.g. Hoskote, Bengaluru Rural, Karnataka"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                required
+                className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400"
+              />
+              <p className="text-xs text-text-muted mt-2 font-medium">
+                Enter your full business location including area, city, and
+                state.
+              </p>
             </div>
           </div>
 
@@ -264,7 +252,8 @@ const ListBusinessPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="col-span-1 md:col-span-2">
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Account Holder Name <span className="text-text-primary">*</span>
+                  Account Holder Name{" "}
+                  <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -277,7 +266,7 @@ const ListBusinessPage = () => {
 
               <div>
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Account Number <span className="text-text-primary">*</span>
+                  Account Number <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -290,7 +279,7 @@ const ListBusinessPage = () => {
 
               <div>
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  IFSC Code <span className="text-text-primary">*</span>
+                  IFSC Code <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -303,7 +292,7 @@ const ListBusinessPage = () => {
 
               <div>
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Bank Name <span className="text-text-primary">*</span>
+                  Bank Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"

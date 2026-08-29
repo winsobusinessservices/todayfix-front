@@ -21,9 +21,11 @@ const Profile = () => {
   const refreshToken = useUserStore((state) => state.refreshToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
   const queryClient = useQueryClient();
+  const setUser = useUserStore((state) => state.setUser);
 
   const setUserData = (updater) => {
-    queryClient.setQueryData(["user"], updater);
+    const updatedUser = queryClient.setQueryData(["user"], updater);
+    setUser(updatedUser)
   };
 
   const handleImageChange = (e) => {

@@ -27,11 +27,12 @@ const Service = () => {
   // 1. Fetch Categories to find the one matching `slug`
   const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
     queryKey: ["publicCategories"],
-    queryFn: categoryApi.getCategories,
+    queryFn: () => categoryApi.getSubcategory(slug),
   });
 
-  const categories = categoriesData?.data || categoriesData || [];
-  const currentCategory = categories.find((cat) => cat.slug === slug);
+  console.log(categoriesData);
+
+  const currentCategory = categoriesData?.data || categoriesData || null;
 
   // 2. Fetch Subcategories for this category
   const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
@@ -41,7 +42,7 @@ const Service = () => {
       enabled: !!currentCategory?.cat_uuid,
     });
 
-  const subcategories = subcategoriesData.data || [];
+  const subcategories = subcategoriesData?.data || subcategoriesData || [];
   const activeSubcategories = subcategories.filter((sub) => sub.is_active);
 
   if (isLoadingCategories) {
@@ -82,7 +83,7 @@ const Service = () => {
       />
 
       {/* Clean Header / Hero */}
-      <div className="w-full bg-surface-secondary border-b border-border-primary pt-12 pb-16">
+      <div className="w-full bg-surface-secondary pt-12 pb-16">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
             <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-3xl shadow-sm border border-border-primary flex items-center justify-center text-purple-500 shrink-0">
@@ -116,86 +117,8 @@ const Service = () => {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 relative">
           {/* Main Content (Left) */}
           <div className="flex-1">
-            {/* Subcategories (The actual services) */}
-            <div className="mb-14">
-              <h2 className="text-2xl font-bold text-text-primary mb-6">
-                Select a Service
-              </h2>
-              {isLoadingSubcategories ? (
-                <div className="flex justify-center py-10">
-                  <span className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></span>
-                </div>
-              ) : activeSubcategories.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {activeSubcategories.map((sub) => (
-                    <div
-                      key={sub.subCat_uuid}
-                      className="group bg-surface-primary border border-border-primary hover:border-purple-500 rounded-2xl p-5 shadow-sm hover:shadow-md transition-all cursor-pointer flex items-start gap-4"
-                    >
-                      <div className="w-12 h-12 bg-surface-secondary rounded-xl flex items-center justify-center text-purple-600 shrink-0 group-hover:bg-purple-100 transition-colors">
-                        <DynamicIcon iconName={sub.icon} className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h3 className="font-bold text-text-primary text-lg mb-1 group-hover:text-purple-700 transition-colors">
-                          {sub.name}
-                        </h3>
-                        <p className="text-sm text-text-secondary line-clamp-2">
-                          {sub.description ||
-                            "Expert service delivered by professionals."}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="bg-surface-secondary border border-border-primary rounded-2xl p-8 text-center">
-                  <p className="text-text-muted font-medium">
-                    No specialized services available in this category yet.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Why Choose Us */}
-            <div className="mb-14 bg-emerald-50/50 border border-emerald-100 rounded-3xl p-6 md:p-8">
-              <h2 className="text-xl font-bold text-emerald-900 mb-6">
-                The TodayFix Guarantee
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="flex flex-col gap-2">
-                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
-                    <Icons.CheckCircle2 className="w-5 h-5" />
-                  </div>
-                  <h4 className="font-bold text-emerald-950">Verified Pros</h4>
-                  <p className="text-sm text-emerald-800/80">
-                    Every provider undergoes strict background checks.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
-                    <Icons.Banknote className="w-5 h-5" />
-                  </div>
-                  <h4 className="font-bold text-emerald-950">Fixed Pricing</h4>
-                  <p className="text-sm text-emerald-800/80">
-                    No hidden fees. Know the price before you book.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
-                    <Icons.ShieldCheck className="w-5 h-5" />
-                  </div>
-                  <h4 className="font-bold text-emerald-950">
-                    Quality Assured
-                  </h4>
-                  <p className="text-sm text-emerald-800/80">
-                    Not satisfied? We'll make it right.
-                  </p>
-                </div>
-              </div>
-            </div>
-
             {/* Vendors Section Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pt-4 border-t border-border-primary">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pt-4">
               <h2 className="text-2xl font-bold text-text-primary">
                 Top Rated Providers
               </h2>

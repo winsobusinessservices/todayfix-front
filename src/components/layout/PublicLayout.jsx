@@ -22,7 +22,8 @@ const PublicLayout = () => {
       <main className="flex-1 pt-20">
         <Outlet />
       </main>
-      {!shouldHideFooter && <Footer />}
+      {/* {!shouldHideFooter && <Footer />} */}
+      <Footer />
     </div>
   );
 };

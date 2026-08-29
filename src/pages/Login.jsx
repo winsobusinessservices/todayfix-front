@@ -142,7 +142,7 @@ const Login = () => {
     isLoginPending || sendOtpMutation.isPending || verifyOtpMutation.isPending;
 
   return (
-    <div className="flex font-sans bg-surface-primary justify-center items-center">
+    <div className="flex font-sans bg-surface-primary justify-center items-center relative">
       <div className="absolute inset-0 opacity-70 bg-[linear-gradient(to_right,#4f46e520_1px,transparent_1px),linear-gradient(to_bottom,#4f46e520_1px,transparent_1px)] bg-[size:70px_70px] " />
       <SEO
         title="Login | TodayFix"
@@ -188,7 +188,7 @@ const Login = () => {
                 )}
             </div>
 
-            <div className="flex flex-col gap-3 mb-8">
+            <div className="flex flex-col gap-3 mb-8 w-full">
               <GoogleLogin />
               {/* <AppleLogin /> */}
             </div>
