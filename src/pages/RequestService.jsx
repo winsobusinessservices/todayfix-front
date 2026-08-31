@@ -77,9 +77,11 @@ const RequestService = () => {
     queryKey: ["services"],
     queryFn: async () => {
       const response = await serviceApi.getServices();
-      return response.data || response; // Handle different response formats
+      return response.data || response;
     }
   });
+  console.log(servicesData);
+  
   const services = Array.isArray(servicesData) ? servicesData : (servicesData?.results || []);
   const serviceOptions = services.map(s => s.name);
 

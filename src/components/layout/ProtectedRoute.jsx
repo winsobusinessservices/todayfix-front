@@ -4,7 +4,7 @@ import { useUserStore } from "../../store/userStore";
 const ProtectedRoute = ({ allowedRoles }) => {
   const location = useLocation();
   const userData = useUserStore((state) => state.user);
-  console.log(userData);
+  // console.log(userData);
 
   const isAuthenticated =
     useUserStore((state) => state.isAuthenticated) || userData?.isAuthenticated;

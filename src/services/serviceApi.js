@@ -31,15 +31,29 @@ export const serviceApi = {
     return response.data;
   },
 
-  // PUT /api/services/<uuid>/update/
-  updateService: async (serviceId, data) => {
-    const response = await api.put(`/api/services/${serviceId}/update/`, data);
+  // PATCH /api/services/<uuid>/update/
+  updateService: async ({ id, data }) => {
+    const response = await api.patch(`/api/services/${id}/update/`, data);
     return response.data;
   },
 
   // DELETE /api/services/<uuid>/delete/
   deleteService: async (serviceId) => {
     const response = await api.delete(`/api/services/${serviceId}/delete/`);
+    return response.data;
+  },
+
+  // POST /api/services/assign-employee/
+  assignEmployee: async (data) => {
+    const response = await api.post("/api/services/assign-employee/", data);
+    return response.data;
+  },
+
+  // GET /api/services/<uuid>/employees/
+  getServiceEmployees: async ({ service_uuid, page = 1 }) => {
+    const response = await api.get(`/api/services/${service_uuid}/employees/`, {
+      params: { page },
+    });
     return response.data;
   },
 };

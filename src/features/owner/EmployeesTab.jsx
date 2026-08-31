@@ -48,31 +48,6 @@ const EmployeesTab = () => {
   const employees =
     employeesData?.results || employeesData?.data || employeesData || [];
 
-  if (
-    isError &&
-    error?.response?.data?.detail?.includes(
-      "not available for Individual businesses",
-    )
-  ) {
-    return (
-      <div className="flex flex-col items-center justify-center p-10 h-[60vh] text-center max-w-xl mx-auto">
-        <div className="w-20 h-20 bg-amber-50 border border-amber-200 rounded-full flex items-center justify-center mb-6 shadow-inner">
-          <Users size={32} className="text-amber-500" />
-        </div>
-        <h2 className="text-3xl font-black text-text-primary tracking-tight mb-4">
-          Feature Unavailable
-        </h2>
-        <p className="text-zinc-500 font-medium leading-relaxed">
-          {error.response.data.detail}
-          <br />
-          <br />
-          Currently, only <strong>Company</strong> and <strong>Investor</strong>{" "}
-          accounts have access to the Employee Management tools.
-        </p>
-      </div>
-    );
-  }
-
   const { mutate: createEmployee, isPending: isCreating } = useMutation({
     mutationFn: businessApi.createEmployee,
     onSuccess: () => {
@@ -110,6 +85,31 @@ const EmployeesTab = () => {
     },
     onError: () => toast.error("Failed to delete employee"),
   });
+
+  if (
+    isError &&
+    error?.response?.data?.detail?.includes(
+      "not available for Individual businesses",
+    )
+  ) {
+    return (
+      <div className="flex flex-col items-center justify-center p-10 h-[60vh] text-center max-w-xl mx-auto">
+        <div className="w-20 h-20 bg-amber-50 border border-amber-200 rounded-full flex items-center justify-center mb-6 shadow-inner">
+          <Users size={32} className="text-amber-500" />
+        </div>
+        <h2 className="text-3xl font-black text-text-primary tracking-tight mb-4">
+          Feature Unavailable
+        </h2>
+        <p className="text-zinc-500 font-medium leading-relaxed">
+          {error.response.data.detail}
+          <br />
+          <br />
+          Currently, only <strong>Company</strong> and <strong>Investor</strong>{" "}
+          accounts have access to the Employee Management tools.
+        </p>
+      </div>
+    );
+  }
 
   const handleAddSubmit = (e) => {
     e.preventDefault();

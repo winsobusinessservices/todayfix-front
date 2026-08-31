@@ -39,6 +39,7 @@ import BookingsTab from "../features/owner/BookingsTab";
 import ServicesTab from "../features/owner/ServicesTab";
 import PortfolioTab from "../features/owner/PortfolioTab";
 import ReviewsTab from "../features/owner/ReviewsTab";
+import ServiceAssignmentsTab from "../features/owner/ServiceAssignmentsTab";
 import FinancialsTab from "../features/owner/FinancialsTab";
 import SettingsTab from "../features/owner/SettingsTab";
 import ProtectedRoute from "../components/layout/ProtectedRoute";
@@ -121,6 +122,7 @@ function AppRoutes() {
           <Route path="portfolio" element={<PortfolioTab />} />
           <Route path="reviews" element={<ReviewsTab />} />
           <Route path="employees" element={<EmployeesTab />} />
+          <Route path="assignments" element={<ServiceAssignmentsTab />} />
           <Route path="financials" element={<FinancialsTab />} />
           <Route path="settings" element={<SettingsTab />} />
         </Route>

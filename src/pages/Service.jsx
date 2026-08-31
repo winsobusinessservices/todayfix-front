@@ -30,7 +30,7 @@ const Service = () => {
     queryFn: () => categoryApi.getSubcategory(slug),
   });
 
-  console.log(categoriesData);
+  // console.log(categoriesData);
 
   const currentCategory = categoriesData?.data || categoriesData || null;
 
