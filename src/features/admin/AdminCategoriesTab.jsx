@@ -36,7 +36,7 @@ const AdminCategoriesTab = () => {
     queryFn: categoryApi.getCategories,
   });
 
-  const categories = categoriesData || [];
+  const categories = categoriesData?.data || [];
 
   const { mutate: createCategory, isPending: isCreating } = useMutation({
     mutationFn: categoryApi.createCategory,

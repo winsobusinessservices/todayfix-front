@@ -22,6 +22,7 @@ const AdminServicesTab = () => {
     name: "",
     description: "",
     icon: "",
+    image: null,
     is_active: true,
   });
 
@@ -30,6 +31,7 @@ const AdminServicesTab = () => {
     name: "",
     description: "",
     icon: "",
+    image: null,
     is_active: true,
   });
 
@@ -57,8 +59,8 @@ const AdminServicesTab = () => {
       enabled: !!selectedCategoryUuid,
     });
 
-  const subcategories = subcategoriesData || [];
-
+  const subcategories = subcategoriesData?.data || [];
+  
   // 3. Mutations
   const { mutate: createSubcategory, isPending: isCreating } = useMutation({
     mutationFn: (data) =>
@@ -73,6 +75,7 @@ const AdminServicesTab = () => {
         name: "",
         description: "",
         icon: "",
+        image: null,
         is_active: true,
       });
       setIsAddModalOpen(false);
@@ -149,13 +152,17 @@ const AdminServicesTab = () => {
       return;
     }
 
-    createSubcategory({
-      name: newSubcategory.name.trim(),
-      slug: nameToSlug(newSubcategory.name.trim()),
-      description: newSubcategory.description.trim(),
-      icon: newSubcategory.icon.trim(),
-      is_active: newSubcategory.is_active,
-    });
+    const formData = new FormData();
+    formData.append("name", newSubcategory.name.trim());
+    formData.append("slug", nameToSlug(newSubcategory.name.trim()));
+    formData.append("description", newSubcategory.description.trim());
+    formData.append("icon", newSubcategory.icon.trim());
+    formData.append("is_active", newSubcategory.is_active);
+    if (newSubcategory.image) {
+      formData.append("image", newSubcategory.image);
+    }
+
+    createSubcategory(formData);
   };
 
   const handleSaveEditSubcategory = (e) => {
@@ -165,15 +172,19 @@ const AdminServicesTab = () => {
       return;
     }
 
+    const formData = new FormData();
+    formData.append("name", editSubcategory.name.trim());
+    formData.append("slug", nameToSlug(editSubcategory.name.trim()));
+    formData.append("description", editSubcategory.description.trim());
+    formData.append("icon", editSubcategory.icon.trim());
+    formData.append("is_active", editSubcategory.is_active);
+    if (editSubcategory.image) {
+      formData.append("image", editSubcategory.image);
+    }
+
     updateSubcategory({
       uuid: selectedRow.subCat_uuid,
-      data: {
-        name: editSubcategory.name.trim(),
-        slug: nameToSlug(editSubcategory.name.trim()),
-        description: editSubcategory.description.trim(),
-        icon: editSubcategory.icon.trim(),
-        is_active: editSubcategory.is_active,
-      },
+      data: formData,
     });
   };
 
@@ -314,6 +325,7 @@ const AdminServicesTab = () => {
                       slug: nameToSlug(selectedRow.name),
                       description: selectedRow.description || "",
                       icon: selectedRow.icon || "",
+                      image: null,
                       is_active: selectedRow.is_active,
                     });
                     setIsEditing(true);
@@ -385,6 +397,22 @@ const AdminServicesTab = () => {
                     })
                   }
                   className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500"
+                />
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-zinc-500 uppercase">
+                  Image
+                </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) =>
+                    setEditSubcategory({
+                      ...editSubcategory,
+                      image: e.target.files[0],
+                    })
+                  }
+                  className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-surface-dark file:text-white cursor-pointer"
                 />
               </div>
               <div className="flex items-center gap-2 pt-2">
@@ -522,6 +550,22 @@ const AdminServicesTab = () => {
                 setNewSubcategory({ ...newSubcategory, icon: e.target.value })
               }
               className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-xs font-bold text-zinc-500 uppercase">
+              Image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) =>
+                setNewSubcategory({
+                  ...newSubcategory,
+                  image: e.target.files[0],
+                })
+              }
+              className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-surface-dark file:text-white cursor-pointer"
             />
           </div>
           <div className="flex items-center gap-2 pt-2">

@@ -15,7 +15,7 @@ export const AdminModal = ({ isOpen, onClose, title, children, footer }) => {
   return (
     <AnimatePresence>
       {isOpen && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -32,11 +32,16 @@ export const AdminModal = ({ isOpen, onClose, title, children, footer }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 5 }}
             transition={{ duration: 0.15 }}
-            className="relative w-full max-w-lg bg-surface-primary border border-border-primary shadow-2xl rounded-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            className="relative w-full max-w-lg bg-surface-primary border border-border-primary shadow-2xl rounded-2xl flex flex-col max-h-[90vh]"
           >
             {/* Header */}
             <div className="px-6 py-4 border-b border-border-primary flex items-center justify-between shrink-0">
-              <h3 id="admin-modal-title" className="text-lg font-black text-text-primary">{title}</h3>
+              <h3
+                id="admin-modal-title"
+                className="text-lg font-black text-text-primary"
+              >
+                {title}
+              </h3>
               <button
                 onClick={onClose}
                 aria-label="Close modal"
@@ -45,7 +50,7 @@ export const AdminModal = ({ isOpen, onClose, title, children, footer }) => {
                 <X className="w-5 h-5" />
               </button>
             </div>
-            
+
             {/* Body */}
             <div className="p-6 overflow-y-auto styled-scrollbar flex-1">
               {children}
@@ -71,27 +76,29 @@ export const StatusBadge = ({ status, children }) => {
     verified: "bg-emerald-50 text-emerald-600 border-emerald-200",
     published: "bg-emerald-50 text-emerald-600 border-emerald-200",
     resolved: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    
+
     pending: "bg-amber-50 text-amber-600 border-amber-200",
     review: "bg-amber-50 text-amber-600 border-amber-200",
     warning: "bg-amber-50 text-amber-600 border-amber-200",
     investigating: "bg-amber-50 text-amber-600 border-amber-200",
-    
+
     suspended: "bg-red-50 text-red-600 border-red-200",
     rejected: "bg-red-50 text-red-600 border-red-200",
     hidden: "bg-red-50 text-red-600 border-red-200",
     error: "bg-red-50 text-red-600 border-red-200",
-    
+
     assigned: "bg-blue-50 text-blue-600 border-blue-200",
     broadcasting: "bg-blue-50 text-blue-600 border-blue-200",
-    
-    default: "bg-zinc-100 text-zinc-700 border-zinc-200"
+
+    default: "bg-zinc-100 text-zinc-700 border-zinc-200",
   };
 
   const statusKey = status?.toLowerCase() || "default";
 
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ${colorConfig[statusKey] || colorConfig.default}`}>
+    <span
+      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap ${colorConfig[statusKey] || colorConfig.default}`}
+    >
       <div className="w-1.5 h-1.5 rounded-full bg-current opacity-75"></div>
       {children || status}
     </span>
@@ -138,18 +145,26 @@ export const DataTable = ({
     }
     return vals;
   };
-  
-  const filteredData = data.data?.filter((item) =>
+
+  // console.log(data);
+
+  const filteredData = data?.filter((item) =>
     flattenValues(item).some((val) =>
       val.toLowerCase().includes(searchTerm.toLowerCase()),
     ),
   );
-  
-  const totalPages = filteredData ? Math.ceil(filteredData.length / itemsPerPage) : 0;
-  const paginatedData = filteredData ? filteredData.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage,
-  ) : [];
+
+  // console.log(filteredData);
+
+  const totalPages = filteredData
+    ? Math.ceil(filteredData.length / itemsPerPage)
+    : 0;
+  const paginatedData = filteredData
+    ? filteredData.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage,
+      )
+    : [];
 
   const handleFilterClick = () => {
     if (onFilter) {
@@ -186,13 +201,13 @@ export const DataTable = ({
         </div>
 
         <div className="flex items-center gap-2 w-full md:w-auto">
-          <button 
+          <button
             onClick={handleFilterClick}
             className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-border-primary rounded-xl text-sm font-bold text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
           >
             <Filter className="w-4 h-4" /> Filter
           </button>
-          <button 
+          <button
             onClick={handleExportClick}
             className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-border-primary rounded-xl text-sm font-bold text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
           >
@@ -217,14 +232,18 @@ export const DataTable = ({
                   {col.header}
                 </th>
               ))}
-              {(onActionClick || rowActions) && <th className="px-5 py-3 text-right"></th>}
+              {(onActionClick || rowActions) && (
+                <th className="px-5 py-3 text-right"></th>
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-border-secondary">
             {paginatedData.length === 0 ? (
               <tr>
                 <td
-                  colSpan={columns.length + 1 + (onActionClick || rowActions ? 1 : 0)}
+                  colSpan={
+                    columns.length + 1 + (onActionClick || rowActions ? 1 : 0)
+                  }
                   className="px-5 py-16 text-center text-zinc-500"
                 >
                   <div className="flex flex-col items-center justify-center gap-2">
@@ -265,7 +284,9 @@ export const DataTable = ({
                       onClick={(e) => {
                         e.stopPropagation();
                         if (rowActions) {
-                          setOpenDropdownRowIndex(openDropdownRowIndex === rowIndex ? null : rowIndex);
+                          setOpenDropdownRowIndex(
+                            openDropdownRowIndex === rowIndex ? null : rowIndex,
+                          );
                         } else if (onActionClick) {
                           onActionClick(row);
                         }
@@ -274,9 +295,9 @@ export const DataTable = ({
                       <button className="p-1.5 text-zinc-400 hover:text-text-primary rounded-lg hover:bg-surface-secondary transition-colors cursor-pointer">
                         <MoreVertical className="w-4 h-4" />
                       </button>
-                      
+
                       {rowActions && openDropdownRowIndex === rowIndex && (
-                        <div 
+                        <div
                           ref={dropdownRef}
                           className="absolute right-8 top-10 w-48 bg-surface-primary border border-border-primary rounded-xl shadow-xl z-50 py-1 flex flex-col animate-in fade-in zoom-in-95 duration-100"
                           onClick={(e) => e.stopPropagation()}
@@ -290,7 +311,9 @@ export const DataTable = ({
                               }}
                               className={`w-full text-left px-4 py-2.5 text-sm font-medium transition-colors hover:bg-surface-secondary flex items-center gap-2 ${action.destructive ? "text-red-500 hover:text-red-600" : "text-text-primary"}`}
                             >
-                              {action.icon && <action.icon className="w-4 h-4" />}
+                              {action.icon && (
+                                <action.icon className="w-4 h-4" />
+                              )}
                               {action.label}
                             </button>
                           ))}
@@ -347,4 +370,3 @@ export const DataTable = ({
     </div>
   );
 };
-

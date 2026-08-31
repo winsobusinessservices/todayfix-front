@@ -67,6 +67,7 @@ import AdminSettingsTab from "../features/admin/AdminSettingsTab";
 import VerificationPage from "../pages/VerificationPage";
 import VerificationSuccess from "../pages/VerificationSuccess";
 import Demo from "../pages/Demo";
+import EmployeesTab from "../features/owner/EmployeesTab";
 
 function AppRoutes() {
   return (
@@ -119,6 +120,7 @@ function AppRoutes() {
           <Route path="services" element={<ServicesTab />} />
           <Route path="portfolio" element={<PortfolioTab />} />
           <Route path="reviews" element={<ReviewsTab />} />
+          <Route path="employees" element={<EmployeesTab />} />
           <Route path="financials" element={<FinancialsTab />} />
           <Route path="settings" element={<SettingsTab />} />
         </Route>

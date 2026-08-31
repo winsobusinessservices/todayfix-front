@@ -15,6 +15,7 @@ import {
   Menu,
   X,
   ShieldAlert,
+  Users,
 } from "lucide-react";
 import Logo from "../components/brand/Logo";
 import { useMutation } from "@tanstack/react-query";
@@ -29,6 +30,7 @@ const SIDEBAR_ITEMS = [
   { id: "services", label: "Services", icon: Wrench },
   { id: "portfolio", label: "Portfolio", icon: ImageIcon },
   { id: "reviews", label: "Reviews", icon: Star },
+  { id: "employees", label: "Employees", icon: Users },
   { id: "financials", label: "Financials", icon: Wallet },
   { id: "settings", label: "Settings", icon: Settings },
 ];

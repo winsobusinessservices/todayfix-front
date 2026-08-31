@@ -27,7 +27,8 @@ export default function Navbar() {
 
   const loggedIn =
     useUserStore((state) => state.isAuthenticated) || userData?.isAuthenticated;
-  const hasBusiness = userData?.role === "OWNER";
+  const hasBusiness =
+    userData?.role === "BUSINESS" || userData?.role === "OWNER";
   const isAdmin = userData?.role === "ADMIN";
   // console.log(userData);
 
