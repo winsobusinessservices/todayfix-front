@@ -33,7 +33,11 @@ export const categoryApi = {
 
   // POST /api/categories/<cat_uuid>/subcategories/ (Create subcategory)
   createSubcategory: async (catUuid, subCategoryData) => {
-    const response = await api.post(`/api/categories/${catUuid}/subcategories/`, subCategoryData);
+    const response = await api.post(`/api/categories/${catUuid}/subcategories/`, subCategoryData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      }
+    });
     return response.data;
   },
 
@@ -45,7 +49,11 @@ export const categoryApi = {
 
   // PATCH /api/categories/subcategories/<subCat_uuid>/ (Update subcategory)
   updateSubcategory: async (subCatUuid, subCategoryData) => {
-    const response = await api.patch(`/api/categories/subcategories/${subCatUuid}/`, subCategoryData);
+    const response = await api.patch(`/api/categories/subcategories/${subCatUuid}/`, subCategoryData, {
+      headers:{
+        "Content-Type": "multipart/form-data",
+      }
+    });
     return response.data;
   },
 };

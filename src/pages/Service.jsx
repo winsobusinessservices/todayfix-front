@@ -6,6 +6,7 @@ import SEO from "../components/seo/SEO";
 import { useQuery } from "@tanstack/react-query";
 import { categoryApi } from "../services/categoryApi";
 import * as Icons from "lucide-react";
+import { serviceApi } from "../services/serviceApi";
 
 // Helper for dynamic icons
 const DynamicIcon = ({ iconName, className }) => {
@@ -30,11 +31,8 @@ const Service = () => {
     queryFn: () => categoryApi.getSubcategory(slug),
   });
 
-  // console.log(categoriesData);
-
   const currentCategory = categoriesData?.data || categoriesData || null;
 
-  // 2. Fetch Subcategories for this category
   const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
     useQuery({
       queryKey: ["publicSubcategories", currentCategory?.cat_uuid],
@@ -43,7 +41,14 @@ const Service = () => {
     });
 
   const subcategories = subcategoriesData?.data || subcategoriesData || [];
-  const activeSubcategories = subcategories.filter((sub) => sub.is_active);
+
+  const { data: servicesData } = useQuery({
+    queryKey: ["service"],
+    queryFn: () => serviceApi.getServices(),
+  });
+
+  const services = servicesData?.results || [];
+  // console.log(services);
 
   if (isLoadingCategories) {
     return (
@@ -83,23 +88,24 @@ const Service = () => {
       />
 
       {/* Clean Header / Hero */}
-      <div className="w-full bg-surface-secondary pt-12 pb-16">
+      <div className="w-full bg-surface-secondary pt-12">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded-3xl shadow-sm border border-border-primary flex items-center justify-center text-purple-500 shrink-0">
-              <DynamicIcon
-                iconName={currentCategory.icon}
-                className="w-12 h-12 md:w-16 md:h-16"
+          <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
+            <div className="w-36 h-36 md:w-40 md:h-40 bg-white rounded-3xl shadow-sm border border-border-primary flex items-center justify-center shrink-0">
+              <img
+                src={currentCategory?.image}
+                alt={currentCategory?.name}
+                className="w-full h-full object-cover rounded-3xl"
               />
             </div>
             <div className="flex flex-col justify-center">
               <div className="inline-flex items-center justify-center md:justify-start gap-2 mb-3">
-                <span className="px-3 py-1 bg-purple-100 text-purple-800 text-xs font-extrabold uppercase tracking-wider rounded-full">
-                  Professional Services
+                <span className="px-3 py-1 bg-surface-accent text-text-primary text-xs font-extrabold uppercase tracking-wider rounded-full">
+                  {currentCategory?.category_name}
                 </span>
-                <span className="flex items-center gap-1 text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+                {/* <span className="flex items-center gap-1 text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
                   <Icons.ShieldCheck className="w-4 h-4" /> Verified
-                </span>
+                </span> */}
               </div>
               <h1 className="text-3xl md:text-5xl font-black text-text-primary tracking-tight mb-4">
                 {currentCategory.name}
@@ -129,7 +135,7 @@ const Service = () => {
                 </span>
                 <div className="w-48">
                   <CustomDropdown
-                    options={["Recommended", "Highest Rated", "Most Reviews"]}
+                    options={["Highest Rated", "Most Reviews"]}
                     value={sortBy}
                     onChange={setSortBy}
                     placeholder="Recommended"
@@ -223,11 +229,13 @@ const Service = () => {
           <div className="w-full lg:w-[360px] flex-shrink-0">
             <div className="sticky top-[100px] bg-surface-primary rounded-3xl p-6 border border-border-primary shadow-[0_8px_40px_rgb(0,0,0,0.08)]">
               <div className="bg-purple-50 rounded-2xl p-5 mb-6 border border-purple-100">
-                <span className="text-purple-800 font-bold text-xs uppercase tracking-wider block mb-1">
+                <span className="text-text-secondary font-bold text-xs uppercase tracking-wider block mb-1">
                   Standard Pricing from
                 </span>
-                <div className="text-3xl font-black text-purple-900">₹499</div>
-                <p className="text-purple-700/80 text-xs font-medium mt-2">
+                <div className="text-3xl font-black text-text-primary">
+                  ₹499
+                </div>
+                <p className="text-text-muted text-xs font-medium mt-2">
                   *Final price depends on selected service
                 </p>
               </div>
@@ -268,6 +276,88 @@ const Service = () => {
                 No credit card required
               </p>
             </div>
+          </div>
+        </div>
+        {/* Services List Section */}
+        <div className="w-full mt-16 mb-20">
+          <div className="flex items-center justify-between mb-8">
+            <h2 className="text-2xl font-black text-text-primary tracking-tight">
+              Available Services
+            </h2>
+            <div className="text-sm font-bold text-text-secondary">
+              {services.length} services found
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {services.map((service) => (
+              <div
+                key={service?.service_uuid}
+                className="flex flex-col bg-surface-primary rounded-3xl border border-border-primary shadow-sm hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)] transition-all overflow-hidden group"
+              >
+                <div className="p-6 flex-1 flex flex-col">
+                  <div className="flex justify-between items-start mb-2">
+                    <span className="px-3 py-1.5 bg-surface-secondary text-text-primary text-[10px] font-black uppercase tracking-widest rounded-xl">
+                      {service?.subcategory?.name}
+                    </span>
+                    <div className="flex items-center gap-1 text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                      <Icons.ShieldCheck className="w-3.5 h-3.5" />
+                      Verified
+                    </div>
+                  </div>
+
+                  <h3 className="text-xl font-black text-text-primary mb-2 leading-tight group-hover:text-emerald-600 transition-colors">
+                    {service?.name}
+                  </h3>
+
+                  <div className="flex items-center gap-2.5 mb-3 pb-2 border-b border-border-primary/50">
+                    <div className="w-8 h-8 rounded-full bg-surface-secondary flex items-center justify-center shrink-0 border border-border-primary">
+                      <Icons.Store className="w-4 h-4 text-text-secondary" />
+                    </div>
+                    <p className="text-sm font-bold text-text-secondary truncate">
+                      {service?.business?.name || "Independent Provider"}
+                    </p>
+                  </div>
+
+                  <p className="text-sm text-text-secondary font-medium leading-relaxed mb-3 flex-1 line-clamp-3">
+                    {service?.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 mb-6">
+                    {service?.duration && (
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-text-secondary bg-surface-secondary px-3 py-1.5 rounded-lg border border-border-primary/50">
+                        <Icons.Clock className="w-3.5 h-3.5" />
+                        {service.duration} min
+                      </div>
+                    )}
+                    {service?.required_employees && (
+                      <div className="flex items-center gap-1.5 text-xs font-bold text-text-secondary bg-surface-secondary px-3 py-1.5 rounded-lg border border-border-primary/50">
+                        <Icons.Users className="w-3.5 h-3.5" />
+                        {service.required_employees} Staff
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="h-px w-full bg-border-primary mb-5" />
+
+                  <div className="flex items-end justify-between mt-auto">
+                    <div>
+                      <span className="text-[10px] font-bold text-text-muted uppercase tracking-wider block mb-1">
+                        Starting at
+                      </span>
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black text-text-primary tracking-tight">
+                          ₹{Math.round(service?.price)}
+                        </span>
+                      </div>
+                    </div>
+                    <button className="px-5 py-3 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:bg-zinc-800 transition-all active:scale-95 shadow-md flex items-center gap-2">
+                      Book
+                      <Icons.ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>

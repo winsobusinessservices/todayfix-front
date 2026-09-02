@@ -42,15 +42,15 @@ const SIDEBAR_SECTIONS = [
       { id: "users", label: "Users", icon: Users },
       { id: "providers", label: "Providers", icon: Briefcase },
       { id: "businesses", label: "Businesses", icon: Store },
-      { id: "verifications", label: "Verifications", icon: Shield },
+      { id: "verifications", label: "Businesses Verification", icon: Shield },
     ],
   },
   {
     label: "Operations",
     items: [
       { id: "requests", label: "Service Requests", icon: ClipboardList },
-      { id: "services", label: "Services", icon: Wrench },
       { id: "categories", label: "Categories", icon: FolderTree },
+      { id: "services", label: "Sub Categories", icon: Wrench },
       { id: "cities", label: "Cities & Locations", icon: MapPin },
       { id: "reviews", label: "Reviews", icon: Star },
     ],
@@ -101,7 +101,7 @@ const AdminDashboard = () => {
 
   const logoMarkup = (
     <Link
-      to="/admin"
+      to="/"
       className="relative z-20 flex items-center space-x-2 text-sm font-normal text-text-primary"
     >
       <img src="/tfix.png" alt="logo" width={45} height={45} />

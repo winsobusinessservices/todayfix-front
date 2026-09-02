@@ -58,7 +58,7 @@ const ServicesTab = () => {
   const queryClient = useQueryClient();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  
+
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [serviceToDelete, setServiceToDelete] = useState(null);
 
@@ -257,7 +257,7 @@ const ServicesTab = () => {
         {services.map((service) => (
           <div
             key={service.service_uuid}
-            className={`bg-surface-primary rounded-3xl border p-6 shadow-2xl shadow-black/5 transition-all duration-300 ${
+            className={`bg-surface-primary justify-between flex flex-col rounded-3xl border p-6 shadow-2xl shadow-black/5 transition-all duration-300 ${
               service.is_active
                 ? "border-border-primary"
                 : "border-border-primary opacity-60 grayscale"

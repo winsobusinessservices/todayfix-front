@@ -5,12 +5,7 @@ import ProfileReviews from "../features/profile/ProfileReviews";
 import ProfileRequests from "../features/profile/ProfileRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../services/authApi";
-import {
-  userDetails,
-  userPendingServices,
-  userReviews,
-  userServicesHistory,
-} from "../services/userApi";
+import { userDetails, userReviews } from "../services/userApi";
 import { useNavigate } from "react-router";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
@@ -25,7 +20,7 @@ const Profile = () => {
 
   const setUserData = (updater) => {
     const updatedUser = queryClient.setQueryData(["user"], updater);
-    setUser(updatedUser)
+    setUser(updatedUser);
   };
 
   const handleImageChange = (e) => {
@@ -47,16 +42,6 @@ const Profile = () => {
     queryKey: ["user"],
     queryFn: userDetails,
   });
-
-  const {
-    data: serviceHistory,
-    isLoading: serviceHistoryLoading,
-    error: serviceHistoryError,
-  } = useQuery({
-    queryKey: ["serviceHistory"],
-    queryFn: userServicesHistory,
-  });
-
   const {
     data: userReview,
     isLoading: userReviewLoading,
@@ -66,24 +51,22 @@ const Profile = () => {
     queryFn: userReviews,
   });
 
-  const {
-    data: userPendingService,
-    isLoading: userPendingServicesLoading,
-    error: userPendingServicesError,
-  } = useQuery({
-    queryKey: ["userPendingServices"],
-    queryFn: userPendingServices,
-  });
-
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: logout,
     onSuccess: (response) => {
       if (response.success) {
-        // navigate("/");
         window.location.href = "/";
         clearAuth();
+        queryClient.removeQueries(["user"]);
+        queryClient.removeQueries(["serviceHistory"]);
+        queryClient.removeQueries(["userReviews"]);
+        queryClient.removeQueries(["userPendingServices"]);
+        queryClient.removeQueries(["addresses"]);
         popup("Logout Successful", "You've been safely logged out.", "logout");
       }
+    },
+    onError: (error) => {
+      popup("Error", error.message, "error");
     },
   });
 
@@ -93,9 +76,7 @@ const Profile = () => {
 
   if (
     userDataLoading ||
-    serviceHistoryLoading ||
-    userReviewLoading ||
-    userPendingServicesLoading
+    userReviewLoading 
   ) {
     return <p>Loading...</p>;
   }
@@ -238,10 +219,7 @@ const Profile = () => {
         <div className="bg-surface-primary border border-border-primary rounded-2xl p-8 md:p-12 shadow-2xl shadow-black/5 min-h-[500px]">
           {/* TAB 0: My Requests */}
           {activeTab === "requests" && (
-            <ProfileRequests
-              addresses={userData?.addresses}
-              userPendingServices={userPendingService}
-            />
+            <ProfileRequests addresses={userData?.addresses} />
           )}
 
           {/* TAB 1: Profile & Addresses */}
@@ -250,9 +228,7 @@ const Profile = () => {
           )}
 
           {/* TAB 2: Service History */}
-          {activeTab === "history" && (
-            <ProfileServicesHistory serviceHistory={serviceHistory} />
-          )}
+          {activeTab === "history" && <ProfileServicesHistory />}
 
           {/* TAB 3: User Reviews */}
           {activeTab === "reviews" && (

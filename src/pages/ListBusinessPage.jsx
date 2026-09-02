@@ -252,8 +252,7 @@ const ListBusinessPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="col-span-1 md:col-span-2">
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Account Holder Name{" "}
-                  <span className="text-red-500">*</span>
+                  Account Holder Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -305,13 +304,14 @@ const ListBusinessPage = () => {
 
               <div>
                 <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                  Branch Name
+                  Branch Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   value={branchName}
                   onChange={(e) => setBranchName(e.target.value)}
                   className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary transition-all font-medium"
+                  required
                 />
               </div>
             </div>

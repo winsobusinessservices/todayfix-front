@@ -17,7 +17,7 @@ createRoot(document.getElementById("root")).render(
       <HelmetProvider>
         <BrowserRouter>
           <App />
-          <Toaster position="bottom-right" reverseOrder={false} />
+          <Toaster position="top-center" reverseOrder={false} />
         </BrowserRouter>
       </HelmetProvider>
     </QueryClientProvider>

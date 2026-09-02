@@ -62,12 +62,17 @@ const ProfileRequests = ({ addresses }) => {
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState("");
 
+  const [currentPage, setCurrentPage] = useState(1);
+
   const { data: bookingsData, isLoading } = useQuery({
-    queryKey: ["userBookings"],
-    queryFn: bookingApi.getUserBookings,
+    queryKey: ["userBookings", currentPage],
+    queryFn: () =>
+      bookingApi.getUserBookings({ page: currentPage, status: "PENDING" }),
   });
 
   const bookings = bookingsData?.results || bookingsData || [];
+  const count = bookingsData?.count || 0;
+  const totalPages = Math.ceil(count / 10); // Assuming 10 items per page
 
   const { mutate: cancelBooking, isPending: isCancelling } = useMutation({
     mutationFn: (id) => bookingApi.cancelBooking(id, "Cancelled by user"),
@@ -234,7 +239,7 @@ const ProfileRequests = ({ addresses }) => {
           </motion.div>
         ))}
 
-        {!isLoading && bookings?.length === 0 && (
+        {bookings.length === 0 && !isLoading && (
           <div className="text-center py-16 bg-surface-secondary rounded-3xl border border-border-primary">
             <Search className="w-12 h-12 text-zinc-600 mx-auto mb-4 opacity-50" />
             <h3 className="text-lg font-bold text-text-primary mb-2">
@@ -243,6 +248,29 @@ const ProfileRequests = ({ addresses }) => {
             <p className="text-sm text-zinc-500">
               You don't have any pending service requests.
             </p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {!isLoading && totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 mt-4">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="px-4 py-2 rounded-xl bg-surface-primary border border-border-primary text-sm font-bold text-text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-secondary"
+            >
+              Previous
+            </button>
+            <span className="text-sm font-bold text-text-secondary">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 rounded-xl bg-surface-primary border border-border-primary text-sm font-bold text-text-primary disabled:opacity-50 disabled:cursor-not-allowed hover:bg-surface-secondary"
+            >
+              Next
+            </button>
           </div>
         )}
       </div>

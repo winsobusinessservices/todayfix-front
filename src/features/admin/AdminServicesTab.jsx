@@ -60,7 +60,6 @@ const AdminServicesTab = () => {
     });
 
   const subcategories = subcategoriesData?.data || [];
-  
   // 3. Mutations
   const { mutate: createSubcategory, isPending: isCreating } = useMutation({
     mutationFn: (data) =>

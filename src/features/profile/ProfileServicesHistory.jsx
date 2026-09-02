@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { IndianRupee, MapPin, Calendar, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { bookingApi } from "../../services/bookingApi";
 
-const ProfileServicesHistory = ({ serviceHistory }) => {
+const ProfileServicesHistory = () => {
   const [filter, setFilter] = useState("All");
   const [search, setSearch] = useState("");
   const [detailsModal, setDetailsModal] = useState(null);
@@ -14,8 +16,21 @@ const ProfileServicesHistory = ({ serviceHistory }) => {
   const [reviewRating, setReviewRating] = useState(5);
   const navigate = useNavigate();
 
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const { data: bookingsData, isLoading } = useQuery({
+    queryKey: ["userBookingsHistory", currentPage],
+    queryFn: () => bookingApi.getUserBookings({ page: currentPage }),
+  });
+
+  // Since it's history, we filter out PENDING or IN_PROGRESS if possible,
+  // but let's just use the real data and filter by the selected filter state
+  const serviceHistory = bookingsData?.results || bookingsData || [];
+  const count = bookingsData?.count || 0;
+  const totalPages = Math.ceil(count / 10);
+
   const completedServices = serviceHistory.filter(
-    (s) => s.status === "Completed",
+    (s) => s.status === "COMPLETED",
   );
   const totalSpent = completedServices.reduce(
     (acc, curr) => acc + parseInt(curr.price || 0),
@@ -24,11 +39,19 @@ const ProfileServicesHistory = ({ serviceHistory }) => {
   const averageRating = "4.8"; // Hardcoded for MVP as per user suggestion
 
   const filteredHistory = serviceHistory.filter((service) => {
-    if (filter !== "All" && service.status !== filter) return false;
+    // Hide pending/in-progress from history by default unless we specifically want them
+    if (filter !== "All" && service.status !== filter.toUpperCase())
+      return false;
+    if (
+      filter === "All" &&
+      (service.status === "PENDING" || service.status === "CONFIRMED")
+    )
+      return false; // Usually history is for past events
+
     if (
       search &&
-      !service.serviceName.toLowerCase().includes(search.toLowerCase()) &&
-      !service.businessName.toLowerCase().includes(search.toLowerCase())
+      !service.service?.name?.toLowerCase().includes(search.toLowerCase()) &&
+      !service.business?.name?.toLowerCase().includes(search.toLowerCase())
     )
       return false;
     return true;
@@ -97,108 +120,115 @@ const ProfileServicesHistory = ({ serviceHistory }) => {
       </div>
 
       {/* Cards */}
-      <div className="space-y-4 w-full">
-        {filteredHistory.map((service, index) => (
-          <div
-            key={service.serviceId || index}
-            className="bg-surface-primary border border-border-primary rounded-[1.5rem] p-6 md:p-8 shadow-sm hover:shadow-lg hover:border-black transition-all"
-          >
-            {/* Header: Title & Status */}
-            <div className="flex justify-between items-start mb-2">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-surface-secondary flex items-center justify-center border border-border-secondary shrink-0 mt-1">
-                  <div className="w-3 h-3 rounded-full bg-text-primary"></div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-black text-text-primary leading-tight">
-                    {service.serviceName}
-                  </h3>
-                  <p className="text-base font-medium text-text-secondary mt-1">
-                    {service.businessName}
-                  </p>
-                </div>
+      {isLoading && (
+        <div className="text-center py-16">
+          <span className="w-8 h-8 border-4 border-text-primary border-t-transparent rounded-full animate-spin inline-block"></span>
+        </div>
+      )}
+      {!isLoading && filteredHistory.length === 0 && (
+        <div className="text-center py-16 bg-surface-secondary rounded-3xl border border-border-secondary">
+          <Search className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
+          <p className="text-text-primary font-bold text-lg mb-1">
+            No services found
+          </p>
+          <p className="text-text-secondary font-medium">
+            Try adjusting your filters or search term.
+          </p>
+        </div>
+      )}
+      {filteredHistory.map((service, index) => (
+        <div
+          key={service.uuid || index}
+          className="bg-surface-primary border border-border-primary rounded-[1.5rem] p-6 md:p-8 shadow-sm hover:shadow-lg hover:border-black transition-all"
+        >
+          {/* Header: Title & Status */}
+          <div className="flex justify-between items-start mb-2">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-surface-secondary flex items-center justify-center border border-border-secondary shrink-0 mt-1">
+                <div className="w-3 h-3 rounded-full bg-text-primary"></div>
               </div>
-              <span
-                className={`px-3 py-1.5 text-[10px] sm:text-xs font-black rounded-full uppercase tracking-widest flex items-center gap-1.5 shrink-0 ${service.status === "Completed" ? "bg-green-500/10 text-green-600 border border-green-500/20" : "bg-zinc-100 text-zinc-600 border border-zinc-200"}`}
-              >
-                {service.status === "Completed" && <span>✓</span>}{" "}
-                {service.status}
+              <div>
+                <h3 className="text-xl font-black text-text-primary leading-tight">
+                  {service.service?.name}
+                </h3>
+                <p className="text-base font-medium text-text-secondary mt-1">
+                  {service.business?.name}
+                </p>
+              </div>
+            </div>
+            <span
+              className={`px-3 py-1.5 text-[10px] sm:text-xs font-black rounded-full uppercase tracking-widest flex items-center gap-1.5 shrink-0 ${service.status === "COMPLETED" ? "bg-green-500/10 text-green-600 border border-green-500/20" : "bg-zinc-100 text-zinc-600 border border-zinc-200"}`}
+            >
+              {service.status === "COMPLETED" && <span>✓</span>}{" "}
+              {service.status}
+            </span>
+          </div>
+
+          {/* Middle: Details */}
+          <div className="pl-14 mt-4 space-y-3">
+            <div className="flex items-center gap-2 text-sm text-text-secondary font-medium">
+              <Calendar className="w-4 h-4" />
+              {service.scheduled_date}
+            </div>
+            <div className="flex items-center gap-2 text-sm text-text-secondary font-medium">
+              <MapPin className="w-4 h-4" />
+              {service.address?.locality || "Indiranagar"},{" "}
+              {service.address?.city || "Bengaluru"}
+            </div>
+          </div>
+
+          {/* Bottom: Payment & Actions */}
+          <div className="pt-5 border-t border-border-secondary flex flex-col sm:flex-row justify-between items-center gap-5 pl-0 sm:pl-14">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <span className="text-sm font-bold text-text-secondary uppercase tracking-widest">
+                Total paid
+              </span>
+              <span className="text-xl font-black text-text-primary">
+                {service.price}
               </span>
             </div>
 
-            {/* Middle: Details */}
-            <div className="pl-14 mt-4 space-y-3">
-              <div className="flex items-center gap-2 text-sm text-text-secondary font-medium">
-                <Calendar className="w-4 h-4" />
-                {service.date}
-              </div>
-              <div className="flex items-center gap-2 text-sm text-text-secondary font-medium">
-                <MapPin className="w-4 h-4" />
-                {/* Fallback mock location if not in DB */}
-                Indiranagar, Bengaluru
-              </div>
-            </div>
-
-            {/* Bottom: Payment & Actions */}
-            <div className="pt-5 border-t border-border-secondary flex flex-col sm:flex-row justify-between items-center gap-5 pl-0 sm:pl-14">
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <span className="text-sm font-bold text-text-secondary uppercase tracking-widest">
-                  Total paid
-                </span>
-                <span className="text-xl font-black text-text-primary">
-                  {service.price}
-                </span>
-              </div>
-
-              <div className="flex items-center gap-3 w-full sm:w-auto">
-                <button
-                  className="flex-1 sm:flex-none px-6 py-3 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors text-sm cursor-pointer"
-                  onClick={() => setDetailsModal(service)}
-                >
-                  View Details
-                </button>
-                {/* Assuming for this demo that the first one is unrated and others are rated, to show both states */}
-                {service.status === "Completed" ? (
-                  index === 0 ? (
-                    <button
-                      onClick={() => setReviewModal(service)}
-                      className="flex-1 sm:flex-none px-6 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm cursor-pointer"
-                    >
-                      Rate Service
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => navigate("/request-service")}
-                      className="flex-1 sm:flex-none px-6 py-3 bg-surface-dark border border-border-secondary text-text-inverted font-bold rounded-xl hover:bg-surface-secondary hover:text-text-primary transition-colors text-sm cursor-pointer"
-                    >
-                      Book Again
-                    </button>
-                  )
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <button
+                className="flex-1 sm:flex-none px-6 py-3 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors text-sm cursor-pointer"
+                onClick={() => setDetailsModal(service)}
+              >
+                View Details
+              </button>
+              {/* Assuming for this demo that the first one is unrated and others are rated, to show both states */}
+              {service.status === "Completed" ? (
+                index === 0 ? (
+                  <button
+                    onClick={() => setReviewModal(service)}
+                    className="flex-1 sm:flex-none px-6 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm cursor-pointer"
+                  >
+                    Rate Service
+                  </button>
                 ) : (
                   <button
                     onClick={() => navigate("/request-service")}
-                    className="flex-1 sm:flex-none px-6 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm cursor-pointer"
+                    className="flex-1 sm:flex-none px-6 py-3 bg-surface-dark border border-border-secondary text-text-inverted font-bold rounded-xl hover:bg-surface-secondary hover:text-text-primary transition-colors text-sm cursor-pointer"
                   >
                     Book Again
                   </button>
-                )}
-              </div>
+                )
+              ) : (
+                <button
+                  onClick={() => navigate("/request-service")}
+                  className="flex-1 sm:flex-none px-6 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm cursor-pointer"
+                >
+                  Book Again
+                </button>
+              )}
             </div>
           </div>
-        ))}
+        </div>
+      ))}
 
-        {filteredHistory.length === 0 && (
-          <div className="text-center py-16 bg-surface-secondary rounded-3xl border border-border-secondary">
-            <Search className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
-            <p className="text-text-primary font-bold text-lg mb-1">
-              No services found
-            </p>
-            <p className="text-text-secondary font-medium">
-              Try adjusting your filters or search term.
-            </p>
-          </div>
-        )}
-      </div>
+      {/* {filteredHistory.length === 0 && (
+          
+        )} */}
+      {/* </div> */}
 
       {/* Details Modal */}
       {detailsModal && (
@@ -230,7 +260,7 @@ const ProfileServicesHistory = ({ serviceHistory }) => {
               <div className="flex justify-between border-b border-border-secondary pb-4">
                 <span className="text-text-secondary font-medium">Service</span>
                 <span className="font-bold text-text-primary">
-                  {detailsModal.serviceName}
+                  {detailsModal.service?.name}
                 </span>
               </div>
               <div className="flex justify-between border-b border-border-secondary pb-4">
@@ -238,60 +268,51 @@ const ProfileServicesHistory = ({ serviceHistory }) => {
                   Professional
                 </span>
                 <span className="font-bold text-text-primary">
-                  {detailsModal.businessName}
+                  {detailsModal.business?.name}
                 </span>
               </div>
               <div className="flex justify-between border-b border-border-secondary pb-4">
                 <span className="text-text-secondary font-medium">
                   Date & Time
                 </span>
-                <span className="font-bold text-text-primary">
-                  {detailsModal.date}
-                </span>
+                {/* </p> */}
+                <p className="text-sm font-bold text-text-primary flex items-center gap-2">
+                  <Calendar className="w-4 h-4" />
+                  {detailsModal.scheduled_date} at {detailsModal.scheduled_time}{" "}
+                  ({detailsModal.slot_type})
+                </p>
               </div>
-              <div className="flex justify-between border-b border-border-secondary pb-4">
-                <span className="text-text-secondary font-medium">
+              <div>
+                <p className="text-xs font-bold text-text-secondary uppercase tracking-widest mb-1">
                   Location
-                </span>
-                <span className="font-bold text-text-primary">
-                  Indiranagar, Bengaluru
-                </span>
+                </p>
+                <p className="text-sm font-bold text-text-primary flex items-center gap-2">
+                  <MapPin className="w-4 h-4" />
+                  {detailsModal.address?.address_line},{" "}
+                  {detailsModal.address?.locality}, {detailsModal.address?.city}
+                </p>
               </div>
-              <div className="flex justify-between pt-2">
-                <span className="text-text-secondary font-medium">
-                  Total Paid
-                </span>
-                <span className="text-xl font-black text-text-primary">
+              <div>
+                <p className="text-xs font-bold text-text-secondary uppercase tracking-widest mb-1">
+                  Amount Paid
+                </p>
+                <p className="text-xl font-black text-text-primary">
                   {detailsModal.price}
-                </span>
+                </p>
               </div>
-            </div>
-
-            <div className="flex flex-col gap-3">
-              <div className="flex gap-3">
+              <div className="pt-4 flex gap-3">
                 <button
-                  className="flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform"
-                  onClick={() => navigate("/request-service")}
+                  onClick={() => setDetailsModal(null)}
+                  className="flex-1 px-4 py-3 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors text-sm"
+                >
+                  Close
+                </button>
+                <Link
+                  to={`/vendor/${detailsModal.business?.business_profile_uuid}`}
+                  className="flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform text-sm text-center border border-zinc-700"
                 >
                   Book Again
-                </button>
-                <button className="flex-1 px-4 py-3 bg-surface-secondary text-text-primary font-bold rounded-xl border border-border-secondary hover:bg-zinc-200 transition-colors">
-                  Download Invoice
-                </button>
-              </div>
-              <div className="mt-4 pt-4 border-t border-border-secondary">
-                <p className="text-sm font-medium text-text-secondary mb-2">
-                  Need help?
-                </p>
-                <button
-                  onClick={() => {
-                    setReportModal(detailsModal);
-                    setDetailsModal(null);
-                  }}
-                  className="text-sm font-bold text-red-500 hover:text-red-600 hover:underline cursor-pointer"
-                >
-                  Report an issue →
-                </button>
+                </Link>
               </div>
             </div>
           </div>

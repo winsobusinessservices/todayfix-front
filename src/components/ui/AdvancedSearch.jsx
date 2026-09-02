@@ -4,6 +4,7 @@ import CustomDropdown from "./CustomDropdown";
 import { ratings } from "../../data/collectedData";
 import { categoryApi } from "../../services/categoryApi";
 import { api } from "../../api";
+import { useNavigate, createSearchParams } from "react-router";
 
 const AdvancedSearch = () => {
   // State for search filters
@@ -21,7 +22,7 @@ const AdvancedSearch = () => {
       try {
         const [servicesRes, areasRes] = await Promise.all([
           categoryApi.getCategories(),
-          api.getAreas()
+          api.getAreas(),
         ]);
         setServicesData(servicesRes);
         setAreasData(areasRes);
@@ -35,18 +36,27 @@ const AdvancedSearch = () => {
   // Mock data for dropdowns
   const cities = ["Bengaluru"];
   const areas = areasData?.map((ar) => ar?.name) || [];
-  const services = servicesData?.map((s) => s?.name) || [];
+  const services = (servicesData?.data || servicesData || [])?.map((s) => s?.name) || [];
+
+  const navigate = useNavigate();
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log("Searching with:", {
-      searchQuery,
-      city,
-      area,
-      service,
-      rating,
+    const params = {};
+    if (searchQuery.trim()) params.search = searchQuery.trim();
+    
+    // The `service` dropdown actually selects a Category name
+    if (service) {
+      const selectedCat = servicesData?.data?.find(s => s.name === service) || servicesData?.find(s => s.name === service);
+      if (selectedCat) params.category_slug = selectedCat.slug;
+    }
+    
+    // We could pass area/city too if the API supports it, but for now we'll pass search & category
+    
+    navigate({
+      pathname: "/search",
+      search: `?${createSearchParams(params)}`,
     });
-    // Add your search logic/API call here
   };
 
   return (
@@ -145,69 +155,79 @@ const AdvancedSearch = () => {
           </span>
 
           {/* Area Filter */}
-          <CustomDropdown
-            options={areas}
-            value={area}
-            onChange={setArea}
-            placeholder="Any Area"
-            icon={
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"
-                />
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                />
-              </svg>
-            }
-          />
+          <span>
+            <CustomDropdown
+              options={areas}
+              value={area}
+              onChange={setArea}
+              placeholder="Any Area"
+              icon={
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                </svg>
+              }
+            />
+          </span>
 
           {/* Service Filter */}
-          <CustomDropdown
-            options={services}
-            value={service}
-            onChange={setService}
-            placeholder="All Services"
-            icon={
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
-                />
-              </svg>
-            }
-          />
+          <span>
+            <CustomDropdown
+              options={services}
+              value={service}
+              onChange={setService}
+              placeholder="All Services"
+              icon={
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                  />
+                </svg>
+              }
+            />
+          </span>
 
           {/* Rating Filter */}
-          <CustomDropdown
-            options={ratings}
-            value={rating}
-            onChange={setRating}
-            placeholder="Any Rating"
-            icon={
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-            }
-          />
+          <span>
+            <CustomDropdown
+              options={ratings}
+              value={rating}
+              onChange={setRating}
+              placeholder="Any Rating"
+              icon={
+                <svg
+                  className="w-4 h-4"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+              }
+            />
+          </span>
 
           {/* Search Button (Mobile Only) */}
           <button

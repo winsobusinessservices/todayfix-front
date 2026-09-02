@@ -8,10 +8,8 @@ export const serviceApi = {
   },
 
   // GET /api/services/search/ (Search Services)
-  searchServices: async (query) => {
-    const response = await api.get("/api/services/search/", {
-      params: { q: query }, // Assuming standard query param 'q'
-    });
+  searchServices: async (params) => {
+    const response = await api.get("/api/services/search/", { params });
     return response.data;
   },
 

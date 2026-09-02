@@ -255,7 +255,6 @@ const Register = () => {
                     name="last_name"
                     value={formData.last_name}
                     onChange={handleInputChange}
-                    required
                     placeholder="Doe"
                     className={`w-full bg-surface-secondary/50 border ${getFieldError("last_name") ? "border-red-500 focus:ring-red-500/20" : "border-border-primary focus:border-black focus:ring-black/10"} text-text-primary rounded-xl py-3 px-4 focus:outline-none focus:ring-4 transition-all font-medium placeholder-text-muted`}
                   />

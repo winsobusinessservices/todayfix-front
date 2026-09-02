@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router";
+import { useNavigate, createSearchParams } from "react-router";
 import CustomDropdown from "./CustomDropdown";
 import { areasData, ratings, servicesData } from "../../data/collectedData";
 import { api } from "../../api";
+import { useCategoryStore } from "../../store/categoryStore";
 
 const AnimatedSearchBar = () => {
   // State for the user's actual input
@@ -18,27 +19,24 @@ const AnimatedSearchBar = () => {
   const [area, setArea] = useState("");
   const [service, setService] = useState("");
   const [rating, setRating] = useState("");
+  const categories = useCategoryStore((state) => state.categories);
 
   const areas = areasData?.map((ar) => ar?.name) || [];
-  const services = servicesData?.map((s) => s?.name) || [];
+  const services = categories?.map((c) => c?.name) || [];
 
   useEffect(() => {
-    // Only run the typing animation if the user hasn't typed anything
     if (inputValue !== "") return;
-
     let timer = setTimeout(() => {
       handleTyping();
     }, typingSpeed);
-
     return () => clearTimeout(timer);
   }, [placeholderText, isDeleting, inputValue, loopNum, typingSpeed]);
 
   const handleTyping = () => {
-    if (servicesData.length === 0) return;
-    const i = loopNum % servicesData.length;
-    const fullText = servicesData[i]?.name || "";
+    if (categories.length === 0) return;
+    const i = loopNum % categories.length;
+    const fullText = categories[i]?.name || "";
 
-    // Determine the next string state based on whether we are typing or deleting
     setPlaceholderText(
       isDeleting
         ? fullText.substring(0, placeholderText.length - 1)
@@ -62,7 +60,19 @@ const AnimatedSearchBar = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (inputValue.trim() !== "") {
-      navigate(`/services/${encodeURIComponent(inputValue.trim())}`);
+      const params = { search: inputValue.trim() };
+
+      if (service) {
+        const selectedCat = categories?.find((c) => c.name === service);
+        if (selectedCat)
+          params.category_slug =
+            selectedCat.slug || selectedCat.name.toLowerCase();
+      }
+
+      navigate({
+        pathname: "/search",
+        search: `?${createSearchParams(params)}`,
+      });
     }
   };
 

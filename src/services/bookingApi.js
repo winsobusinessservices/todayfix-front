@@ -6,8 +6,14 @@ export const bookingApi = {
   // ==========================================
   
   // GET /api/bookings/ (List User Bookings)
-  getUserBookings: async () => {
-    const response = await api.get("/api/bookings/");
+  getUserBookings: async (params) => {
+    const response = await api.get("/api/bookings/", { params });
+    return response.data;
+  },
+
+  // GET /api/bookings/availability/ (Check Slot Availability)
+  checkAvailability: async (params) => {
+    const response = await api.get("/api/bookings/availability/", { params });
     return response.data;
   },
 

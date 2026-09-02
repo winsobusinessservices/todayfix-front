@@ -11,6 +11,7 @@ import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "motion/react";
 import { AlertCircle } from "lucide-react";
 import { updateProfile } from "../../services/userApi";
+import { verifyProfilePhone } from "../../services/authApi";
 import { validatePhone } from "../../utils/phoneValidator";
 
 const ProfileDetails = ({ userData, setUserData }) => {
@@ -120,8 +121,29 @@ const ProfileDetails = ({ userData, setUserData }) => {
       setIsEditingProfile(false);
       queryClient.invalidateQueries(["user"]);
     },
-    onError: (data) => toast.error(data?.response?.data?.message),
+    onError: (data) =>
+      toast.error(data?.response?.data?.message || "Failed to update profile"),
   });
+
+  const { mutate: verifyPhoneMutate, isPending: isVerifyingPhone } =
+    useMutation({
+      mutationFn: verifyProfilePhone,
+      onSuccess: () => {
+        toast.success("Phone verified successfully!");
+        setShowOtpModal(false);
+        setOtpValue("");
+        setOtpError(false);
+        executeProfileUpdate();
+      },
+      onError: (err) => {
+        setOtpError(true);
+        toast.error(
+          err?.response?.data?.message ||
+            err?.response?.data?.error ||
+            "Invalid OTP",
+        );
+      },
+    });
 
   const handleGetCurrentLocation = (formSetter) => {
     if ("geolocation" in navigator) {
@@ -133,8 +155,6 @@ const ProfileDetails = ({ userData, setUserData }) => {
               position.coords.latitude.toString() +
               "," +
               position.coords.longitude.toString(),
-            // latitude: position.coords.latitude.toString(),
-            // longitude: position.coords.longitude.toString(),
           }));
           toast.success("Location retrieved successfully");
         },
@@ -177,7 +197,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
       return;
     }
 
-    if (!initialData?.phone && userData.phone) {
+    if (userData.phone !== initialData?.phone) {
       setShowOtpModal(true);
       return;
     }
@@ -196,14 +216,11 @@ const ProfileDetails = ({ userData, setUserData }) => {
   };
 
   const handleVerifyOtp = () => {
-    if (otpValue === "1234") {
-      setShowOtpModal(false);
-      setOtpValue("");
-      setOtpError(false);
-      executeProfileUpdate();
-    } else {
+    if (!otpValue || otpValue.length < 4) {
       setOtpError(true);
+      return;
     }
+    verifyPhoneMutate({ phone: userData.phone, otp: otpValue });
   };
 
   const getFieldError = (fieldName) => {
@@ -278,6 +295,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
             setOtpError={setOtpError}
             handleVerifyOtp={handleVerifyOtp}
             setActiveModal={() => setShowOtpModal(false)}
+            isLoading={isVerifyingPhone}
           />
         )}
       </AnimatePresence>
@@ -343,6 +361,11 @@ const ProfileDetails = ({ userData, setUserData }) => {
                     d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
                   />
                 </svg>
+                {userData?.email !== null || undefined || "" ? (
+                  <span className="text-green-500">&#10004;</span>
+                ) : (
+                  <span className="text-red-500">&#10008;</span>
+                )}
               </label>
               <input
                 type="email"
@@ -364,17 +387,22 @@ const ProfileDetails = ({ userData, setUserData }) => {
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+              <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2 flex items-center gap-2">
                 Phone Number
+                {userData?.phone !== null || undefined || "" ? (
+                  <span className="text-green-500">&#10004;</span>
+                ) : (
+                  <span className="text-red-500">&#10008;</span>
+                )}
               </label>
               <input
                 type="tel"
                 name="phone"
                 value={userData?.phone || ""}
                 onChange={handleInputChange}
-                disabled={!isEditingProfile || !!initialData?.phone}
+                disabled={!isEditingProfile}
                 className={`w-full md:w-1/2 bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold ${
-                  !isEditingProfile || !!initialData?.phone
+                  !isEditingProfile
                     ? "opacity-50 cursor-not-allowed select-none"
                     : ""
                 }`}

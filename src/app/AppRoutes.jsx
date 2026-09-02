@@ -32,6 +32,7 @@ import BecomeProfessional from "../pages/BecomeProfessional";
 import HelpCenter from "../pages/HelpCenter";
 import FAQPage from "../pages/FAQPage";
 import ProFAQ from "../pages/ProFAQ";
+import Search from "../pages/Search";
 
 import JobBoardTab from "../features/owner/JobBoardTab";
 import OverviewTab from "../features/owner/OverviewTab";
@@ -69,6 +70,7 @@ import VerificationPage from "../pages/VerificationPage";
 import VerificationSuccess from "../pages/VerificationSuccess";
 import Demo from "../pages/Demo";
 import EmployeesTab from "../features/owner/EmployeesTab";
+import SlotsTab from "../features/owner/SlotsTab";
 
 function AppRoutes() {
   return (
@@ -77,6 +79,7 @@ function AppRoutes() {
       <Routes>
         <Route element={<PublicLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/search" element={<Search />} />
         <Route path="/services" element={<Services />} />
         <Route path="/services/:slug" element={<Service />} />
         <Route path="/vendor/:id" element={<Vendor />} />
@@ -123,6 +126,7 @@ function AppRoutes() {
           <Route path="reviews" element={<ReviewsTab />} />
           <Route path="employees" element={<EmployeesTab />} />
           <Route path="assignments" element={<ServiceAssignmentsTab />} />
+          <Route path="slots" element={<SlotsTab />} />
           <Route path="financials" element={<FinancialsTab />} />
           <Route path="settings" element={<SettingsTab />} />
         </Route>

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router";
 import { ShieldCheck, UploadCloud, FileText, AlertCircle } from "lucide-react";
 import { submitBusinessApplication } from "../services/userApi";
 import { popup } from "../components/pop-up/pop-up";
+import CustomDropdown from "../components/ui/CustomDropdown";
 
 const FileUpload = ({ id, label, required, file, setFile, accept }) => (
   <div className="flex flex-col gap-2">
@@ -81,6 +82,62 @@ const BusinessDocumentsPage = () => {
   const [labourLicenseNumber, setLabourLicenseNumber] = useState("");
   const [bbmpLicenseNumber, setBbmpLicenseNumber] = useState("");
   const [foodLicenseNumber, setFoodLicenseNumber] = useState("");
+
+  const [activeRegistrations, setActiveRegistrations] = useState(
+    isCompany ? ["gstNumber"] : [],
+  );
+
+  const registrationOptions = [
+    {
+      value: "gstNumber",
+      label: "GST Number",
+      placeholder: "e.g. 29ABCDE1234F1Z5",
+      val: gstNumber,
+      setter: setGstNumber,
+    },
+    {
+      value: "udyamNumber",
+      label: "Udyam Number",
+      placeholder: "e.g. UDYAM-KA-00-00-0000000",
+      val: udyamNumber,
+      setter: setUdyamNumber,
+    },
+    {
+      value: "labourLicenseNumber",
+      label: "Labour License Number",
+      placeholder: "e.g. LAB-TEST-KA-2026-00125",
+      val: labourLicenseNumber,
+      setter: setLabourLicenseNumber,
+    },
+    {
+      value: "bbmpLicenseNumber",
+      label: "BBMP License Number",
+      placeholder: "e.g. BBMP-TEST-2026-00458",
+      val: bbmpLicenseNumber,
+      setter: setBbmpLicenseNumber,
+    },
+    {
+      value: "foodLicenseNumber",
+      label: "Food License Number",
+      placeholder: "e.g. FSSAI-TEST-2026-00987",
+      val: foodLicenseNumber,
+      setter: setFoodLicenseNumber,
+    },
+  ];
+
+  const handleAddRegistration = (e) => {
+    const val = e.target.value;
+    if (val && !activeRegistrations.includes(val)) {
+      setActiveRegistrations([...activeRegistrations, val]);
+    }
+    e.target.value = "";
+  };
+
+  const handleRemoveRegistration = (type) => {
+    setActiveRegistrations(activeRegistrations.filter((t) => t !== type));
+    const opt = registrationOptions.find((o) => o.value === type);
+    if (opt) opt.setter("");
+  };
 
   // Store photos & bills
   const [internalStorePhoto, setInternalStorePhoto] = useState(null);
@@ -165,7 +222,11 @@ const BusinessDocumentsPage = () => {
     const errors = {};
     let firstMessage = "";
     for (const [key, value] of Object.entries(responseData)) {
-      if (key === "details" && typeof value === "object" && !Array.isArray(value)) {
+      if (
+        key === "details" &&
+        typeof value === "object" &&
+        !Array.isArray(value)
+      ) {
         // Nested details errors
         for (const [innerKey, innerValue] of Object.entries(value)) {
           const msg = Array.isArray(innerValue)
@@ -350,37 +411,60 @@ const BusinessDocumentsPage = () => {
                 ? "Please provide at least ONE of the following:"
                 : "Optional — provide any applicable registrations:"}
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <NumberInput
-                label="GST Number"
-                value={gstNumber}
-                setValue={setGstNumber}
-                placeholder="e.g. 29ABCDE1234F1Z5"
-              />
-              <NumberInput
-                label="Udyam Number"
-                value={udyamNumber}
-                setValue={setUdyamNumber}
-                placeholder="e.g. UDYAM-KA-00-00-0000000"
-              />
-              <NumberInput
-                label="Labour License Number"
-                value={labourLicenseNumber}
-                setValue={setLabourLicenseNumber}
-                placeholder="e.g. LAB-TEST-KA-2026-00125"
-              />
-              <NumberInput
-                label="BBMP License Number"
-                value={bbmpLicenseNumber}
-                setValue={setBbmpLicenseNumber}
-                placeholder="e.g. BBMP-TEST-2026-00458"
-              />
-              <NumberInput
-                label="Food License Number"
-                value={foodLicenseNumber}
-                setValue={setFoodLicenseNumber}
-                placeholder="e.g. FSSAI-TEST-2026-00987"
-              />
+            <div className="space-y-4">
+              {activeRegistrations.map((type) => {
+                const opt = registrationOptions.find((o) => o.value === type);
+                if (!opt) return null;
+                return (
+                  <div
+                    key={type}
+                    className="flex gap-4 items-end bg-surface-secondary p-4 rounded-2xl border border-border-secondary relative group"
+                  >
+                    <div className="flex-1">
+                      <NumberInput
+                        label={opt.label}
+                        value={opt.val}
+                        setValue={opt.setter}
+                        placeholder={opt.placeholder}
+                      />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveRegistration(type)}
+                      className="text-red-500 hover:bg-red-50 p-3 rounded-xl border border-transparent hover:border-red-100 transition-all font-bold text-sm bg-surface-primary shadow-sm"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                );
+              })}
+
+              {registrationOptions.filter(
+                (opt) => !activeRegistrations.includes(opt.value),
+              ).length > 0 && (
+                <div className="mt-4 w-full">
+                  <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
+                    Add a Registration
+                  </label>
+                  <CustomDropdown
+                    options={registrationOptions
+                      .filter((opt) => !activeRegistrations.includes(opt.value))
+                      .map((opt) => opt.label)}
+                    value=""
+                    onChange={(label) => {
+                      if (!label) return;
+                      const opt = registrationOptions.find(
+                        (o) => o.label === label,
+                      );
+                      if (opt) {
+                        handleAddRegistration({ target: { value: opt.value } });
+                      }
+                    }}
+                    placeholder="Select a registration type..."
+                    icon={<FileText className="w-4 h-4" />}
+                  />
+                </div>
+              )}
             </div>
           </div>
 

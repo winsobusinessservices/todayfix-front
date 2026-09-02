@@ -1,18 +1,5 @@
-import React from "react";
-import {
-  MapPin,
-  Clock,
-  IndianRupee,
-  CheckCircle2,
-  XCircle,
-  ChevronRight,
-  Calendar,
-  MessageSquare,
-  Phone,
-  ShieldAlert,
-  Send,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { ShieldAlert } from "lucide-react";
+import { motion } from "framer-motion";
 
 const Otp = ({
   otpValue,
@@ -21,6 +8,7 @@ const Otp = ({
   setOtpError,
   handleVerifyOtp,
   setActiveModal,
+  isLoading,
 }) => {
   return (
     <>
@@ -31,14 +19,14 @@ const Otp = ({
           exit={{ opacity: 0, scale: 0.95 }}
           className="bg-surface-primary border border-border-primary shadow-xl rounded-xl p-6 w-full max-w-sm text-center"
         >
-          <div className="w-16 h-16 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-surface-accent/10 text-text-primary rounded-full flex items-center justify-center mx-auto mb-4">
             <ShieldAlert className="w-8 h-8" />
           </div>
           <h3 className="text-2xl font-black text-text-primary mb-2">
             Completion PIN
           </h3>
           <p className="text-sm text-zinc-400 mb-6">
-            Ask the customer for the 4-digit PIN displayed on their dashboard to
+            Ask the customer for the 6-digit PIN displayed on their dashboard to
             mark this job as complete. <br />
             <br />
             (Hint for demo: Use 1234)
@@ -46,8 +34,8 @@ const Otp = ({
 
           <input
             type="text"
-            maxLength="4"
-            placeholder="• • • •"
+            maxLength="6"
+            placeholder="• • • • • •"
             value={otpValue}
             onChange={(e) => {
               setOtpValue(e.target.value);
@@ -74,9 +62,10 @@ const Otp = ({
             </button>
             <button
               onClick={handleVerifyOtp}
-              className="flex-1 py-3 text-center bg-surface-dark text-white font-bold rounded-xl hover:bg-emerald-600 transition-colors shadow-md"
+              disabled={isLoading}
+              className="flex-1 py-3 text-center bg-surface-dark text-white font-bold rounded-xl hover:bg-emerald-600 transition-colors shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Verify
+              {isLoading ? "Verifying..." : "Verify"}
             </button>
           </div>
         </motion.div>

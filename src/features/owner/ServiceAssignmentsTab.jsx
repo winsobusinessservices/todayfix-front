@@ -1,5 +1,11 @@
-import React, { useState } from "react";
-import { UserCheck, Users, Briefcase, ChevronRight, AlertCircle } from "lucide-react";
+import { useState } from "react";
+import {
+  UserCheck,
+  Users,
+  Briefcase,
+  ChevronRight,
+  AlertCircle,
+} from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { serviceApi } from "../../services/serviceApi";
 import { businessApi } from "../../services/businessApi";
@@ -23,7 +29,11 @@ const ServiceAssignmentsTab = () => {
   const [selectedServiceId, setSelectedServiceId] = useState(null);
   const [employeeToAssign, setEmployeeToAssign] = useState("");
 
-  const { data: servicesData, isLoading: servicesLoading, isError: servicesError } = useQuery({
+  const {
+    data: servicesData,
+    isLoading: servicesLoading,
+    isError: servicesError,
+  } = useQuery({
     queryKey: ["ownerServices"],
     queryFn: async () => {
       const res = await serviceApi.getServices();
@@ -31,7 +41,7 @@ const ServiceAssignmentsTab = () => {
     },
   });
 
-  const { data: employeesData, isLoading: employeesLoading } = useQuery({
+  const { data: employeesData, isLoading: employeesLoading, error: employeesErrorObj } = useQuery({
     queryKey: ["businessEmployees"],
     queryFn: async () => {
       const res = await businessApi.getEmployees();
@@ -42,7 +52,9 @@ const ServiceAssignmentsTab = () => {
   const { data: assignedEmployeesData, isLoading: assignedLoading } = useQuery({
     queryKey: ["serviceEmployees", selectedServiceId],
     queryFn: async () => {
-      const res = await serviceApi.getServiceEmployees({ service_uuid: selectedServiceId });
+      const res = await serviceApi.getServiceEmployees({
+        service_uuid: selectedServiceId,
+      });
       return res.data || res;
     },
     enabled: !!selectedServiceId,
@@ -60,9 +72,15 @@ const ServiceAssignmentsTab = () => {
     },
   });
 
-  const allServices = Array.isArray(servicesData) ? servicesData : servicesData?.results || [];
-  const allEmployees = Array.isArray(employeesData) ? employeesData : employeesData?.results || [];
-  const assignedEmployees = Array.isArray(assignedEmployeesData) ? assignedEmployeesData : assignedEmployeesData?.results || [];
+  const allServices = Array.isArray(servicesData)
+    ? servicesData
+    : servicesData?.results || [];
+  const allEmployees = Array.isArray(employeesData)
+    ? employeesData
+    : employeesData?.results || [];
+  const assignedEmployees = Array.isArray(assignedEmployeesData)
+    ? assignedEmployeesData
+    : assignedEmployeesData?.results || [];
 
   const handleAssign = (e) => {
     e.preventDefault();
@@ -73,14 +91,35 @@ const ServiceAssignmentsTab = () => {
     });
   };
 
-  const selectedService = allServices.find((s) => s.service_uuid === selectedServiceId);
+  const selectedService = allServices.find(
+    (s) => s.service_uuid === selectedServiceId,
+  );
   const assignedUuids = assignedEmployees.map((ae) => ae.employee_uuid);
-  const availableEmployees = allEmployees.filter((emp) => !assignedUuids.includes(emp.employee_uuid));
+  const availableEmployees = allEmployees.filter(
+    (emp) => !assignedUuids.includes(emp.employee_uuid),
+  );
 
   if (servicesLoading || employeesLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-primary"></div>
+      </div>
+    );
+  }
+
+  // Handle Individual Business Model Restriction
+  if (employeesErrorObj?.response?.data?.detail?.includes("Employee management is not available")) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[60vh] max-w-lg mx-auto text-center px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="w-16 h-16 bg-surface-secondary rounded-full flex items-center justify-center mb-6 border border-border-primary shadow-sm mx-auto">
+          <AlertCircle className="w-8 h-8 text-zinc-500" />
+        </div>
+        <h2 className="text-2xl font-black text-text-primary tracking-tight mb-2">
+          Feature Not Available
+        </h2>
+        <p className="text-text-secondary font-medium leading-relaxed mb-6">
+          Employee management is not available for Individual businesses. Upgrade your business model to Company or Investor to unlock team management, assign tasks, and grow your workforce.
+        </p>
       </div>
     );
   }
@@ -93,11 +132,15 @@ const ServiceAssignmentsTab = () => {
           <h2 className="text-xl font-black text-text-primary tracking-tight flex items-center gap-2">
             <Briefcase size={20} className="text-zinc-500" /> Services
           </h2>
-          <p className="text-sm text-zinc-500 mt-1">Select a service to manage its staff.</p>
+          <p className="text-sm text-zinc-500 mt-1">
+            Select a service to manage its staff.
+          </p>
         </div>
         <div className="flex-1 overflow-y-auto p-4 space-y-2">
           {allServices.length === 0 ? (
-            <div className="text-center text-zinc-500 py-10 font-medium">No services found.</div>
+            <div className="text-center text-zinc-500 py-10 font-medium">
+              No services found.
+            </div>
           ) : (
             allServices.map((service) => (
               <button
@@ -115,12 +158,21 @@ const ServiceAssignmentsTab = () => {
                 <div>
                   <h3 className="font-bold text-sm">{service.name}</h3>
                   {service.subcategory?.name && (
-                    <p className={`text-xs mt-1 ${selectedServiceId === service.service_uuid ? "text-zinc-300" : "text-zinc-500"}`}>
+                    <p
+                      className={`text-xs mt-1 ${selectedServiceId === service.service_uuid ? "text-zinc-300" : "text-zinc-500"}`}
+                    >
                       {service.subcategory.name}
                     </p>
                   )}
                 </div>
-                <ChevronRight size={18} className={selectedServiceId === service.service_uuid ? "text-text-inverted" : "text-zinc-400"} />
+                <ChevronRight
+                  size={18}
+                  className={
+                    selectedServiceId === service.service_uuid
+                      ? "text-text-inverted"
+                      : "text-zinc-400"
+                  }
+                />
               </button>
             ))
           )}
@@ -134,9 +186,12 @@ const ServiceAssignmentsTab = () => {
             <div className="w-20 h-20 bg-surface-secondary border border-border-primary rounded-full flex items-center justify-center mb-4 shadow-inner">
               <UserCheck size={32} className="text-zinc-400" />
             </div>
-            <h3 className="text-xl font-black text-text-primary mb-2">No Service Selected</h3>
+            <h3 className="text-xl font-black text-text-primary mb-2">
+              No Service Selected
+            </h3>
             <p className="text-zinc-500 font-medium max-w-sm">
-              Choose a service from the left menu to view or assign employees to it.
+              Choose a service from the left menu to view or assign employees to
+              it.
             </p>
           </div>
         ) : (
@@ -162,13 +217,18 @@ const ServiceAssignmentsTab = () => {
                 <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider mb-4">
                   Assign New Employee
                 </h3>
-                <form onSubmit={handleAssign} className="flex flex-col sm:flex-row gap-3">
+                <form
+                  onSubmit={handleAssign}
+                  className="flex flex-col sm:flex-row gap-3"
+                >
                   <select
                     value={employeeToAssign}
                     onChange={(e) => setEmployeeToAssign(e.target.value)}
                     className="flex-1 bg-surface-primary border border-border-primary rounded-xl px-4 py-3 text-sm font-bold text-text-primary focus:outline-none focus:border-text-primary transition-colors appearance-none"
                   >
-                    <option value="" disabled>Select an available employee...</option>
+                    <option value="" disabled>
+                      Select an available employee...
+                    </option>
                     {availableEmployees.map((emp) => (
                       <option key={emp.employee_uuid} value={emp.employee_uuid}>
                         {emp.name} ({emp.phone})
@@ -202,24 +262,34 @@ const ServiceAssignmentsTab = () => {
                   </div>
                 ) : assignedEmployees.length === 0 ? (
                   <div className="text-center py-10 bg-surface-secondary rounded-2xl border border-dashed border-border-primary">
-                    <p className="text-zinc-500 font-medium">No employees assigned yet.</p>
+                    <p className="text-zinc-500 font-medium">
+                      No employees assigned yet.
+                    </p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {assignedEmployees.map((ae) => {
                       // Attempt to enrich with employee details from the main list
-                      const fullEmp = allEmployees.find(e => e.employee_uuid === ae.employee_uuid);
-                      const dispName = ae.employee_name || fullEmp?.name || "Unknown Employee";
+                      const fullEmp = allEmployees.find(
+                        (e) => e.employee_uuid === ae.employee_uuid,
+                      );
+                      const dispName =
+                        ae.employee_name || fullEmp?.name || "Unknown Employee";
 
                       return (
-                        <div key={ae.employee_uuid} className="flex items-center gap-4 p-4 bg-surface-primary border border-border-primary rounded-2xl shadow-sm">
+                        <div
+                          key={ae.employee_uuid}
+                          className="flex items-center gap-4 p-4 bg-surface-primary border border-border-primary rounded-2xl shadow-sm"
+                        >
                           <div className="w-10 h-10 rounded-full bg-surface-secondary border border-border-primary flex items-center justify-center shrink-0">
                             <span className="font-bold text-text-primary text-sm">
                               {dispName.substring(0, 2).toUpperCase()}
                             </span>
                           </div>
                           <div className="min-w-0">
-                            <h4 className="font-bold text-text-primary text-sm truncate">{dispName}</h4>
+                            <h4 className="font-bold text-text-primary text-sm truncate">
+                              {dispName}
+                            </h4>
                             <p className="text-xs font-medium text-zinc-500 truncate">
                               {fullEmp?.phone || "Assigned"}
                             </p>

@@ -48,4 +48,47 @@ export const businessApi = {
     const response = await api.delete(`/api/business/employees/${id}/delete/`);
     return response.data;
   },
+
+  // GET /api/business/working-schedules/list/ (List Slots)
+  getWorkingSchedules: async () => {
+    const response = await api.get("/api/business/working-schedules/list/");
+    return response.data;
+  },
+
+  // POST /api/business/working-schedules/ (Create Slot)
+  createWorkingSchedule: async (data) => {
+    const response = await api.post("/api/business/working-schedules/", data);
+    return response.data;
+  },
+
+  // POST /api/business/working-schedules/{uuid}/ (Update Slot)
+  updateWorkingSchedule: async ({ id, data }) => {
+    const response = await api.post(`/api/business/working-schedules/${id}/`, data);
+    return response.data;
+  },
+
+  // DELETE /api/business/working-schedules/{uuid}/delete/ (Delete Slot)
+  deleteWorkingSchedule: async (id) => {
+    const response = await api.delete(`/api/business/working-schedules/${id}/delete/`);
+    return response.data;
+  },
+
+  // GET /api/business/availability/ (List Provider Availability)
+  getAvailability: async (employee_uuid) => {
+    const params = employee_uuid ? { employee_uuid, employee: employee_uuid } : {};
+    const response = await api.get("/api/business/availability/", { params });
+    return response.data;
+  },
+
+  // POST /api/business/availability/create/ (Create Provider Availability)
+  createAvailability: async (data) => {
+    const response = await api.post("/api/business/availability/create/", data);
+    return response.data;
+  },
+
+  // POST /api/business/availability/{uuid}/update/ (Update Provider Availability)
+  updateAvailability: async ({ id, data }) => {
+    const response = await api.post(`/api/business/availability/${id}/update/`, data);
+    return response.data;
+  },
 };

@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
+import { IMAGE_URL } from "../../services/axiosClient";
 
 const ServiceCards = ({ service }) => {
   return (
@@ -8,9 +9,9 @@ const ServiceCards = ({ service }) => {
         {/* Image Section: Reduced height */}
         <div className="relative h-36 w-full rounded-lg overflow-hidden mb-4">
           <img
-            src={service.image}
+            src={IMAGE_URL + service.image}
             alt={service.name}
-            className="w-full border h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className="w-full border h-full object-cover transition-transform duration-700 rounded-lg group-hover:scale-105"
           />
           {/* Category Badge overlay */}
           <div className="absolute top-2 left-2 bg-surface-primary/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-[10px] font-bold text-text-primary shadow-sm">

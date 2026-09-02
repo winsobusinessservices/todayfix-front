@@ -2,7 +2,14 @@ import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trash2, X } from "lucide-react";
 
-const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, title, message, isDeleting }) => {
+const ConfirmDeleteModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  isDeleting,
+}) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -28,10 +35,11 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, title, message, isDele
                 {title || "Confirm Delete"}
               </h2>
               <p className="text-sm font-medium text-zinc-500">
-                {message || "Are you sure you want to delete this item? This action cannot be undone."}
+                {message ||
+                  "Are you sure you want to delete this item? This action cannot be undone."}
               </p>
             </div>
-            
+
             <div className="p-4 bg-surface-secondary flex gap-3 border-t border-border-primary">
               <button
                 onClick={onClose}

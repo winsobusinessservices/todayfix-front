@@ -81,3 +81,12 @@ export const googleLogin = async (credential) => {
     .post("/api/auth/google/", { credential: credential })
     .then((res) => res.data);
 };
+
+export const verifyProfilePhone = async (data) => {
+  return await api
+    .post("/api/auth/profile/verify-phone/", {
+      phone: data.phone,
+      otp: data.otp,
+    })
+    .then((res) => res.data);
+};

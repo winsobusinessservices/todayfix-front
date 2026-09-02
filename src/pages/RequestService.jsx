@@ -9,7 +9,7 @@ import {
   MapPin,
   Info,
   ShieldCheck,
-  Star
+  Star,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomDropdown from "../components/ui/CustomDropdown";
@@ -18,44 +18,6 @@ import { serviceApi } from "../services/serviceApi";
 import { getAddresses } from "../services/addressApi";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-
-const serviceMockData = {
-  "AC Servicing & Repair": {
-    image: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?w=500&q=80",
-    startingPrice: "Rs. 399",
-  },
-  "Deep Home Cleaning": {
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=500&q=80",
-    startingPrice: "Rs. 899",
-  },
-  "Plumbing & Pipes": {
-    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=500&q=80",
-    startingPrice: "Rs. 199",
-  },
-  "Electrical Repairs": {
-    image: "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=500&q=80",
-    startingPrice: "Rs. 149",
-  },
-  "Pest Control": {
-    image: "https://images.unsplash.com/photo-1598928506311-c55dd2b1d3d7?w=500&q=80",
-    startingPrice: "Rs. 799",
-  },
-  "Painting & Decor": {
-    image: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=500&q=80",
-    startingPrice: "Rs. 1499",
-  },
-  "Interior Design & Renovation": {
-    image: "https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?w=500&q=80",
-    startingPrice: "Rs. 499",
-  }
-};
-
-const getServiceDetails = (category) => {
-  return serviceMockData[category] || {
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=500&q=80",
-    startingPrice: "Rs. 499"
-  };
-};
 
 const RequestService = () => {
   const navigate = useNavigate();
@@ -78,20 +40,24 @@ const RequestService = () => {
     queryFn: async () => {
       const response = await serviceApi.getServices();
       return response.data || response;
-    }
+    },
   });
-  console.log(servicesData);
-  
-  const services = Array.isArray(servicesData) ? servicesData : (servicesData?.results || []);
-  const serviceOptions = services.map(s => s.name);
+  // console.log(servicesData);
+
+  const services = Array.isArray(servicesData)
+    ? servicesData
+    : servicesData?.results || [];
+  const serviceOptions = services.map((s) => s.name);
 
   // Fetch Addresses
   const { data: addressesData } = useQuery({
     queryKey: ["addresses"],
-    queryFn: getAddresses
+    queryFn: getAddresses,
   });
   const addresses = addressesData?.data || addressesData || [];
-  const addressOptions = addresses.map(a => `${a.address_type} : ${a.address_line.slice(0, 30)} - ${a.pincode}`);
+  const addressOptions = addresses.map(
+    (a) => `${a.address_type} : ${a.address_line.slice(0, 30)} - ${a.pincode}`,
+  );
 
   // Create Booking Mutation
   const { mutate: createBooking, isPending: isSubmitting } = useMutation({
@@ -103,13 +69,26 @@ const RequestService = () => {
     onError: (error) => {
       console.error(error);
       toast.error(error?.response?.data?.message || "Failed to create booking");
-    }
+    },
+  });
+
+  // Fetch Availability
+  const { data: availabilityData, isLoading: checkingAvailability, isError: isAvailabilityError, error: availabilityError } = useQuery({
+    queryKey: ["availability", formData.service_uuid, formData.scheduled_date],
+    queryFn: () =>
+      bookingApi.checkAvailability({
+        service_uuid: formData.service_uuid,
+        scheduled_date: formData.scheduled_date,
+      }),
+    enabled: !!formData.service_uuid && !!formData.scheduled_date,
   });
 
   useEffect(() => {
     // If coming from a specific service page, pre-fill category
     if (location.state && location.state.category) {
-      const matchedService = services.find(s => s.name === location.state.category);
+      const matchedService = services.find(
+        (s) => s.name === location.state.category,
+      );
       if (matchedService) {
         setFormData((prev) => ({
           ...prev,
@@ -124,7 +103,12 @@ const RequestService = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.service_uuid || !formData.address_uuid || !formData.scheduled_date || !formData.slot_type) {
+    if (
+      !formData.service_uuid ||
+      !formData.address_uuid ||
+      !formData.scheduled_date ||
+      !formData.slot_type
+    ) {
       toast.error("Please fill all required fields");
       return;
     }
@@ -133,25 +117,30 @@ const RequestService = () => {
       address_uuid: formData.address_uuid,
       scheduled_date: formData.scheduled_date,
       slot_type: formData.slot_type,
-      notes: formData.notes
+      notes: formData.notes,
     });
   };
 
   const selectedServiceDetails = useMemo(() => {
     if (!formData.service_uuid || services.length === 0) return null;
-    const service = services.find(s => (s.uuid || s.service_uuid) === formData.service_uuid);
+    const service = services.find(
+      (s) => (s.uuid || s.service_uuid) === formData.service_uuid,
+    );
     if (!service) return null;
     return {
       name: service.name,
-      image: service.image || getServiceDetails(service.name).image,
-      startingPrice: service.price ? `Rs. ${service.price}` : getServiceDetails(service.name).startingPrice,
+      image:
+        service.image ||
+        "https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=500&q=80", // default fallback image
+      startingPrice: service.price
+        ? `Rs. ${service.price}`
+        : "Price unavailable",
     };
   }, [formData.service_uuid, services]);
 
   return (
     <div className="min-h-screen bg-surface-secondary text-text-primary py-8 md:py-12 px-4 md:px-6 font-sans">
       <div className="max-w-6xl mx-auto">
-        
         {/* Header */}
         <div className="mb-8">
           <button
@@ -196,18 +185,30 @@ const RequestService = () => {
                 Booking Confirmed!
               </h2>
               <p className="text-text-secondary text-lg mb-8 max-w-md mx-auto">
-                Your request for <span className="font-bold text-text-primary">{selectedServiceDetails?.name}</span> has been successfully placed.
+                Your request for{" "}
+                <span className="font-bold text-text-primary">
+                  {selectedServiceDetails?.name}
+                </span>{" "}
+                has been successfully placed.
               </p>
-              
+
               <div className="bg-surface-secondary rounded-2xl p-6 mb-8 border border-border-primary flex flex-col md:flex-row justify-center items-center gap-8 md:gap-16">
                 <div>
-                  <p className="text-xs text-text-muted uppercase tracking-wider font-bold mb-1">Booking ID</p>
-                  <p className="text-xl font-extrabold text-text-primary">{bookingId}</p>
+                  <p className="text-xs text-text-muted uppercase tracking-wider font-bold mb-1">
+                    Booking ID
+                  </p>
+                  <p className="text-xl font-extrabold text-text-primary">
+                    {bookingId}
+                  </p>
                 </div>
                 <div className="hidden md:block w-px h-12 bg-border-primary"></div>
                 <div>
-                  <p className="text-xs text-text-muted uppercase tracking-wider font-bold mb-1">Scheduled For</p>
-                  <p className="text-lg font-bold text-text-primary">{formData.scheduled_date} • {formData.slot_type}</p>
+                  <p className="text-xs text-text-muted uppercase tracking-wider font-bold mb-1">
+                    Scheduled For
+                  </p>
+                  <p className="text-lg font-bold text-text-primary">
+                    {formData.scheduled_date} • {formData.slot_type}
+                  </p>
                 </div>
               </div>
 
@@ -222,11 +223,9 @@ const RequestService = () => {
         ) : (
           // Two-Column Layout for Steps 1 & 2
           <div className="flex flex-col lg:flex-row gap-8 items-start">
-            
             {/* Left Column: Wizard Steps */}
             <div className="flex-1 w-full bg-surface-primary rounded-3xl border border-border-primary p-6 md:p-8 shadow-xl shadow-black/5">
               <AnimatePresence mode="wait">
-                
                 {/* STEP 1: Service Details (Category, Date, Time, Description) */}
                 {step === 1 && (
                   <motion.div
@@ -240,7 +239,7 @@ const RequestService = () => {
                       <h2 className="text-2xl font-bold mb-4 flex items-center gap-2 text-text-primary">
                         <Info className="text-text-primary" /> Service Details
                       </h2>
-                      
+
                       {/* Service Category Selection */}
                       <div className="mb-6">
                         <label className="block text-sm font-bold text-text-secondary mb-3">
@@ -250,15 +249,21 @@ const RequestService = () => {
                           options={serviceOptions}
                           value={selectedServiceDetails?.name || ""}
                           onChange={(val) => {
-                            const matched = services.find(s => s.name === val);
+                            const matched = services.find(
+                              (s) => s.name === val,
+                            );
                             if (matched) {
-                              setFormData({ ...formData, service_uuid: matched.uuid || matched.service_uuid });
+                              setFormData({
+                                ...formData,
+                                service_uuid:
+                                  matched.uuid || matched.service_uuid,
+                              });
                             }
                           }}
                           placeholder="Choose a service"
                         />
                       </div>
-                      
+
                       {/* Date & Time Row */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                         <div>
@@ -267,11 +272,16 @@ const RequestService = () => {
                           </label>
                           <div className="relative">
                             <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
-                            <input 
+                            <input
                               type="date"
                               required
                               value={formData.scheduled_date}
-                              onChange={(e) => setFormData({...formData, scheduled_date: e.target.value})}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  scheduled_date: e.target.value,
+                                })
+                              }
                               className="w-full bg-surface-secondary border border-border-primary rounded-xl py-3 pl-12 pr-4 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors"
                             />
                           </div>
@@ -282,20 +292,77 @@ const RequestService = () => {
                           </label>
                           <div className="relative">
                             <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-zinc-400" />
-                            <select 
+                            <select
                               required
                               value={formData.slot_type}
-                              onChange={(e) => setFormData({...formData, slot_type: e.target.value})}
+                              onChange={(e) =>
+                                setFormData({
+                                  ...formData,
+                                  slot_type: e.target.value,
+                                })
+                              }
                               className="w-full bg-surface-secondary border border-border-primary rounded-xl py-3 pl-12 pr-4 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors appearance-none"
                             >
-                              <option value="" disabled>Select a slot</option>
-                              <option value="MORNING">Morning (9 AM - 12 PM)</option>
-                              <option value="AFTERNOON">Afternoon (12 PM - 4 PM)</option>
-                              <option value="EVENING">Evening (4 PM - 8 PM)</option>
+                              <option value="" disabled>
+                                Select a slot
+                              </option>
+                              <option value="MORNING">
+                                Morning (9 AM - 12 PM)
+                              </option>
+                              <option value="AFTERNOON">
+                                Afternoon (12 PM - 4 PM)
+                              </option>
+                              <option value="EVENING">
+                                Evening (4 PM - 8 PM)
+                              </option>
                             </select>
                           </div>
                         </div>
                       </div>
+
+                      {/* Availability Display */}
+                      {formData.service_uuid && formData.scheduled_date && (
+                        <div className="mb-6 p-4 bg-surface-primary border border-border-primary rounded-xl">
+                          <h3 className="text-sm font-bold text-text-secondary mb-3 flex items-center gap-2">
+                            <Clock className="w-4 h-4" /> Availability for{" "}
+                            {formData.scheduled_date}
+                          </h3>
+                          {checkingAvailability ? (
+                            <div className="flex gap-2 items-center text-sm text-text-secondary">
+                              <span className="w-4 h-4 border-2 border-text-secondary border-t-transparent rounded-full animate-spin inline-block"></span>
+                              Checking slots...
+                            </div>
+                          ) : isAvailabilityError ? (
+                            <p className="text-sm text-red-500 font-medium">
+                              {availabilityError?.response?.data?.message || "Failed to fetch availability."}
+                            </p>
+                          ) : availabilityData?.success === false ? (
+                            <p className="text-sm text-red-500 font-medium">
+                              {availabilityData?.message || "Availability can only be checked for a future date."}
+                            </p>
+                          ) : availabilityData?.data?.slots ? (
+                            <div className="grid grid-cols-3 gap-3">
+                              {Object.entries(availabilityData.data.slots || {}).map(
+                                ([slot, slotData]) => (
+                                  <div
+                                    key={slot}
+                                    className={`p-2 rounded-lg text-center text-sm font-bold border ${slotData?.available ? "bg-green-500/10 text-green-600 border-green-500/20" : "bg-red-500/10 text-red-600 border-red-500/20"}`}
+                                  >
+                                    <div className="text-xs uppercase tracking-wider mb-1 opacity-80">
+                                      {slot}
+                                    </div>
+                                    <div>{slotData?.available ? "Available" : "Unavailable"}</div>
+                                  </div>
+                                ),
+                              )}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-zinc-500">
+                              No availability data found for this date.
+                            </p>
+                          )}
+                        </div>
+                      )}
 
                       {/* Description */}
                       <div>
@@ -305,7 +372,9 @@ const RequestService = () => {
                         <textarea
                           rows={4}
                           value={formData.notes}
-                          onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                          onChange={(e) =>
+                            setFormData({ ...formData, notes: e.target.value })
+                          }
                           placeholder="Provide any details that might help the professional (e.g. 'AC making loud noise', '2 BHK full cleaning')"
                           className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:border-text-primary transition-colors resize-none font-medium"
                         />
@@ -314,7 +383,11 @@ const RequestService = () => {
 
                     <button
                       onClick={handleNext}
-                      disabled={!formData.service_uuid || !formData.scheduled_date || !formData.slot_type}
+                      disabled={
+                        !formData.service_uuid ||
+                        !formData.scheduled_date ||
+                        !formData.slot_type
+                      }
                       className="w-full py-4 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md flex justify-center items-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
                     >
                       Continue to Address <ArrowRight size={20} />
@@ -333,9 +406,10 @@ const RequestService = () => {
                   >
                     <div>
                       <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-text-primary">
-                        <MapPin className="text-text-primary" /> Where do you need the service?
+                        <MapPin className="text-text-primary" /> Where do you
+                        need the service?
                       </h2>
-                      
+
                       <div className="space-y-6">
                         <div>
                           <label className="block text-sm font-bold text-text-secondary mb-3">
@@ -345,23 +419,40 @@ const RequestService = () => {
                             <CustomDropdown
                               options={addressOptions}
                               value={
-                                addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid)
-                                  ? `${addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid).address_type} : ${addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid).address_line.slice(0, 30)} - ${addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid).pincode}`
+                                addresses.find(
+                                  (a) =>
+                                    (a.uuid || a.id || a.add_uuid) ===
+                                    formData.address_uuid,
+                                )
+                                  ? `${addresses.find((a) => (a.uuid || a.id || a.add_uuid) === formData.address_uuid).address_type} : ${addresses.find((a) => (a.uuid || a.id || a.add_uuid) === formData.address_uuid).address_line.slice(0, 30)} - ${addresses.find((a) => (a.uuid || a.id || a.add_uuid) === formData.address_uuid).pincode}`
                                   : ""
                               }
                               onChange={(val) => {
-                                const matched = addresses.find(a => `${a.address_type} : ${a.address_line.slice(0, 30)} - ${a.pincode}` === val);
+                                const matched = addresses.find(
+                                  (a) =>
+                                    `${a.address_type} : ${a.address_line.slice(0, 30)} - ${a.pincode}` ===
+                                    val,
+                                );
                                 if (matched) {
-                                  setFormData({ ...formData, address_uuid: matched.uuid || matched.id || matched.add_uuid });
+                                  setFormData({
+                                    ...formData,
+                                    address_uuid:
+                                      matched.uuid ||
+                                      matched.id ||
+                                      matched.add_uuid,
+                                  });
                                 }
                               }}
-                              icon={<MapPin className="h-5 w-5 text-zinc-500" />}
+                              icon={
+                                <MapPin className="h-5 w-5 text-zinc-500" />
+                              }
                               variant="transparent"
                             />
                           </div>
                           <p className="text-xs text-zinc-500 font-medium mt-3 flex items-center gap-1.5">
                             <ShieldCheck className="w-4 h-4 text-green-500" />
-                            Professionals will only see your full address after booking confirmation.
+                            Professionals will only see your full address after
+                            booking confirmation.
                           </p>
                         </div>
                       </div>
@@ -391,15 +482,17 @@ const RequestService = () => {
                 {/* Summary Header / Image */}
                 <div className="h-40 w-full bg-surface-secondary relative border-b border-border-primary">
                   {selectedServiceDetails ? (
-                    <img 
-                      src={selectedServiceDetails.image} 
-                      alt={selectedServiceDetails.name} 
+                    <img
+                      src={selectedServiceDetails.image}
+                      alt={selectedServiceDetails.name}
                       className="w-full h-full object-cover"
                     />
                   ) : (
                     <div className="w-full h-full flex flex-col items-center justify-center text-zinc-400 gap-2">
                       <Star className="w-8 h-8 opacity-20" />
-                      <span className="text-sm font-semibold">Select a service</span>
+                      <span className="text-sm font-semibold">
+                        Select a service
+                      </span>
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
@@ -413,9 +506,13 @@ const RequestService = () => {
                 <div className="p-6">
                   {/* Price */}
                   <div className="flex items-center justify-between mb-6 pb-6 border-b border-border-secondary">
-                    <span className="font-bold text-text-secondary">Starting Price</span>
+                    <span className="font-bold text-text-secondary">
+                      Starting Price
+                    </span>
                     <span className="text-2xl font-extrabold text-text-primary">
-                      {selectedServiceDetails ? selectedServiceDetails.startingPrice : "--"}
+                      {selectedServiceDetails
+                        ? selectedServiceDetails.startingPrice
+                        : "--"}
                     </span>
                   </div>
 
@@ -424,23 +521,37 @@ const RequestService = () => {
                     <div className="flex items-start gap-3">
                       <Calendar className="w-5 h-5 text-zinc-400 mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Date</p>
-                        <p className="font-semibold text-text-primary text-sm">{formData.scheduled_date || "Not selected"}</p>
+                        <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">
+                          Date
+                        </p>
+                        <p className="font-semibold text-text-primary text-sm">
+                          {formData.scheduled_date || "Not selected"}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <Clock className="w-5 h-5 text-zinc-400 mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Time</p>
-                        <p className="font-semibold text-text-primary text-sm">{formData.slot_type || "Not selected"}</p>
+                        <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">
+                          Time
+                        </p>
+                        <p className="font-semibold text-text-primary text-sm">
+                          {formData.slot_type || "Not selected"}
+                        </p>
                       </div>
                     </div>
                     <div className="flex items-start gap-3">
                       <MapPin className="w-5 h-5 text-zinc-400 mt-0.5 shrink-0" />
                       <div>
-                        <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Location</p>
+                        <p className="text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">
+                          Location
+                        </p>
                         <p className="font-semibold text-text-primary text-sm line-clamp-2">
-                          {addresses.find(a => (a.uuid || a.id || a.add_uuid) === formData.address_uuid)?.locality || "Not selected"}
+                          {addresses.find(
+                            (a) =>
+                              (a.uuid || a.id || a.add_uuid) ===
+                              formData.address_uuid,
+                          )?.locality || "Not selected"}
                         </p>
                       </div>
                     </div>
@@ -448,7 +559,6 @@ const RequestService = () => {
                 </div>
               </div>
             </div>
-
           </div>
         )}
       </div>

@@ -43,8 +43,7 @@ const Services = () => {
     });
 
   const subcategoriesList = subcategoriesData?.data || subcategoriesData || [];
-  const activeSubcategories = subcategoriesList.filter((sub) => sub.is_active).slice(0,10);
-
+  const activeSubcategories = subcategoriesList.filter((sub) => sub.is_active).slice(0,10); 
   const filterOptions = useMemo(() => {
     return ["All Categories", ...activeCategories.map((item) => item.name)];
   }, [activeCategories]);

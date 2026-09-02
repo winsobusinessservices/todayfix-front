@@ -83,10 +83,10 @@ const CustomDropdown = ({
   }
 
   return (
-    <div className="relative w-full md:w-auto" ref={ref}>
+    <div className="relative w-full" ref={ref}>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full md:w-auto flex items-center justify-between bg-surface-primary border border-border-primary text-text-primary text-sm font-medium rounded-xl py-2 pl-9 pr-8 hover:border-black cursor-pointer shadow-sm transition-all"
+        className="w-full flex items-center justify-between bg-surface-primary border border-border-primary text-text-primary text-sm font-medium rounded-xl py-2 pl-9 pr-8 hover:border-black cursor-pointer shadow-sm transition-all"
       >
         <div className="absolute left-3 flex items-center pointer-events-none text-text-muted group-hover:text-text-primary transition-colors">
           {icon}
@@ -117,7 +117,7 @@ const CustomDropdown = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute left-0 md:left-1/2 md:-translate-x-1/2 top-full mt-2 w-full md:w-max min-w-[160px] bg-surface-primary border border-border-primary rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] z-50 overflow-hidden"
+            className="absolute left-0 top-full mt-2 w-full bg-surface-primary border border-border-primary rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] z-50 overflow-hidden"
           >
             <div className="max-h-60 overflow-y-auto p-1.5">
               <div

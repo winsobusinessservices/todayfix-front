@@ -17,12 +17,15 @@ import {
   ShieldAlert,
   Users,
   UserCheck,
+  Clock,
 } from "lucide-react";
 import Logo from "../components/brand/Logo";
-import { useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../services/authApi";
+import { businessApi } from "../services/businessApi";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
+import toast from "react-hot-toast";
 
 const SIDEBAR_ITEMS = [
   { id: "", label: "Overview", icon: LayoutDashboard },
@@ -31,6 +34,7 @@ const SIDEBAR_ITEMS = [
   { id: "services", label: "Services", icon: Wrench },
   { id: "portfolio", label: "Portfolio", icon: ImageIcon },
   { id: "reviews", label: "Reviews", icon: Star },
+  { id: "slots", label: "Slots", icon: Clock },
   { id: "employees", label: "Employees", icon: Users },
   { id: "assignments", label: "Service Assignments", icon: UserCheck },
   { id: "financials", label: "Financials", icon: Wallet },
@@ -42,12 +46,82 @@ const OwnerDashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showMockPopup, setShowMockPopup] = useState(false); // For simulating WebSocket ping
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const refreshToken = useUserStore((state) => state.refreshToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
 
+  // --- Employee Logic for Availability ---
+  const { data: employeesData } = useQuery({
+    queryKey: ["employees"],
+    queryFn: () => businessApi.getEmployees(1),
+  });
+  const employeesList = Array.isArray(employeesData) ? employeesData : employeesData?.results || [];
+  const ownerEmployeeUuid = employeesList.length > 0 ? employeesList[0].employee_uuid : null;
+
+  // --- Availability Logic ---
+  const { data: availabilityData, isLoading: availabilityLoading, error: availabilityError } = useQuery({
+    queryKey: ["businessAvailability", ownerEmployeeUuid],
+    queryFn: () => businessApi.getAvailability(ownerEmployeeUuid),
+    enabled: !!ownerEmployeeUuid,
+  });
+
+  let currentAvailability = null;
+  const list = Array.isArray(availabilityData) 
+    ? availabilityData 
+    : availabilityData?.data || (availabilityData?.provider_availability_uuid ? [availabilityData] : []);
+    
+  if (list.length > 0) {
+    currentAvailability = list.find(
+      a => a.employee_uuid === ownerEmployeeUuid || a.employee === ownerEmployeeUuid
+    ) || list[0]; // fallback to the first one if the ID field name is different
+  }
+  
+  const isAvailable = currentAvailability?.status === "AVAILABLE";
+
+  const { mutate: createAvailability, isPending: creatingAvailability } =
+    useMutation({
+      mutationFn: businessApi.createAvailability,
+      onSuccess: () => {
+        queryClient.invalidateQueries(["businessAvailability"]);
+        toast.success("You are now online and accepting bookings!");
+      },
+      onError: () => toast.error("Failed to update status."),
+    });
+
+  const { mutate: updateAvailability, isPending: updatingAvailability } =
+    useMutation({
+      mutationFn: businessApi.updateAvailability,
+      onSuccess: (_, variables) => {
+        queryClient.invalidateQueries(["businessAvailability"]);
+        const statusText =
+          variables.data.status === "AVAILABLE" ? "online" : "offline";
+        toast.success(`You are now ${statusText}!`);
+      },
+      onError: () => {
+        toast.error("Failed to update status.");
+      },
+    });
+
+  const toggleAvailability = () => {
+    if (!ownerEmployeeUuid) {
+      toast.error("No employee found to set availability for.");
+      return;
+    }
+    const newStatus = isAvailable ? "UNAVAILABLE" : "AVAILABLE";
+    if (currentAvailability) {
+      updateAvailability({
+        id: currentAvailability.provider_availability_uuid,
+        data: { status: newStatus, employee_uuid: ownerEmployeeUuid },
+      });
+    } else {
+      createAvailability({ status: newStatus, employee_uuid: ownerEmployeeUuid });
+    }
+  };
+  const isStatusChanging = creatingAvailability || updatingAvailability;
+
   const logoMarkup = (
     <Link
-      to="/owner-dashboard"
+      to="/"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary"
     >
       <img src="tfix.png" alt="logo" width={55} height={55} />
@@ -56,7 +130,7 @@ const OwnerDashboard = () => {
     </Link>
   );
 
-  const { mutate, isPending, isError, error } = useMutation({
+  const { mutate, isPending, isError, error: logoutError } = useMutation({
     mutationFn: logout,
     onSuccess: (response) => {
       if (response.success) {
@@ -170,7 +244,29 @@ const OwnerDashboard = () => {
           </div>
 
           <div className="flex items-center gap-4">
-            <button className="w-10 h-10 rounded-full bg-surface-secondary border border-border-primary flex items-center justify-center text-text-primary hover:bg-border-primary transition-colors relative">
+            {/* Store Status Toggle */}
+            <div className="hidden sm:flex items-center gap-3 bg-surface-secondary px-3 py-1.5 rounded-full border border-border-primary shadow-sm mr-2">
+              <span
+                className={`text-xs font-bold tracking-wide uppercase ${isAvailable ? "text-green-600" : "text-zinc-500"}`}
+              >
+                {isAvailable ? "Online" : "Offline"}
+              </span>
+              <button
+                onClick={toggleAvailability}
+                disabled={isStatusChanging || availabilityLoading}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors cursor-pointer disabled:opacity-50 ${
+                  isAvailable ? "bg-green-500" : "bg-zinc-300"
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    isAvailable ? "translate-x-6" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            <button className="w-10 h-10 rounded-full bg-surface-secondary border border-border-primary flex items-center justify-center text-text-primary hover:bg-border-primary transition-colors relative cursor-pointer">
               <Bell size={18} />
               <span className="absolute top-2 right-2 w-2 h-2 bg-text-primary rounded-full border border-surface-primary"></span>
             </button>
