@@ -10,9 +10,13 @@ import {
   Briefcase,
   Globe,
   Phone,
+  Clock,
+  Loader2,
 } from "lucide-react";
 import SEO from "../components/seo/SEO";
 import { featuredData } from "../data/collectedData";
+import { useState } from "react";
+import toast from "react-hot-toast";
 
 const Demo = () => {
   const { name } = useParams();
@@ -24,6 +28,35 @@ const Demo = () => {
       partner.name.toLowerCase() === decodedName.toLowerCase() ||
       partner.name === name,
   );
+  const [formData, setFormData] = useState({
+    pickUp: "",
+    destination: "",
+    date: "",
+    time: "",
+  });
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleBookRide = (e) => {
+    e.preventDefault();
+    // console.log(formData);
+    setLoading(true);
+    setTimeout(() => {
+      toast.success("Booking Successful");
+      setFormData({
+        pickUp: "",
+        destination: "",
+        date: "",
+        time: "",
+      });
+      setLoading(false);
+    }, 1000);
+    // API logic here
+  };
 
   const otherWebsites = [
     {
@@ -259,6 +292,87 @@ const Demo = () => {
                 </p>
               </div>
             </div>
+          </div>
+          <div className="bg-surface-primary rounded-[2rem] p-8 shadow-xl border border-border-primary text-text-primary group relative overflow-hidden">
+            <h3 className="text-xl font-bold mb-6 relative z-10">
+              Book Your Ride Now
+            </h3>
+            <form onSubmit={handleBookRide} className="space-y-5 relative z-10">
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-text-secondary flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-zinc-400" /> From
+                </label>
+                <input
+                  type="text"
+                  name="pickUp"
+                  value={formData.pickUp}
+                  onChange={handleChange}
+                  placeholder="Enter starting point..."
+                  className="w-full px-4 py-3 bg-surface-secondary border border-border-primary rounded-xl focus:outline-none focus:border-text-primary transition-colors text-text-primary placeholder:text-zinc-500 font-medium"
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold text-text-secondary flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-zinc-400" /> To
+                </label>
+                <input
+                  type="text"
+                  name="destination"
+                  value={formData.destination}
+                  onChange={handleChange}
+                  placeholder="Enter destination..."
+                  className="w-full px-4 py-3 bg-surface-secondary border border-border-primary rounded-xl focus:outline-none focus:border-text-primary transition-colors text-text-primary placeholder:text-zinc-500 font-medium"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-text-secondary flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-zinc-400" /> Date
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={formData.date}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-surface-secondary border border-border-primary rounded-xl focus:outline-none focus:border-text-primary transition-colors text-text-primary placeholder:text-zinc-500 font-medium"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-bold text-text-secondary flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-zinc-400" /> Time
+                  </label>
+                  <input
+                    type="time"
+                    name="time"
+                    value={formData.time}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-surface-secondary border border-border-primary rounded-xl focus:outline-none focus:border-text-primary transition-colors text-text-primary placeholder:text-zinc-500 font-medium"
+                    required
+                  />
+                </div>
+              </div>
+
+              {loading ? (
+                <div className="w-full mt-2 py-4 bg-text-primary text-surface-primary font-black rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-lg flex items-center justify-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  <span>Submitting...</span>
+                </div>
+              ) : (
+                <button
+                  type="submit"
+                  className="w-full mt-2 py-4 bg-text-primary text-surface-primary font-black rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-lg flex items-center justify-center gap-2"
+                >
+                  Find Rides
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              )}
+            </form>
           </div>
         </div>
       </div>

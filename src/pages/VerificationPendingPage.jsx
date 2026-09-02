@@ -26,6 +26,7 @@ const VerificationPendingPage = () => {
   } = useQuery({
     queryKey: ["myBusinessApplications"],
     queryFn: businessApi.getBusinessApplicationList,
+    refetchInterval: 20000, // Poll every 5 seconds to catch status changes automatically
   });
 
   const handleReapply = async () => {
@@ -92,6 +93,16 @@ const VerificationPendingPage = () => {
   }
 
   const { status, rejection_reason } = latestApp;
+
+  React.useEffect(() => {
+    if (status === "ACCEPTED") {
+      // Instantly refresh user profile globally so navbars/roles update
+      userDetails()
+        .then((data) => setUser({ ...userData, ...data }))
+        .catch(console.error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   return (
     <div className="font-sans flex flex-col items-center justify-center p-6 py-20 animate-in fade-in zoom-in-95 duration-500">

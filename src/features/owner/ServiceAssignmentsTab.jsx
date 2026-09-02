@@ -5,6 +5,7 @@ import {
   Briefcase,
   ChevronRight,
   AlertCircle,
+  Trash2,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { serviceApi } from "../../services/serviceApi";
@@ -36,12 +37,16 @@ const ServiceAssignmentsTab = () => {
   } = useQuery({
     queryKey: ["ownerServices"],
     queryFn: async () => {
-      const res = await serviceApi.getServices();
+      const res = await serviceApi.getBusinessServices();
       return res.data || res;
     },
   });
 
-  const { data: employeesData, isLoading: employeesLoading, error: employeesErrorObj } = useQuery({
+  const {
+    data: employeesData,
+    isLoading: employeesLoading,
+    error: employeesErrorObj,
+  } = useQuery({
     queryKey: ["businessEmployees"],
     queryFn: async () => {
       const res = await businessApi.getEmployees();
@@ -72,12 +77,23 @@ const ServiceAssignmentsTab = () => {
     },
   });
 
+  const { mutate: removeEmployee, isPending: isRemoving } = useMutation({
+    mutationFn: serviceApi.removeEmployee,
+    onSuccess: () => {
+      toast.success("Employee removed successfully!");
+      queryClient.invalidateQueries(["serviceEmployees", selectedServiceId]);
+    },
+    onError: (err) => {
+      toast.error(extractErrorMessage(err, "Failed to remove employee"));
+    },
+  });
+
   const allServices = Array.isArray(servicesData)
     ? servicesData
-    : servicesData?.results || [];
-  const allEmployees = Array.isArray(employeesData)
-    ? employeesData
-    : employeesData?.results || [];
+    : servicesData?.data || [];
+
+  const allEmployees = employeesData?.results?.filter((emp) => emp.is_active) || [];
+
   const assignedEmployees = Array.isArray(assignedEmployeesData)
     ? assignedEmployeesData
     : assignedEmployeesData?.results || [];
@@ -108,7 +124,11 @@ const ServiceAssignmentsTab = () => {
   }
 
   // Handle Individual Business Model Restriction
-  if (employeesErrorObj?.response?.data?.detail?.includes("Employee management is not available")) {
+  if (
+    employeesErrorObj?.response?.data?.detail?.includes(
+      "Employee management is not available",
+    )
+  ) {
     return (
       <div className="flex flex-col items-center justify-center h-[60vh] max-w-lg mx-auto text-center px-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
         <div className="w-16 h-16 bg-surface-secondary rounded-full flex items-center justify-center mb-6 border border-border-primary shadow-sm mx-auto">
@@ -118,7 +138,9 @@ const ServiceAssignmentsTab = () => {
           Feature Not Available
         </h2>
         <p className="text-text-secondary font-medium leading-relaxed mb-6">
-          Employee management is not available for Individual businesses. Upgrade your business model to Company or Investor to unlock team management, assign tasks, and grow your workforce.
+          Employee management is not available for Individual businesses.
+          Upgrade your business model to Company or Investor to unlock team
+          management, assign tasks, and grow your workforce.
         </p>
       </div>
     );
@@ -279,21 +301,37 @@ const ServiceAssignmentsTab = () => {
                       return (
                         <div
                           key={ae.employee_uuid}
-                          className="flex items-center gap-4 p-4 bg-surface-primary border border-border-primary rounded-2xl shadow-sm"
+                          className="flex items-center justify-between gap-4 p-4 bg-surface-primary border border-border-primary rounded-2xl shadow-sm group"
                         >
-                          <div className="w-10 h-10 rounded-full bg-surface-secondary border border-border-primary flex items-center justify-center shrink-0">
-                            <span className="font-bold text-text-primary text-sm">
-                              {dispName.substring(0, 2).toUpperCase()}
-                            </span>
+                          <div className="flex items-center gap-4 min-w-0">
+                            <div className="w-10 h-10 rounded-full bg-surface-secondary border border-border-primary flex items-center justify-center shrink-0">
+                              <span className="font-bold text-text-primary text-sm">
+                                {dispName.substring(0, 2).toUpperCase()}
+                              </span>
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="font-bold text-text-primary text-sm truncate">
+                                {dispName}
+                              </h4>
+                              <p className="text-xs font-medium text-zinc-500 truncate">
+                                {fullEmp?.phone || "Assigned"}
+                              </p>
+                            </div>
                           </div>
-                          <div className="min-w-0">
-                            <h4 className="font-bold text-text-primary text-sm truncate">
-                              {dispName}
-                            </h4>
-                            <p className="text-xs font-medium text-zinc-500 truncate">
-                              {fullEmp?.phone || "Assigned"}
-                            </p>
-                          </div>
+
+                          <button
+                            onClick={() =>
+                              removeEmployee({
+                                service_uuid: selectedServiceId,
+                                employee_uuid: ae.employee_uuid,
+                              })
+                            }
+                            disabled={isRemoving}
+                            className="p-2 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                            title="Remove Employee"
+                          >
+                            <Trash2 size={16} />
+                          </button>
                         </div>
                       );
                     })}

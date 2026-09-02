@@ -39,3 +39,12 @@ body {
 .styled-scrollbar::-webkit-scrollbar-thumb:hover {
   background: var(--color-text-secondary);
 }
+
+.custom-scrollbar {
+  overflow: auto; 
+  scrollbar-width: none; 
+  -ms-overflow-style: none; 
+}
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}

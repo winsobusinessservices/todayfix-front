@@ -29,7 +29,7 @@ const Services = () => {
           return categoryApi.getSubcategories(selectedCategoryObj.cat_uuid);
         } else {
           // Fetch subcategories for all active categories
-          const promises = activeCategories.map((cat) =>
+          const promises = activeCategories.slice(0,3).map((cat) =>
             categoryApi.getSubcategories(cat.cat_uuid),
           );
           const results = await Promise.all(promises);
@@ -43,10 +43,13 @@ const Services = () => {
     });
 
   const subcategoriesList = subcategoriesData?.data || subcategoriesData || [];
-  const activeSubcategories = subcategoriesList.filter((sub) => sub.is_active).slice(0,10); 
+  const activeSubcategories = subcategoriesList
+    .filter((sub) => sub.is_active)
+    .slice(0, 18);
   const filterOptions = useMemo(() => {
     return ["All Categories", ...activeCategories.map((item) => item.name)];
   }, [activeCategories]);
+  // console.log(subcategoriesList);
 
   return (
     <div className="w-full max-w-6xl mx-auto relative flex flex-col gap-6 pt-4 md:pt-6">
@@ -111,7 +114,7 @@ const Services = () => {
               </div>
 
               {/* Desktop List */}
-              <ul className="hidden md:flex flex-col gap-2 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+              <ul className="hidden md:flex flex-col gap-2 max-h-[600px] overflow-y-auto pr-2 styled-scrollbar">
                 {filterOptions.map((catName) => (
                   <li key={catName}>
                     <button
@@ -133,13 +136,13 @@ const Services = () => {
           </div>
 
           {/* Right Content */}
-          <div className="flex-1 ">
+          <div className="flex-1">
             {isLoading || isLoadingSubcategories ? (
               <div className="flex justify-center py-20">
                 <span className="w-10 h-10 border-4 border-purple-500 border-t-transparent rounded-full animate-spin"></span>
               </div>
             ) : activeSubcategories.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5 max-h-[664px] overflow-y-auto custom-scrollbar bg-background-secondary bg-surface-primary rounded-lg md:shadow-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] md:border border-border-primary md:p-3 transition-all duration-300 hover:shadow-2xl hover:shadow-[0_8px_40px_rgb(0,0,0,0.08)]">
                 {activeSubcategories.map((sub) => (
                   <div key={sub.subCat_uuid || sub.slug}>
                     <ServicesCards service={sub} isSubcategory={true} />
@@ -147,7 +150,7 @@ const Services = () => {
                 ))}
               </div>
             ) : (
-              <div className="text-center py-12 bg-background-secondary rounded-2xl border border-border-light">
+              <div className="text-center py-12 bg-background-secondary rounded-2xl border border-border-primary">
                 <p className="text-text-muted text-lg">No services found.</p>
               </div>
             )}

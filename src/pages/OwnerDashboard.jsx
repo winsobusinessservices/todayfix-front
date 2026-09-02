@@ -50,6 +50,13 @@ const OwnerDashboard = () => {
   const refreshToken = useUserStore((state) => state.refreshToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
 
+  const {data: profilesData, error, isLoading} = useQuery({
+    queryKey: ["businessProfiles"],
+    queryFn: businessApi.getProfiles
+  })
+
+  // console.log(profilesData);
+
   // --- Employee Logic for Availability ---
   const { data: employeesData } = useQuery({
     queryKey: ["employees"],

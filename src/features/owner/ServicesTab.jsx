@@ -83,11 +83,9 @@ const ServicesTab = () => {
     enabled: !!catUuid,
   });
 
-  // console.log(subCategoriesData);
-
   const subCategories = Array.isArray(subCategoriesData)
     ? subCategoriesData
-    : subCategoriesData?.results || [];
+    : subCategoriesData?.data || [];
 
   const { data: servicesData, isLoading: servicesLoading } = useQuery({
     queryKey: ["ownerServices"],
@@ -99,11 +97,7 @@ const ServicesTab = () => {
 
   const allServices = Array.isArray(servicesData)
     ? servicesData
-    : servicesData?.results || [];
-
-  // Note: Since this is the owner dashboard, we ideally filter services by their business UUID.
-  // For now we display all services returned, assuming the API might filter it or the user can see their own.
-  const services = allServices;
+    : servicesData?.data || [];
 
   const { mutate: createService, isPending: isCreating } = useMutation({
     mutationFn: serviceApi.createService,
@@ -254,7 +248,7 @@ const ServicesTab = () => {
 
       {/* Services List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-        {services.map((service) => (
+        {allServices.map((service) => (
           <div
             key={service.service_uuid}
             className={`bg-surface-primary justify-between flex flex-col rounded-3xl border p-6 shadow-2xl shadow-black/5 transition-all duration-300 ${
@@ -315,7 +309,7 @@ const ServicesTab = () => {
             </div>
           </div>
         ))}
-        {services.length === 0 && (
+        {allServices.length === 0 && (
           <div className="col-span-full text-center py-20 bg-surface-primary rounded-3xl border border-border-primary">
             <p className="text-zinc-500 font-medium">No services added yet.</p>
           </div>

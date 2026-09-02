@@ -3,29 +3,34 @@ import { Link } from "react-router";
 import { IMAGE_URL } from "../../services/axiosClient";
 
 const ServiceCards = ({ service }) => {
+  // console.log(service);
   return (
     <>
       <div className="group bg-surface-primary rounded-lg p-2.5 border border-border-primary shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)] hover:-translate-y-1 transition-all duration-300 flex flex-col">
         {/* Image Section: Reduced height */}
         <div className="relative h-36 w-full rounded-lg overflow-hidden mb-4">
           <img
-            src={IMAGE_URL + service.image}
+            src={
+              service.image
+                ? IMAGE_URL + service.image
+                : "https://www.salesforce.com/blog/wp-content/uploads/sites/2/2024/04/AdobeStock_538960660.jpeg"
+            }
             alt={service.name}
-            className="w-full border h-full object-cover transition-transform duration-700 rounded-lg group-hover:scale-105"
+            className="w-full h-full object-cover transition-transform duration-700 rounded-lg group-hover:scale-105"
           />
           {/* Category Badge overlay */}
           <div className="absolute top-2 left-2 bg-surface-primary/90 backdrop-blur-sm px-2.5 py-1 rounded-full text-[10px] font-bold text-text-primary shadow-sm">
-            {service.category || "Home & Decor"}
+            {service.category_name || "No Name"}
           </div>
         </div>
 
         {/* Content Section */}
         <div className="flex flex-col flex-grow px-2">
-          <h3 className="text-base font-bold text-text-primary mb-1.5 transition-colors">
+          <h3 className="text-base font-bold text-text-primary mb-1 transition-colors">
             {service.name}
           </h3>
           <p className="text-[11px] text-text-secondary leading-relaxed line-clamp-2">
-            {service.description}
+            {service.description || "No description available"}
           </p>
 
           {/* Vendors List (Facepile) */}

@@ -69,4 +69,12 @@ export const serviceApi = {
     });
     return response.data;
   },
+
+  // DELETE /api/services/{service_uuid}/employees/{employee_uuid}/remove/
+  removeEmployee: async ({ service_uuid, employee_uuid }) => {
+    const response = await api.delete(
+      `/api/services/${service_uuid}/employees/${employee_uuid}/remove/`
+    );
+    return response.data;
+  },
 };
