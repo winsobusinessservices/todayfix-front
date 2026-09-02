@@ -92,7 +92,7 @@ const ServicesTab = () => {
   const { data: servicesData, isLoading: servicesLoading } = useQuery({
     queryKey: ["ownerServices"],
     queryFn: async () => {
-      const response = await serviceApi.getServices();
+      const response = await serviceApi.getBusinessServices();
       return response.data || response;
     },
   });

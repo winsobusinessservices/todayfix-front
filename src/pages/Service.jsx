@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { categoryApi } from "../services/categoryApi";
 import * as Icons from "lucide-react";
 import { serviceApi } from "../services/serviceApi";
+import { IMAGE_URL } from "../services/axiosClient";
 
 // Helper for dynamic icons
 const DynamicIcon = ({ iconName, className }) => {
@@ -26,24 +27,27 @@ const Service = () => {
   const [sortBy, setSortBy] = useState("Recommended");
 
   // 1. Fetch Categories to find the one matching `slug`
-  const { data: categoriesData, isLoading: isLoadingCategories } = useQuery({
-    queryKey: ["publicCategories"],
+  const { data: subcategoriesData, isLoading: isLoadingCategories } = useQuery({
+    queryKey: ["publicSubcategory"],
     queryFn: () => categoryApi.getSubcategory(slug),
   });
 
-  const currentCategory = categoriesData?.data || categoriesData || null;
+  const currentSubcategory =
+    subcategoriesData?.data || subcategoriesData || null;
+  // console.log(currentSubcategory);
 
-  const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
-    useQuery({
-      queryKey: ["publicSubcategories", currentCategory?.cat_uuid],
-      queryFn: () => categoryApi.getSubcategories(currentCategory.cat_uuid),
-      enabled: !!currentCategory?.cat_uuid,
-    });
+  // const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
+  //   useQuery({
+  //     queryKey: ["publicSubcategories", currentCategory?.cat_uuid],
+  //     queryFn: () => categoryApi.getSubcategories(currentCategory.cat_uuid),
+  //     enabled: !!currentCategory?.cat_uuid,
+  //   });
 
-  const subcategories = subcategoriesData?.data || subcategoriesData || [];
+  // const subcategories = subcategoriesData?.data || subcategoriesData || [];
+  // console.log(subcategories);
 
   const { data: servicesData } = useQuery({
-    queryKey: ["service"],
+    queryKey: ["subcategory-services", currentSubcategory?.cat_uuid],
     queryFn: () => serviceApi.getServices(),
   });
 
@@ -58,7 +62,7 @@ const Service = () => {
     );
   }
 
-  if (!currentCategory) {
+  if (!currentSubcategory) {
     return (
       <div className="min-h-screen bg-surface-primary flex flex-col items-center justify-center p-6">
         <h2 className="text-2xl font-bold text-text-primary mb-2">
@@ -80,10 +84,10 @@ const Service = () => {
   return (
     <div className="min-h-screen bg-surface-primary font-sans pb-20">
       <SEO
-        title={`${currentCategory.name} Services | TodayFix`}
+        title={`${currentSubcategory.name} Services | TodayFix`}
         description={
-          currentCategory.description ||
-          `Find the best ${currentCategory.name} professionals in your area.`
+          currentSubcategory.description ||
+          `Find the best ${currentSubcategory.name} professionals in your area.`
         }
       />
 
@@ -93,25 +97,25 @@ const Service = () => {
           <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
             <div className="w-36 h-36 md:w-40 md:h-40 bg-white rounded-3xl shadow-sm border border-border-primary flex items-center justify-center shrink-0">
               <img
-                src={currentCategory?.image}
-                alt={currentCategory?.name}
+                src={IMAGE_URL + currentSubcategory?.image}
+                alt={currentSubcategory?.name}
                 className="w-full h-full object-cover rounded-3xl"
               />
             </div>
             <div className="flex flex-col justify-center">
               <div className="inline-flex items-center justify-center md:justify-start gap-2 mb-3">
                 <span className="px-3 py-1 bg-surface-accent text-text-primary text-xs font-extrabold uppercase tracking-wider rounded-full">
-                  {currentCategory?.category_name}
+                  {currentSubcategory?.category_name}
                 </span>
                 {/* <span className="flex items-center gap-1 text-sm font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
                   <Icons.ShieldCheck className="w-4 h-4" /> Verified
                 </span> */}
               </div>
               <h1 className="text-3xl md:text-5xl font-black text-text-primary tracking-tight mb-4">
-                {currentCategory.name}
+                {currentSubcategory.name}
               </h1>
               <p className="text-text-secondary text-base md:text-lg max-w-2xl leading-relaxed">
-                {currentCategory.description ||
+                {currentSubcategory.description ||
                   "Discover top-rated professionals for all your needs. Quality service, transparent pricing, and trusted experts."}
               </p>
             </div>
@@ -267,7 +271,7 @@ const Service = () => {
 
               <Link
                 to="/request-service"
-                state={{ category: currentCategory.name }}
+                state={{ category: currentSubcategory.name }}
                 className="w-full flex justify-center items-center gap-2 bg-surface-dark hover:bg-zinc-800 text-text-inverted px-6 py-4 rounded-2xl text-base font-bold transition-all shadow-md active:scale-95 mb-4"
               >
                 Proceed to Booking <Icons.ArrowRight className="w-4 h-4" />

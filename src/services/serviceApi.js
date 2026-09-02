@@ -19,9 +19,24 @@ export const serviceApi = {
     return response.data;
   },
 
+  // GET /api/services/subcategory/{subCat_uuid}/services/
+  getServicesBySubcategory: async (subcatUuid, params) => {
+    const response = await api.get(
+      `/api/services/subcategory/${subcatUuid}/services/`,
+      { params },
+    );
+    return response.data;
+  },
+
   // ==========================================
   // BUSINESS OWNER ENDPOINTS
   // ==========================================
+
+  // GET /api/services/my/
+  getBusinessServices: async () => {
+    const response = await api.get("/api/services/my/");
+    return response.data;
+  },
 
   // POST /api/services/create/
   createService: async (data) => {
