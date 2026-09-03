@@ -4,13 +4,8 @@ import {
   Clock,
   IndianRupee,
   CheckCircle2,
-  XCircle,
-  ChevronRight,
   Calendar,
   MessageSquare,
-  Phone,
-  ShieldAlert,
-  Send,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -41,17 +36,33 @@ const StatusBadge = ({ status }) => {
 
 const BookingsTab = () => {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState("SCHEDULED"); // "SCHEDULED" | "INSTANT"
   const [filter, setFilter] = useState("ALL");
   const [activeModal, setActiveModal] = useState(null); // { type: 'otp' | 'contact' | 'chat', bookingId: string }
   const [otpValue, setOtpValue] = useState("");
   const [otpError, setOtpError] = useState(false);
 
-  const { data: bookingsData, isLoading } = useQuery({
+  // Scheduled bookings query
+  const { data: bookingsData, isLoading: isLoadingScheduled } = useQuery({
     queryKey: ["businessBookings"],
     queryFn: bookingApi.getBusinessBookings,
+    enabled: activeTab === "SCHEDULED",
   });
 
-  const bookingsList = bookingsData?.results || bookingsData || [];
+  // Instant booking offers query
+  const { data: instantOffersData, isLoading: isLoadingInstant } = useQuery({
+    queryKey: ["instantBookingOffers"],
+    queryFn: bookingApi.getInstantBookingOffers,
+    enabled: activeTab === "INSTANT",
+  });
+
+  const bookingsList =
+    activeTab === "SCHEDULED"
+      ? bookingsData?.results || bookingsData || []
+      : instantOffersData?.data || instantOffersData?.results || [];
+
+  const isLoading =
+    activeTab === "SCHEDULED" ? isLoadingScheduled : isLoadingInstant;
 
   const { mutate: acceptBooking, isPending: isAccepting } = useMutation({
     mutationFn: bookingApi.acceptBooking,
@@ -59,7 +70,7 @@ const BookingsTab = () => {
       toast.success("Booking accepted!");
       queryClient.invalidateQueries(["businessBookings"]);
     },
-    onError: () => toast.error("Failed to accept booking")
+    onError: () => toast.error("Failed to accept booking"),
   });
 
   const { mutate: completeBooking, isPending: isCompleting } = useMutation({
@@ -71,54 +82,123 @@ const BookingsTab = () => {
       setOtpValue("");
       setOtpError(false);
     },
-    onError: () => toast.error("Failed to complete booking")
+    onError: () => toast.error("Failed to complete booking"),
   });
+
+  const { mutate: startInstantBooking, isPending: isStartingInstant } =
+    useMutation({
+      mutationFn: bookingApi.startInstantBooking,
+      onSuccess: () => {
+        toast.success("Job started successfully!");
+        queryClient.invalidateQueries(["businessBookings"]);
+      },
+      onError: () => toast.error("Failed to start job"),
+    });
+
+  const { mutate: completeInstantBooking, isPending: isCompletingInstant } =
+    useMutation({
+      mutationFn: bookingApi.completeInstantBooking,
+      onSuccess: () => {
+        toast.success("Instant booking marked as complete!");
+        queryClient.invalidateQueries(["businessBookings"]);
+        setActiveModal(null);
+        setOtpValue("");
+        setOtpError(false);
+      },
+      onError: () => toast.error("Failed to complete instant booking"),
+    });
+
+  const { mutate: acceptInstantBooking, isPending: isAcceptingInstant } =
+    useMutation({
+      mutationFn: bookingApi.acceptInstantBookingOffer,
+      onSuccess: () => {
+        toast.success("Instant booking offer accepted!");
+        queryClient.invalidateQueries(["instantBookingOffers"]);
+        queryClient.invalidateQueries(["businessBookings"]);
+      },
+      onError: () => toast.error("Failed to accept instant offer"),
+    });
 
   const handleVerifyOtp = () => {
     if (otpValue === "1234") {
-      completeBooking(activeModal.bookingId);
+      if (activeModal?.isInstant) {
+        completeInstantBooking(activeModal.bookingId);
+      } else {
+        completeBooking(activeModal.bookingId);
+      }
     } else {
       setOtpError(true);
     }
   };
 
   const filteredBookings =
-    filter === "ALL"
+    activeTab === "INSTANT"
       ? bookingsList
-      : bookingsList.filter((b) => {
-          if (filter === "ACTIVE") return b.status === "CONFIRMED" || b.status === "IN_PROGRESS";
-          return b.status === filter;
-        });
+      : filter === "ALL"
+        ? bookingsList
+        : bookingsList.filter((b) => {
+            if (filter === "ACTIVE")
+              return b.status === "CONFIRMED" || b.status === "IN_PROGRESS";
+            return b.status === filter;
+          });
 
   return (
     <div className="space-y-6">
-      {/* Header & Filters */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-          <h1 className="text-3xl font-black tracking-tight text-text-primary mb-2">
-            Bookings
-          </h1>
-          <p className="text-zinc-400">
-            Manage your upcoming and past service requests.
-          </p>
-        </div>
+      {/* Header & Tabs */}
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-black tracking-tight text-text-primary mb-2">
+              Bookings
+            </h1>
+            <p className="text-zinc-400">
+              Manage your upcoming and past service requests.
+            </p>
+          </div>
 
-        {/* Filter Pills */}
-        <div className="flex flex-wrap gap-2 bg-surface-primary p-1 rounded-2xl border border-border-primary">
-          {["ALL", "PENDING", "ACTIVE", "COMPLETED"].map((f) => (
+          {/* Tab Toggle */}
+          <div className="flex bg-surface-primary p-1 rounded-2xl border border-border-primary self-start md:self-center">
             <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all duration-300 ${
-                filter === f
-                  ? "bg-surface-secondary text-text-primary shadow-sm border border-border-primary"
-                  : "text-zinc-500 hover:text-text-primary border border-transparent"
+              onClick={() => setActiveTab("SCHEDULED")}
+              className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                activeTab === "SCHEDULED"
+                  ? "bg-text-primary text-text-inverted shadow-md"
+                  : "text-zinc-500 hover:text-text-primary"
               }`}
             >
-              {f.toLowerCase()}
+              Scheduled
             </button>
-          ))}
+            <button
+              onClick={() => setActiveTab("INSTANT")}
+              className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
+                activeTab === "INSTANT"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "text-zinc-500 hover:text-blue-600"
+              }`}
+            >
+              <Clock className="w-4 h-4" /> Instant Offers
+            </button>
+          </div>
         </div>
+
+        {/* Filter Pills (Only for Scheduled) */}
+        {activeTab === "SCHEDULED" && (
+          <div className="flex flex-wrap gap-2 bg-surface-primary p-1 rounded-2xl border border-border-primary w-fit">
+            {["ALL", "PENDING", "ACTIVE", "COMPLETED"].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all duration-300 ${
+                  filter === f
+                    ? "bg-surface-secondary text-text-primary shadow-sm border border-border-primary"
+                    : "text-zinc-500 hover:text-text-primary border border-transparent"
+                }`}
+              >
+                {f.toLowerCase()}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Bookings List */}
@@ -137,30 +217,64 @@ const BookingsTab = () => {
               <div className="flex-grow space-y-4">
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-medium text-zinc-500 uppercase">
-                    {booking.uuid.split('-')[0]}
+                    {(booking.uuid || booking.id || "OFFER")?.split("-")[0]}
                   </span>
-                  <StatusBadge status={booking.status} />
+                  {activeTab === "SCHEDULED" ? (
+                    <StatusBadge status={booking.status} />
+                  ) : (
+                    <span className="px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider bg-blue-500/10 text-blue-600 border-blue-500/20 flex items-center gap-1.5 shadow-sm">
+                      <Clock className="w-3 h-3" /> URGENT OFFER
+                    </span>
+                  )}
                 </div>
 
                 <div>
                   <h3 className="text-xl font-bold tracking-tight text-text-primary mb-1">
-                    {booking.service?.name}
+                    {booking.service?.name ||
+                      booking.requested_service_name ||
+                      "Service Request"}
                   </h3>
-                  <p className="text-zinc-400 font-medium">
-                    {booking.user?.first_name} {booking.user?.last_name}
-                  </p>
+                  {booking.user && (
+                    <p className="text-zinc-400 font-medium">
+                      {booking.user?.first_name} {booking.user?.last_name}
+                    </p>
+                  )}
+                  {booking.customer_note && (
+                    <p className="text-sm text-zinc-500 italic mt-1 bg-surface-secondary p-2 rounded-lg border border-border-primary inline-block">
+                      "{booking.customer_note}"
+                    </p>
+                  )}
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-zinc-500">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4" />
-                    <span>
-                      {booking.scheduled_date} ({booking.slot_type})
-                    </span>
-                  </div>
+                  {activeTab === "SCHEDULED" ? (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4" />
+                      <span>
+                        {booking.scheduled_date} ({booking.slot_type})
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-orange-500 font-bold bg-orange-500/10 px-2 py-1 rounded-md w-fit">
+                      <Clock className="w-4 h-4" />
+                      <span>Respond within 15 mins</span>
+                    </div>
+                  )}
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
-                    <span>{booking.address?.locality || booking.address?.city}</span>
+                    <span
+                      className="truncate max-w-[200px]"
+                      title={
+                        booking.address?.locality ||
+                        booking.address?.city ||
+                        booking.address?.address_line
+                      }
+                    >
+                      {booking.address?.locality ||
+                        booking.address?.city ||
+                        booking.address?.address_line ||
+                        "Customer Location"}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -173,39 +287,87 @@ const BookingsTab = () => {
 
                 {/* Conditional Actions based on status */}
                 <div className="w-full flex flex-wrap md:justify-end gap-2">
-                  {booking.status === "PENDING" && (
+                  {activeTab === "INSTANT" && (
                     <button
-                      onClick={() => acceptBooking(booking.uuid)}
-                      disabled={isAccepting}
-                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                      onClick={() =>
+                        acceptInstantBooking(booking.uuid || booking.id)
+                      }
+                      disabled={isAcceptingInstant}
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors shadow-md cursor-pointer disabled:opacity-50"
                     >
-                      <CheckCircle2 className="w-4 h-4" /> {isAccepting ? "Accepting..." : "Accept Job"}
+                      <CheckCircle2 className="w-4 h-4" />{" "}
+                      {isAcceptingInstant ? "Accepting..." : "Accept Now"}
                     </button>
                   )}
-                  {booking.status === "CONFIRMED" && (
-                    <>
+                  {activeTab === "SCHEDULED" &&
+                    booking.status === "PENDING" && (
+                      <button
+                        onClick={() => acceptBooking(booking.uuid)}
+                        disabled={isAccepting}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-text-primary text-text-inverted font-bold text-sm rounded-xl hover:bg-surface-dark transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />{" "}
+                        {isAccepting ? "Accepting..." : "Accept Job"}
+                      </button>
+                    )}
+                  {activeTab === "SCHEDULED" &&
+                    booking.status === "CONFIRMED" && (
+                      <>
+                        <button
+                          onClick={() =>
+                            setActiveModal({
+                              type: "contact",
+                              bookingId: booking.uuid,
+                            })
+                          }
+                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-secondary text-text-primary border border-border-primary font-bold text-sm rounded-xl hover:bg-zinc-800 transition-colors"
+                        >
+                          <MessageSquare className="w-4 h-4" /> Contact
+                        </button>
+
+                        {booking.booking_type === "INSTANT" ? (
+                          <button
+                            onClick={() => startInstantBooking(booking.uuid)}
+                            disabled={isStartingInstant}
+                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                          >
+                            <Clock className="w-4 h-4" />{" "}
+                            {isStartingInstant ? "Starting..." : "Start Job"}
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() =>
+                              setActiveModal({
+                                type: "otp",
+                                bookingId: booking.uuid,
+                              })
+                            }
+                            disabled={isCompleting}
+                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark text-white font-bold text-sm rounded-xl hover:bg-emerald-600 transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                          >
+                            <CheckCircle2 className="w-4 h-4" /> Finish Job
+                          </button>
+                        )}
+                      </>
+                    )}
+
+                  {activeTab === "SCHEDULED" &&
+                    booking.booking_type === "INSTANT" &&
+                    booking.status === "IN_PROGRESS" && (
                       <button
                         onClick={() =>
                           setActiveModal({
-                            type: "contact",
+                            type: "otp",
                             bookingId: booking.uuid,
+                            isInstant: true,
                           })
                         }
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-secondary text-text-primary border border-border-primary font-bold text-sm rounded-xl hover:bg-zinc-800 transition-colors"
-                      >
-                        <MessageSquare className="w-4 h-4" /> Contact
-                      </button>
-                      <button
-                        onClick={() =>
-                          setActiveModal({ type: "otp", bookingId: booking.uuid })
-                        }
-                        disabled={isCompleting}
+                        disabled={isCompletingInstant}
                         className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark text-white font-bold text-sm rounded-xl hover:bg-emerald-600 transition-colors shadow-md cursor-pointer disabled:opacity-50"
                       >
                         <CheckCircle2 className="w-4 h-4" /> Finish Job
                       </button>
-                    </>
-                  )}
+                    )}
                 </div>
               </div>
             </div>
@@ -254,4 +416,3 @@ const BookingsTab = () => {
 };
 
 export default BookingsTab;
-

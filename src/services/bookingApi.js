@@ -51,15 +51,39 @@ export const bookingApi = {
     return response.data;
   },
 
+  // GET /api/instant-bookings/provider/offers/ (List Instant Offers)
+  getInstantBookingOffers: async () => {
+    const response = await api.get("/api/instant-bookings/provider/offers/");
+    return response.data;
+  },
+
   // GET /api/bookings/business/<uuid>/ (Business Booking Details)
   getBusinessBookingDetails: async (bookingId) => {
     const response = await api.get(`/api/bookings/business/${bookingId}/`);
     return response.data;
   },
 
-  // POST /api/bookings/business/<uuid>/accept/ (Accept Booking)
+  // POST /api/bookings/business/<uuid>/accept/ (Accept Scheduled Booking)
   acceptBooking: async (bookingId) => {
     const response = await api.post(`/api/bookings/business/${bookingId}/accept/`);
+    return response.data;
+  },
+
+  // POST /api/instant-bookings/provider/offers/<uuid>/accept/ (Accept Instant Offer)
+  acceptInstantBookingOffer: async (offerId) => {
+    const response = await api.post(`/api/instant-bookings/provider/offers/${offerId}/accept/`);
+    return response.data;
+  },
+
+  // POST /api/instant-bookings/<uuid>/start/ (Start Instant Booking)
+  startInstantBooking: async (bookingId) => {
+    const response = await api.post(`/api/instant-bookings/${bookingId}/start/`);
+    return response.data;
+  },
+
+  // POST /api/instant-bookings/<uuid>/complete/ (Complete Instant Booking)
+  completeInstantBooking: async (bookingId) => {
+    const response = await api.post(`/api/instant-bookings/${bookingId}/complete/`);
     return response.data;
   },
 
