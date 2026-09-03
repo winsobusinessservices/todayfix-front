@@ -10,6 +10,20 @@ export const updateProfile = async (userData) => {
     .then((data) => data.data);
 };
 
+export const userBookingHistory = async ({ page } = {}) => {
+  const res = await api.get("/api/bookings/history/", {
+    page: { page },
+  });
+  return res.data;
+};
+
+export const userPendingBoooking = async ({ page } = {}) => {
+  const res = await api.get("/api/bookings/history/pending/", {
+    page: { page },
+  });
+  return res.data;
+};
+
 export const submitBusinessApplication = async (formData) => {
   return await api
     .post("/api/business/applications/", formData, {

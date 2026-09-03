@@ -17,7 +17,6 @@ import ListBusinessPage from "../pages/ListBusinessPage";
 import BusinessDocumentsPage from "../pages/BusinessDocumentsPage";
 import VerificationPendingPage from "../pages/VerificationPendingPage";
 import OwnerDashboard from "../pages/OwnerDashboard";
-import RequestService from "../pages/RequestService";
 import Profile from "../pages/Profile";
 import Careers from "../pages/Careers";
 import Blog from "../pages/Blog";
@@ -112,7 +111,6 @@ function AppRoutes() {
           <Route path="/list-business" element={<ListBusinessPage />} />
           <Route path="/list-business/documents" element={<BusinessDocumentsPage />} />
           <Route path="/verification-pending" element={<VerificationPendingPage />} />
-          <Route path="/request-service" element={<RequestService />} />
         </Route>
       </Route>
 

@@ -612,6 +612,19 @@ const ProfileDetails = ({ userData, setUserData }) => {
                         />
                       </div>
                     </div>
+                    <div className="md:col-span-2 mt-4">
+                      <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                        Google Maps Embed Link (Required for Instant Booking)
+                      </label>
+                      <input
+                        type="text"
+                        name="location"
+                        value={addressForm.location}
+                        onChange={handleNewAddressChange}
+                        placeholder="<iframe src='https://www.google.com/maps/embed?...' ></iframe>"
+                        className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
+                      />
+                    </div>
                   </div>
 
                   <div className="flex items-center mt-4 bg-surface-secondary p-4 rounded-xl border border-border-secondary">
@@ -882,6 +895,19 @@ const ProfileDetails = ({ userData, setUserData }) => {
                             className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
                           />
                         </div>
+                      </div>
+                      <div className="md:col-span-2 mt-4">
+                        <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
+                          Google Maps Embed Link (Required for Instant Booking)
+                        </label>
+                        <input
+                          type="text"
+                          name="location"
+                          value={editForm.location || ""}
+                          onChange={handleEditAddressChange}
+                          placeholder="<iframe src='https://www.google.com/maps/embed?...' ></iframe>"
+                          className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
+                        />
                       </div>
                     </div>
 

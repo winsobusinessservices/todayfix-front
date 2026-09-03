@@ -14,6 +14,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookingApi } from "../../services/bookingApi";
 import toast from "react-hot-toast";
 import { Star, X } from "lucide-react";
+import { userBookingHistory, userPendingBoooking } from "../../services/userApi";
 
 const StatusBadge = ({ status }) => {
   if (status === "PENDING") {
@@ -46,7 +47,18 @@ const StatusBadge = ({ status }) => {
       </div>
     );
   }
-  return null;
+  if (status === "NO_PROVIDER") {
+    return (
+      <div className="flex items-center gap-1.5 text-zinc-500 bg-zinc-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-zinc-500/20 w-fit">
+        <AlertCircle size={14} /> No Provider Found
+      </div>
+    );
+  }
+  return (
+    <div className="flex items-center gap-1.5 text-zinc-500 bg-zinc-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-zinc-500/20 w-fit">
+      <AlertCircle size={14} /> {status}
+    </div>
+  );
 };
 
 const ProfileRequests = ({ addresses }) => {
@@ -66,16 +78,17 @@ const ProfileRequests = ({ addresses }) => {
 
   const { data: bookingsData, isLoading } = useQuery({
     queryKey: ["userBookings", currentPage],
-    queryFn: () =>
-      bookingApi.getUserBookings({ page: currentPage, status: "PENDING" }),
+    // queryFn: () => userPendingBoooking({ page: currentPage }),
+    queryFn:() => bookingApi.getUserBookings({ page: currentPage }),
   });
+  // console.log(bookingsData);
 
-  const bookings = bookingsData?.results || bookingsData || [];
+  const bookings = bookingsData?.results?.data || bookingsData?.results || [];
   const count = bookingsData?.count || 0;
-  const totalPages = Math.ceil(count / 10); // Assuming 10 items per page
+  const totalPages = Math.ceil(count / 10);
 
   const { mutate: cancelBooking, isPending: isCancelling } = useMutation({
-    mutationFn: (id) => bookingApi.cancelBooking(id, "Cancelled by user"),
+    mutationFn: (id) => bookingApi.cancelBooking(id),
     onSuccess: () => {
       toast.success("Booking cancelled successfully");
       queryClient.invalidateQueries(["userBookings"]);
@@ -140,7 +153,7 @@ const ProfileRequests = ({ addresses }) => {
         )}
         {bookings?.map((req, i) => (
           <motion.div
-            key={req.uuid}
+            key={req.booking_uuid}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
@@ -153,16 +166,18 @@ const ProfileRequests = ({ addresses }) => {
                   {req.service?.name || "Service Request"}
                 </h3>
                 <p className="text-sm text-zinc-500 font-medium">
-                  ID: {req.uuid.split("-")[0].toUpperCase()} •{" "}
-                  {req.scheduled_date} ({req.slot_type})
+                  ID: {req?.booking_uuid?.split("-")[0].toUpperCase()} •{" "}
+                  {req.booking_type === "INSTANT"
+                    ? "Instant Booking (ASAP)"
+                    : `${req.scheduled_date} (${req.slot_type})`}
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <StatusBadge status={req.status} />
 
-                {req.status === "PENDING" && (
+                {req.status === "NO_PROVIDER" && (
                   <button
-                    onClick={() => setConfirmDeleteId(req.uuid)}
+                    onClick={() => setConfirmDeleteId(req.booking_uuid)}
                     className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors cursor-pointer"
                     title="Cancel Request"
                   >
@@ -183,11 +198,20 @@ const ProfileRequests = ({ addresses }) => {
                 <IndianRupee className="w-5 h-5 text-zinc-500" />
                 {req.price ? `Rs. ${req.price}` : "To be decided"}
               </div>
-              <div className="flex items-center gap-2 text-text-primary font-bold">
-                <MapPin className="w-5 h-5 text-zinc-500" />
-                {req.address?.locality ||
-                  req.address?.city ||
-                  "Location details"}
+              <div className="flex items-center gap-2 text-text-primary font-bold max-w-[60%]">
+                <MapPin className="w-5 h-5 text-zinc-500 shrink-0" />
+                <span
+                  className="truncate"
+                  title={
+                    req.address
+                      ? `${req.address.address_line}, ${req.address.locality || req.address.city}`
+                      : "Location details"
+                  }
+                >
+                  {req.address
+                    ? `${req.address.address_type}: ${req.address.address_line}, ${req.address.locality || req.address.city}`
+                    : "Location details"}
+                </span>
               </div>
             </div>
 

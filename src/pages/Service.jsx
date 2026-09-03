@@ -8,23 +8,13 @@ import { categoryApi } from "../services/categoryApi";
 import * as Icons from "lucide-react";
 import { serviceApi } from "../services/serviceApi";
 import { IMAGE_URL } from "../services/axiosClient";
-
-// Helper for dynamic icons
-const DynamicIcon = ({ iconName, className }) => {
-  if (!iconName) {
-    const Default = Icons.Wrench;
-    return <Default className={className} />;
-  }
-  const formattedName =
-    iconName.charAt(0).toUpperCase() + iconName.slice(1).toLowerCase();
-  const IconComponent =
-    Icons[formattedName] || Icons[`${formattedName}s`] || Icons.Wrench;
-  return <IconComponent className={className} />;
-};
+import { useBookingStore } from "../store/bookingStore";
+import BookingDrawer from "../components/booking/BookingDrawer";
 
 const Service = () => {
   const { slug } = useParams();
   const [sortBy, setSortBy] = useState("Recommended");
+  const openBooking = useBookingStore((state) => state.openBooking);
 
   // 1. Fetch Categories to find the one matching `slug`
   const { data: subcategoriesData, isLoading: isLoadingCategories } = useQuery({
@@ -34,25 +24,16 @@ const Service = () => {
 
   const currentSubcategory =
     subcategoriesData?.data || subcategoriesData || null;
-  // console.log(currentSubcategory);
-
-  // const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
-  //   useQuery({
-  //     queryKey: ["publicSubcategories", currentCategory?.cat_uuid],
-  //     queryFn: () => categoryApi.getSubcategories(currentCategory.cat_uuid),
-  //     enabled: !!currentCategory?.cat_uuid,
-  //   });
-
-  // const subcategories = subcategoriesData?.data || subcategoriesData || [];
-  // console.log(subcategories);
 
   const { data: servicesData } = useQuery({
-    queryKey: ["subcategory-services", currentSubcategory?.cat_uuid],
-    queryFn: () => serviceApi.getServices(),
+    queryKey: ["subcategory-services", currentSubcategory?.subCat_uuid],
+    queryFn: () =>
+      serviceApi.getServicesBySubcategory(currentSubcategory?.subCat_uuid),
+    enabled: !!currentSubcategory?.subCat_uuid,
   });
 
   const services = servicesData?.results || [];
-  // console.log(services);
+  // console.log(currentSubcategory);
 
   if (isLoadingCategories) {
     return (
@@ -269,13 +250,10 @@ const Service = () => {
                 </div>
               </div>
 
-              <Link
-                to="/request-service"
-                state={{ category: currentSubcategory.name }}
-                className="w-full flex justify-center items-center gap-2 bg-surface-dark hover:bg-zinc-800 text-text-inverted px-6 py-4 rounded-2xl text-base font-bold transition-all shadow-md active:scale-95 mb-4"
-              >
-                Proceed to Booking <Icons.ArrowRight className="w-4 h-4" />
-              </Link>
+              <div className="w-full flex justify-center items-center gap-2 bg-surface-secondary text-text-secondary px-6 py-4 rounded-2xl text-base font-bold transition-all shadow-md mb-4 text-center">
+                Select a service below to book{" "}
+                <Icons.ArrowDown className="w-4 h-4" />
+              </div>
               <p className="text-[10px] text-center text-text-muted font-medium uppercase tracking-widest">
                 No credit card required
               </p>
@@ -354,7 +332,10 @@ const Service = () => {
                         </span>
                       </div>
                     </div>
-                    <button className="px-5 py-3 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:bg-zinc-800 transition-all active:scale-95 shadow-md flex items-center gap-2">
+                    <button
+                      onClick={() => openBooking(service)}
+                      className="px-5 py-3 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:bg-zinc-800 transition-all active:scale-95 shadow-md flex items-center gap-2"
+                    >
                       Book
                       <Icons.ChevronRight className="w-4 h-4" />
                     </button>
@@ -365,6 +346,7 @@ const Service = () => {
           </div>
         </div>
       </div>
+      <BookingDrawer />
     </div>
   );
 };

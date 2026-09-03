@@ -2,7 +2,10 @@ import React, { useState } from "react";
 import { IndianRupee, MapPin, Calendar, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { bookingApi } from "../../services/bookingApi";
+import {
+  userBookingHistory,
+  userPendingBoooking,
+} from "../../services/userApi";
 
 const ProfileServicesHistory = () => {
   const [filter, setFilter] = useState("All");
@@ -20,12 +23,14 @@ const ProfileServicesHistory = () => {
 
   const { data: bookingsData, isLoading } = useQuery({
     queryKey: ["userBookingsHistory", currentPage],
-    queryFn: () => bookingApi.getUserBookings({ page: currentPage }),
+    queryFn: () => userBookingHistory({ page: currentPage }),
   });
+  // console.log(bookingsData);
 
   // Since it's history, we filter out PENDING or IN_PROGRESS if possible,
   // but let's just use the real data and filter by the selected filter state
-  const serviceHistory = bookingsData?.results || bookingsData || [];
+  const serviceHistory =
+    bookingsData?.results?.data || bookingsData?.results || bookingsData || [];
   const count = bookingsData?.count || 0;
   const totalPages = Math.ceil(count / 10);
 
@@ -139,7 +144,7 @@ const ProfileServicesHistory = () => {
       {filteredHistory.map((service, index) => (
         <div
           key={service.uuid || index}
-          className="bg-surface-primary border border-border-primary rounded-[1.5rem] p-6 md:p-8 shadow-sm hover:shadow-lg hover:border-black transition-all"
+          className="bg-surface-primary border border-border-primary rounded-[1.5rem] p-6 md:p-8 shadow-sm hover:shadow-lg hover:border-black transition-all mb-4"
         >
           {/* Header: Title & Status */}
           <div className="flex justify-between items-start mb-2">
@@ -149,18 +154,23 @@ const ProfileServicesHistory = () => {
               </div>
               <div>
                 <h3 className="text-xl font-black text-text-primary leading-tight">
-                  {service.service?.name}
+                  {service.service?.name || "Service Request"}
                 </h3>
                 <p className="text-base font-medium text-text-secondary mt-1">
-                  {service.business?.name}
+                  {service.business?.name ||
+                    (service.booking_type === "INSTANT"
+                      ? "Finding Provider..."
+                      : "No Provider Assigned")}
                 </p>
               </div>
             </div>
             <span
-              className={`px-3 py-1.5 text-[10px] sm:text-xs font-black rounded-full uppercase tracking-widest flex items-center gap-1.5 shrink-0 ${service.status === "COMPLETED" ? "bg-green-500/10 text-green-600 border border-green-500/20" : "bg-zinc-100 text-zinc-600 border border-zinc-200"}`}
+              className={`px-3 py-1.5 text-[10px] sm:text-xs font-black rounded-full uppercase tracking-widest flex items-center gap-1.5 shrink-0 ${service.status === "COMPLETED" ? "bg-green-500/10 text-green-600 border border-green-500/20" : service.status === "NO_PROVIDER" ? "bg-zinc-100 text-zinc-500 border border-zinc-200" : "bg-zinc-100 text-zinc-600 border border-zinc-200"}`}
             >
               {service.status === "COMPLETED" && <span>✓</span>}{" "}
-              {service.status}
+              {service.status === "NO_PROVIDER"
+                ? "NO PROVIDER"
+                : service.status}
             </span>
           </div>
 
@@ -168,12 +178,24 @@ const ProfileServicesHistory = () => {
           <div className="pl-14 mt-4 space-y-3">
             <div className="flex items-center gap-2 text-sm text-text-secondary font-medium">
               <Calendar className="w-4 h-4" />
-              {service.scheduled_date}
+              {service.booking_type === "INSTANT"
+                ? "Instant Booking (ASAP)"
+                : service.scheduled_date}
             </div>
-            <div className="flex items-center gap-2 text-sm text-text-secondary font-medium">
-              <MapPin className="w-4 h-4" />
-              {service.address?.locality || "Indiranagar"},{" "}
-              {service.address?.city || "Bengaluru"}
+            <div className="flex items-center gap-2 text-sm text-text-secondary font-medium max-w-[80%]">
+              <MapPin className="w-4 h-4 shrink-0" />
+              <span
+                className="truncate"
+                title={
+                  service.address
+                    ? `${service.address.address_line}, ${service.address.locality || service.address.city}`
+                    : "Location details"
+                }
+              >
+                {service.address
+                  ? `${service.address.address_type}: ${service.address.address_line}, ${service.address.locality || service.address.city}`
+                  : "Location details"}
+              </span>
             </div>
           </div>
 

@@ -23,6 +23,12 @@ export const bookingApi = {
     return response.data;
   },
 
+  // POST /api/instant-bookings/ (Create Instant Booking)
+  createInstantBooking: async (data) => {
+    const response = await api.post("/api/instant-bookings/", data);
+    return response.data;
+  },
+
   // GET /api/bookings/<uuid>/ (Get User Booking Details)
   getUserBookingDetails: async (bookingId) => {
     const response = await api.get(`/api/bookings/${bookingId}/`);
@@ -30,8 +36,8 @@ export const bookingApi = {
   },
 
   // POST /api/bookings/<uuid>/cancel/ (Cancel Booking)
-  cancelBooking: async (bookingId, reason) => {
-    const response = await api.post(`/api/bookings/${bookingId}/cancel/`, { reason });
+  cancelBooking: async (bookingId) => {
+    const response = await api.post(`/api/bookings/${bookingId}/cancel/`);
     return response.data;
   },
 

@@ -19,6 +19,11 @@ export const businessApi = {
     return response.data;
   },
 
+  getBusinessApplicationDocuments: async (applicationId) => {
+    const response = await api.get(`/api/business/applications/${applicationId}/documents/`);
+    return response.data;
+  },
+
   // GET /api/business/applications/<uuid>/ (Get My Business Application Details)
   getBusinessApplicationDetails: async (applicationId) => {
     const response = await api.get(`/api/business/applications/${applicationId}/`);
