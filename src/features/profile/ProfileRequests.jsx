@@ -175,7 +175,7 @@ const ProfileRequests = ({ addresses }) => {
               <div className="flex items-center gap-3">
                 <StatusBadge status={req.status} />
 
-                {req.status === "NO_PROVIDER" && (
+                {req.status === "PENDING" && (
                   <button
                     onClick={() => setConfirmDeleteId(req.booking_uuid)}
                     className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors cursor-pointer"
@@ -257,6 +257,32 @@ const ProfileRequests = ({ addresses }) => {
                   className="px-4 py-2 bg-green-500/10 text-green-500 font-bold rounded-lg border border-green-500/20 hover:bg-green-500/20 transition-colors shrink-0"
                 >
                   Leave a Review
+                </button>
+              </div>
+            )}
+
+            {/* No Provider Info Box */}
+            {req.status === "NO_PROVIDER" && (
+              <div className="mt-6 bg-surface-primary border border-zinc-500/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle
+                    className="text-zinc-500 shrink-0 mt-0.5"
+                    size={18}
+                  />
+                  <div>
+                    <h4 className="text-sm font-bold text-zinc-500 mb-1">
+                      No Providers Nearby
+                    </h4>
+                    <p className="text-sm text-zinc-400">
+                      We couldn't find an available professional for instant booking in your area right now. We recommend switching to a scheduled booking.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleRequest()}
+                  className="px-4 py-2 bg-zinc-500/10 text-zinc-500 font-bold rounded-lg border border-zinc-500/20 hover:bg-zinc-500/20 transition-colors shrink-0"
+                >
+                  Schedule Booking
                 </button>
               </div>
             )}

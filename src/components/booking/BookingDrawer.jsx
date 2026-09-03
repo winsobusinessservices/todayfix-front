@@ -35,36 +35,42 @@ const BookingTypeSelector = () => {
 
       <button
         onClick={() => handleSelect("INSTANT")}
-        className="w-full text-left p-4 rounded-2xl border-2 border-border-primary hover:border-text-primary transition-colors bg-surface-secondary flex items-start gap-4 group"
+        className="w-full text-left p-5 rounded-[1.5rem] border-2 border-border-primary hover:border-text-primary hover:shadow-lg transition-all bg-surface-secondary flex items-center justify-between gap-4 group"
       >
-        <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100 group-hover:scale-110 transition-transform">
-          <Clock className="w-6 h-6 text-blue-500" />
+        <div className="flex items-center gap-5">
+          <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100 group-hover:scale-110 group-hover:bg-blue-100 transition-all duration-300">
+            <Clock className="w-7 h-7 text-blue-600" />
+          </div>
+          <div>
+            <h4 className="font-black text-text-primary text-lg">
+              Right Now (Instant)
+            </h4>
+            <p className="text-sm font-medium text-text-secondary mt-0.5">
+              Provider arrives ASAP.
+            </p>
+          </div>
         </div>
-        <div>
-          <h4 className="font-bold text-text-primary text-lg">
-            Right Now (Instant)
-          </h4>
-          <p className="text-sm text-text-secondary mt-1">
-            Provider will be assigned immediately and arrive ASAP.
-          </p>
-        </div>
+        <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-text-primary group-hover:translate-x-1 transition-all" />
       </button>
 
       <button
         onClick={() => handleSelect("SCHEDULED")}
-        className="w-full text-left p-4 rounded-2xl border-2 border-border-primary hover:border-text-primary transition-colors bg-surface-secondary flex items-start gap-4 group"
+        className="w-full text-left p-5 rounded-[1.5rem] border-2 border-border-primary hover:border-text-primary hover:shadow-lg transition-all bg-surface-secondary flex items-center justify-between gap-4 group"
       >
-        <div className="w-12 h-12 rounded-full bg-purple-50 flex items-center justify-center shrink-0 border border-purple-100 group-hover:scale-110 transition-transform">
-          <Calendar className="w-6 h-6 text-purple-500" />
+        <div className="flex items-center gap-5">
+          <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center shrink-0 border border-purple-100 group-hover:scale-110 group-hover:bg-purple-100 transition-all duration-300">
+            <Calendar className="w-7 h-7 text-purple-600" />
+          </div>
+          <div>
+            <h4 className="font-black text-text-primary text-lg">
+              Schedule for Later
+            </h4>
+            <p className="text-sm font-medium text-text-secondary mt-0.5">
+              Pick a date and time slot.
+            </p>
+          </div>
         </div>
-        <div>
-          <h4 className="font-bold text-text-primary text-lg">
-            Schedule for Later
-          </h4>
-          <p className="text-sm text-text-secondary mt-1">
-            Pick a specific date and time slot that works for you.
-          </p>
-        </div>
+        <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-text-primary group-hover:translate-x-1 transition-all" />
       </button>
     </div>
   );
