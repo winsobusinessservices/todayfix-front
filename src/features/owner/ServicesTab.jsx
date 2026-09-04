@@ -14,6 +14,7 @@ import { serviceApi } from "../../services/serviceApi";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import ConfirmDeleteModal from "../../components/modals/ConfirmDeleteModal";
+import { useOutletContext } from "react-router";
 
 const ToggleSwitch = ({ active, onToggle, disabled }) => (
   <button
@@ -71,8 +72,9 @@ const ServicesTab = () => {
     subCat_uuid: "",
     is_active: true,
   });
-
-  const catUuid = "f772bae2-66f3-44cc-911d-e8a70571f4a2";
+  
+  const businessData = useOutletContext();
+  const catUuid = businessData?.cat_uuid;
 
   const { data: subCategoriesData, isLoading: subCategoryLoading } = useQuery({
     queryKey: ["subCategories", catUuid],

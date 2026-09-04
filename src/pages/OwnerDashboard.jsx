@@ -13,8 +13,6 @@ import {
   Bell,
   CheckCircle2,
   Menu,
-  X,
-  ShieldAlert,
   Users,
   UserCheck,
   Clock,
@@ -54,8 +52,6 @@ const OwnerDashboard = () => {
     queryKey: ["businessProfiles"],
     queryFn: businessApi.getProfiles
   })
-
-  // console.log(profilesData);
 
   // --- Employee Logic for Availability ---
   const { data: employeesData } = useQuery({
@@ -282,34 +278,6 @@ const OwnerDashboard = () => {
 
         {/* 3. Middle Part: Outlet Component */}
         <main className="flex-1 overflow-y-auto styled-scrollbar p-4 md:p-6 lg:p-10 relative h-full">
-          {/* VERIFICATION LOCK SCREEN OVERLAY */}
-          {/* <AnimatePresence>
-            {!isVerified && (
-              <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="absolute inset-0 z-40 bg-surface-secondary/80 backdrop-blur-xl flex flex-col items-center justify-center p-6 text-center"
-              >
-                <div className="w-24 h-24 bg-surface-primary border border-border-primary rounded-full flex items-center justify-center mb-6 shadow-2xl">
-                  <ShieldAlert size={40} className="text-orange-500 animate-pulse" />
-                </div>
-                <h2 className="text-3xl font-black text-text-primary tracking-tight mb-3">
-                  Account Pending Verification
-                </h2>
-                <p className="text-zinc-500 max-w-md mx-auto mb-8 font-medium leading-relaxed">
-                  Your business documents are currently being reviewed by our Admin team. You will unlock access to the Job Board and Bookings once verified. This usually takes 24-48 hours.
-                </p>
-                <button 
-                  className="px-8 py-4 bg-surface-primary border border-border-primary text-text-primary font-bold rounded-xl hover:bg-surface-secondary transition-colors shadow-lg"
-                  onClick={() => window.location.href = 'mailto:support@todayfix.com'}
-                >
-                  Contact Support
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence> */}
-
           <AnimatePresence mode="wait">
             <motion.div
               key={location.pathname}
@@ -319,7 +287,7 @@ const OwnerDashboard = () => {
               transition={{ duration: 0.3, ease: "easeOut" }}
               className="h-full max-w-6xl mx-auto"
             >
-              <Outlet />
+              <Outlet context={profilesData?.data[0]}/>
             </motion.div>
           </AnimatePresence>
         </main>

@@ -64,7 +64,7 @@ const ServiceCards = ({ service }) => {
         <div className="mt-4 px-1 pb-1">
           <Link
             // to={`/services/${service.name.toLowerCase().replace(/\s+/g, "-")}`}
-            to={`/services/${service.subCat_uuid}`}
+            to={`/services/${service.slug}`}
             className="w-full bg-surface-dark text-text-inverted py-2.5 rounded-lg font-semibold text-xs hover:bg-zinc-800 transition-colors duration-300 flex items-center justify-center gap-1.5 group/btn shadow-sm"
           >
             View Providers

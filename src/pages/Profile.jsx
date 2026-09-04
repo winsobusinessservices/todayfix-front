@@ -42,6 +42,7 @@ const Profile = () => {
     queryKey: ["user"],
     queryFn: userDetails,
   });
+  
   const {
     data: userReview,
     isLoading: userReviewLoading,
