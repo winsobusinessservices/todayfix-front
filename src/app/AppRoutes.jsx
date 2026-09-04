@@ -32,6 +32,7 @@ import HelpCenter from "../pages/HelpCenter";
 import FAQPage from "../pages/FAQPage";
 import ProFAQ from "../pages/ProFAQ";
 import Search from "../pages/Search";
+import InstantBookingTracking from "../pages/InstantBookingTracking";
 
 import JobBoardTab from "../features/owner/JobBoardTab";
 import OverviewTab from "../features/owner/OverviewTab";
@@ -81,6 +82,7 @@ function AppRoutes() {
         <Route path="/search" element={<Search />} />
         <Route path="/services" element={<Services />} />
         <Route path="/services/:slug" element={<Service />} />
+        <Route path="/track/instant/:id" element={<InstantBookingTracking />} />
         <Route path="/vendor/:id" element={<Vendor />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />

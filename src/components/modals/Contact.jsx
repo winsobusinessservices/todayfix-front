@@ -7,8 +7,22 @@ import {
 } from "lucide-react";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMutation } from "@tanstack/react-query";
+import { callingApi } from "../../services/callingApi";
+import toast from "react-hot-toast";
 
 const Contact = ({ activeModal ,setActiveModal }) => {
+  const { mutate: initiateCall, isPending } = useMutation({
+    mutationFn: () => callingApi.createCallSession({ booking_uuid: activeModal.bookingId }),
+    onSuccess: () => {
+      toast.success("Call initiated! You will receive a secure call shortly.");
+      setActiveModal(null);
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || "Failed to initiate call.");
+    }
+  });
+
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
@@ -47,12 +61,16 @@ const Contact = ({ activeModal ,setActiveModal }) => {
               <ChevronRight className="w-4 h-4 text-zinc-500" />
             </button>
 
-            <button className="w-full flex items-center justify-between p-4 rounded-xl border border-border-primary bg-surface-secondary hover:border-text-primary transition-colors relative overflow-hidden group">
+            <button 
+              onClick={() => initiateCall()}
+              disabled={isPending}
+              className="w-full flex items-center justify-between p-4 rounded-xl border border-border-primary bg-surface-secondary hover:border-text-primary transition-colors relative overflow-hidden group disabled:opacity-50"
+            >
               <div className="flex items-center gap-3 relative z-10">
                 <Phone className="text-emerald-500" />
                 <div className="text-left">
                   <span className="font-bold text-text-primary block">
-                    Secure Call
+                    {isPending ? "Connecting..." : "Secure Call"}
                   </span>
                   <span className="text-xs text-zinc-500 font-medium">
                     Number is masked

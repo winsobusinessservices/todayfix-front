@@ -231,6 +231,7 @@ const BookingsTab = () => {
                 <div>
                   <h3 className="text-xl font-bold tracking-tight text-text-primary mb-1">
                     {booking.service?.name ||
+                      booking.service_name ||
                       booking.requested_service_name ||
                       "Service Request"}
                   </h3>
@@ -267,13 +268,18 @@ const BookingsTab = () => {
                       title={
                         booking.address?.locality ||
                         booking.address?.city ||
-                        booking.address?.address_line
+                        booking.address?.address_line ||
+                        (booking.distance_km
+                          ? `${booking.distance_km} km away`
+                          : "")
                       }
                     >
                       {booking.address?.locality ||
                         booking.address?.city ||
                         booking.address?.address_line ||
-                        "Customer Location"}
+                        (booking.distance_km
+                          ? `${booking.distance_km} km away (${booking.estimated_travel_minutes} min)`
+                          : "Customer Location")}
                     </span>
                   </div>
                 </div>
@@ -289,9 +295,7 @@ const BookingsTab = () => {
                 <div className="w-full flex flex-wrap md:justify-end gap-2">
                   {activeTab === "INSTANT" && (
                     <button
-                      onClick={() =>
-                        acceptInstantBooking(booking.uuid || booking.id)
-                      }
+                      onClick={() => acceptInstantBooking(booking.id)}
                       disabled={isAcceptingInstant}
                       className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors shadow-md cursor-pointer disabled:opacity-50"
                     >

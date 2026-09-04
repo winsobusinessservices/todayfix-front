@@ -29,6 +29,30 @@ export const bookingApi = {
     return response.data;
   },
 
+  // GET /api/instant-bookings/services/ (Instant Service Search)
+  getInstantServices: async (params) => {
+    const response = await api.get("/api/instant-bookings/services/", { params });
+    return response.data;
+  },
+
+  // GET /api/instant-bookings/<uuid>/ (Customer views booking details)
+  getCustomerInstantBookingDetails: async (bookingId) => {
+    const response = await api.get(`/api/instant-bookings/${bookingId}/`);
+    return response.data;
+  },
+
+  // POST /api/instant-bookings/<uuid>/cancel/ (Customer cancels instant booking)
+  cancelCustomerInstantBooking: async (bookingId) => {
+    const response = await api.post(`/api/instant-bookings/${bookingId}/cancel/`);
+    return response.data;
+  },
+
+  // POST /api/instant-bookings/<uuid>/retry/ (Customer adds tip / retries)
+  retryCustomerInstantBooking: async (bookingId, tipAmount) => {
+    const response = await api.post(`/api/instant-bookings/${bookingId}/retry/`, { tip_amount: tipAmount });
+    return response.data;
+  },
+
   // GET /api/bookings/<uuid>/ (Get User Booking Details)
   getUserBookingDetails: async (bookingId) => {
     const response = await api.get(`/api/bookings/${bookingId}/`);

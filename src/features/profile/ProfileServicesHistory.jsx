@@ -41,7 +41,7 @@ const ProfileServicesHistory = () => {
     (acc, curr) => acc + parseInt(curr.price || 0),
     0,
   );
-  const averageRating = "4.8"; // Hardcoded for MVP as per user suggestion
+  const averageRating = "0.0"; // Hardcoded for MVP as per user suggestion
 
   const filteredHistory = serviceHistory.filter((service) => {
     // Hide pending/in-progress from history by default unless we specifically want them
