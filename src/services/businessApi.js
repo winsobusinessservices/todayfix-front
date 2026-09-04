@@ -9,7 +9,7 @@ export const businessApi = {
 
   // PUT /api/business/profiles/<uuid>/ (Update Profile)
   updateProfile: async (profileId, data) => {
-    const response = await api.put(`/api/business/profiles/${profileId}/`, data);
+    const response = await api.patch(`/api/business/profiles/${profileId}/`, data);
     return response.data;
   },
 

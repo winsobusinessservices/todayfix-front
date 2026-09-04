@@ -157,7 +157,7 @@ const SlotsTab = () => {
   const openModalForNew = () => {
     setEditingSlot(null);
     setFormData({
-      employee_uuid: allEmployees[0]?.employee_uuid || "",
+      employee_uuid: allEmployees[0]?.employee?.employee_uuid || "",
       day_of_week: "MONDAY",
       slot_type: "MORNING",
       start_time: "09:00",
@@ -172,7 +172,7 @@ const SlotsTab = () => {
     // Remove "Z" or seconds if present from time for standard time input (HH:mm)
     const formatTime = (timeStr) => timeStr?.substring(0, 5) || "09:00";
     setFormData({
-      employee_uuid: slot.employee_uuid || slot.employee,
+      employee_uuid: slot?.employee?.employee_uuid,
       day_of_week: slot.day_of_week,
       slot_type: slot.slot_type,
       start_time: formatTime(slot.start_time),
