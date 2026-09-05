@@ -12,14 +12,14 @@ export const updateProfile = async (userData) => {
 
 export const userBookingHistory = async ({ page } = {}) => {
   const res = await api.get("/api/bookings/history/", {
-    page: { page },
+    params: { page },
   });
   return res.data;
 };
 
-export const userPendingBoooking = async ({ page } = {}) => {
+export const userPendingBooking = async ({ page } = {}) => {
   const res = await api.get("/api/bookings/history/pending/", {
-    page: { page },
+    params: { page },
   });
   return res.data;
 };
@@ -35,31 +35,31 @@ export const submitBusinessApplication = async (formData) => {
 };
 
 // Dummy data until given.
-export const userServicesHistory = async () => {
-  const res = await new Promise((resolve) =>
-    resolve(
-      new Response(JSON.stringify([]), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
-    ),
-  );
-  const data = await res.json();
-  return data;
-};
+// export const userServicesHistory = async () => {
+//   const res = await new Promise((resolve) =>
+//     resolve(
+//       new Response(JSON.stringify([]), {
+//         status: 200,
+//         headers: { "Content-Type": "application/json" },
+//       }),
+//     ),
+//   );
+//   const data = await res.json();
+//   return data;
+// };
 
-export const userPendingServices = async () => {
-  const res = await new Promise((resolve) =>
-    resolve(
-      new Response(JSON.stringify([]), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
-    ),
-  );
-  const data = await res.json();
-  return data;
-};
+// export const userPendingServices = async () => {
+//   const res = await new Promise((resolve) =>
+//     resolve(
+//       new Response(JSON.stringify([]), {
+//         status: 200,
+//         headers: { "Content-Type": "application/json" },
+//       }),
+//     ),
+//   );
+//   const data = await res.json();
+//   return data;
+// };
 
 export const userReviews = async () => {
   const res = await new Promise((resolve) =>

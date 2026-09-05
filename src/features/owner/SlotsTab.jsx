@@ -117,7 +117,7 @@ const SlotsTab = () => {
 
   const allEmployees = Array.isArray(employeesData)
     ? employeesData
-    : employeesData?.results || [];
+    : employeesData?.results.filter((emp) => emp.is_active) || [];
 
   const allSchedules = Array.isArray(schedulesData)
     ? schedulesData
@@ -157,7 +157,7 @@ const SlotsTab = () => {
   const openModalForNew = () => {
     setEditingSlot(null);
     setFormData({
-      employee_uuid: allEmployees[0]?.employee?.employee_uuid || "",
+      employee_uuid: allEmployees[0]?.employee_uuid || "",
       day_of_week: "MONDAY",
       slot_type: "MORNING",
       start_time: "09:00",
@@ -255,7 +255,7 @@ const SlotsTab = () => {
           {allSchedules.map((slot) => {
             const employee = allEmployees.find(
               (emp) =>
-                emp.employee_uuid === (slot.employee_uuid || slot.employee),
+                emp.employee_uuid === (slot?.employee?.employee_uuid || slot.employee),
             );
             return (
               <div

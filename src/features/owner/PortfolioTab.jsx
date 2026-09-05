@@ -81,6 +81,11 @@ const PortfolioTab = () => {
   const firstApp = applications.length > 0 ? applications[0] : null;
   const appId = firstApp?.business_application_uuid;
 
+  // const { data: docsData } = useQuery({
+  //   queryKey: ["docs-data"],
+  //   queryFn: businessApi.getBusinessApplicationDocuments(appId),
+  // });
+
   const bankAccount = firstApp?.bank_account;
   const identity = firstApp?.identity;
 

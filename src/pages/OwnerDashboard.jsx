@@ -127,7 +127,7 @@ const OwnerDashboard = () => {
       to="/"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary"
     >
-      <img src="tfix.png" alt="logo" width={55} height={55} />
+      <img src="/tfix.png" alt="logo" width={55} height={55} />
       {/* <video src="logo-vid.mp4" autoPlay muted loop height={55} width={55} className="rounded-md"></video> */}
       <Logo />
     </Link>

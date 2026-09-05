@@ -18,8 +18,9 @@ const Service = () => {
 
   // 1. Fetch Categories to find the one matching `slug`
   const { data: subcategoriesData, isLoading: isLoadingCategories } = useQuery({
-    queryKey: ["publicSubcategory"],
+    queryKey: ["publicSubcategory", slug],
     queryFn: () => categoryApi.getSubcategory(slug),
+    enabled: !!slug,
   });
 
   const currentSubcategory =
