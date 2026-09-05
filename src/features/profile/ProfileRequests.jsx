@@ -14,7 +14,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookingApi } from "../../services/bookingApi";
 import toast from "react-hot-toast";
 import { Star, X } from "lucide-react";
-import { userBookingHistory, userPendingBoooking } from "../../services/userApi";
 
 const StatusBadge = ({ status }) => {
   if (status === "PENDING") {

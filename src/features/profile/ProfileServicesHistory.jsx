@@ -4,7 +4,6 @@ import { Link, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   userBookingHistory,
-  userPendingBoooking,
 } from "../../services/userApi";
 
 const ProfileServicesHistory = () => {
