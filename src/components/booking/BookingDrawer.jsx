@@ -192,6 +192,7 @@ const AddressSelector = () => {
     notes,
     setNotes,
   } = useBookingStore();
+  // console.log(selectedService); 
 
   const [mapEmbed, setMapEmbed] = useState("");
   const [currentPayload, setCurrentPayload] = useState(null);
@@ -215,7 +216,7 @@ const AddressSelector = () => {
     },
     onSuccess: (data) => {
       console.log("Booking response:", data);
-      setBookingId(data?.data?.instant_booking_uuid || "TF-SUCCESS");
+      setBookingId(data?.data?.uuid || "TF-SUCCESS");
       nextStep();
     },
     onError: (error) => {
@@ -269,14 +270,14 @@ const AddressSelector = () => {
       }
     } else {
       payload = {
-        service_uuid: selectedService?.uuid || selectedService?.service_uuid,
+        service_uuid: selectedService?.service_uuid,
         address_uuid,
         notes,
         scheduled_date: schedule.date,
         slot_type: schedule.timeSlot,
+        business_uuid: selectedService?.business?.business_profile_uuid
       };
     }
-
     submitBooking(payload);
   };
 
@@ -385,7 +386,9 @@ const BookingSuccess = () => {
         <p className="text-xs text-text-muted font-bold uppercase mb-1">
           Booking ID
         </p>
-        <p className="text-lg font-black text-text-primary">{bookingId}</p>
+        <p className="text-lg font-black text-text-primary uppercase">
+          {bookingId.split("-")[0]}
+        </p>
       </div>
       <button
         onClick={() => {

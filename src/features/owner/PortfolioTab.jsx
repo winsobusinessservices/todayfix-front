@@ -39,6 +39,7 @@ const PortfolioTab = () => {
     email: "",
     phone: "",
     website: "",
+    business_type: "",
   });
 
   const profile = useOutletContext();
@@ -47,12 +48,13 @@ const PortfolioTab = () => {
     if (profile) {
       setProfileId(profile.business_profile_uuid);
       setDetails({
-        name: profile.name || "",
+        name: profile.business_name || "",
         description: profile.description || "",
-        location: profile.location || "",
-        email: profile.email || "",
-        phone: profile.phone || "",
+        location: profile.address || "",
+        email: profile.contact_email || "",
+        phone: profile.contact_phone || "",
         website: profile.website || "",
+        business_type: profile.business_type || "INDIVIDUAL",
       });
     }
   }, [profile]);
@@ -86,6 +88,14 @@ const PortfolioTab = () => {
   //   queryFn: businessApi.getBusinessApplicationDocuments(appId),
   // });
 
+  const { data: docsData, isLoading: isDocsLoading } = useQuery({
+    queryKey: ["docs-data", appId],
+    queryFn: () => businessApi.getApplicationDocuments(appId),
+    enabled: !!appId,
+  });
+
+  const documents = docsData?.data || docsData || {};
+
   const bankAccount = firstApp?.bank_account;
   const identity = firstApp?.identity;
 
@@ -98,6 +108,7 @@ const PortfolioTab = () => {
         email: details.email,
         phone: details.phone,
         website: details.website,
+        business_type: details.business_type,
       });
     } else {
       toast.error("No business profile found to update.");
@@ -138,7 +149,7 @@ const PortfolioTab = () => {
     {
       id: 1,
       label: "Website",
-      value: profile?.website || "Website Not Added",
+      value: details?.website || "Website Not Added",
       editKey: "website",
       icon: (
         <svg
@@ -159,7 +170,7 @@ const PortfolioTab = () => {
     {
       id: 2,
       label: "Email",
-      value: profile?.email || "Email Not Added",
+      value: details?.email || "Email Not Added",
       editKey: "email",
       icon: (
         <svg
@@ -180,7 +191,7 @@ const PortfolioTab = () => {
     {
       id: 3,
       label: "Phone",
-      value: profile?.phone ? "+91 " + profile.phone : "Phone Not Added",
+      value: details?.phone ? "+91 " + details.phone : "Phone Not Added",
       editKey: "phone",
       icon: (
         <svg
@@ -201,7 +212,7 @@ const PortfolioTab = () => {
     {
       id: 4,
       label: "Joined",
-      value: dateMonthYearFormater(profile?.created_at),
+      value: dateMonthYearFormater(details?.created_at),
       editKey: null,
       icon: (
         <svg
@@ -222,7 +233,7 @@ const PortfolioTab = () => {
     {
       id: 5,
       label: "Location",
-      value: profile?.location || "Location Not Added",
+      value: details?.location || "Location Not Added",
       editKey: "location",
       icon: <IconLocation className="size-5" />,
     },
@@ -299,14 +310,33 @@ const PortfolioTab = () => {
                   </div>
 
                   <div className="flex items-center justify-center gap-2 mt-2 text-sm font-medium w-full">
+                  {isEditing ? (
+                    <select
+                      value={details.business_type}
+                      onChange={(e) =>
+                        setDetails({
+                          ...details,
+                          business_type: e.target.value,
+                        })
+                      }
+                      className="bg-surface-secondary text-indigo-500 font-medium py-1 px-2 border-b-2 border-border-primary focus:outline-none focus:border-text-primary text-center appearance-none cursor-pointer"
+                    >
+                      <option value="INDIVIDUAL">INDIVIDUAL</option>
+                      <option value="COMPANY">COMPANY</option>
+                      <option value="INVESTOR">INVESTOR</option>
+                    </select>
+                  ) : (
                     <span className="text-indigo-500">
-                      {firstApp?.business_type || "Business Profile"}
+                      {details.business_type ||
+                        firstApp?.business_type ||
+                        "Business Profile"}
                     </span>
-                    <span className="text-zinc-500">|</span>
-                    <span className="text-zinc-400">
-                      Joined {dateMonthYearFormater(profile?.created_at)}
-                    </span>
-                  </div>
+                  )}
+                  <span className="text-zinc-500">|</span>
+                  <span className="text-zinc-400">
+                    Joined {dateMonthYearFormater(profile?.created_at)}
+                  </span>
+                </div>
 
                   <div className="mt-8 w-full max-w-sm mx-auto">
                     {isEditing ? (
@@ -420,28 +450,36 @@ const PortfolioTab = () => {
                         <ShieldCheck className="w-5 h-5" />
                         Verified Documents
                       </h2>
-                      <div className="flex flex-wrap gap-3 w-full">
-                        {renderDocumentLink(
-                          "PAN Document",
-                          firstApp?.identity?.pan_document,
-                        )}
-                        {renderDocumentLink(
-                          "Aadhaar Document",
-                          firstApp?.identity?.aadhaar_document,
-                        )}
-                        {renderDocumentLink(
-                          "Internal Store Photo",
-                          firstApp?.identity?.internal_store_photo,
-                        )}
-                        {renderDocumentLink(
-                          "External Store Photo",
-                          firstApp?.identity?.external_store_photo,
-                        )}
-                        {renderDocumentLink(
-                          "Cancelled GST/Bill",
-                          firstApp?.identity?.cancelled_gst_bill_book_photo,
-                        )}
-                      </div>
+                      {isDocsLoading ? (
+                        <div className="flex items-center gap-2 text-zinc-400">
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <span className="text-sm">Loading documents...</span>
+                        </div>
+                      ) : (
+                        <div className="flex flex-wrap gap-3 w-full">
+                          {renderDocumentLink(
+                            "PAN Document",
+                            documents?.pan_document,
+                          )}
+                          {renderDocumentLink(
+                            "Aadhaar Document",
+                            documents?.aadhaar_document,
+                          )}
+                          {renderDocumentLink(
+                            "Internal Store Photo",
+                            documents?.internal_store_photo,
+                          )}
+                          {renderDocumentLink(
+                            "External Store Photo",
+                            documents?.external_store_photo,
+                          )}
+                          {renderDocumentLink(
+                            "Cancelled GST/Bill",
+                            documents?.cancelled_gst_bill_book_photo,
+                          )}
+                          {renderDocumentLink("Logo", documents?.logo)}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>

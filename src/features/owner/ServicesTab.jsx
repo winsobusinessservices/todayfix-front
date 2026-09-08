@@ -74,7 +74,7 @@ const ServicesTab = () => {
   });
   
   const businessData = useOutletContext();
-  const catUuid = businessData?.cat_uuid;
+  const catUuid = businessData?.category_uuid;
 
   const { data: subCategoriesData, isLoading: subCategoryLoading } = useQuery({
     queryKey: ["subCategories", catUuid],

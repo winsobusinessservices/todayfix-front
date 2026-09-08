@@ -1,9 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import {
-  Phone,
-  XCircle,
-  Send,
-} from "lucide-react";
+import { Phone, XCircle, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { chatApi } from "../../services/chatApi";
@@ -15,8 +11,10 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   const bookingId = activeModal?.bookingId;
 
   // Derive target user info from bookingsList if available
-  const targetBooking = bookingsList?.find((b) => b.id === bookingId || b.instant_booking_uuid === bookingId || b.uuid === bookingId);
-  const targetName = targetBooking?.customer || targetBooking?.business_name || "User";
+  const targetBooking = bookingsList?.find((b) => b.uuid === bookingId);
+  const targetName =
+    targetBooking?.user?.first_name + " " + targetBooking?.user?.last_name ||
+    "User";
 
   // 1. Fetch Conversations
   const { data: conversations } = useQuery({
@@ -27,13 +25,18 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
     },
     enabled: !!bookingId,
   });
+  // console.log(conversations);
 
-  const conversationList = Array.isArray(conversations) ? conversations : (conversations?.results || []);
+  const conversationList = Array.isArray(conversations)
+    ? conversations
+    : conversations?.results || [];
   const activeConversation = conversationList.find(
-    (c) => c.scheduled_booking === bookingId || c.instant_booking === bookingId
+    (c) => c.scheduled_booking === bookingId || c.instant_booking === bookingId,
   );
-  
+  // console.log(bookingId);
+
   const conversationId = activeConversation?.conversation_uuid;
+  // console.log(conversationId);
 
   // 2. Fetch Messages
   const { data: messagesData, isLoading: messagesLoading } = useQuery({
@@ -43,18 +46,73 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
       return res.data || res;
     },
     enabled: !!conversationId,
-    refetchInterval: 3000, // Poll every 3 seconds
   });
+  // console.log(messagesData);
+  
 
-  const messagesList = Array.isArray(messagesData) ? messagesData : (messagesData?.results || []);
+  const messagesList = Array.isArray(messagesData)
+    ? messagesData
+    : messagesData?.results || [];
+
+  // WebSocket Integration for Chat
+  useEffect(() => {
+    if (!conversationId) return;
+
+    // Use wss:// for production, ws:// for local
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const host =
+      window.location.hostname === "localhost"
+        ? "localhost:8000"
+        : window.location.host;
+
+    // Connect to chat websocket
+    const ws = new WebSocket(`${protocol}//${host}/ws/chat/${conversationId}/`);
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      // Assuming backend sends { type: "chat_message", text: "...", created_at: "...", ... }
+      // Or if it sends the raw message object directly
+
+      // Update React Query cache instantly
+      queryClient.setQueryData(["chatMessages", conversationId], (oldData) => {
+        const oldList = Array.isArray(oldData)
+          ? oldData
+          : oldData?.results || [];
+
+        // Prevent duplicate appending if we just sent it
+        if (
+          oldList.find(
+            (m) =>
+              m.message_uuid === data.message_uuid ||
+              (data.id && m.id === data.id),
+          )
+        ) {
+          return oldData;
+        }
+
+        const newList = [...oldList, data];
+
+        if (oldData && !Array.isArray(oldData) && oldData.results) {
+          return { ...oldData, results: newList };
+        }
+        return newList;
+      });
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [conversationId, queryClient]);
 
   // 3. Send Message Mutation
   const { mutate: sendMsg, isPending: isSending } = useMutation({
-    mutationFn: (text) => chatApi.sendMessage({ conversation: conversationId, text }),
+    mutationFn: (text) =>
+      chatApi.sendMessage({ conversation: conversationId, text }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["chatMessages", conversationId]);
+      // Invalidate to ensure consistency, though WebSocket will append it
+      // queryClient.invalidateQueries(["chatMessages", conversationId]);
       setNewMessage("");
-    }
+    },
   });
 
   // Scroll to bottom on new messages
@@ -86,9 +144,7 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
                 {targetName.charAt(0)}
               </div>
               <div>
-                <h3 className="font-bold text-text-primary">
-                  {targetName}
-                </h3>
+                <h3 className="font-bold text-text-primary">{targetName}</h3>
                 <p className="text-xs text-zinc-500 font-medium flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>{" "}
                   Online
@@ -123,22 +179,22 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
                 Chat History
               </span>
             </div>
-            
+
             {!conversationId && !messagesLoading && (
               <div className="text-center text-text-secondary text-sm italic mt-10">
                 Conversation not initialized yet.
               </div>
             )}
-            
+
             {messagesList.map((msg) => {
               // The backend `msg.sender` might just be an ID, or we need to check if we are the sender
               // For now, if msg.is_me is not provided, we might have to infer it or rely on standard formatting
-              // We'll just assume all incoming are from 'customer' and outgoing 'vendor' for demo purposes if backend doesn't flag it, 
+              // We'll just assume all incoming are from 'customer' and outgoing 'vendor' for demo purposes if backend doesn't flag it,
               // but ideally backend gives us an 'is_me' boolean or 'sender_id' we match with current user.
               // We'll assume msg.text is the content.
-              
+
               const isOutgoing = true; // Hardcoded for demo if no sender logic exists, ideally check msg.sender === currentUser.id
-              
+
               return (
                 <div
                   key={msg.message_uuid || msg.id}
@@ -151,7 +207,12 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
                       {msg.text}
                     </p>
                     <p className="text-[10px] mt-1 text-right font-bold text-zinc-500">
-                      {msg.created_at ? new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ""}
+                      {msg.created_at
+                        ? new Date(msg.created_at).toLocaleTimeString([], {
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })
+                        : ""}
                     </p>
                   </div>
                 </div>

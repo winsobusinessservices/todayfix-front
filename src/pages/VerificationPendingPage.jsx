@@ -55,6 +55,22 @@ const VerificationPendingPage = () => {
     setIsRefreshing(false);
   };
 
+  // Get the most recent application
+  const appList = applications?.results || applications?.data || [];
+  const latestApp = appList.length > 0 ? appList[0] : null;
+  const status = latestApp?.status;
+  const rejection_reason = latestApp?.rejection_reason;
+
+  React.useEffect(() => {
+    if (status === "APPROVED") {
+      // Instantly refresh user profile globally so navbars/roles update
+      userDetails()
+        .then((data) => setUser({ ...userData, ...data }))
+        .catch(console.error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
+
   if (isLoading) {
     return (
       <div className="font-sans flex flex-col items-center justify-center p-6 py-20 min-h-[60vh]">
@@ -65,10 +81,6 @@ const VerificationPendingPage = () => {
       </div>
     );
   }
-
-  // Get the most recent application
-  const appList = applications?.results || applications?.data || [];
-  const latestApp = appList.length > 0 ? appList[0] : null;
 
   if (!latestApp) {
     // If they have no applications, they shouldn't be on this page.
@@ -91,18 +103,6 @@ const VerificationPendingPage = () => {
       </div>
     );
   }
-
-  const { status, rejection_reason } = latestApp;
-
-  React.useEffect(() => {
-    if (status === "ACCEPTED") {
-      // Instantly refresh user profile globally so navbars/roles update
-      userDetails()
-        .then((data) => setUser({ ...userData, ...data }))
-        .catch(console.error);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status]);
 
   return (
     <div className="font-sans flex flex-col items-center justify-center p-6 py-20 animate-in fade-in zoom-in-95 duration-500">
@@ -184,7 +184,7 @@ const VerificationPendingPage = () => {
           </>
         )}
 
-        {status === "ACCEPTED" && (
+        {status === "APPROVED" && (
           <>
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl"></div>
             <div className="relative z-10">

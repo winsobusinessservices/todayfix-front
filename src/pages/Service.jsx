@@ -34,7 +34,7 @@ const Service = () => {
   });
 
   const services = servicesData?.results || [];
-  // console.log(currentSubcategory);
+  // console.log(services);
 
   if (isLoadingCategories) {
     return (

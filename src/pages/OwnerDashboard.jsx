@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import {
@@ -42,11 +42,41 @@ const SIDEBAR_ITEMS = [
 const OwnerDashboard = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showMockPopup, setShowMockPopup] = useState(false); // For simulating WebSocket ping
+  const [showMockPopup, setShowMockPopup] = useState(false); 
+  const [notificationData, setNotificationData] = useState(null);
+  
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const refreshToken = useUserStore((state) => state.refreshToken);
+  const accessToken = useUserStore((state) => state.accessToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
+
+  // WebSocket Integration for Notifications
+  useEffect(() => {
+    if (!accessToken) return;
+
+    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+    const host = window.location.hostname === "localhost" ? "localhost:8000" : window.location.host;
+    
+    // Connect to notifications websocket, passing token
+    const ws = new WebSocket(`${protocol}//${host}/ws/notifications/?token=${accessToken}`);
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "new_booking") {
+          setNotificationData(data.data);
+          setShowMockPopup(true);
+        }
+      } catch (err) {
+        console.error("Error parsing notification ws data:", err);
+      }
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [accessToken]);
 
   const {data: profilesData, error, isLoading} = useQuery({
     queryKey: ["businessProfiles"],
@@ -293,7 +323,6 @@ const OwnerDashboard = () => {
         </main>
       </div>
 
-      {/* --- MOCK WEBSOCKET INCOMING REQUEST FULL-SCREEN MODAL --- */}
       <AnimatePresence>
         {showMockPopup && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
@@ -318,17 +347,17 @@ const OwnerDashboard = () => {
                   New Service Request
                 </h2>
                 <h3 className="text-3xl font-black text-text-primary tracking-tight mb-2">
-                  Plumbing Fixes
+                  {notificationData?.service_title || "New Service"}
                 </h3>
                 <p className="text-sm font-medium text-zinc-500 mb-8">
-                  Koramangala, Bengaluru (~3km away)
+                  {notificationData?.morphed_location || "Location pending"}
                 </p>
 
                 <div className="p-5 mb-8">
                   <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">
                     Guaranteed Payout
                   </p>
-                  <p className="text-5xl font-black text-text-primary">₹800</p>
+                  <p className="text-5xl font-black text-text-primary">{notificationData?.payout || "---"}</p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3">

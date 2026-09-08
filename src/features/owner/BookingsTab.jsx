@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Calendar,
   MessageSquare,
+  X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -14,6 +15,7 @@ import toast from "react-hot-toast";
 import Contact from "../../components/modals/Contact";
 import Chat from "../../components/modals/Chat";
 import Otp from "../../components/modals/Otp";
+import { dateFormater } from "../../utils/dateFormater";
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -60,7 +62,7 @@ const BookingsTab = () => {
     activeTab === "SCHEDULED"
       ? bookingsData?.results || bookingsData || []
       : instantOffersData?.data || instantOffersData?.results || [];
-
+  // console.log(bookingsList);
   const isLoading =
     activeTab === "SCHEDULED" ? isLoadingScheduled : isLoadingInstant;
 
@@ -71,6 +73,15 @@ const BookingsTab = () => {
       queryClient.invalidateQueries(["businessBookings"]);
     },
     onError: () => toast.error("Failed to accept booking"),
+  });
+
+  const { mutate: declineBooking, isPending: isDeclining } = useMutation({
+    mutationFn: bookingApi.rejectBooking,
+    onSuccess: () => {
+      toast.success("Booking declined!");
+      queryClient.invalidateQueries(["businessBookings"]);
+    },
+    onError: () => toast.error("Failed to decline booking"),
   });
 
   const { mutate: completeBooking, isPending: isCompleting } = useMutation({
@@ -141,7 +152,6 @@ const BookingsTab = () => {
               return b.status === "CONFIRMED" || b.status === "IN_PROGRESS";
             return b.status === filter;
           });
-
   return (
     <div className="space-y-6">
       {/* Header & Tabs */}
@@ -213,6 +223,7 @@ const BookingsTab = () => {
             key={booking.uuid}
             className="bg-surface-primary rounded-2xl border border-border-primary p-6 shadow-2xl shadow-black/5 hover:border-text-primary transition-all duration-300 group"
           >
+            {/* {console.log(booking)} */}
             <div className="flex flex-col md:flex-row justify-between gap-6">
               <div className="flex-grow space-y-4">
                 <div className="flex items-center gap-3">
@@ -230,19 +241,21 @@ const BookingsTab = () => {
 
                 <div>
                   <h3 className="text-xl font-bold tracking-tight text-text-primary mb-1">
-                    {booking.service?.name ||
-                      booking.service_name ||
-                      booking.requested_service_name ||
-                      "Service Request"}
+                    {booking.service?.name || "Service Request"}
                   </h3>
                   {booking.user && (
-                    <p className="text-zinc-400 font-medium">
-                      {booking.user?.first_name} {booking.user?.last_name}
+                    <p className="text-zinc-400 font-medium uppercase">
+                      Clinet -{" "}
+                      {booking?.status === "CONFIRMED"
+                        ? booking?.user?.first_name +
+                          " " +
+                          booking?.user?.last_name
+                        : booking.user?.user_uuid.split("-")[0] || "Customer"}
                     </p>
                   )}
-                  {booking.customer_note && (
+                  {booking.notes && (
                     <p className="text-sm text-zinc-500 italic mt-1 bg-surface-secondary p-2 rounded-lg border border-border-primary inline-block">
-                      "{booking.customer_note}"
+                      "{booking?.notes}"
                     </p>
                   )}
                 </div>
@@ -252,7 +265,8 @@ const BookingsTab = () => {
                     <div className="flex items-center gap-2">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {booking.scheduled_date} ({booking.slot_type})
+                        {dateFormater(booking.scheduled_date)} (
+                        {booking.slot_type})
                       </span>
                     </div>
                   ) : (
@@ -305,14 +319,24 @@ const BookingsTab = () => {
                   )}
                   {activeTab === "SCHEDULED" &&
                     booking.status === "PENDING" && (
-                      <button
-                        onClick={() => acceptBooking(booking.uuid)}
-                        disabled={isAccepting}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-text-primary text-text-inverted font-bold text-sm rounded-xl hover:bg-surface-dark transition-colors shadow-md cursor-pointer disabled:opacity-50"
-                      >
-                        <CheckCircle2 className="w-4 h-4" />{" "}
-                        {isAccepting ? "Accepting..." : "Accept Job"}
-                      </button>
+                      <>
+                        <button
+                          onClick={() => acceptBooking(booking.uuid)}
+                          disabled={isAccepting}
+                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-text-primary text-text-inverted font-bold text-sm rounded-xl hover:bg-surface-dark transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                        >
+                          <CheckCircle2 className="w-4 h-4" />{" "}
+                          {isAccepting ? "Accepting..." : "Accept Job"}
+                        </button>
+                        <button
+                          onClick={() => declineBooking(booking.uuid)}
+                          disabled={isDeclining}
+                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-400 text-text-inverted font-bold text-sm rounded-xl hover:bg-red-500 transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                        >
+                          <X className="w-4 h-4" />{" "}
+                          {isDeclining ? "Declining..." : "Decline Job"}
+                        </button>
+                      </>
                     )}
                   {activeTab === "SCHEDULED" &&
                     booking.status === "CONFIRMED" && (

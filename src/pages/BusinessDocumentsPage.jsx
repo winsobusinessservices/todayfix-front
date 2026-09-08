@@ -4,6 +4,7 @@ import { ShieldCheck, UploadCloud, FileText, AlertCircle } from "lucide-react";
 import { submitBusinessApplication } from "../services/userApi";
 import { popup } from "../components/pop-up/pop-up";
 import CustomDropdown from "../components/ui/CustomDropdown";
+import { useUserStore } from "../store/userStore";
 
 const FileUpload = ({ id, label, required, file, setFile, accept }) => (
   <div className="flex flex-col gap-2">
@@ -65,6 +66,8 @@ const BusinessDocumentsPage = () => {
   const location = useLocation();
   const providerType = location.state?.providerType || "INDIVIDUAL";
   const isCompany = providerType === "COMPANY" || providerType === "INVESTOR";
+  const userData = useUserStore((state) => state.user);
+  const setUser = useUserStore((state) => state.setUser);
 
   const [error, setError] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
@@ -295,6 +298,15 @@ const BusinessDocumentsPage = () => {
       if (logo) formData.append("logo", logo);
 
       await submitBusinessApplication(formData);
+
+      if (userData && setUser) {
+        setUser({
+          ...userData,
+          hasBusiness: true,
+          businessVerified: false,
+          businessStatus: "PENDING",
+        });
+      }
 
       localStorage.removeItem("businessAppDetails");
       popup(

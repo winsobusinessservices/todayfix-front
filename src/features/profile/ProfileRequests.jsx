@@ -14,6 +14,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookingApi } from "../../services/bookingApi";
 import toast from "react-hot-toast";
 import { Star, X } from "lucide-react";
+import { dateFormater } from "../../utils/dateFormater";
 
 const StatusBadge = ({ status }) => {
   if (status === "PENDING") {
@@ -85,6 +86,8 @@ const ProfileRequests = ({ addresses }) => {
   const bookings = bookingsData?.results?.data || bookingsData?.results || [];
   const count = bookingsData?.count || 0;
   const totalPages = Math.ceil(count / 10);
+  // console.log(bookings);
+  
 
   const { mutate: cancelBooking, isPending: isCancelling } = useMutation({
     mutationFn: (id) => bookingApi.cancelBooking(id),
@@ -152,13 +155,12 @@ const ProfileRequests = ({ addresses }) => {
         )}
         {bookings?.map((req, i) => (
           <motion.div
-            key={req.booking_uuid}
+            key={req.uuid}
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
             className="bg-surface-secondary border border-border-primary rounded-3xl p-6 relative overflow-hidden"
           >
-            {/* Top row */}
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
               <div>
                 <h3 className="text-xl font-bold tracking-tight text-text-primary mb-1">
@@ -168,7 +170,7 @@ const ProfileRequests = ({ addresses }) => {
                   ID: {req?.booking_uuid?.split("-")[0].toUpperCase()} •{" "}
                   {req.booking_type === "INSTANT"
                     ? "Instant Booking (ASAP)"
-                    : `${req.scheduled_date} (${req.slot_type})`}
+                    : `${dateFormater(req.scheduled_date)} (${req.slot_type})`}
                 </p>
               </div>
               <div className="flex items-center gap-3">
@@ -176,7 +178,7 @@ const ProfileRequests = ({ addresses }) => {
 
                 {req.status === "PENDING" && (
                   <button
-                    onClick={() => setConfirmDeleteId(req.booking_uuid)}
+                    onClick={() => setConfirmDeleteId(req.uuid)}
                     className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors cursor-pointer"
                     title="Cancel Request"
                   >
