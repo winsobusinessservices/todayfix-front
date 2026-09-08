@@ -83,7 +83,7 @@ const CustomDropdown = ({
   }
 
   return (
-    <div className="relative w-full" ref={ref}>
+    <div className={`relative w-full ${isOpen ? "z-50" : "z-0"}`} ref={ref}>
       <div
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between bg-surface-primary border border-border-primary text-text-primary text-sm font-medium rounded-xl py-2 pl-9 pr-8 hover:border-black cursor-pointer shadow-sm transition-all"
