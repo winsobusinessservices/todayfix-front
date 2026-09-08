@@ -12,14 +12,14 @@ export const updateProfile = async (userData) => {
 
 export const userBookingHistory = async ({ page } = {}) => {
   const res = await api.get("/api/bookings/history/", {
-    page: { page },
+    params: { page },
   });
   return res.data;
 };
 
-export const userPendingBoooking = async ({ page } = {}) => {
+export const userPendingBooking = async ({ page } = {}) => {
   const res = await api.get("/api/bookings/history/pending/", {
-    page: { page },
+    params: { page },
   });
   return res.data;
 };
