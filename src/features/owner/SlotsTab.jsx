@@ -203,8 +203,9 @@ const SlotsTab = () => {
     if (editingSlot) {
       // Backend does not allow changing the provider when updating.
       const { employee_uuid, ...updatePayload } = payload;
+      const slotId = editingSlot.employee_working_schedule_uuid || editingSlot.working_schedule_uuid || editingSlot.uuid || editingSlot.id;
       updateSchedule({
-        id: editingSlot.employee_working_schedule_uuid,
+        id: slotId,
         data: updatePayload,
       });
     } else {
@@ -259,7 +260,7 @@ const SlotsTab = () => {
             );
             return (
               <div
-                key={slot.employee_working_schedule_uuid}
+                key={slot.employee_working_schedule_uuid || slot.working_schedule_uuid || slot.uuid || slot.id}
                 className="bg-surface-primary border border-border-primary rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow relative group"
               >
                 <div className="flex justify-between items-start mb-4">
@@ -292,7 +293,7 @@ const SlotsTab = () => {
                     </button>
                     <button
                       onClick={() =>
-                        setDeleteId(slot.employee_working_schedule_uuid)
+                        setDeleteId(slot.employee_working_schedule_uuid || slot.working_schedule_uuid || slot.uuid || slot.id)
                       }
                       className="p-1.5 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                       title="Delete"
