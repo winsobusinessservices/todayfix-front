@@ -13,6 +13,8 @@ import { AlertCircle } from "lucide-react";
 import { updateProfile } from "../../services/userApi";
 import { verifyProfilePhone } from "../../services/authApi";
 import { validatePhone } from "../../utils/phoneValidator";
+import { Map } from "lucide-react";
+import MapPicker from "../../components/modals/MapPicker";
 
 const ProfileDetails = ({ userData, setUserData }) => {
   const queryClient = useQueryClient();
@@ -27,6 +29,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
   const [otpValue, setOtpValue] = useState("");
   const [otpError, setOtpError] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [mapMode, setMapMode] = useState(null);
 
   useEffect(() => {
     if (userData && !initialData) {
@@ -614,16 +617,38 @@ const ProfileDetails = ({ userData, setUserData }) => {
                     </div>
                     <div className="md:col-span-2 mt-4">
                       <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                        Google Maps Embed Link (Required for Instant Booking)
+                        Service Location (Required for Instant Booking)
                       </label>
-                      <input
-                        type="text"
-                        name="location"
-                        value={addressForm.location}
-                        onChange={handleNewAddressChange}
-                        placeholder="<iframe src='https://www.google.com/maps/embed?...' ></iframe>"
-                        className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
-                      />
+                      {addressForm.location ? (
+                        <div className="relative">
+                          {addressForm.location.includes('<iframe') ? (
+                            <div
+                              className="w-full h-32 rounded-xl overflow-hidden border border-border-primary"
+                              dangerouslySetInnerHTML={{ __html: addressForm.location.replace(/height="\d+"/, 'height="100%"') }}
+                            />
+                          ) : (
+                            <div className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3 text-text-primary text-sm font-semibold">
+                              {addressForm.location}
+                            </div>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => setMapMode("ADD")}
+                            className="absolute bottom-2 right-2 px-3 py-1.5 bg-surface-primary/90 backdrop-blur-sm border border-border-primary text-text-primary text-xs font-bold rounded-lg shadow-sm hover:bg-surface-secondary transition-colors"
+                          >
+                            Change Location
+                          </button>
+                        </div>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setMapMode("ADD")}
+                          className="w-full bg-purple-500/10 text-purple-600 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
+                        >
+                          <Map className="w-5 h-5" />
+                          Select Location on Map
+                        </button>
+                      )}
                     </div>
                   </div>
 
@@ -898,16 +923,38 @@ const ProfileDetails = ({ userData, setUserData }) => {
                       </div>
                       <div className="md:col-span-2 mt-4">
                         <label className="block text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">
-                          Google Maps Embed Link (Required for Instant Booking)
+                          Service Location (Required for Instant Booking)
                         </label>
-                        <input
-                          type="text"
-                          name="location"
-                          value={editForm.location || ""}
-                          onChange={handleEditAddressChange}
-                          placeholder="<iframe src='https://www.google.com/maps/embed?...' ></iframe>"
-                          className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3.5 text-text-primary focus:border-text-primary focus:ring-1 focus:ring-text-primary outline-none text-sm font-semibold transition-all"
-                        />
+                        {editForm.location ? (
+                          <div className="relative">
+                            {editForm.location.includes('<iframe') ? (
+                              <div
+                                className="w-full h-32 rounded-xl overflow-hidden border border-border-primary"
+                                dangerouslySetInnerHTML={{ __html: editForm.location.replace(/height="\d+"/, 'height="100%"') }}
+                              />
+                            ) : (
+                              <div className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3 text-text-primary text-sm font-semibold">
+                                {editForm.location}
+                              </div>
+                            )}
+                            <button
+                              type="button"
+                              onClick={() => setMapMode("EDIT")}
+                              className="absolute bottom-2 right-2 px-3 py-1.5 bg-surface-primary/90 backdrop-blur-sm border border-border-primary text-text-primary text-xs font-bold rounded-lg shadow-sm hover:bg-surface-secondary transition-colors"
+                            >
+                              Change Location
+                            </button>
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => setMapMode("EDIT")}
+                            className="w-full bg-purple-500/10 text-purple-600 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
+                          >
+                            <Map className="w-5 h-5" />
+                            Select Location on Map
+                          </button>
+                        )}
                       </div>
                     </div>
 
@@ -987,6 +1034,17 @@ const ProfileDetails = ({ userData, setUserData }) => {
           )}
         </AnimatePresence>
       </div>
+      <MapPicker
+        isOpen={!!mapMode}
+        onClose={() => setMapMode(null)}
+        onConfirm={(iframe) => {
+          if (mapMode === "ADD") {
+            setAddressForm(prev => ({ ...prev, location: iframe }));
+          } else if (mapMode === "EDIT") {
+            setEditForm(prev => ({ ...prev, location: iframe }));
+          }
+        }}
+      />
     </>
   );
 };

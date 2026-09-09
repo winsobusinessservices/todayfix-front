@@ -215,9 +215,8 @@ const ProfileRequests = ({ addresses }) => {
                 </span>
               </div>
             </div>
-
             {/* Accepted Info Box */}
-            {req.status === "CONFIRMED" && req.business && (
+            {req.status === "CONFIRMED" || "IN_PROGRESS" && req.business && (
               <div className="mt-6 bg-surface-primary border border-blue-500/30 rounded-2xl p-4 flex items-start gap-3">
                 <AlertCircle
                   className="text-blue-500 shrink-0 mt-0.5"

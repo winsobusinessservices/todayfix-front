@@ -136,8 +136,11 @@ export const bookingApi = {
   },
 
   // POST /api/bookings/business/<uuid>/reassign-employee/ (Reassign Employee)
-  reassignEmployee: async (bookingId, employeeId) => {
-    const response = await api.post(`/api/bookings/business/${bookingId}/reassign-employee/`, { employee_uuid: employeeId });
+  reassignEmployee: async (bookingId, oldEmployeeId, newEmployeeId) => {
+    const response = await api.post(`/api/bookings/business/${bookingId}/reassign-employee/`, {
+      old_employee_uuid: oldEmployeeId,
+      new_employee_uuid: newEmployeeId,
+    });
     return response.data;
   },
 };

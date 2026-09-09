@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { XCircle, UserCheck } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { employeeApi } from "../../services/employeeApi";
+import { serviceApi } from "../../services/serviceApi";
 import { bookingApi } from "../../services/bookingApi";
 import toast from "react-hot-toast";
 
@@ -11,21 +11,38 @@ const AssignEmployee = ({ activeModal, setActiveModal }) => {
   const [selectedEmployee, setSelectedEmployee] = useState("");
 
   const { data: employeesData, isLoading } = useQuery({
-    queryKey: ["businessEmployees"],
-    queryFn: employeeApi.getEmployees,
+    queryKey: ["serviceEmployees", activeModal.serviceId],
+    queryFn: () =>
+      serviceApi.getServiceEmployees({ service_uuid: activeModal.serviceId }),
+    enabled: !!activeModal.serviceId,
   });
 
   const employees = employeesData?.results || employeesData || [];
 
   const { mutate: assignEmployee, isPending } = useMutation({
-    mutationFn: ({ bookingId, employeeId }) =>
-      bookingApi.assignEmployee(bookingId, employeeId),
+    mutationFn: ({ bookingId, employeeId }) => {
+      if (activeModal.isReassign) {
+        return bookingApi.reassignEmployee(
+          bookingId,
+          activeModal.oldEmployeeId,
+          employeeId,
+        );
+      }
+      return bookingApi.assignEmployee(bookingId, employeeId);
+    },
     onSuccess: () => {
-      toast.success("Employee assigned successfully!");
+      toast.success(
+        activeModal.isReassign
+          ? "Employee reassigned successfully!"
+          : "Employee assigned successfully!",
+      );
       queryClient.invalidateQueries(["businessBookings"]);
       setActiveModal(null);
     },
-    onError: () => toast.error("Failed to assign employee"),
+    onError: (error) => {
+      const msg = error.response?.data?.message || "Failed to assign employee";
+      toast.error(msg);
+    },
   });
 
   const handleAssign = () => {
@@ -38,6 +55,7 @@ const AssignEmployee = ({ activeModal, setActiveModal }) => {
       employeeId: selectedEmployee,
     });
   };
+  // console.log(activeModal);
 
   return (
     <motion.div
@@ -59,7 +77,9 @@ const AssignEmployee = ({ activeModal, setActiveModal }) => {
             </div>
             <div>
               <h2 className="text-lg font-black tracking-tight text-text-primary">
-                Assign Employee
+                {activeModal.isReassign
+                  ? "Reassign Employee"
+                  : "Assign Employee"}
               </h2>
               <p className="text-xs font-medium text-zinc-500">
                 Select an employee for this job
@@ -96,8 +116,13 @@ const AssignEmployee = ({ activeModal, setActiveModal }) => {
                 >
                   <option value="">-- Choose Employee --</option>
                   {employees.map((emp) => (
-                    <option key={emp.employee_uuid || emp.id} value={emp.employee_uuid || emp.id}>
-                      {emp.user?.first_name} {emp.user?.last_name} ({emp.role || "Employee"})
+                    <option
+                      key={emp.employee_uuid || emp.id}
+                      value={emp.employee_uuid || emp.id}
+                    >
+                      {emp.employee_name ||
+                        emp.user?.first_name + " " + emp.user?.last_name ||
+                        "Employee"}
                     </option>
                   ))}
                 </select>
@@ -108,7 +133,13 @@ const AssignEmployee = ({ activeModal, setActiveModal }) => {
                 disabled={isPending || !selectedEmployee}
                 className="w-full py-3.5 bg-purple-600 text-white font-black text-lg rounded-xl hover:bg-purple-700 transition-colors shadow-lg shadow-purple-500/20 disabled:opacity-50 mt-4 cursor-pointer"
               >
-                {isPending ? "Assigning..." : "Assign Job"}
+                {isPending
+                  ? activeModal.isReassign
+                    ? "Reassigning..."
+                    : "Assigning..."
+                  : activeModal.isReassign
+                    ? "Reassign Job"
+                    : "Assign Job"}
               </button>
             </div>
           )}

@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   ArrowRight,
   ArrowLeft,
+  Navigation
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -17,6 +18,8 @@ import { bookingApi } from "../../services/bookingApi";
 import CustomDropdown from "../ui/CustomDropdown";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
+import { Map } from "lucide-react";
+import MapPicker from "../modals/MapPicker";
 
 // Step 1: Instant vs Scheduled
 const BookingTypeSelector = () => {
@@ -192,10 +195,37 @@ const AddressSelector = () => {
     notes,
     setNotes,
   } = useBookingStore();
-  // console.log(selectedService); 
+  // console.log(selectedService);
 
   const [mapEmbed, setMapEmbed] = useState("");
   const [currentPayload, setCurrentPayload] = useState(null);
+  const [isMapOpen, setIsMapOpen] = useState(false);
+  const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+
+  const handleGetCurrentLocation = () => {
+    setIsLoadingLocation(true);
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (loc) => {
+          const lat = loc.coords.latitude;
+          const lng = loc.coords.longitude;
+          const iframeString = `<iframe src="https://maps.google.com/maps?q=${lat},${lng}&hl=es;z=14&output=embed" width="100%" height="300" frameborder="0" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+          setMapEmbed(iframeString);
+          setIsLoadingLocation(false);
+          toast.success("Location retrieved successfully");
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          setIsLoadingLocation(false);
+          toast.error("Error getting location. Please allow location access.");
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    } else {
+      setIsLoadingLocation(false);
+      toast.error("Geolocation is not supported by your browser");
+    }
+  };
 
   const { data: addressesData } = useQuery({
     queryKey: ["addresses"],
@@ -275,7 +305,7 @@ const AddressSelector = () => {
         notes,
         scheduled_date: schedule.date,
         slot_type: schedule.timeSlot,
-        business_uuid: selectedService?.business?.business_profile_uuid
+        business_uuid: selectedService?.business?.business_profile_uuid,
       };
     }
     submitBooking(payload);
@@ -326,14 +356,47 @@ const AddressSelector = () => {
       {bookingType === "INSTANT" && (
         <div>
           <label className="block text-sm font-bold text-text-secondary mb-3">
-            Google Maps Embed Link (Required)
+            Service Location (Required)
           </label>
-          <input
-            type="text"
-            value={mapEmbed}
-            onChange={(e) => setMapEmbed(e.target.value)}
-            placeholder="<iframe src='https://www.google.com/maps/embed?...' ></iframe>"
-            className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:border-text-primary transition-colors font-medium"
+          {mapEmbed ? (
+            <div className="relative">
+              <div
+                className="w-full h-32 rounded-xl overflow-hidden border border-border-primary"
+                dangerouslySetInnerHTML={{
+                  __html: mapEmbed.replace('height="300"', 'height="100%"'),
+                }}
+              />
+              <button
+                onClick={() => setIsMapOpen(true)}
+                className="absolute bottom-2 right-2 px-3 py-1.5 bg-surface-primary/90 backdrop-blur-sm border border-border-primary text-text-primary text-xs font-bold rounded-lg shadow-sm hover:bg-surface-secondary transition-colors"
+              >
+                Change Location
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3">
+              <button
+                onClick={() => setIsMapOpen(true)}
+                className="w-full bg-purple-500/10 text-purple-600 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
+              >
+                <Map className="w-5 h-5" />
+                Select Location on Map
+              </button>
+              <button
+                onClick={handleGetCurrentLocation}
+                disabled={isLoadingLocation}
+                className="w-full bg-blue-500/10 text-blue-600 border border-blue-500/20 hover:bg-blue-500/20 hover:border-blue-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Navigation className={`w-5 h-5 ${isLoadingLocation ? 'animate-spin' : ''}`} />
+                {isLoadingLocation ? 'Getting Location...' : 'Use Current Location'}
+              </button>
+            </div>
+          )}
+
+          <MapPicker
+            isOpen={isMapOpen}
+            onClose={() => setIsMapOpen(false)}
+            onConfirm={(iframeString) => setMapEmbed(iframeString)}
           />
         </div>
       )}
@@ -415,6 +478,13 @@ const BookingDrawer = () => {
     setStep,
   } = useBookingStore();
 
+  // Auto-skip step 2 for INSTANT bookings
+  useEffect(() => {
+    if (step === 2 && bookingType === "INSTANT") {
+      setStep(3);
+    }
+  }, [step, bookingType, setStep]);
+
   // Handle escape key to close
   useEffect(() => {
     const handleEsc = (e) => {
@@ -488,12 +558,6 @@ const BookingDrawer = () => {
               {step === 2 && bookingType === "SCHEDULED" && (
                 <DateTimeSelector />
               )}
-              {step === 2 &&
-                bookingType === "INSTANT" &&
-                (() => {
-                  setStep(3);
-                  return null;
-                })()}
               {step === 3 && <AddressSelector />}
               {step === 4 && <BookingSuccess />}
             </div>
