@@ -11,46 +11,38 @@ import {
   X,
 } from "lucide-react";
 
-// Mock data for active broadcasts (from Admin)
-const INITIAL_BROADCASTS = [
-  {
-    id: "REQ-002",
-    service: "AC Servicing & Repair",
-    customerMasked: "Customer #8421",
-    location: "Indiranagar, Bengaluru (approx. 2km away)",
-    date: "Aug 6, 2026",
-    time: "Morning (9 AM - 12 PM)",
-    payout: "850",
-    description:
-      "My split AC is not cooling properly and making a loud noise. It's a 1.5 ton Voltas AC.",
-    urgency: "High",
-  },
-  {
-    id: "REQ-005",
-    service: "Deep Home Cleaning",
-    customerMasked: "Customer #3190",
-    location: "Koramangala, Bengaluru (approx. 4.5km away)",
-    date: "Aug 8, 2026",
-    time: "Flexible",
-    payout: "2200",
-    description:
-      "Full deep cleaning of a 2BHK unfurnished flat before moving in.",
-    urgency: "Normal",
-  },
-];
+import { bookingApi } from "../../services/bookingApi";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const JobBoardTab = () => {
   const navigate = useNavigate();
-  const [broadcasts, setBroadcasts] = useState(INITIAL_BROADCASTS);
+  const queryClient = useQueryClient();
   const [acceptedJobId, setAcceptedJobId] = useState(null);
+
+  // Instant booking offers query
+  const { data: instantOffersData, isLoading } = useQuery({
+    queryKey: ["instantBookingOffers"],
+    queryFn: bookingApi.getInstantBookingOffers,
+  });
+
+  const broadcasts = instantOffersData?.data || instantOffersData?.results || [];
+
+  const { mutate: acceptInstantBooking, isPending: isAcceptingInstant } =
+    useMutation({
+      mutationFn: bookingApi.acceptInstantBookingOffer,
+      onSuccess: () => {
+        toast.success("Instant booking offer accepted!");
+        queryClient.invalidateQueries(["instantBookingOffers"]);
+        queryClient.invalidateQueries(["businessBookings"]);
+        navigate("/owner-dashboard/bookings");
+      },
+      onError: () => toast.error("Failed to accept instant offer"),
+    });
 
   const handleAcceptJob = (id) => {
     setAcceptedJobId(id);
-    setTimeout(() => {
-      setBroadcasts((prev) => prev.filter((b) => b.id !== id));
-      setAcceptedJobId(null);
-      navigate("/owner-dashboard/bookings");
-    }, 1500); // Simulate network delay
+    acceptInstantBooking(id);
   };
 
   return (
@@ -69,7 +61,7 @@ const JobBoardTab = () => {
         <AnimatePresence>
           {broadcasts.map((job) => (
             <motion.div
-              key={job.id}
+              key={job.id || job.uuid}
               layout
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -78,7 +70,7 @@ const JobBoardTab = () => {
             >
               {/* Accepted Overlay */}
               <AnimatePresence>
-                {acceptedJobId === job.id && (
+                {acceptedJobId === (job.id || job.uuid) && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -112,27 +104,28 @@ const JobBoardTab = () => {
                         )}
                       </div>
                       <h3 className="text-xl font-bold text-text-primary tracking-tight">
-                        {job.service}
+                        {job.service?.name || job.service_name || "Service Request"}
                       </h3>
                       <p className="text-sm font-medium text-zinc-500 flex items-center gap-1.5 mt-1">
                         <ShieldCheck size={14} className="text-emerald-500" />
-                        {job.customerMasked} (Identity Protected)
+                        Customer #{job.user?.user_uuid?.split("-")[0] || "1234"} (Identity Protected)
                       </p>
                     </div>
                   </div>
 
                   <p className="text-sm text-zinc-400 font-medium leading-relaxed bg-surface-secondary p-4 rounded-xl border border-border-primary">
-                    "{job.description}"
+                    "{job.notes || "No additional description provided."}"
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex items-center gap-2 text-sm font-bold text-text-primary">
                       <MapPin size={16} className="text-zinc-400" />
-                      {job.location}
+                      {job.address?.locality || job.address?.city || job.address?.address_line || "Customer Location"}
+                      {job.distance_km ? ` (${job.distance_km} km)` : ""}
                     </div>
                     <div className="flex items-center gap-2 text-sm font-bold text-text-primary">
                       <Calendar size={16} className="text-zinc-400" />
-                      {job.date} • {job.time}
+                      ASAP • Instant Booking
                     </div>
                   </div>
                 </div>
@@ -145,7 +138,7 @@ const JobBoardTab = () => {
                     </p>
                     <div className="flex items-center justify-center md:justify-end gap-1 text-3xl font-black text-text-primary">
                       <IndianRupee size={24} className="text-text-primary" />
-                      {job.payout}
+                      {job.price || job.estimated_price || "TBD"}
                     </div>
                     <p className="text-xs text-emerald-500 font-bold mt-1">
                       Guaranteed by Admin
@@ -153,10 +146,11 @@ const JobBoardTab = () => {
                   </div>
 
                   <button
-                    onClick={() => handleAcceptJob(job.id)}
-                    className="w-full py-3.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-lg active:scale-95 cursor-pointer"
+                    onClick={() => handleAcceptJob(job.id || job.uuid)}
+                    disabled={isAcceptingInstant}
+                    className="w-full py-3.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-lg active:scale-95 cursor-pointer disabled:opacity-50"
                   >
-                    Accept Job
+                    {isAcceptingInstant && acceptedJobId === (job.id || job.uuid) ? "Accepting..." : "Accept Job"}
                   </button>
                 </div>
               </div>
@@ -164,7 +158,7 @@ const JobBoardTab = () => {
           ))}
         </AnimatePresence>
 
-        {broadcasts.length === 0 && (
+        {!isLoading && broadcasts.length === 0 && (
           <div className="text-center py-20 bg-surface-secondary rounded-3xl border border-border-primary">
             <div className="w-16 h-16 bg-surface-primary rounded-full flex items-center justify-center mx-auto mb-4 border border-border-primary">
               <Clock className="w-8 h-8 text-zinc-400" />

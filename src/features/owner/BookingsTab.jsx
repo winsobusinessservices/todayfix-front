@@ -15,6 +15,7 @@ import toast from "react-hot-toast";
 import Contact from "../../components/modals/Contact";
 import Chat from "../../components/modals/Chat";
 import Otp from "../../components/modals/Otp";
+import AssignEmployee from "../../components/modals/AssignEmployee";
 import { dateFormater } from "../../utils/dateFormater";
 
 const StatusBadge = ({ status }) => {
@@ -45,26 +46,12 @@ const BookingsTab = () => {
   const [otpError, setOtpError] = useState(false);
 
   // Scheduled bookings query
-  const { data: bookingsData, isLoading: isLoadingScheduled } = useQuery({
+  const { data: bookingsData, isLoading } = useQuery({
     queryKey: ["businessBookings"],
     queryFn: bookingApi.getBusinessBookings,
-    enabled: activeTab === "SCHEDULED",
   });
 
-  // Instant booking offers query
-  const { data: instantOffersData, isLoading: isLoadingInstant } = useQuery({
-    queryKey: ["instantBookingOffers"],
-    queryFn: bookingApi.getInstantBookingOffers,
-    enabled: activeTab === "INSTANT",
-  });
-
-  const bookingsList =
-    activeTab === "SCHEDULED"
-      ? bookingsData?.results || bookingsData || []
-      : instantOffersData?.data || instantOffersData?.results || [];
-  // console.log(bookingsList);
-  const isLoading =
-    activeTab === "SCHEDULED" ? isLoadingScheduled : isLoadingInstant;
+  const bookingsList = bookingsData?.results || bookingsData || [];
 
   const { mutate: acceptBooking, isPending: isAccepting } = useMutation({
     mutationFn: bookingApi.acceptBooking,
@@ -96,62 +83,31 @@ const BookingsTab = () => {
     onError: () => toast.error("Failed to complete booking"),
   });
 
-  const { mutate: startInstantBooking, isPending: isStartingInstant } =
-    useMutation({
-      mutationFn: bookingApi.startInstantBooking,
-      onSuccess: () => {
-        toast.success("Job started successfully!");
-        queryClient.invalidateQueries(["businessBookings"]);
-      },
-      onError: () => toast.error("Failed to start job"),
-    });
-
-  const { mutate: completeInstantBooking, isPending: isCompletingInstant } =
-    useMutation({
-      mutationFn: bookingApi.completeInstantBooking,
-      onSuccess: () => {
-        toast.success("Instant booking marked as complete!");
-        queryClient.invalidateQueries(["businessBookings"]);
-        setActiveModal(null);
-        setOtpValue("");
-        setOtpError(false);
-      },
-      onError: () => toast.error("Failed to complete instant booking"),
-    });
-
-  const { mutate: acceptInstantBooking, isPending: isAcceptingInstant } =
-    useMutation({
-      mutationFn: bookingApi.acceptInstantBookingOffer,
-      onSuccess: () => {
-        toast.success("Instant booking offer accepted!");
-        queryClient.invalidateQueries(["instantBookingOffers"]);
-        queryClient.invalidateQueries(["businessBookings"]);
-      },
-      onError: () => toast.error("Failed to accept instant offer"),
-    });
+  const { mutate: startBooking, isPending: isStarting } = useMutation({
+    mutationFn: bookingApi.startBooking,
+    onSuccess: () => {
+      toast.success("Job started successfully!");
+      queryClient.invalidateQueries(["businessBookings"]);
+    },
+    onError: () => toast.error("Failed to start job"),
+  });
 
   const handleVerifyOtp = () => {
     if (otpValue === "1234") {
-      if (activeModal?.isInstant) {
-        completeInstantBooking(activeModal.bookingId);
-      } else {
-        completeBooking(activeModal.bookingId);
-      }
+      completeBooking(activeModal.bookingId);
     } else {
       setOtpError(true);
     }
   };
 
   const filteredBookings =
-    activeTab === "INSTANT"
+    filter === "ALL"
       ? bookingsList
-      : filter === "ALL"
-        ? bookingsList
-        : bookingsList.filter((b) => {
-            if (filter === "ACTIVE")
-              return b.status === "CONFIRMED" || b.status === "IN_PROGRESS";
-            return b.status === filter;
-          });
+      : bookingsList.filter((b) => {
+          if (filter === "ACTIVE")
+            return b.status === "CONFIRMED" || b.status === "IN_PROGRESS";
+          return b.status === filter;
+        });
   return (
     <div className="space-y-6">
       {/* Header & Tabs */}
@@ -166,34 +122,8 @@ const BookingsTab = () => {
             </p>
           </div>
 
-          {/* Tab Toggle */}
-          <div className="flex bg-surface-primary p-1 rounded-2xl border border-border-primary self-start md:self-center">
-            <button
-              onClick={() => setActiveTab("SCHEDULED")}
-              className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
-                activeTab === "SCHEDULED"
-                  ? "bg-text-primary text-text-inverted shadow-md"
-                  : "text-zinc-500 hover:text-text-primary"
-              }`}
-            >
-              Scheduled
-            </button>
-            <button
-              onClick={() => setActiveTab("INSTANT")}
-              className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${
-                activeTab === "INSTANT"
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "text-zinc-500 hover:text-blue-600"
-              }`}
-            >
-              <Clock className="w-4 h-4" /> Instant Offers
-            </button>
-          </div>
-        </div>
-
-        {/* Filter Pills (Only for Scheduled) */}
-        {activeTab === "SCHEDULED" && (
-          <div className="flex flex-wrap gap-2 bg-surface-primary p-1 rounded-2xl border border-border-primary w-fit">
+        {/* Filter Pills */}
+        <div className="flex flex-wrap gap-2 bg-surface-primary p-1 rounded-2xl border border-border-primary w-fit">
             {["ALL", "PENDING", "ACTIVE", "COMPLETED"].map((f) => (
               <button
                 key={f}
@@ -208,7 +138,7 @@ const BookingsTab = () => {
               </button>
             ))}
           </div>
-        )}
+        </div>
       </div>
 
       {/* Bookings List */}
@@ -230,13 +160,7 @@ const BookingsTab = () => {
                   <span className="text-sm font-medium text-zinc-500 uppercase">
                     {(booking.uuid || booking.id || "OFFER")?.split("-")[0]}
                   </span>
-                  {activeTab === "SCHEDULED" ? (
-                    <StatusBadge status={booking.status} />
-                  ) : (
-                    <span className="px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider bg-blue-500/10 text-blue-600 border-blue-500/20 flex items-center gap-1.5 shadow-sm">
-                      <Clock className="w-3 h-3" /> URGENT OFFER
-                    </span>
-                  )}
+                  <StatusBadge status={booking.status} />
                 </div>
 
                 <div>
@@ -261,20 +185,13 @@ const BookingsTab = () => {
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-zinc-500">
-                  {activeTab === "SCHEDULED" ? (
-                    <div className="flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      <span>
-                        {dateFormater(booking.scheduled_date)} (
-                        {booking.slot_type})
-                      </span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 text-orange-500 font-bold bg-orange-500/10 px-2 py-1 rounded-md w-fit">
-                      <Clock className="w-4 h-4" />
-                      <span>Respond within 15 mins</span>
-                    </div>
-                  )}
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    <span>
+                      {dateFormater(booking.scheduled_date)} (
+                      {booking.slot_type})
+                    </span>
+                  </div>
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4" />
                     <span
@@ -307,95 +224,82 @@ const BookingsTab = () => {
 
                 {/* Conditional Actions based on status */}
                 <div className="w-full flex flex-wrap md:justify-end gap-2">
-                  {activeTab === "INSTANT" && (
-                    <button
-                      onClick={() => acceptInstantBooking(booking.id)}
-                      disabled={isAcceptingInstant}
-                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors shadow-md cursor-pointer disabled:opacity-50"
-                    >
-                      <CheckCircle2 className="w-4 h-4" />{" "}
-                      {isAcceptingInstant ? "Accepting..." : "Accept Now"}
-                    </button>
+                  {booking.status === "PENDING" && (
+                    <>
+                      <button
+                        onClick={() => acceptBooking(booking.uuid)}
+                        disabled={isAccepting}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-text-primary text-text-inverted font-bold text-sm rounded-xl hover:bg-surface-dark transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />{" "}
+                        {isAccepting ? "Accepting..." : "Accept Job"}
+                      </button>
+                      <button
+                        onClick={() => declineBooking(booking.uuid)}
+                        disabled={isDeclining}
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-400 text-text-inverted font-bold text-sm rounded-xl hover:bg-red-500 transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                      >
+                        <X className="w-4 h-4" />{" "}
+                        {isDeclining ? "Declining..." : "Decline Job"}
+                      </button>
+                    </>
                   )}
-                  {activeTab === "SCHEDULED" &&
-                    booking.status === "PENDING" && (
-                      <>
-                        <button
-                          onClick={() => acceptBooking(booking.uuid)}
-                          disabled={isAccepting}
-                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-text-primary text-text-inverted font-bold text-sm rounded-xl hover:bg-surface-dark transition-colors shadow-md cursor-pointer disabled:opacity-50"
-                        >
-                          <CheckCircle2 className="w-4 h-4" />{" "}
-                          {isAccepting ? "Accepting..." : "Accept Job"}
-                        </button>
-                        <button
-                          onClick={() => declineBooking(booking.uuid)}
-                          disabled={isDeclining}
-                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-red-400 text-text-inverted font-bold text-sm rounded-xl hover:bg-red-500 transition-colors shadow-md cursor-pointer disabled:opacity-50"
-                        >
-                          <X className="w-4 h-4" />{" "}
-                          {isDeclining ? "Declining..." : "Decline Job"}
-                        </button>
-                      </>
-                    )}
-                  {activeTab === "SCHEDULED" &&
-                    booking.status === "CONFIRMED" && (
-                      <>
-                        <button
-                          onClick={() =>
-                            setActiveModal({
-                              type: "contact",
-                              bookingId: booking.uuid,
-                            })
-                          }
-                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-secondary text-text-primary border border-border-primary font-bold text-sm rounded-xl hover:bg-zinc-800 transition-colors"
-                        >
-                          <MessageSquare className="w-4 h-4" /> Contact
-                        </button>
-
-                        {booking.booking_type === "INSTANT" ? (
-                          <button
-                            onClick={() => startInstantBooking(booking.uuid)}
-                            disabled={isStartingInstant}
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors shadow-md cursor-pointer disabled:opacity-50"
-                          >
-                            <Clock className="w-4 h-4" />{" "}
-                            {isStartingInstant ? "Starting..." : "Start Job"}
-                          </button>
-                        ) : (
-                          <button
-                            onClick={() =>
-                              setActiveModal({
-                                type: "otp",
-                                bookingId: booking.uuid,
-                              })
-                            }
-                            disabled={isCompleting}
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark text-white font-bold text-sm rounded-xl hover:bg-emerald-600 transition-colors shadow-md cursor-pointer disabled:opacity-50"
-                          >
-                            <CheckCircle2 className="w-4 h-4" /> Finish Job
-                          </button>
-                        )}
-                      </>
-                    )}
-
-                  {activeTab === "SCHEDULED" &&
-                    booking.booking_type === "INSTANT" &&
-                    booking.status === "IN_PROGRESS" && (
+                  {booking.status === "CONFIRMED" && (
+                    <>
                       <button
                         onClick={() =>
                           setActiveModal({
-                            type: "otp",
+                            type: "contact",
                             bookingId: booking.uuid,
-                            isInstant: true,
                           })
                         }
-                        disabled={isCompletingInstant}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark text-white font-bold text-sm rounded-xl hover:bg-emerald-600 transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-secondary text-text-primary border border-border-primary font-bold text-sm rounded-xl hover:bg-zinc-800 transition-colors"
                       >
-                        <CheckCircle2 className="w-4 h-4" /> Finish Job
+                        <MessageSquare className="w-4 h-4" /> Contact
                       </button>
-                    )}
+                      
+                      {!booking.assigned_employee ? (
+                        <button
+                          onClick={() => setActiveModal({ type: "assign", bookingId: booking.uuid })}
+                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 text-white font-bold text-sm rounded-xl hover:bg-purple-700 transition-colors shadow-md cursor-pointer"
+                        >
+                          Assign Employee
+                        </button>
+                      ) : (
+                        <>
+                          <button
+                            onClick={() => setActiveModal({ type: "assign", bookingId: booking.uuid })}
+                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-purple-100 text-purple-700 font-bold text-sm rounded-xl hover:bg-purple-200 transition-colors shadow-sm cursor-pointer"
+                          >
+                            Reassign
+                          </button>
+                          <button
+                            onClick={() => startBooking(booking.uuid)}
+                            disabled={isStarting}
+                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white font-bold text-sm rounded-xl hover:bg-blue-700 transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                          >
+                            <Clock className="w-4 h-4" />{" "}
+                            {isStarting ? "Starting..." : "Start Job"}
+                          </button>
+                        </>
+                      )}
+                    </>
+                  )}
+
+                  {booking.status === "IN_PROGRESS" && (
+                    <button
+                      onClick={() =>
+                        setActiveModal({
+                          type: "otp",
+                          bookingId: booking.uuid,
+                        })
+                      }
+                      disabled={isCompleting}
+                      className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark text-white font-bold text-sm rounded-xl hover:bg-emerald-600 transition-colors shadow-md cursor-pointer disabled:opacity-50"
+                    >
+                      <CheckCircle2 className="w-4 h-4" /> Finish Job
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -425,6 +329,13 @@ const BookingsTab = () => {
             activeModal={activeModal}
             setActiveModal={setActiveModal}
             bookingsList={bookingsList}
+          />
+        )}
+
+        {activeModal?.type === "assign" && (
+          <AssignEmployee
+            activeModal={activeModal}
+            setActiveModal={setActiveModal}
           />
         )}
 
