@@ -49,7 +49,7 @@ const Footer = () => {
           {/* Disclaimer */}
           <p className="text-[11px] text-text-muted leading-relaxed max-w-[320px] mt-1">
             By subscribing you agree to our Privacy Policy and consent to
-            receive updates from Sirona.
+            receive updates from TodayFix.
           </p>
         </div>
 
@@ -80,7 +80,7 @@ const Footer = () => {
             <h4 className="font-bold text-text-primary text-sm tracking-widest uppercase">
               Connect
             </h4>
-            <p className="text-[12px] font-medium text-text-secondary leading-relaxed">
+            <p className="text-[15px] font-medium text-text-muted leading-relaxed">
               India's most trusted home services marketplace.
             </p>
             {/* Social Media links */}

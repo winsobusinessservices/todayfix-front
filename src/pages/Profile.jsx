@@ -91,10 +91,10 @@ const Profile = () => {
       <div className="max-w-5xl mx-auto px-6 pt-12 md:pt-16 relative z-10">
         {/* --- Profile Header --- */}
         <div className="bg-surface-primary border border-border-primary rounded-3xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-10 shadow-2xl shadow-black/5 mb-10 relative">
-          <div className="absolute top-6 right-6">
+          <div className="absolute top-2 right-2">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 font-bold rounded-xl border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer"
+              className="flex items-center gap-2 px-4 py-1 lg:py-2 bg-red-500/10 text-red-500 font-bold rounded-xl border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer"
             >
               <svg
                 className="w-4 h-4"

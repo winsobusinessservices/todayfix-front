@@ -66,10 +66,10 @@ const ProfileServicesHistory = () => {
       {/* Header Summary */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         <div className="bg-surface-primary border border-border-primary rounded-2xl p-4 text-center shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
-          <p className="text-2xl md:text-3xl font-black text-text-primary">
+          <p className="text-2xl md:text-3xl font-black text-text-primary flex items-center justify-center gap-1">
             {completedServices.length}
           </p>
-          <p className="text-xs font-bold text-text-secondary uppercase tracking-wider mt-1">
+          <p className="text-xs font-bold text-text-secondary uppercase tracking-wider mt-1  whitespace-normal break-words">
             Completed
           </p>
         </div>

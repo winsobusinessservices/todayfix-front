@@ -77,19 +77,19 @@ const ReviewsTab = () => {
                 <p className="text-sm text-zinc-500 font-medium">{review.reply}</p>
               </div>
             ) : (
-              <div className="ml-0 md:ml-12 flex gap-2">
+              <div className="ml-0 md:ml-10 flex gap-2">
                 <input 
                   type="text" 
                   value={draftReplies[review.id] || ""}
                   onChange={(e) => handleReplyChange(review.id, e.target.value)}
                   placeholder="Write a reply..." 
-                  className="flex-grow bg-surface-secondary border border-border-primary rounded-xl px-4 py-2 text-sm text-text-primary focus:outline-none focus:border-text-primary font-medium transition-colors"
+                  className="flex-grow bg-surface-secondary border border-border-primary rounded-xl px-3 py-1 md:px-4 md:py-2 text-xs md:text-sm text-text-primary focus:outline-none focus:border-text-primary font-medium transition-colors"
                 />
                 <button 
                   onClick={() => submitReply(review.id)}
-                  className="flex items-center justify-center gap-2 px-4 py-2 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:scale-[0.98] transition-transform shadow-md"
+                  className="flex items-center justify-center gap-2 px-3 py-1 md:px-4 md:py-2 bg-surface-dark text-text-inverted font-bold text-xs md:text-sm rounded-xl hover:scale-[0.98] transition-transform shadow-md"
                 >
-                  <MessageSquare className="w-4 h-4" /> Reply
+                  <MessageSquare className="w-3 h-3 md:w-4 md:h-4" /> Reply
                 </button>
               </div>
             )}

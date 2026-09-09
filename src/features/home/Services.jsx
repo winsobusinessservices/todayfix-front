@@ -72,10 +72,10 @@ const Services = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-lg md:text-xl text-text-secondary max-w-xl"
+            className="text-lg md:text-xl text-text-secondary max-w-auto"
           >
-            Choose from 50+ professional home and business services tailored for
-            you.
+              Find trusted professionals for all your home and business needs, all in one place. Explore 50+ services, from repairs and interiors to engineering, travel, real estate, and more. Choose a service and connect with the right professionals to get your work done with ease.
+
           </motion.p>
         </div>
 

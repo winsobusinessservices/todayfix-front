@@ -3,6 +3,10 @@ import { motion } from "framer-motion";
 import SEO from "../components/seo/SEO";
 
 const Contact = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Form submitted");
+  }
   return (
     <main className="min-h-screen bg-surface-secondary font-sans pb-24">
       <SEO
@@ -37,7 +41,7 @@ const Contact = () => {
           <h2 className="text-2xl font-bold text-text-primary mb-6">
             Send us a message
           </h2>
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-1.5">
                 <label className="text-sm font-bold text-text-primary">

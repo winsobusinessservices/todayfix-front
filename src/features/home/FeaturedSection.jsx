@@ -16,25 +16,29 @@ const FeaturedSection = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6"
+          className="flex flex-col  mb-16 gap-6"
         >
-          <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary tracking-tight leading-tight mb-6">
-              Featured <br />
-              <span className="text-text-muted">Businesses.</span>
+          <div className="max-w-full flex md:items-center md:justify-between gap-6 flex-col md:flex-row">
+            <h2 className="text-4xl text-center md:text-5xl lg:text-6xl font-extrabold text-text-primary  tracking-tight leading-tight">
+              Featured 
+              <span className="text-text-muted"> Businesses.</span>
             </h2>
-            <p className="text-lg text-text-secondary leading-relaxed">
-              Connect with highly vetted, top-performing local businesses. We've
-              verified their credentials so you can hire with absolute
-              confidence.
-            </p>
-          </div>
-          <button
+
+             <button
             onClick={() => navigate("/services")}
             className="shrink-0 h-12 px-6 rounded-full bg-surface-dark text-text-inverted font-medium hover:scale-105 transition-transform duration-300"
           >
             View All Providers
           </button>
+          </div>
+             <p className="text-lg text-text-secondary leading-relaxed line-height-[1.6]">
+            Connect with highly vetted, top-performing local businesses you can trust. TodayFix makes it easy to discover reliable service providers, explore their services, and find the right professionals for your needs. We bring quality businesses closer to you, helping you make confident decisions and get the job done with ease.
+             <br />
+        
+            Whether you need a quick repair, regular maintenance, or a specialized service, you can explore trusted providers all in one place. Find businesses that match your requirements and enjoy a simple, convenient way to get the services you need.
+
+            </p>
+
         </motion.div>
 
         {/* Standard Grid (3 columns on lg) */}
@@ -58,13 +62,12 @@ const FeaturedSection = () => {
                   ease: [0.22, 1, 0.36, 1],
                 }}
                 className={`group relative overflow-hidden rounded-[2rem] max-h-[490px] flex flex-col justify-between cursor-pointer border transition-all duration-500 h-full min-h-[420px]
-                } ${
-                  isDimmed
+                } ${isDimmed
                     ? "opacity-40 blur-[2px] scale-[0.98]"
                     : isHovered
                       ? "scale-[1.02] z-10"
                       : "scale-100"
-                }`}
+                  }`}
               >
                 <div className="flex items-center justify-between bg-surface-dark px-3">
                   <div
@@ -134,11 +137,10 @@ const FeaturedSection = () => {
                       {/* View Action - Translates on hover */}
                       <motion.div
                         animate={isHovered ? { x: 5 } : { x: 0 }}
-                        className={`p-2 rounded-full ${
-                          isFeatured
+                        className={`p-2 rounded-full ${isFeatured
                             ? "bg-surface-primary text-text-primary"
                             : "bg-surface-dark text-text-inverted"
-                        }`}
+                          }`}
                       >
                         <svg
                           className="w-4 h-4"

@@ -168,6 +168,7 @@ const DateTimeSelector = () => {
               })}
             </div>
           )}
+          {!availabilityData && availabilityData?.detail}
         </div>
       )}
 
