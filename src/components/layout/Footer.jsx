@@ -54,10 +54,10 @@ const Footer = () => {
         </div>
 
         {/* Right Section: Links Grid */}
-        <div className="flex-grow grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-10 lg:gap-6 pt-2">
+        <div className="flex-grow grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-10 lg:gap-8 pt-2">
           {footerLinkColumns.map((column, index) => (
             <div key={index} className="flex flex-col gap-5">
-              <h4 className="font-bold text-text-primary text-sm tracking-widest uppercase">
+              <h4 className="font-bold text-text-primary text-[12px] tracking-widest uppercase">
                 {column.title}
               </h4>
               <ul className="flex flex-col gap-3">
@@ -65,7 +65,7 @@ const Footer = () => {
                   <li key={idx}>
                     <Link
                       to={link.path}
-                      className="text-text-secondary hover:text-text-primary transition-colors text-[15px] font-medium"
+                      className="text-text-secondary hover:text-text-primary transition-colors text-xs font-medium"
                     >
                       {link.label}
                     </Link>
@@ -80,7 +80,7 @@ const Footer = () => {
             <h4 className="font-bold text-text-primary text-sm tracking-widest uppercase">
               Connect
             </h4>
-            <p className="text-[15px] font-medium text-text-secondary leading-relaxed">
+            <p className="text-[12px] font-medium text-text-secondary leading-relaxed">
               India's most trusted home services marketplace.
             </p>
             {/* Social Media links */}

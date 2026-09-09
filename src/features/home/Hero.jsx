@@ -14,16 +14,16 @@ const Hero = () => {
 
   return (
     <div className="mt-0 flex flex-col relative bg-surface-primary overflow-hidden gap-10 lg:gap-0">
-      <div className="absolute inset-0 opacity-70 bg-[linear-gradient(to_right,#4f46e520_1px,transparent_1px),linear-gradient(to_bottom,#4f46e520_1px,transparent_1px)] bg-[size:70px_70px] " />
+      <div className="sm:mx-10 absolute inset-0 opacity-70 bg-[linear-gradient(to_right,#4f46e520_1px,transparent_1px),linear-gradient(to_bottom,#4f46e520_1px,transparent_1px)] bg-[size:70px_70px] " />
       {/* <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-zinc-100 rounded-full mix-blend-multiply filter blur-[100px] z-0 pointer-events-none"></div> */}
-      <span className="z-20 relative w-full flex justify-center mt-4 max-md:px-16">
+      <span className="z-20 relative w-full flex justify-center mt-4 px-3 sm:px-6">
         <AnimatedSearchBar />
       </span>
-      <div className="relative z-10 w-full max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
-        <div className="flex flex-col items-start space-y-10">
-          <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-[80px] font-extrabold text-text-primary tracking-tight leading-[1.05]">
+      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+        <div className="min-w-0 flex flex-col items-start space-y-7 sm:space-y-10">
+          <h1 className="max-w-full break-words text-4xl sm:text-6xl md:text-7xl lg:text-[80px] font-extrabold text-text-primary tracking-tight leading-[1.05]">
             Find Verified <br />
-            <div className="relative overflow-hidden my-2">
+            <div className="relative max-w-full overflow-hidden my-2">
               <AnimatePresence mode="popLayout">
                 <motion.span
                   key={currentIndex}
@@ -36,7 +36,7 @@ const Hero = () => {
                     stiffness: 120,
                     damping: 20,
                   }}
-                  className="block text-text-muted origin-bottom md:text-6xl"
+                  className="block max-w-full break-words text-text-muted origin-bottom sm:text-6xl"
                 >
                   {services?.[currentIndex]?.name}
                 </motion.span>
@@ -49,30 +49,30 @@ const Hero = () => {
             The smarter, faster way to connect with highly vetted professionals
             and local service providers near you.
           </p>
-          <div className="flex items-center gap-8 md:gap-12 pt-6 border-t border-border-primary">
-            <div className="flex flex-col">
+          <div className="grid w-full max-w-lg grid-cols-3 gap-2 sm:flex sm:items-center sm:gap-8 md:gap-12 p-6 border-t border-border-primary text-center">
+            <div className="min-w-0 flex flex-col sm:text-left">
               <h4 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight">
                 2.4L+
               </h4>
-              <p className="text-xs md:text-sm text-text-secondary font-bold uppercase tracking-widest mt-2">
+              <p className="text-[10px] sm:text-xs md:text-sm text-text-secondary font-bold uppercase tracking-wider sm:tracking-widest mt-2">
                 Verified Pros
               </p>
             </div>
-            <div className="w-px h-16 bg-zinc-200"></div>
-            <div className="flex flex-col">
+            <div className="hidden sm:block w-px h-16 bg-zinc-200"></div>
+            <div className="min-w-0 flex flex-col sm:text-left">
               <h4 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight">
                 500+
               </h4>
-              <p className="text-xs md:text-sm text-text-secondary font-bold uppercase tracking-widest mt-2">
+              <p className="text-[10px] sm:text-xs md:text-sm text-text-secondary font-bold uppercase tracking-wider sm:tracking-widest mt-2">
                 Cities
               </p>
             </div>
-            <div className="w-px h-16 bg-zinc-200"></div>
-            <div className="flex flex-col">
+            <div className="hidden sm:block w-px h-16 bg-zinc-200"></div>
+            <div className="min-w-0 flex flex-col sm:text-left">
               <h4 className="text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight">
                 100+
               </h4>
-              <p className="text-xs md:text-sm text-text-secondary font-bold uppercase tracking-widest mt-2">
+              <p className="text-[10px] sm:text-xs md:text-sm text-text-secondary font-bold uppercase tracking-wider sm:tracking-widest mt-2">
                 Categories
               </p>
             </div>

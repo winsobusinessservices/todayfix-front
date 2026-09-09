@@ -79,7 +79,7 @@ const AnimatedSearchBar = () => {
   return (
     <div className="flex items-center justify-center font-sans px-4 sm:px-6 w-full">
       {/* Search Bar Container */}
-      <div className="relative w-full max-w-xl group">
+      <div className="relative w-full max-w-2xl group">
         {/* Animated Background Glow */}
         {/* <div className="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-600 rounded-full blur opacity-25 group-hover:opacity-60 transition duration-1000 group-hover:duration-200"></div> */}
         {/* Main Input Wrapper */}
@@ -159,9 +159,9 @@ const AnimatedSearchBar = () => {
         </form>
 
         {/* Secondary Filters */}
-        <div className="flex items-center justify-center gap-1 md:gap-3 mt-6">
+        <div className="mx-auto grid w-full max-w-xl grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3 mt-4 sm:mt-6">
           {/* Area Filter */}
-          <div className="bg-zinc-800/80 backdrop-blur-md rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors shadow-lg">
+          <div className="relative min-w-0 bg-zinc-800/80 rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors shadow-lg sm:col-span-1">
             <CustomDropdown
               options={areas}
               value={area}
@@ -193,7 +193,7 @@ const AnimatedSearchBar = () => {
           </div>
 
           {/* Service Filter */}
-          <div className="bg-zinc-800/80 backdrop-blur-md rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors shadow-lg">
+          <div className="relative min-w-0 bg-zinc-800/80 rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors shadow-lg sm:col-span-1">
             <CustomDropdown
               options={services}
               value={service}
@@ -219,7 +219,7 @@ const AnimatedSearchBar = () => {
           </div>
 
           {/* Rating Filter */}
-          <div className="bg-zinc-800/80 backdrop-blur-md rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors shadow-lg">
+          <div className="relative col-span-2 min-w-0 w-1/2 justify-self-center bg-zinc-800/80 rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors shadow-lg sm:col-span-1 sm:w-auto sm:justify-self-auto">
             <CustomDropdown
               options={ratings}
               value={rating}

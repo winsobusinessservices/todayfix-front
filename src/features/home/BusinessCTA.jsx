@@ -55,7 +55,7 @@ const BusinessCTA = () => {
           >
             <Link
               to="/list-business"
-              className="px-8 py-4 bg-surface-primary text-text-primary font-bold rounded-full text-base tracking-wide hover:bg-zinc-200 hover:scale-105 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]"
+              className="flex justify-center items-center px-8 py-4 bg-surface-primary text-text-primary font-bold rounded-full text-base tracking-wide hover:bg-zinc-200 hover:scale-105 transition-all duration-300 shadow-[0_0_40px_-10px_rgba(255,255,255,0.3)]"
             >
               List Your Business Now
             </Link>
