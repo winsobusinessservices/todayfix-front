@@ -367,7 +367,7 @@ const PortfolioTab = () => {
                   {!isEditing ? (
                     <button
                       onClick={() => setIsEditing(true)}
-                      className="flex items-center gap-2 text-sm font-bold text-blue-500 hover:text-blue-400 transition-colors bg-blue-500/10 px-3 py-1.5 rounded-full"
+                      className="flex items-center gap-2 text-sm font-bold text-text-primary hover:opacity-80 transition-colors bg-surface-secondary px-3 py-1.5 rounded-full border border-border-primary"
                     >
                       <Edit3 className="w-4 h-4" /> Edit Profile
                     </button>

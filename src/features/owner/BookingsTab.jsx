@@ -23,8 +23,8 @@ import { dateFormater } from "../../utils/dateFormater";
 const StatusBadge = ({ status }) => {
   const styles = {
     PENDING: "bg-orange-500/10 text-orange-500 border-orange-500/20",
-    CONFIRMED: "bg-blue-500/10 text-blue-500 border-blue-500/20",
-    IN_PROGRESS: "bg-blue-500/10 text-blue-500 border-blue-500/20",
+    CONFIRMED: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
+    IN_PROGRESS: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
     COMPLETED: "bg-green-500/10 text-green-500 border-green-500/20",
     CANCELLED: "bg-red-500/10 text-red-500 border-red-500/20",
     REJECTED: "bg-red-500/10 text-red-500 border-red-500/20",
@@ -233,8 +233,8 @@ const BookingsTab = () => {
                 {/* Assigned Employee Details */}
                 {(booking.booking_employees?.length > 0 || booking.employee) && (
                   <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border-primary/50">
-                    <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center border border-purple-500/20 flex-shrink-0">
-                      <User className="w-5 h-5 text-purple-500" />
+                    <div className="w-10 h-10 rounded-full bg-surface-secondary flex items-center justify-center border border-border-primary flex-shrink-0">
+                      <User className="w-5 h-5 text-text-primary" />
                     </div>
                     <div>
                       <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">Assigned To</p>
@@ -308,14 +308,14 @@ const BookingsTab = () => {
                                   booking.employee?.employee_uuid,
                               })
                             }
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-surface-secondary text-purple-400 border border-purple-500/30 font-bold text-sm rounded-xl hover:bg-purple-500/10 transition-colors shadow-sm cursor-pointer"
+                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-surface-secondary text-text-secondary border border-border-primary font-bold text-sm rounded-xl hover:bg-surface-tertiary transition-colors shadow-sm cursor-pointer"
                           >
                             Reassign
                           </button>
                           <button
                             onClick={() => startBooking(booking.uuid)}
                             disabled={isStarting}
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold text-sm rounded-xl hover:from-blue-500 hover:to-cyan-500 transition-all shadow-md shadow-blue-500/25 cursor-pointer disabled:opacity-50"
+                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:opacity-90 transition-all shadow-md cursor-pointer disabled:opacity-50"
                           >
                             <Clock className="w-4 h-4" />{" "}
                             {isStarting ? "Starting..." : "Start Job"}

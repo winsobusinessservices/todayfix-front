@@ -152,13 +152,13 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
           {/* Header */}
           <div className="px-6 py-4 border-b border-border-primary flex items-center justify-between bg-surface-secondary shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold text-lg border border-emerald-500/20">
+              <div className="w-10 h-10 rounded-full bg-surface-secondary text-text-primary flex items-center justify-center font-bold text-lg border border-border-primary">
                 {targetName.charAt(0)}
               </div>
               <div>
                 <h3 className="font-bold text-text-primary">{targetName}</h3>
                 <p className="text-xs text-zinc-500 font-medium flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>{" "}
+                  <span className="w-2 h-2 rounded-full bg-zinc-400 animate-pulse"></span>{" "}
                   Online
                 </p>
               </div>

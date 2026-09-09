@@ -48,7 +48,7 @@ const AdminRequestsTab = () => {
                   <span className={`px-3 py-1 text-xs font-bold rounded-full border ${
                     req.status === "Pending Broadcast" 
                       ? "bg-orange-500/10 text-orange-600 border-orange-500/20"
-                      : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                      : "bg-green-500/10 text-green-600 border-green-500/20"
                   }`}>
                     {req.status}
                   </span>
@@ -103,12 +103,12 @@ const AdminRequestsTab = () => {
               {selectedRequest.status === "Pending Broadcast" ? (
                 <button 
                   onClick={() => handleBroadcast(selectedRequest.id)}
-                  className="w-full py-4 text-text-inverted bg-blue-600 font-bold rounded-xl shadow-lg hover:bg-blue-700 hover:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-4 text-text-inverted bg-surface-dark font-bold rounded-xl shadow-lg hover:opacity-90 hover:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <RadioTower size={20} /> Broadcast to Vendors
                 </button>
               ) : (
-                <div className="w-full py-4 text-emerald-600 bg-emerald-500/10 font-bold rounded-xl flex items-center justify-center gap-2 border border-emerald-500/20">
+                <div className="w-full py-4 text-green-600 bg-green-500/10 font-bold rounded-xl flex items-center justify-center gap-2 border border-green-500/20">
                   <CheckCircle2 size={20} /> Already Broadcasted
                 </div>
               )}

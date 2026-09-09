@@ -512,7 +512,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
                     <button
                       type="button"
                       onClick={() => handleGetCurrentLocation(setAddressForm)}
-                      className="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-blue-200 transition-colors"
+                      className="text-xs font-bold bg-surface-secondary text-text-primary px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-surface-accent transition-colors"
                     >
                       <svg
                         className="w-4 h-4"
@@ -643,7 +643,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
                         <button
                           type="button"
                           onClick={() => setMapMode("ADD")}
-                          className="w-full bg-purple-500/10 text-purple-600 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
+                          className="w-full bg-surface-secondary text-text-primary border border-border-primary hover:bg-surface-accent hover:border-border-dark rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
                         >
                           <Map className="w-5 h-5" />
                           Select Location on Map
@@ -818,7 +818,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
                       <button
                         type="button"
                         onClick={() => handleGetCurrentLocation(setEditForm)}
-                        className="text-xs font-bold bg-blue-100 text-blue-700 px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-blue-200 transition-colors"
+                        className="text-xs font-bold bg-surface-secondary text-text-primary px-3 py-1.5 rounded-lg flex items-center gap-1 hover:bg-surface-accent transition-colors"
                       >
                         <svg
                           className="w-4 h-4"
@@ -949,7 +949,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
                           <button
                             type="button"
                             onClick={() => setMapMode("EDIT")}
-                            className="w-full bg-purple-500/10 text-purple-600 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
+                            className="w-full bg-surface-secondary text-text-primary border border-border-primary hover:bg-surface-accent hover:border-border-dark rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
                           >
                             <Map className="w-5 h-5" />
                             Select Location on Map

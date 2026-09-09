@@ -96,20 +96,20 @@ const SettingsTab = () => {
       <div
         className={`rounded-3xl border p-6 shadow-2xl shadow-black/5 transition-colors duration-500 ${
           settings.vacationMode
-            ? "bg-blue-500/10 border-blue-500/30"
+            ? "bg-surface-dark/5 border-border-dark"
             : "bg-surface-primary border-border-primary"
         }`}
       >
         <div className="flex items-start gap-4">
           <div
-            className={`p-3 rounded-2xl ${settings.vacationMode ? "bg-blue-500/20 text-blue-500" : "bg-surface-secondary text-zinc-400"}`}
+            className={`p-3 rounded-2xl ${settings.vacationMode ? "bg-surface-dark/10 text-text-primary" : "bg-surface-secondary text-zinc-400"}`}
           >
             <Moon size={24} />
           </div>
           <div className="flex-grow">
             <div className="flex justify-between items-center mb-2">
               <h3
-                className={`text-xl font-bold tracking-tight ${settings.vacationMode ? "text-blue-500" : "text-text-primary"}`}
+                className={`text-xl font-bold tracking-tight ${settings.vacationMode ? "text-text-primary" : "text-text-primary"}`}
               >
                 Vacation Mode
               </h3>

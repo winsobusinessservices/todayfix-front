@@ -120,7 +120,7 @@ const FinancialsTab = () => {
                   <td className="px-6 py-4 text-sm text-text-primary font-medium">
                     <div className="flex items-center gap-2">
                       {txn.type === 'earning' && <ArrowDownRight className="w-5 h-5 text-green-500 bg-green-500/10 p-1 rounded-full" />}
-                      {txn.type === 'payout' && <ArrowUpRight className="w-5 h-5 text-blue-500 bg-blue-500/10 p-1 rounded-full" />}
+                      {txn.type === 'payout' && <ArrowUpRight className="w-5 h-5 text-zinc-500 bg-zinc-500/10 p-1 rounded-full" />}
                       {txn.type === 'fee' && <ArrowUpRight className="w-5 h-5 text-red-500 bg-red-500/10 p-1 rounded-full" />}
                       {txn.description}
                     </div>

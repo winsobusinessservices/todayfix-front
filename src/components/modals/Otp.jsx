@@ -63,7 +63,7 @@ const Otp = ({
             <button
               onClick={handleVerifyOtp}
               disabled={isLoading}
-              className="flex-1 py-3 text-center bg-surface-dark text-white font-bold rounded-xl hover:bg-emerald-600 transition-colors shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+              className="flex-1 py-3 text-center bg-surface-dark text-white font-bold rounded-xl hover:opacity-90 transition-colors shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? "Verifying..." : "Verify"}
             </button>

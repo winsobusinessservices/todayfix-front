@@ -72,8 +72,8 @@ const AssignEmployee = ({ activeModal, setActiveModal }) => {
       >
         <div className="p-6 border-b border-border-primary flex justify-between items-center bg-surface-secondary">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center">
-              <UserCheck className="w-5 h-5 text-purple-600" />
+            <div className="w-10 h-10 rounded-full bg-surface-secondary flex items-center justify-center">
+              <UserCheck className="w-5 h-5 text-text-primary" />
             </div>
             <div>
               <h2 className="text-lg font-black tracking-tight text-text-primary">
@@ -112,7 +112,7 @@ const AssignEmployee = ({ activeModal, setActiveModal }) => {
                 <select
                   value={selectedEmployee}
                   onChange={(e) => setSelectedEmployee(e.target.value)}
-                  className="w-full px-4 py-3 bg-surface-secondary border border-border-primary rounded-xl focus:outline-none focus:border-purple-500 transition-colors text-text-primary font-medium"
+                  className="w-full px-4 py-3 bg-surface-secondary border border-border-primary rounded-xl focus:outline-none focus:border-text-primary transition-colors text-text-primary font-medium"
                 >
                   <option value="">-- Choose Employee --</option>
                   {employees.map((emp) => (
@@ -131,7 +131,7 @@ const AssignEmployee = ({ activeModal, setActiveModal }) => {
               <button
                 onClick={handleAssign}
                 disabled={isPending || !selectedEmployee}
-                className="w-full py-3.5 bg-purple-600 text-white font-black text-lg rounded-xl hover:bg-purple-700 transition-colors shadow-lg shadow-purple-500/20 disabled:opacity-50 mt-4 cursor-pointer"
+                className="w-full py-3.5 bg-surface-dark text-text-inverted font-black text-lg rounded-xl hover:opacity-90 transition-colors shadow-lg disabled:opacity-50 mt-4 cursor-pointer"
               >
                 {isPending
                   ? activeModal.isReassign

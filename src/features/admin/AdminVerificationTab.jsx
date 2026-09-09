@@ -223,7 +223,7 @@ const AdminVerificationTab = () => {
                   <button
                     onClick={handleApprove}
                     disabled={isApproving}
-                    className="px-4 py-2 bg-emerald-500 text-white font-bold rounded-xl hover:bg-emerald-600 shadow-lg shadow-emerald-500/20 cursor-pointer disabled:opacity-50"
+                    className="px-4 py-2 bg-green-500 text-white font-bold rounded-xl hover:bg-green-600 shadow-lg shadow-green-500/20 cursor-pointer disabled:opacity-50"
                   >
                     {isApproving ? "Approving..." : "Approve Application"}
                   </button>
@@ -311,9 +311,9 @@ const AdminVerificationTab = () => {
               </h4>
               {/* Assuming identity field holds document details or there are actual fields like pan_document */}
               {selectedVendor.identity?.pan_document && (
-                <div className="p-4 rounded-xl border border-border-secondary flex items-center justify-between hover:border-purple-500 transition-colors">
+                <div className="p-4 rounded-xl border border-border-secondary flex items-center justify-between hover:border-border-dark transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-500/10 text-blue-500 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-surface-secondary text-text-primary rounded-lg flex items-center justify-center">
                       <FileText size={20} />
                     </div>
                     <div>
@@ -329,16 +329,16 @@ const AdminVerificationTab = () => {
                     href={IMAGE_URL + selectedVendor.identity.pan_document}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-bold text-blue-500 hover:underline cursor-pointer"
+                    className="text-sm font-bold text-text-primary hover:underline cursor-pointer"
                   >
                     View
                   </a>
                 </div>
               )}
               {selectedVendor.identity?.aadhaar_document && (
-                <div className="p-4 rounded-xl border border-border-secondary flex items-center justify-between hover:border-purple-500 transition-colors">
+                <div className="p-4 rounded-xl border border-border-secondary flex items-center justify-between hover:border-border-dark transition-colors">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-500/10 text-blue-500 rounded-lg flex items-center justify-center">
+                    <div className="w-10 h-10 bg-surface-secondary text-text-primary rounded-lg flex items-center justify-center">
                       <FileText size={20} />
                     </div>
                     <div>
@@ -354,7 +354,7 @@ const AdminVerificationTab = () => {
                     href={IMAGE_URL + selectedVendor.identity.aadhaar_document}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm font-bold text-blue-500 hover:underline cursor-pointer"
+                    className="text-sm font-bold text-text-primary hover:underline cursor-pointer"
                   >
                     View
                   </a>
