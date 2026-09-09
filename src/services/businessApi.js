@@ -96,4 +96,27 @@ export const businessApi = {
     const response = await api.post(`/api/business/availability/${id}/update/`, data);
     return response.data;
   },
+
+  // UPGRADE REQUESTS
+  // GET /api/business/upgrade-requests/list/
+  getUpgradeRequests: async () => {
+    const response = await api.get("/api/business/upgrade-requests/list/");
+    return response.data;
+  },
+
+  // POST /api/business/upgrade-requests/
+  createUpgradeRequest: async (data) => {
+    const response = await api.post("/api/business/upgrade-requests/", data);
+    return response.data;
+  },
+
+  // POST /api/business/upgrade-requests/<uuid>/documents/
+  uploadUpgradeDocuments: async (requestId, formData) => {
+    const response = await api.post(`/api/business/upgrade-requests/${requestId}/documents/`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
 };

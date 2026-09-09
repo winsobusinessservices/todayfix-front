@@ -24,6 +24,7 @@ import { businessApi } from "../services/businessApi";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
 import toast from "react-hot-toast";
+import { IMAGE_URL } from "../services/axiosClient";
 
 const SIDEBAR_ITEMS = [
   { id: "", label: "Overview", icon: LayoutDashboard },
@@ -54,12 +55,8 @@ const OwnerDashboard = () => {
   // WebSocket Integration for Notifications
   useEffect(() => {
     if (!accessToken) return;
-
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const host = window.location.hostname === "localhost" ? "localhost:8000" : window.location.host;
-    
     // Connect to notifications websocket, passing token
-    const ws = new WebSocket(`${protocol}//${host}/ws/notifications/?token=${accessToken}`);
+    const ws = new WebSocket(`${IMAGE_URL}/ws/notifications/?token=${accessToken}`);
 
     ws.onmessage = (event) => {
       try {

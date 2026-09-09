@@ -83,18 +83,14 @@ const PortfolioTab = () => {
   const firstApp = applications.length > 0 ? applications[0] : null;
   const appId = firstApp?.business_application_uuid;
 
-  // const { data: docsData } = useQuery({
-  //   queryKey: ["docs-data"],
-  //   queryFn: businessApi.getBusinessApplicationDocuments(appId),
+  // const { data: docsData, isLoading: isDocsLoading } = useQuery({
+  //   queryKey: ["docs-data", appId],
+  //   queryFn: () => businessApi.getBusinessApplicationDocuments(appId),
+  //   enabled: !!appId,
   // });
 
-  const { data: docsData, isLoading: isDocsLoading } = useQuery({
-    queryKey: ["docs-data", appId],
-    queryFn: () => businessApi.getApplicationDocuments(appId),
-    enabled: !!appId,
-  });
-
-  const documents = docsData?.data || docsData || {};
+  // const documents = docsData?.data || docsData || {};
+  const isDocsLoading = false; // remove later when commenting out the top api
 
   const bankAccount = firstApp?.bank_account;
   const identity = firstApp?.identity;
@@ -212,7 +208,7 @@ const PortfolioTab = () => {
     {
       id: 4,
       label: "Joined",
-      value: dateMonthYearFormater(details?.created_at),
+      value: dateMonthYearFormater(profile?.created_at),
       editKey: null,
       icon: (
         <svg
@@ -310,33 +306,33 @@ const PortfolioTab = () => {
                   </div>
 
                   <div className="flex items-center justify-center gap-2 mt-2 text-sm font-medium w-full">
-                  {isEditing ? (
-                    <select
-                      value={details.business_type}
-                      onChange={(e) =>
-                        setDetails({
-                          ...details,
-                          business_type: e.target.value,
-                        })
-                      }
-                      className="bg-surface-secondary text-indigo-500 font-medium py-1 px-2 border-b-2 border-border-primary focus:outline-none focus:border-text-primary text-center appearance-none cursor-pointer"
-                    >
-                      <option value="INDIVIDUAL">INDIVIDUAL</option>
-                      <option value="COMPANY">COMPANY</option>
-                      <option value="INVESTOR">INVESTOR</option>
-                    </select>
-                  ) : (
-                    <span className="text-indigo-500">
-                      {details.business_type ||
-                        firstApp?.business_type ||
-                        "Business Profile"}
+                    {isEditing ? (
+                      <select
+                        value={details.business_type}
+                        onChange={(e) =>
+                          setDetails({
+                            ...details,
+                            business_type: e.target.value,
+                          })
+                        }
+                        className="bg-surface-secondary text-indigo-500 font-medium py-1 px-2 border-b-2 border-border-primary focus:outline-none focus:border-text-primary text-center appearance-none cursor-pointer"
+                      >
+                        <option value="INDIVIDUAL">INDIVIDUAL</option>
+                        <option value="COMPANY">COMPANY</option>
+                        <option value="INVESTOR">INVESTOR</option>
+                      </select>
+                    ) : (
+                      <span className="text-indigo-500">
+                        {details.business_type ||
+                          firstApp?.business_type ||
+                          "Business Profile"}
+                      </span>
+                    )}
+                    <span className="text-zinc-500">|</span>
+                    <span className="text-zinc-400">
+                      Joined {dateMonthYearFormater(profile?.created_at)}
                     </span>
-                  )}
-                  <span className="text-zinc-500">|</span>
-                  <span className="text-zinc-400">
-                    Joined {dateMonthYearFormater(profile?.created_at)}
-                  </span>
-                </div>
+                  </div>
 
                   <div className="mt-8 w-full max-w-sm mx-auto">
                     {isEditing ? (
@@ -459,25 +455,25 @@ const PortfolioTab = () => {
                         <div className="flex flex-wrap gap-3 w-full">
                           {renderDocumentLink(
                             "PAN Document",
-                            documents?.pan_document,
+                            identity?.pan_document,
                           )}
                           {renderDocumentLink(
                             "Aadhaar Document",
-                            documents?.aadhaar_document,
+                            identity?.aadhaar_document,
                           )}
                           {renderDocumentLink(
                             "Internal Store Photo",
-                            documents?.internal_store_photo,
+                            identity?.internal_store_photo,
                           )}
                           {renderDocumentLink(
                             "External Store Photo",
-                            documents?.external_store_photo,
+                            identity?.external_store_photo,
                           )}
                           {renderDocumentLink(
                             "Cancelled GST/Bill",
-                            documents?.cancelled_gst_bill_book_photo,
+                            identity?.cancelled_gst_bill_book_photo,
                           )}
-                          {renderDocumentLink("Logo", documents?.logo)}
+                          {renderDocumentLink("Logo", identity?.logo)}
                         </div>
                       )}
                     </div>

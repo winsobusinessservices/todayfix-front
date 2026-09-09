@@ -19,15 +19,15 @@ export const chatApi = {
     return response.data;
   },
 
-  // GET /api/chat/messages/ (List messages in conversation)
+  // GET /api/chat/conversations/<uuid>/messages/ (List messages in conversation)
   getMessages: async (conversationId) => {
-    const response = await api.get(`/api/chat/messages/`, { params: { conversation: conversationId } });
+    const response = await api.get(`/api/chat/conversations/${conversationId}/messages/`);
     return response.data;
   },
 
-  // POST /api/chat/messages/ (Send message)
-  sendMessage: async (data) => {
-    const response = await api.post("/api/chat/messages/", data);
+  // POST /api/chat/conversations/<uuid>/messages/ (Send message)
+  sendMessage: async (conversationId, data) => {
+    const response = await api.post(`/api/chat/conversations/${conversationId}/messages/`, data);
     return response.data;
   }
 };

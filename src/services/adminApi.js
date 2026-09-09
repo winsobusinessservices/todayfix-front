@@ -34,4 +34,20 @@ export const adminApi = {
     const response = await api.post(`/api/business/admin/applications/${applicationId}/reject/`, { reason });
     return response.data;
   },
+
+  // Upgrade Requests
+  getUpgradeRequests: async (status) => {
+    const response = await api.get(`/api/business/admin/upgrade-requests/`, { params: { status } });
+    return response.data;
+  },
+
+  approveUpgradeRequest: async (id) => {
+    const response = await api.post(`/api/business/admin/upgrade-requests/${id}/approve/`);
+    return response.data;
+  },
+
+  rejectUpgradeRequest: async (id, reason) => {
+    const response = await api.post(`/api/business/admin/upgrade-requests/${id}/reject/`, { reason });
+    return response.data;
+  },
 };

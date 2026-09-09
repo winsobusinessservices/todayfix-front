@@ -3,11 +3,15 @@ import { Phone, XCircle, Send } from "lucide-react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { chatApi } from "../../services/chatApi";
+import { useUserStore } from "../../store/userStore";
+
 
 const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   const [newMessage, setNewMessage] = useState("");
   const messagesEndRef = useRef(null);
   const queryClient = useQueryClient();
+  const { user } = useUserStore();
+  const currentUserId = user?.user_uuid || user?.id;
   const bookingId = activeModal?.bookingId;
 
   // Derive target user info from bookingsList if available
@@ -70,8 +74,16 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      // Assuming backend sends { type: "chat_message", text: "...", created_at: "...", ... }
-      // Or if it sends the raw message object directly
+      // Determine if it's a typing event or a message
+      if (data.type === 'typing_started' || data.type === 'typing_stopped') {
+        // Handle typing (could add a typing indicator state here in the future)
+        return;
+      }
+
+      // We assume it's a message object
+      const messageData = data.message || data; // handle both { message: {...} } and direct message payload
+
+      if (!messageData.message_uuid && !messageData.id) return; // not a message
 
       // Update React Query cache instantly
       queryClient.setQueryData(["chatMessages", conversationId], (oldData) => {
@@ -83,14 +95,14 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
         if (
           oldList.find(
             (m) =>
-              m.message_uuid === data.message_uuid ||
-              (data.id && m.id === data.id),
+              m.message_uuid === messageData.message_uuid ||
+              (messageData.id && m.id === messageData.id),
           )
         ) {
           return oldData;
         }
 
-        const newList = [...oldList, data];
+        const newList = [...oldList, messageData];
 
         if (oldData && !Array.isArray(oldData) && oldData.results) {
           return { ...oldData, results: newList };
@@ -107,7 +119,7 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   // 3. Send Message Mutation
   const { mutate: sendMsg, isPending: isSending } = useMutation({
     mutationFn: (text) =>
-      chatApi.sendMessage({ conversation: conversationId, text }),
+      chatApi.sendMessage(conversationId, { text }),
     onSuccess: () => {
       // Invalidate to ensure consistency, though WebSocket will append it
       // queryClient.invalidateQueries(["chatMessages", conversationId]);
@@ -187,26 +199,26 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
             )}
 
             {messagesList.map((msg) => {
-              // The backend `msg.sender` might just be an ID, or we need to check if we are the sender
-              // For now, if msg.is_me is not provided, we might have to infer it or rely on standard formatting
-              // We'll just assume all incoming are from 'customer' and outgoing 'vendor' for demo purposes if backend doesn't flag it,
-              // but ideally backend gives us an 'is_me' boolean or 'sender_id' we match with current user.
-              // We'll assume msg.text is the content.
-
-              const isOutgoing = true; // Hardcoded for demo if no sender logic exists, ideally check msg.sender === currentUser.id
+              // msg.sender might be an ID or an object. If it's an object, it usually has user_uuid or id
+              const senderId = msg.sender?.user_uuid || msg.sender?.id || msg.sender;
+              const isOutgoing = senderId === currentUserId;
 
               return (
                 <div
                   key={msg.message_uuid || msg.id}
-                  className={`flex justify-start`} // In real app: isOutgoing ? "justify-end" : "justify-start"
+                  className={`flex ${isOutgoing ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl p-4 shadow-sm bg-surface-secondary border border-border-primary text-text-primary rounded-bl-none`}
+                    className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${
+                      isOutgoing
+                        ? "bg-text-primary text-surface-primary rounded-br-none"
+                        : "bg-surface-secondary border border-border-primary text-text-primary rounded-bl-none"
+                    }`}
                   >
                     <p className="text-sm font-medium leading-relaxed">
                       {msg.text}
                     </p>
-                    <p className="text-[10px] mt-1 text-right font-bold text-zinc-500">
+                    <p className={`text-[10px] mt-1 text-right font-bold ${isOutgoing ? "text-surface-secondary/70" : "text-zinc-500"}`}>
                       {msg.created_at
                         ? new Date(msg.created_at).toLocaleTimeString([], {
                             hour: "2-digit",

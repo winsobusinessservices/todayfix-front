@@ -23,6 +23,7 @@ import {
   Menu,
   Search,
   Command,
+  ArrowUpCircle,
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import Logo from "../components/brand/Logo";
@@ -43,6 +44,7 @@ const SIDEBAR_SECTIONS = [
       { id: "providers", label: "Providers", icon: Briefcase },
       { id: "businesses", label: "Businesses", icon: Store },
       { id: "verifications", label: "Businesses Verification", icon: Shield },
+      { id: "upgrades", label: "Business Upgrades", icon: ArrowUpCircle },
     ],
   },
   {

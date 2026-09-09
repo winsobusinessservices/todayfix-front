@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { X, MapPin, Navigation } from "lucide-react";
+import { X, MapPin, Navigation, MapPinned } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapContainer, TileLayer, Marker, useMap, useMapEvents } from "react-leaflet";
+import {
+  MapContainer,
+  TileLayer,
+  Marker,
+  useMap,
+  useMapEvents,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 
@@ -31,9 +37,7 @@ function LocationMarker({ position, setPosition }) {
     },
   });
 
-  return position === null ? null : (
-    <Marker position={position}></Marker>
-  );
+  return position === null ? null : <Marker position={position}></Marker>;
 }
 
 // Component to programmatically update the map's center
@@ -65,7 +69,10 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         (loc) => {
-          const latlng = { lat: loc.coords.latitude, lng: loc.coords.longitude };
+          const latlng = {
+            lat: loc.coords.latitude,
+            lng: loc.coords.longitude,
+          };
           setPosition(latlng);
           setIsLoadingLocation(false);
         },
@@ -73,7 +80,7 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
           console.error("Error getting location:", error);
           setIsLoadingLocation(false);
         },
-        { enableHighAccuracy: true, timeout: 10000 }
+        { enableHighAccuracy: true, timeout: 10000 },
       );
     } else {
       setIsLoadingLocation(false);
@@ -82,10 +89,10 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
 
   const handleConfirm = () => {
     if (!position) return;
-    
+
     // Generate the Google Maps iframe string using the exact format expected by the backend
     const iframeString = `<iframe src="https://maps.google.com/maps?q=${position.lat},${position.lng}&hl=es;z=14&output=embed" width="100%" height="300" frameborder="0" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
-    
+
     onConfirm(iframeString, position);
     onClose();
   };
@@ -93,7 +100,7 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
@@ -108,12 +115,16 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
         initial={{ scale: 0.95, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.95, opacity: 0, y: 20 }}
-        className="relative w-full max-w-2xl bg-surface-primary rounded-3xl overflow-hidden shadow-2xl border border-border-primary flex flex-col"
+        className="relative w-full max-w-2xl bg-surface-primary rounded-2xl overflow-hidden shadow-2xl border border-border-primary flex flex-col"
       >
-        <div className="p-6 border-b border-border-primary flex justify-between items-center">
+        <div className="px-4 py-3 border-b border-border-primary flex justify-between items-center">
           <div>
-            <h3 className="text-xl font-bold text-text-primary">Select Location</h3>
-            <p className="text-zinc-400 text-sm mt-1">Tap anywhere on the map to drop a pin.</p>
+            <h3 className="text-xl font-bold text-text-primary">
+              Select Location
+            </h3>
+            <p className="text-zinc-400 text-sm mt-1">
+              Tap anywhere on the map to drop a pin.
+            </p>
           </div>
           <button
             onClick={onClose}
@@ -137,7 +148,7 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
             <LocationMarker position={position} setPosition={setPosition} />
             <MapUpdater center={position} />
           </MapContainer>
-          
+
           {/* Custom Controls */}
           <div className="absolute bottom-6 right-6 z-[400]">
             <button
@@ -147,37 +158,43 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
                 handleGetCurrentLocation();
               }}
               disabled={isLoadingLocation}
-              className="bg-surface-primary p-3 rounded-full shadow-xl border border-border-primary hover:bg-surface-secondary transition-colors text-text-primary group disabled:opacity-50"
+              className="bg-surface-primary p-3 rounded-full shadow-md border border-border-primary hover:bg-surface-secondary transition-all text-text-primary group disabled:opacity-50 active:scale-95"
               title="Use my current location"
             >
-              <Navigation className={`w-6 h-6 ${isLoadingLocation ? 'animate-spin text-purple-500' : 'group-hover:text-purple-500 transition-colors'}`} />
+              <MapPinned
+                className={`w-6 h-6 ${isLoadingLocation ? "animate-pulse" : "group-hover:scale-110 transition-transform"}`}
+              />
             </button>
           </div>
         </div>
 
-        <div className="p-6 border-t border-border-primary flex items-center justify-between bg-surface-secondary/50">
-          <div className="flex-1 mr-4">
+        <div className="p-5 border-t border-border-primary flex flex-col sm:flex-row items-center justify-between bg-surface-primary gap-4">
+          <div className="flex-1 w-full sm:w-auto">
             {position ? (
               <div className="flex flex-col">
-                <span className="text-xs text-zinc-500 font-medium uppercase tracking-wider mb-1">Selected Coordinates</span>
-                <span className="text-sm font-bold text-text-primary bg-surface-primary px-3 py-1.5 rounded-lg border border-border-primary inline-flex w-fit">
+                <span className="text-xs text-text-muted font-bold uppercase tracking-wider mb-1">
+                  Selected Coordinates
+                </span>
+                <span className="text-sm font-bold text-text-primary bg-surface-secondary px-3 py-1.5 rounded-lg border border-border-secondary inline-flex w-fit">
                   {position.lat.toFixed(5)}, {position.lng.toFixed(5)}
                 </span>
               </div>
             ) : (
-              <p className="text-sm text-orange-400 flex items-center gap-2">
+              <p className="text-sm font-medium text-text-secondary flex items-center gap-2">
                 <MapPin className="w-4 h-4" /> Please select a location on the map
               </p>
             )}
           </div>
-          
-          <button
-            onClick={handleConfirm}
-            disabled={!position}
-            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all shadow-lg shadow-purple-500/25 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
-          >
-            Confirm Location
-          </button>
+
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            <button
+              onClick={handleConfirm}
+              disabled={!position}
+              className="w-full sm:w-auto px-6 py-3.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed flex-shrink-0"
+            >
+              Confirm Location
+            </button>
+          </div>
         </div>
       </motion.div>
     </div>

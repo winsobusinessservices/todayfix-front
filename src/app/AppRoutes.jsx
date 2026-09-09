@@ -48,6 +48,7 @@ import ProtectedRoute from "../components/layout/ProtectedRoute";
 import AdminDashboard from "../pages/AdminDashboard";
 import AdminOverviewTab from "../features/admin/AdminOverviewTab";
 import AdminVerificationTab from "../features/admin/AdminVerificationTab";
+import AdminUpgradesTab from "../features/admin/AdminUpgradesTab";
 import AdminRequestsTab from "../features/admin/AdminRequestsTab";
 import AdminDisputesTab from "../features/admin/AdminDisputesTab";
 
@@ -142,6 +143,7 @@ function AppRoutes() {
           <Route path="providers" element={<AdminProvidersTab />} />
           <Route path="businesses" element={<AdminBusinessesTab />} />
           <Route path="verifications" element={<AdminVerificationTab />} />
+          <Route path="upgrades" element={<AdminUpgradesTab />} />
           
           {/* Operations */}
           <Route path="requests" element={<AdminRequestsTab />} />

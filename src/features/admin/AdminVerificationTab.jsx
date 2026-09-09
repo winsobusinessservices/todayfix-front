@@ -9,6 +9,7 @@ import {
   AdminModal,
 } from "../../components/ui/AdminShared";
 import { FileText, Building2, User } from "lucide-react";
+import { IMAGE_URL } from "../../services/axiosClient";
 
 const AdminVerificationTab = () => {
   const queryClient = useQueryClient();
@@ -325,7 +326,7 @@ const AdminVerificationTab = () => {
                     </div>
                   </div>
                   <a
-                    href={selectedVendor.identity.pan_document}
+                    href={IMAGE_URL + selectedVendor.identity.pan_document}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm font-bold text-blue-500 hover:underline cursor-pointer"
@@ -350,7 +351,7 @@ const AdminVerificationTab = () => {
                     </div>
                   </div>
                   <a
-                    href={selectedVendor.identity.aadhaar_document}
+                    href={IMAGE_URL + selectedVendor.identity.aadhaar_document}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm font-bold text-blue-500 hover:underline cursor-pointer"
