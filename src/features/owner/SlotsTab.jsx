@@ -55,6 +55,14 @@ const SlotsTab = () => {
     is_active: true,
   });
 
+  // Fetch Business Profile to get business type
+  const { data: profilesData } = useQuery({
+    queryKey: ["businessProfiles"],
+    queryFn: businessApi.getProfiles,
+  });
+  const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
+  const currentBusinessType = profile?.business_type || "INDIVIDUAL";
+
   // Fetch Employees
   const {
     data: employeesData,
@@ -66,6 +74,8 @@ const SlotsTab = () => {
       const res = await businessApi.getEmployees();
       return res.data || res;
     },
+    enabled: currentBusinessType !== "INDIVIDUAL",
+    retry: false,
   });
 
   // Fetch Working Schedules
@@ -123,8 +133,9 @@ const SlotsTab = () => {
     ? schedulesData
     : schedulesData?.results || [];
 
-  // Individual Business Check
+  // Employee Management Check
   if (
+    currentBusinessType !== "INDIVIDUAL" &&
     employeesErrorObj?.response?.data?.detail?.includes(
       "Employee management is not available",
     )
@@ -146,7 +157,7 @@ const SlotsTab = () => {
     );
   }
 
-  if (employeesLoading || schedulesLoading) {
+  if ((currentBusinessType !== "INDIVIDUAL" && employeesLoading) || schedulesLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-primary"></div>
@@ -189,19 +200,20 @@ const SlotsTab = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.employee_uuid) {
+    if (currentBusinessType !== "INDIVIDUAL" && !formData.employee_uuid) {
       return toast.error("Please select an employee");
     }
 
     const payload = {
-      ...formData,
-      // Optional: Add seconds back for backend if required
+      ...(currentBusinessType !== "INDIVIDUAL" && { employee_uuid: formData.employee_uuid }),
+      day_of_week: formData.day_of_week,
+      slot_type: formData.slot_type,
       start_time: `${formData.start_time}:00`,
       end_time: `${formData.end_time}:00`,
+      is_active: formData.is_active,
     };
 
     if (editingSlot) {
-      // Backend does not allow changing the provider when updating.
       const { employee_uuid, ...updatePayload } = payload;
       const slotId = editingSlot.employee_working_schedule_uuid || editingSlot.working_schedule_uuid || editingSlot.uuid || editingSlot.id;
       updateSchedule({
@@ -254,10 +266,6 @@ const SlotsTab = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {allSchedules.map((slot) => {
-            const employee = allEmployees.find(
-              (emp) =>
-                emp.employee_uuid === (slot?.employee?.employee_uuid || slot.employee),
-            );
             return (
               <div
                 key={slot.employee_working_schedule_uuid || slot.working_schedule_uuid || slot.uuid || slot.id}
@@ -270,7 +278,7 @@ const SlotsTab = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-text-primary text-sm line-clamp-1">
-                        {slot ? `${slot?.employee?.name}` : "Unknown Employee"}
+                        {slot?.employee ? `${slot?.employee?.first_name} ${slot?.employee?.last_name}` : "Business Hours"}
                       </h4>
                       <span
                         className={`text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full ${
@@ -342,29 +350,36 @@ const SlotsTab = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              <div>
-                <label className="block text-sm font-bold text-text-secondary mb-2">
-                  Employee
-                </label>
-                <select
-                  required
-                  disabled={!!editingSlot}
-                  value={formData.employee_uuid}
-                  onChange={(e) =>
-                    setFormData({ ...formData, employee_uuid: e.target.value })
-                  }
-                  className="w-full bg-surface-secondary border border-border-primary rounded-xl px-4 py-3 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors appearance-none disabled:opacity-50"
-                >
-                  <option value="" disabled>
-                    Select an employee
-                  </option>
-                  {allEmployees.map((emp) => (
-                    <option key={emp.employee_uuid} value={emp.employee_uuid}>
-                      {emp?.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {currentBusinessType !== "INDIVIDUAL" && (
+                <div>
+                  <label className="block text-sm font-bold text-text-secondary mb-1.5 uppercase tracking-wider">
+                    Employee
+                  </label>
+                  <div className="relative">
+                    <select
+                      value={formData.employee_uuid}
+                      onChange={(e) =>
+                        setFormData({ ...formData, employee_uuid: e.target.value })
+                      }
+                      className="w-full bg-surface-secondary text-text-primary border border-border-primary rounded-xl px-4 py-3 appearance-none focus:outline-none focus:ring-2 focus:ring-text-primary font-bold transition-all"
+                    >
+                      {allEmployees.length === 0 ? (
+                        <option value="">No employees available</option>
+                      ) : (
+                        allEmployees.map((emp) => (
+                          <option key={emp.employee_uuid} value={emp.employee_uuid}>
+                            {emp.first_name} {emp.last_name}
+                          </option>
+                        ))
+                      )}
+                    </select>
+                    <ChevronDown
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none"
+                      size={20}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

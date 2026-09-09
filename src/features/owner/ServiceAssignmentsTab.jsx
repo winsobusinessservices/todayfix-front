@@ -42,6 +42,13 @@ const ServiceAssignmentsTab = () => {
     },
   });
 
+  const { data: profilesData } = useQuery({
+    queryKey: ["businessProfiles"],
+    queryFn: businessApi.getProfiles,
+  });
+  const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
+  const currentBusinessType = profile?.business_type || "INDIVIDUAL";
+
   const {
     data: employeesData,
     isLoading: employeesLoading,
@@ -52,6 +59,8 @@ const ServiceAssignmentsTab = () => {
       const res = await businessApi.getEmployees();
       return res.data || res;
     },
+    enabled: currentBusinessType !== "INDIVIDUAL",
+    retry: false,
   });
 
   const { data: assignedEmployeesData, isLoading: assignedLoading } = useQuery({

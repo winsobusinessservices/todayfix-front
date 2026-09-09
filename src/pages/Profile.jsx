@@ -173,7 +173,7 @@ const Profile = () => {
                     d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
                   />
                 </svg>
-                {userData?.addresses?.find((a) => a.default)?.city ||
+                {userData?.addresses?.find((a) => a.is_default)?.city ||
                   "Location not set"}
               </span>
               <span className="flex items-center gap-2 bg-surface-secondary px-4 py-2 rounded-full border border-border-secondary">

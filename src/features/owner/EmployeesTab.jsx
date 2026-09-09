@@ -33,6 +33,13 @@ const EmployeesTab = () => {
     is_active: true,
   });
 
+  const { data: profilesData } = useQuery({
+    queryKey: ["businessProfiles"],
+    queryFn: businessApi.getProfiles,
+  });
+  const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
+  const currentBusinessType = profile?.business_type || "INDIVIDUAL";
+
   const {
     data: employeesData,
     isLoading,
@@ -41,6 +48,7 @@ const EmployeesTab = () => {
   } = useQuery({
     queryKey: ["businessEmployees"],
     queryFn: () => businessApi.getEmployees(1),
+    enabled: currentBusinessType !== "INDIVIDUAL",
     retry: false, // Do not retry on 403/400 errors
   });
 

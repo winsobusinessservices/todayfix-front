@@ -80,19 +80,24 @@ const OwnerDashboard = () => {
     queryFn: businessApi.getProfiles
   })
 
+  const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
+  const currentBusinessType = profile?.business_type || "INDIVIDUAL";
+
   // --- Employee Logic for Availability ---
   const { data: employeesData } = useQuery({
     queryKey: ["employees"],
     queryFn: () => businessApi.getEmployees(1),
+    enabled: currentBusinessType !== "INDIVIDUAL",
+    retry: false,
   });
   const employeesList = Array.isArray(employeesData) ? employeesData : employeesData?.results || [];
   const ownerEmployeeUuid = employeesList.length > 0 ? employeesList[0].employee_uuid : null;
 
   // --- Availability Logic ---
   const { data: availabilityData, isLoading: availabilityLoading, error: availabilityError } = useQuery({
-    queryKey: ["businessAvailability", ownerEmployeeUuid],
-    queryFn: () => businessApi.getAvailability(ownerEmployeeUuid),
-    enabled: !!ownerEmployeeUuid,
+    queryKey: ["businessAvailability", ownerEmployeeUuid, currentBusinessType],
+    queryFn: () => businessApi.getAvailability(currentBusinessType === "INDIVIDUAL" ? null : ownerEmployeeUuid),
+    enabled: currentBusinessType === "INDIVIDUAL" || !!ownerEmployeeUuid,
   });
 
   let currentAvailability = null;
@@ -133,18 +138,24 @@ const OwnerDashboard = () => {
     });
 
   const toggleAvailability = () => {
-    if (!ownerEmployeeUuid) {
+    if (currentBusinessType !== "INDIVIDUAL" && !ownerEmployeeUuid) {
       toast.error("No employee found to set availability for.");
       return;
     }
     const newStatus = isAvailable ? "UNAVAILABLE" : "AVAILABLE";
+    
+    // For INDIVIDUAL, omit employee_uuid
+    const payload = currentBusinessType === "INDIVIDUAL" 
+      ? { status: newStatus } 
+      : { status: newStatus, employee_uuid: ownerEmployeeUuid };
+
     if (currentAvailability) {
       updateAvailability({
-        id: currentAvailability.provider_availability_uuid,
-        data: { status: newStatus, employee_uuid: ownerEmployeeUuid },
+        id: currentAvailability.provider_availability_uuid || currentAvailability.id || currentAvailability.uuid,
+        data: payload,
       });
     } else {
-      createAvailability({ status: newStatus, employee_uuid: ownerEmployeeUuid });
+      createAvailability(payload);
     }
   };
   const isStatusChanging = creatingAvailability || updatingAvailability;

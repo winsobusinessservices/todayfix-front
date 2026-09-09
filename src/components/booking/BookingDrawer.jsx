@@ -9,7 +9,7 @@ import {
   ShieldCheck,
   ArrowRight,
   ArrowLeft,
-  Navigation
+  Navigation,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -219,7 +219,7 @@ const AddressSelector = () => {
           setIsLoadingLocation(false);
           toast.error("Error getting location. Please allow location access.");
         },
-        { enableHighAccuracy: true, timeout: 10000 }
+        { enableHighAccuracy: true, timeout: 10000 },
       );
     } else {
       setIsLoadingLocation(false);
@@ -387,8 +387,12 @@ const AddressSelector = () => {
                 disabled={isLoadingLocation}
                 className="w-full bg-blue-500/10 text-blue-600 border border-blue-500/20 hover:bg-blue-500/20 hover:border-blue-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Navigation className={`w-5 h-5 ${isLoadingLocation ? 'animate-spin' : ''}`} />
-                {isLoadingLocation ? 'Getting Location...' : 'Use Current Location'}
+                <Navigation
+                  className={`w-5 h-5 ${isLoadingLocation ? "animate-spin" : ""}`}
+                />
+                {isLoadingLocation
+                  ? "Getting Location..."
+                  : "Use Current Location"}
               </button>
             </div>
           )}

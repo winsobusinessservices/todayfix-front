@@ -55,13 +55,14 @@ const SettingsTab = () => {
     queryFn: businessApi.getUpgradeRequests,
   });
 
-  const profile = profilesData?.results?.[0] || profilesData?.[0] || {};
+  const profile = profilesData?.data?.[0] || profilesData?.[0] || {};
   const currentBusinessType = profile?.business_type || "INDIVIDUAL";
 
   const upgradeRequests = upgradeRequestsData?.data || upgradeRequestsData?.results || [];
   const latestRequest = upgradeRequests[0];
   const pendingUpgrade = latestRequest?.status === "PENDING" ? latestRequest : null;
   const rejectedUpgrade = latestRequest?.status === "REJECTED" ? latestRequest : null;
+  // console.log(profilesData);
 
   const toggle = (key) => {
     setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -199,7 +200,7 @@ const SettingsTab = () => {
             )}
           </div>
 
-          {currentBusinessType === "INDIVIDUAL" && !pendingUpgrade && (
+          { !pendingUpgrade && (
             <button
               onClick={() => setIsUpgradeModalOpen(true)}
               className="shrink-0 px-5 py-2.5 bg-text-primary text-surface-primary font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md flex items-center gap-2"
