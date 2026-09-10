@@ -91,7 +91,7 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
     if (!position) return;
 
     // Generate the Google Maps iframe string using the exact format expected by the backend
-    const iframeString = `<iframe src="https://maps.google.com/maps?q=${position.lat},${position.lng}&hl=es;z=14&output=embed" width="100%" height="300" frameborder="0" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+    const iframeString = `<iframe src="https://maps.google.com/maps?q=${position.lat},${position.lng}&hl=es;z=14&output=embed" width="100%" height="300" frameborder="0" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"><!-- !3d${position.lat}!4d${position.lng} --></iframe>`;
 
     onConfirm(iframeString, position);
     onClose();

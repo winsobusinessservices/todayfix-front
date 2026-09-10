@@ -230,7 +230,7 @@ const AddressSelector = () => {
         (loc) => {
           const lat = loc.coords.latitude;
           const lng = loc.coords.longitude;
-          const iframeString = `<iframe src="https://maps.google.com/maps?q=${lat},${lng}&hl=es;z=14&output=embed" width="100%" height="300" frameborder="0" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>`;
+          const iframeString = `<iframe src="https://maps.google.com/maps?q=${lat},${lng}&hl=es;z=14&output=embed" width="100%" height="300" frameborder="0" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"><!-- !3d${lat}!4d${lng} --></iframe>`;
           setMapEmbed(iframeString);
           setIsLoadingLocation(false);
           toast.success("Location retrieved successfully");
@@ -338,8 +338,16 @@ const AddressSelector = () => {
       return bookingApi.createBooking(payload);
     },
     onSuccess: (data) => {
-      console.log("Booking response:", data);
-      setBookingId(data?.data?.uuid || "TF-SUCCESS");
+      // Handle the case where the backend returns success: true, but no provider is available
+      if (
+        data?.data?.status === "NO_PROVIDER" || 
+        data?.message?.toLowerCase().includes("no provider")
+      ) {
+        toast.error(data?.message || "No provider is currently available for this service.");
+        return;
+      }
+      
+      setBookingId(data?.data?.uuid || data?.data?.instant_booking_uuid || "TF-SUCCESS");
       nextStep();
     },
     onError: (error) => {

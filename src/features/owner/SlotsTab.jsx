@@ -8,6 +8,7 @@ import {
   Trash2,
   Edit2,
   User,
+  ChevronDown,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { businessApi } from "../../services/businessApi";
@@ -61,7 +62,12 @@ const SlotsTab = () => {
     queryKey: ["businessProfiles"],
     queryFn: businessApi.getProfiles,
   });
-  const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
+  const profile = Array.isArray(profilesData)
+    ? profilesData[0]
+    : profilesData?.data?.[0] ||
+      profilesData?.results?.[0] ||
+      profilesData ||
+      {};
   const currentBusinessType = profile?.business_type || "INDIVIDUAL";
 
   // Fetch Employees
@@ -160,7 +166,10 @@ const SlotsTab = () => {
     );
   }
 
-  if ((currentBusinessType !== "INDIVIDUAL" && employeesLoading) || schedulesLoading) {
+  if (
+    (currentBusinessType !== "INDIVIDUAL" && employeesLoading) ||
+    schedulesLoading
+  ) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-primary"></div>
@@ -208,7 +217,9 @@ const SlotsTab = () => {
     }
 
     const payload = {
-      ...(currentBusinessType !== "INDIVIDUAL" && { employee_uuid: formData.employee_uuid }),
+      ...(currentBusinessType !== "INDIVIDUAL" && {
+        employee_uuid: formData.employee_uuid,
+      }),
       day_of_week: formData.day_of_week,
       slot_type: formData.slot_type,
       start_time: `${formData.start_time}:00`,
@@ -218,7 +229,11 @@ const SlotsTab = () => {
 
     if (editingSlot) {
       const { employee_uuid, ...updatePayload } = payload;
-      const slotId = editingSlot.employee_working_schedule_uuid || editingSlot.working_schedule_uuid || editingSlot.uuid || editingSlot.id;
+      const slotId =
+        editingSlot.employee_working_schedule_uuid ||
+        editingSlot.working_schedule_uuid ||
+        editingSlot.uuid ||
+        editingSlot.id;
       updateSchedule({
         id: slotId,
         data: updatePayload,
@@ -271,7 +286,12 @@ const SlotsTab = () => {
           {allSchedules.map((slot) => {
             return (
               <div
-                key={slot.employee_working_schedule_uuid || slot.working_schedule_uuid || slot.uuid || slot.id}
+                key={
+                  slot.employee_working_schedule_uuid ||
+                  slot.working_schedule_uuid ||
+                  slot.uuid ||
+                  slot.id
+                }
                 className="bg-surface-primary border border-border-primary rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow relative group"
               >
                 <div className="flex justify-between items-start mb-4">
@@ -281,7 +301,9 @@ const SlotsTab = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-text-primary text-sm line-clamp-1">
-                        {slot?.employee ? `${slot?.employee?.name}` : "Business Hours"}
+                        {slot?.employee
+                          ? `${slot?.employee?.name}`
+                          : "Business Hours"}
                       </h4>
                       <span
                         className={`text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full ${
@@ -304,7 +326,12 @@ const SlotsTab = () => {
                     </button>
                     <button
                       onClick={() =>
-                        setDeleteId(slot.employee_working_schedule_uuid || slot.working_schedule_uuid || slot.uuid || slot.id)
+                        setDeleteId(
+                          slot.employee_working_schedule_uuid ||
+                            slot.working_schedule_uuid ||
+                            slot.uuid ||
+                            slot.id,
+                        )
                       }
                       className="p-1.5 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
                       title="Delete"
@@ -362,7 +389,10 @@ const SlotsTab = () => {
                     <select
                       value={formData.employee_uuid}
                       onChange={(e) =>
-                        setFormData({ ...formData, employee_uuid: e.target.value })
+                        setFormData({
+                          ...formData,
+                          employee_uuid: e.target.value,
+                        })
                       }
                       className="w-full bg-surface-secondary text-text-primary border border-border-primary rounded-xl px-4 py-3 appearance-none focus:outline-none focus:ring-2 focus:ring-text-primary font-bold transition-all"
                     >
@@ -370,7 +400,10 @@ const SlotsTab = () => {
                         <option value="">No employees available</option>
                       ) : (
                         allEmployees.map((emp) => (
-                          <option key={emp.employee_uuid} value={emp.employee_uuid}>
+                          <option
+                            key={emp.employee_uuid}
+                            value={emp.employee_uuid}
+                          >
                             {emp.name}
                           </option>
                         ))
