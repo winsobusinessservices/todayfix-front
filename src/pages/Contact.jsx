@@ -1,12 +1,60 @@
 import React from "react";
 import { motion } from "framer-motion";
+import { useLocation, useNavigate } from "react-router";
+import toast from "react-hot-toast";
 import SEO from "../components/seo/SEO";
+import { useUserStore } from "../store/userStore";
+
+const SUPPORT_EMAIL = "support@todayfix.in";
+
+const emptyForm = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  message: "",
+};
 
 const Contact = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const user = useUserStore((state) => state.user);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const [formData, setFormData] = React.useState(() => ({
+    ...emptyForm,
+    firstName: user?.first_name || "",
+    lastName: user?.last_name || "",
+    email: user?.email || "",
+    ...(location.state?.contactDraft || {}),
+  }));
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((current) => ({ ...current, [name]: value }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted");
-  }
+
+    if (!isAuthenticated) {
+      toast.error("Please log in before sending a message.");
+      navigate("/login", {
+        state: { from: location, contactDraft: formData },
+      });
+      return;
+    }
+
+    const fullName = `${formData.firstName.trim()} ${formData.lastName.trim()}`;
+    const subject = `TodayFix support request from ${fullName}`;
+    const body = [
+      `Name: ${fullName}`,
+      `Email: ${formData.email.trim()}`,
+      "",
+      "Message:",
+      formData.message.trim(),
+    ].join("\n");
+
+    window.location.href = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  };
+
   return (
     <main className="min-h-screen bg-surface-secondary font-sans pb-24">
       <SEO
@@ -44,47 +92,78 @@ const Contact = () => {
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-text-primary">
+                <label htmlFor="contact-first-name" className="text-sm font-bold text-text-primary">
                   First Name
                 </label>
                 <input
+                  id="contact-first-name"
+                  name="firstName"
                   type="text"
                   placeholder="Jane"
+                  autoComplete="given-name"
+                  required
+                  maxLength={100}
                   className="w-full bg-surface-secondary/50 border border-border-primary rounded-xl py-3 px-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400"
+                  value={formData.firstName}
+                  onChange={handleChange}
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-bold text-text-primary">
+                <label htmlFor="contact-last-name" className="text-sm font-bold text-text-primary">
                   Last Name
                 </label>
                 <input
+                  id="contact-last-name"
+                  name="lastName"
                   type="text"
                   placeholder="Doe"
+                  autoComplete="family-name"
+                  required
+                  maxLength={100}
                   className="w-full bg-surface-secondary/50 border border-border-primary rounded-xl py-3 px-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400"
+                  value={formData.lastName}
+                  onChange={handleChange}
                 />
               </div>
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-bold text-text-primary">
+              <label htmlFor="contact-email" className="text-sm font-bold text-text-primary">
                 Email Address
               </label>
               <input
+                id="contact-email"
+                name="email"
                 type="email"
                 placeholder="jane@example.com"
+                autoComplete="email"
+                required
+                maxLength={254}
                 className="w-full bg-surface-secondary/50 border border-border-primary rounded-xl py-3 px-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400"
+                value={formData.email}
+                onChange={handleChange}
               />
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-bold text-text-primary">
+              <label htmlFor="contact-message" className="text-sm font-bold text-text-primary">
                 Message
               </label>
               <textarea
+                id="contact-message"
+                name="message"
                 rows="5"
                 placeholder="How can we help you?"
+                required
+                minLength={10}
+                maxLength={5000}
                 className="w-full bg-surface-secondary/50 border border-border-primary rounded-xl py-3 px-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400 resize-none"
+                value={formData.message}
+                onChange={handleChange}
               ></textarea>
             </div>
-            <button className="w-full py-4 bg-surface-dark text-text-inverted rounded-xl font-bold hover:scale-[0.98] transition-transform shadow-md">
+            <button
+              type="submit"
+              className="w-full py-4 bg-surface-dark text-text-inverted rounded-xl font-bold hover:scale-[0.98] transition-transform shadow-md"
+            >
               Send Message
             </button>
           </form>

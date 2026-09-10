@@ -33,12 +33,13 @@ const EmployeesTab = () => {
     is_active: true,
   });
 
-  const { data: profilesData } = useQuery({
+  const { data: profilesData, isLoading: profilesLoading } = useQuery({
     queryKey: ["businessProfiles"],
     queryFn: businessApi.getProfiles,
   });
   const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
-  const currentBusinessType = profile?.business_type || "INDIVIDUAL";
+  const currentBusinessType =
+    profile?.business_type?.toUpperCase() || "INDIVIDUAL";
 
   const {
     data: employeesData,
@@ -48,7 +49,7 @@ const EmployeesTab = () => {
   } = useQuery({
     queryKey: ["businessEmployees"],
     queryFn: () => businessApi.getEmployees(1),
-    enabled: currentBusinessType !== "INDIVIDUAL",
+    enabled: !profilesLoading && currentBusinessType !== "INDIVIDUAL",
     retry: false, // Do not retry on 403/400 errors
   });
 
@@ -94,11 +95,20 @@ const EmployeesTab = () => {
     onError: () => toast.error("Failed to delete employee"),
   });
 
+  if (profilesLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="w-8 h-8 border-4 border-text-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   if (
-    isError &&
-    error?.response?.data?.detail?.includes(
-      "not available for Individual businesses",
-    )
+    currentBusinessType === "INDIVIDUAL" ||
+    (isError &&
+      error?.response?.data?.detail?.includes(
+        "not available for Individual businesses",
+      ))
   ) {
     return (
       <div className="flex flex-col items-center justify-center p-10 h-[60vh] text-center max-w-xl mx-auto">
@@ -109,11 +119,9 @@ const EmployeesTab = () => {
           Feature Unavailable
         </h2>
         <p className="text-zinc-500 font-medium leading-relaxed">
-          {error.response.data.detail}
-          <br />
-          <br />
-          Currently, only <strong>Company</strong> and <strong>Investor</strong>{" "}
-          accounts have access to the Employee Management tools.
+          Individual businesses cannot create employees. Only{" "}
+          <strong>Company</strong> and <strong>Investor</strong> accounts have
+          access to employee management and service assignments.
         </p>
       </div>
     );

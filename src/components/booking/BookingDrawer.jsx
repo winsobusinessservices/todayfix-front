@@ -10,16 +10,33 @@ import {
   ArrowRight,
   ArrowLeft,
   Navigation,
+  Plus,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useQuery, useMutation } from "@tanstack/react-query";
-import { getAddresses, updateAddress } from "../../services/addressApi";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  createAddress,
+  getAddresses,
+  updateAddress,
+} from "../../services/addressApi";
 import { bookingApi } from "../../services/bookingApi";
 import CustomDropdown from "../ui/CustomDropdown";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
 import { Map } from "lucide-react";
 import MapPicker from "../modals/MapPicker";
+
+const ADD_ADDRESS_OPTION = "+ Add New Address";
+const emptyAddressForm = {
+  address_type: "HOME",
+  address_line: "",
+  locality: "",
+  city: "",
+  state: "",
+  pincode: "",
+  location: "",
+  is_default: false,
+};
 
 // Step 1: Instant vs Scheduled
 const BookingTypeSelector = () => {
@@ -185,6 +202,7 @@ const DateTimeSelector = () => {
 
 // Step 3: Address & Confirm
 const AddressSelector = () => {
+  const queryClient = useQueryClient();
   const {
     address_uuid,
     setAddress,
@@ -202,6 +220,8 @@ const AddressSelector = () => {
   const [currentPayload, setCurrentPayload] = useState(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
+  const [showAddAddress, setShowAddAddress] = useState(false);
+  const [newAddress, setNewAddress] = useState(emptyAddressForm);
 
   const handleGetCurrentLocation = () => {
     setIsLoadingLocation(true);
@@ -234,9 +254,81 @@ const AddressSelector = () => {
   });
 
   const addresses = addressesData?.data || addressesData || [];
-  const addressOptions = addresses.map(
+  const savedAddressOptions = addresses.map(
     (a) => `${a.address_type} : ${a.address_line.slice(0, 30)} - ${a.pincode}`,
   );
+  const addressOptions =
+    bookingType === "SCHEDULED"
+      ? [...savedAddressOptions, ADD_ADDRESS_OPTION]
+      : savedAddressOptions;
+
+  const { mutate: addAddress, isPending: isAddingAddress } = useMutation({
+    mutationFn: createAddress,
+    onSuccess: async (response, submittedAddress) => {
+      await queryClient.invalidateQueries({ queryKey: ["addresses"] });
+      const refreshedData = await queryClient.fetchQuery({
+        queryKey: ["addresses"],
+        queryFn: getAddresses,
+      });
+      const refreshedAddresses = refreshedData?.data || refreshedData || [];
+      const responseAddress = response?.data || response;
+      const createdAddress =
+        refreshedAddresses.find(
+          (address) =>
+            (address.uuid || address.id || address.add_uuid) ===
+            (responseAddress?.uuid ||
+              responseAddress?.id ||
+              responseAddress?.add_uuid),
+        ) ||
+        [...refreshedAddresses]
+          .reverse()
+          .find(
+            (address) =>
+              address.address_line === submittedAddress.address_line &&
+              address.pincode === submittedAddress.pincode,
+          );
+
+      if (createdAddress) {
+        setAddress(
+          createdAddress.uuid || createdAddress.id || createdAddress.add_uuid,
+        );
+        setMapEmbed(createdAddress.location || "");
+      }
+      setNewAddress(emptyAddressForm);
+      setShowAddAddress(false);
+      toast.success("Address added successfully");
+    },
+    onError: (error) => {
+      const data = error.response?.data;
+      const firstError =
+        data && typeof data === "object"
+          ? Object.values(data).flat().find(Boolean)
+          : null;
+      toast.error(
+        (typeof firstError === "string" && firstError) ||
+          data?.message ||
+          "Failed to add address",
+      );
+    },
+  });
+
+  const handleNewAddressChange = (e) => {
+    const { name, value } = e.target;
+    setNewAddress((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleAddAddress = (e) => {
+    e.preventDefault();
+    addAddress({
+      ...newAddress,
+      address_line: newAddress.address_line.trim(),
+      locality: newAddress.locality.trim(),
+      city: newAddress.city.trim(),
+      state: newAddress.state.trim(),
+      pincode: newAddress.pincode.trim(),
+      is_default: addresses.length === 0,
+    });
+  };
 
   const { mutate: submitBooking, isPending } = useMutation({
     mutationFn: (payload) => {
@@ -333,6 +425,10 @@ const AddressSelector = () => {
                 : ""
             }
             onChange={(val) => {
+              if (val === ADD_ADDRESS_OPTION) {
+                setShowAddAddress(true);
+                return;
+              }
               const matched = addresses.find(
                 (a) =>
                   `${a.address_type} : ${a.address_line.slice(0, 30)} - ${a.pincode}` ===
@@ -348,6 +444,109 @@ const AddressSelector = () => {
             variant="transparent"
           />
         </div>
+        {bookingType === "SCHEDULED" && showAddAddress && (
+          <form
+            onSubmit={handleAddAddress}
+            className="mt-4 space-y-4 rounded-2xl border border-border-primary bg-surface-secondary p-4"
+          >
+            <div className="flex items-center gap-2">
+              <Plus className="h-5 w-5 text-text-primary" />
+              <h4 className="font-bold text-text-primary">Add New Address</h4>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <label className="col-span-2 text-xs font-bold uppercase tracking-wider text-text-secondary">
+                Address Type
+                <select
+                  name="address_type"
+                  value={newAddress.address_type}
+                  onChange={handleNewAddressChange}
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm text-text-primary outline-none focus:border-text-primary"
+                >
+                  <option value="HOME">Home</option>
+                  <option value="WORK">Work</option>
+                  <option value="OTHER">Other</option>
+                </select>
+              </label>
+              <label className="col-span-2 text-xs font-bold uppercase tracking-wider text-text-secondary">
+                Address Line
+                <input
+                  name="address_line"
+                  value={newAddress.address_line}
+                  onChange={handleNewAddressChange}
+                  required
+                  placeholder="House number, street or building"
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                />
+              </label>
+              <label className="col-span-2 text-xs font-bold uppercase tracking-wider text-text-secondary">
+                Locality
+                <input
+                  name="locality"
+                  value={newAddress.locality}
+                  onChange={handleNewAddressChange}
+                  required
+                  placeholder="Area or locality"
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                />
+              </label>
+              <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">
+                City
+                <input
+                  name="city"
+                  value={newAddress.city}
+                  onChange={handleNewAddressChange}
+                  required
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                />
+              </label>
+              <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">
+                State
+                <input
+                  name="state"
+                  value={newAddress.state}
+                  onChange={handleNewAddressChange}
+                  required
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                />
+              </label>
+              <label className="col-span-2 text-xs font-bold uppercase tracking-wider text-text-secondary">
+                Pincode
+                <input
+                  name="pincode"
+                  value={newAddress.pincode}
+                  onChange={handleNewAddressChange}
+                  required
+                  inputMode="numeric"
+                  pattern="[0-9]{6}"
+                  maxLength={6}
+                  placeholder="6-digit pincode"
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                />
+              </label>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="submit"
+                disabled={isAddingAddress}
+                className="flex-1 rounded-xl bg-surface-dark px-4 py-3 text-sm font-bold text-text-inverted disabled:opacity-50"
+              >
+                {isAddingAddress ? "Saving..." : "Save Address"}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowAddAddress(false);
+                  setNewAddress(emptyAddressForm);
+                }}
+                className="rounded-xl border border-border-primary bg-surface-primary px-4 py-3 text-sm font-bold text-text-primary"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        )}
         <p className="text-xs text-zinc-500 font-medium mt-3 flex items-center gap-1.5">
           <ShieldCheck className="w-4 h-4 text-green-500" />
           Professionals will only see your full address after confirmation.

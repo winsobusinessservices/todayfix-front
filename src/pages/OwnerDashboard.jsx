@@ -40,6 +40,8 @@ const SIDEBAR_ITEMS = [
   { id: "settings", label: "Settings", icon: Settings },
 ];
 
+const TEAM_MANAGEMENT_ITEMS = new Set(["employees", "assignments"]);
+
 const OwnerDashboard = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -81,13 +83,19 @@ const OwnerDashboard = () => {
   })
 
   const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
-  const currentBusinessType = profile?.business_type || "INDIVIDUAL";
+  const currentBusinessType =
+    profile?.business_type?.toUpperCase() || "INDIVIDUAL";
+  const sidebarItems = SIDEBAR_ITEMS.filter(
+    (item) =>
+      currentBusinessType !== "INDIVIDUAL" ||
+      !TEAM_MANAGEMENT_ITEMS.has(item.id),
+  );
 
   // --- Employee Logic for Availability ---
   const { data: employeesData } = useQuery({
     queryKey: ["employees"],
     queryFn: () => businessApi.getEmployees(1),
-    enabled: currentBusinessType !== "INDIVIDUAL",
+    enabled: !isLoading && currentBusinessType !== "INDIVIDUAL",
     retry: false,
   });
   const employeesList = Array.isArray(employeesData) ? employeesData : employeesData?.results || [];
@@ -97,7 +105,9 @@ const OwnerDashboard = () => {
   const { data: availabilityData, isLoading: availabilityLoading, error: availabilityError } = useQuery({
     queryKey: ["businessAvailability", ownerEmployeeUuid, currentBusinessType],
     queryFn: () => businessApi.getAvailability(currentBusinessType === "INDIVIDUAL" ? null : ownerEmployeeUuid),
-    enabled: currentBusinessType === "INDIVIDUAL" || !!ownerEmployeeUuid,
+    enabled:
+      !isLoading &&
+      (currentBusinessType === "INDIVIDUAL" || !!ownerEmployeeUuid),
   });
 
   let currentAvailability = null;
@@ -213,7 +223,7 @@ const OwnerDashboard = () => {
 
         {/* Navigation Links */}
         <nav className="flex-1 overflow-y-auto styled-scrollbar p-6 space-y-2">
-          {SIDEBAR_ITEMS.map((item) => {
+          {sidebarItems.map((item) => {
             const Icon = item.icon;
             const targetPath = item.id
               ? `/owner-dashboard/${item.id}`

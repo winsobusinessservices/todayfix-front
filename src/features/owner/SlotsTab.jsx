@@ -3,6 +3,7 @@ import {
   CalendarDays,
   Clock,
   AlertCircle,
+  ChevronDown,
   Plus,
   Trash2,
   Edit2,
@@ -132,6 +133,8 @@ const SlotsTab = () => {
   const allSchedules = Array.isArray(schedulesData)
     ? schedulesData
     : schedulesData?.results || [];
+
+    console.log( allEmployees)
 
   // Employee Management Check
   if (
@@ -278,7 +281,7 @@ const SlotsTab = () => {
                     </div>
                     <div>
                       <h4 className="font-bold text-text-primary text-sm line-clamp-1">
-                        {slot?.employee ? `${slot?.employee?.first_name} ${slot?.employee?.last_name}` : "Business Hours"}
+                        {slot?.employee ? `${slot?.employee?.name}` : "Business Hours"}
                       </h4>
                       <span
                         className={`text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full ${
@@ -368,7 +371,7 @@ const SlotsTab = () => {
                       ) : (
                         allEmployees.map((emp) => (
                           <option key={emp.employee_uuid} value={emp.employee_uuid}>
-                            {emp.first_name} {emp.last_name}
+                            {emp.name}
                           </option>
                         ))
                       )}
