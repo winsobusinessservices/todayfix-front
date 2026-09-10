@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useParams } from "react-router";
 import { vendors } from "../data/collectedData";
 import CustomDropdown from "../components/ui/CustomDropdown";
+import toast from "react-hot-toast";
+
 import SEO from "../components/seo/SEO";
 import { useQuery } from "@tanstack/react-query";
 import { categoryApi } from "../services/categoryApi";
@@ -9,11 +11,18 @@ import * as Icons from "lucide-react";
 import { serviceApi } from "../services/serviceApi";
 import { IMAGE_URL } from "../services/axiosClient";
 import { useBookingStore } from "../store/bookingStore";
+import { useUserStore } from "../store/userStore";
 import BookingDrawer from "../components/booking/BookingDrawer";
+import { useNavigate, useLocation } from "react-router";
+
 
 const Service = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { slug } = useParams();
   const [sortBy, setSortBy] = useState("Recommended");
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  
   const openBooking = useBookingStore((state) => state.openBooking);
 
   // 1. Fetch Categories to find the one matching `slug`
@@ -336,7 +345,14 @@ const Service = () => {
                       </div>
                     </div>
                     <button
-                      onClick={() => openBooking(service)}
+                      onClick={() => {
+                      if (!isAuthenticated) {
+                        toast.error("Please log in booking a service.");
+                        navigate("/login", { state: { from: location } });
+                        return;
+                      }
+                        openBooking(service)
+                      }}
                       className="px-5 py-3 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:bg-zinc-800 transition-all active:scale-95 shadow-md flex items-center gap-2"
                     >
                       Book

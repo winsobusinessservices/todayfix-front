@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import SEO from "../components/seo/SEO";
 import { useMutation } from "@tanstack/react-query";
 import { login, sendLoginOTP, verifyLoginOTP } from "../services/authApi";
@@ -10,6 +10,16 @@ import saveLoginCredentials from "../utils/saveLoginCredentials";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const redirectAfterLogin = () => {
+    const destination = location.state?.from?.pathname || "/";
+    navigate(destination, {
+      replace: true,
+      state: location.state?.contactDraft
+        ? { contactDraft: location.state.contactDraft }
+        : undefined,
+    });
+  };
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -51,7 +61,7 @@ const Login = () => {
           "Welcome back! You've successfully logged in.",
           "login",
         );
-        navigate("/");
+        redirectAfterLogin();
       }
     },
     onError: (error) => {
@@ -104,7 +114,7 @@ const Login = () => {
           "Welcome back! You've successfully logged in.",
           "login",
         );
-        navigate("/");
+        redirectAfterLogin();
       }
     },
     onError: (error) => {
@@ -189,7 +199,7 @@ const Login = () => {
             </div>
 
             <div className="flex flex-col gap-3 mb-8 w-full">
-              <GoogleLogin />
+              <GoogleLogin onLoginSuccess={redirectAfterLogin} />
               {/* <AppleLogin /> */}
             </div>
 

@@ -42,12 +42,13 @@ const ServiceAssignmentsTab = () => {
     },
   });
 
-  const { data: profilesData } = useQuery({
+  const { data: profilesData, isLoading: profilesLoading } = useQuery({
     queryKey: ["businessProfiles"],
     queryFn: businessApi.getProfiles,
   });
   const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
-  const currentBusinessType = profile?.business_type || "INDIVIDUAL";
+  const currentBusinessType =
+    profile?.business_type?.toUpperCase() || "INDIVIDUAL";
 
   const {
     data: employeesData,
@@ -59,7 +60,7 @@ const ServiceAssignmentsTab = () => {
       const res = await businessApi.getEmployees();
       return res.data || res;
     },
-    enabled: currentBusinessType !== "INDIVIDUAL",
+    enabled: !profilesLoading && currentBusinessType !== "INDIVIDUAL",
     retry: false,
   });
 
@@ -99,13 +100,16 @@ const ServiceAssignmentsTab = () => {
 
   const allServices = Array.isArray(servicesData)
     ? servicesData
-    : servicesData?.data || [];
+    : servicesData?.results || servicesData?.data || [];
 
-  const allEmployees = employeesData?.results?.filter((emp) => emp.is_active) || [];
+  const employees = Array.isArray(employeesData)
+    ? employeesData
+    : employeesData?.results || employeesData?.data || [];
+  const allEmployees = employees.filter((emp) => emp.is_active);
 
   const assignedEmployees = Array.isArray(assignedEmployeesData)
     ? assignedEmployeesData
-    : assignedEmployeesData?.results || [];
+    : assignedEmployeesData?.results || assignedEmployeesData?.data || [];
 
   const handleAssign = (e) => {
     e.preventDefault();
@@ -124,7 +128,7 @@ const ServiceAssignmentsTab = () => {
     (emp) => !assignedUuids.includes(emp.employee_uuid),
   );
 
-  if (servicesLoading || employeesLoading) {
+  if (profilesLoading || servicesLoading || employeesLoading) {
     return (
       <div className="flex justify-center items-center h-64">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-text-primary"></div>
@@ -132,8 +136,8 @@ const ServiceAssignmentsTab = () => {
     );
   }
 
-  // Handle Individual Business Model Restriction
   if (
+    currentBusinessType === "INDIVIDUAL" ||
     employeesErrorObj?.response?.data?.detail?.includes(
       "Employee management is not available",
     )
@@ -147,9 +151,9 @@ const ServiceAssignmentsTab = () => {
           Feature Not Available
         </h2>
         <p className="text-text-secondary font-medium leading-relaxed mb-6">
-          Employee management is not available for Individual businesses.
-          Upgrade your business model to Company or Investor to unlock team
-          management, assign tasks, and grow your workforce.
+          Individual businesses cannot assign employees to services. Upgrade
+          the business model to Company or Investor to unlock employee and
+          service-assignment tools.
         </p>
       </div>
     );
