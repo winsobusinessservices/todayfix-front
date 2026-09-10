@@ -8,6 +8,7 @@ const Area = () => {
   const [localVendors, setLocalVendors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
+  const area = window.location.pathname.split("/")[2]; // Extract city from URL
 
   useEffect(() => {
     const fetchVendors = async () => {
@@ -25,7 +26,7 @@ const Area = () => {
 
   // Mock data for the specific Area
   const areaInfo = {
-    name: "Indiranagar",
+    name: area.charAt(0).toUpperCase() + area.slice(1), // Capitalize first letter
     city: "Bengaluru",
     pincode: "560038",
     heroImage:
@@ -60,7 +61,7 @@ const Area = () => {
       <div className="bg-surface-primary border-b border-border-primary py-3 px-6">
         <div className="max-w-6xl mx-auto flex items-center text-sm font-medium text-text-secondary gap-2">
           <Link
-            to="#"
+            to="/"
             className="hover:text-text-primary hover:underline transition-colors"
           >
             Home
@@ -77,7 +78,7 @@ const Area = () => {
             />
           </svg>
           <Link
-            to="#"
+            to="/services"
             className="hover:text-text-primary hover:underline transition-colors"
           >
             {areaInfo.city}
@@ -102,7 +103,7 @@ const Area = () => {
         <img
           src={areaInfo.heroImage}
           alt={areaInfo.name}
-          className="w-full h-full object-cover opacity-50 mix-blend-overlay"
+          className="w-full h-full object-cover opacity-50"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-surface-dark via-surface-dark/60 to-transparent"></div>
 
@@ -270,6 +271,8 @@ const Area = () => {
             </div>
           ))}
         </div>
+        {!localVendors.length && !isLoading &&  <div className="text-text-muted text-center py-3">No services found.</div>}
+
 
         {/* --- LOCAL SEO BLOCK --- */}
         <div className="mt-16 bg-surface-secondary/50 rounded-3xl p-8 md:p-12 border border-border-primary">

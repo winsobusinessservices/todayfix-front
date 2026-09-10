@@ -211,6 +211,10 @@ const BusinessDocumentsPage = () => {
    * Handles objects like { field: ["error message"] } and nested structures.
    */
   const parseBackendErrors = (err) => {
+    if (err?.code === "ECONNABORTED") {
+      return "The document upload took too long. Your information is still saved on this page—please check your connection and try again.";
+    }
+
     const responseData = err?.response?.data;
     if (!responseData) {
       return err?.message || "An unexpected error occurred. Please try again.";
@@ -351,6 +355,7 @@ const BusinessDocumentsPage = () => {
       <div className="max-w-4xl mx-auto px-6 -mt-12 relative z-20">
         <form
           onSubmit={handleSubmit}
+          aria-busy={isSubmitting}
           className="bg-surface-primary rounded-3xl p-8 md:p-12 shadow-2xl border border-border-primary space-y-10"
         >
           {error && (
@@ -374,12 +379,18 @@ const BusinessDocumentsPage = () => {
             </div>
           )}
 
+          <fieldset
+            disabled={isSubmitting}
+            className={`min-w-0 border-0 p-0 space-y-10 transition-opacity duration-200 ${
+              isSubmitting ? "pointer-events-none select-none opacity-60" : ""
+            }`}
+          >
           {/* Identity Section */}
           <div className="space-y-6">
             <h3 className="text-xl font-black text-text-primary border-b border-border-secondary pb-2">
               1. Identity Proof
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
               <NumberInput
                 label="PAN Number"
                 required={isCompany}
@@ -387,21 +398,22 @@ const BusinessDocumentsPage = () => {
                 setValue={setPanNumber}
                 placeholder="e.g. ABCDE1234F"
               />
-              <FileUpload
-                id="pan_doc"
-                label="PAN Document"
-                required={isCompany}
-                file={panDocument}
-                setFile={setPanDocument}
-              />
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
-              <NumberInput
+                            <NumberInput
                 label="Aadhaar Number"
                 required={isCompany}
                 value={aadhaarNumber}
                 setValue={setAadhaarNumber}
                 placeholder="e.g. 999999999999"
+              />
+            
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                <FileUpload
+                id="pan_doc"
+                label="PAN Document"
+                required={isCompany}
+                file={panDocument}
+                setFile={setPanDocument}
               />
               <FileUpload
                 id="aadhaar_doc"
@@ -573,6 +585,7 @@ const BusinessDocumentsPage = () => {
               "Submit Application"
             )}
           </button>
+          </fieldset>
         </form>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router";
 import { vendors } from "../data/collectedData";
 import CustomDropdown from "../components/ui/CustomDropdown";
@@ -21,6 +21,8 @@ const Service = () => {
     queryKey: ["publicSubcategory", slug],
     queryFn: () => categoryApi.getSubcategory(slug),
     enabled: !!slug,
+    // A missing/invalid slug will not become valid by retrying the same request.
+    retry: false,
   });
 
   const currentSubcategory =

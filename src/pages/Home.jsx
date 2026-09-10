@@ -11,6 +11,7 @@ import BusinessCTA from "../features/home/BusinessCTA";
 import PricingComponent from "../features/pricing/PricingComponent";
 import FAQSection from "../features/home/FAQSection";
 import ServicesOffered from "../features/home/ServicesOffered";
+import WhyChooseTodayFix from "../features/home/WhyChooseTodayFix";
 
 const Home = () => {
   return (
@@ -23,6 +24,7 @@ const Home = () => {
       <ServicesOffered/>
       <FeatureMarquee />
       <Services />
+      <WhyChooseTodayFix />
       <FeaturedSection />
       <HowItWorks />
       <TestimonialSection />

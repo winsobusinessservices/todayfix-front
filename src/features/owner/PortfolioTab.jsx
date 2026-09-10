@@ -359,7 +359,7 @@ const PortfolioTab = () => {
 
               {/* Information / Edit Card */}
               <div className="bg-surface-primary rounded-3xl p-6 md:p-8 shadow-[0_2px_20px_rgb(0,0,0,0.04)] border border-border-primary">
-                <div className="flex justify-between items-center mb-6">
+                <div className="flex flex-col md:flex-row gap-3 justify-between items-center mb-6">
                   <h2 className="text-xl font-bold text-text-primary tracking-tight flex items-center gap-1">
                     <Contact className="w-6 h-6" />
                     Contact Information

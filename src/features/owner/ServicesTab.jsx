@@ -75,8 +75,11 @@ const ServicesTab = () => {
   
   const businessData = useOutletContext();
   const catUuid = businessData?.category_uuid;
+  const businessType = businessData?.business_type?.toUpperCase();
+  const isIndividual =
+    businessType === "INDIVIDUAL" || businessType === "INDIVISUAL";
 
-  const { data: subCategoriesData, isLoading: subCategoryLoading } = useQuery({
+  const { data: subCategoriesData } = useQuery({
     queryKey: ["subCategories", catUuid],
     queryFn: async () => {
       const response = await categoryApi.getSubcategories(catUuid);
@@ -146,7 +149,11 @@ const ServicesTab = () => {
         description: service.description,
         price: service.price,
         duration: service.duration,
-        required_employees: service.required_employees,
+        // The API currently expects this value even though individuals do not
+        // manage staff. Keep it internal and default individual services to 1.
+        required_employees: isIndividual
+          ? 1
+          : service.required_employees || 1,
         cat_uuid: service.category?.cat_uuid || catUuid,
         subCat_uuid:
           service.subcategory?.subCat_uuid || subCategories[0]?.subCat_uuid,
@@ -194,7 +201,9 @@ const ServicesTab = () => {
       description: formData.description,
       price: formData.price.toString(),
       duration: parseInt(formData.duration),
-      required_employees: parseInt(formData.required_employees),
+      required_employees: isIndividual
+        ? 1
+        : parseInt(formData.required_employees),
       cat_uuid: catUuid,
       subCat_uuid: formData.subCat_uuid,
       is_active: formData.is_active,
@@ -289,10 +298,12 @@ const ServicesTab = () => {
                 <Clock className="w-4 h-4" />
                 {service.duration} mins
               </div>
-              <div className="flex items-center gap-1.5">
-                <Users className="w-4 h-4" />
-                {service.required_employees} staff
-              </div>
+              {!isIndividual && (
+                <div className="flex items-center gap-1.5">
+                  <Users className="w-4 h-4" />
+                  {service.required_employees} staff
+                </div>
+              )}
             </div>
 
             <div className="flex justify-end gap-2 pt-4 border-t border-border-primary">
@@ -425,26 +436,32 @@ const ServicesTab = () => {
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">
-                      Required Staff
-                    </label>
-                    <input
-                      required
-                      type="number"
-                      min="1"
-                      value={formData.required_employees}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          required_employees: e.target.value,
-                        })
-                      }
-                      className="w-full bg-surface-secondary border border-border-primary rounded-xl px-4 py-3 text-text-primary font-medium focus:outline-none focus:border-text-primary transition-colors"
-                      placeholder="e.g. 1"
-                    />
-                  </div>
-                  <div className="flex flex-col justify-end pb-1">
+                  {!isIndividual && (
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase tracking-wider mb-2">
+                        Required Staff
+                      </label>
+                      <input
+                        required
+                        type="number"
+                        min="1"
+                        value={formData.required_employees}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            required_employees: e.target.value,
+                          })
+                        }
+                        className="w-full bg-surface-secondary border border-border-primary rounded-xl px-4 py-3 text-text-primary font-medium focus:outline-none focus:border-text-primary transition-colors"
+                        placeholder="e.g. 1"
+                      />
+                    </div>
+                  )}
+                  <div
+                    className={`flex flex-col justify-end pb-1 ${
+                      isIndividual ? "col-span-2" : ""
+                    }`}
+                  >
                     <label className="flex items-center gap-3 p-3 bg-surface-secondary border border-border-primary rounded-xl cursor-pointer hover:border-text-primary transition-colors">
                       <input
                         type="checkbox"

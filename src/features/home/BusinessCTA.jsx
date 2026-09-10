@@ -59,9 +59,12 @@ const BusinessCTA = () => {
             >
               List Your Business Now
             </Link>
-            <button className="px-8 py-4 bg-transparent text-text-inverted border border-white/20 font-bold rounded-full text-base tracking-wide hover:bg-white/10 transition-all duration-300">
+            <Link
+              to="/list-business"
+              className="px-8 py-4 bg-transparent text-text-inverted border border-white/20 font-bold rounded-full text-base tracking-wide hover:bg-white/10 transition-all duration-300"
+            >
               Grow Business
-            </button>
+            </Link>
           </motion.div>
         </div>
 

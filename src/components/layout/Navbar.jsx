@@ -45,7 +45,7 @@ export default function Navbar() {
     { name: "Services", link: "/services" },
     { name: "Pricing", link: "/pricing" },
     {
-      name: "Cities",
+      name: "Areas",
       type: "dropdown",
       items: areasData,
     },

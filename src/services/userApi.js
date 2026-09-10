@@ -30,6 +30,8 @@ export const submitBusinessApplication = async (formData) => {
       headers: {
         "Content-Type": "multipart/form-data",
       },
+      // Document uploads can legitimately take longer than normal JSON requests.
+      timeout: 60000,
     })
     .then((data) => data.data);
 };
