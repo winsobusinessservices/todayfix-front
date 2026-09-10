@@ -40,7 +40,7 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   // console.log(bookingId);
 
   const conversationId = activeConversation?.conversation_uuid;
-  // console.log(conversationId);
+  // console.log(conversationList);
 
   // 2. Fetch Messages
   const { data: messagesData, isLoading: messagesLoading } = useQuery({

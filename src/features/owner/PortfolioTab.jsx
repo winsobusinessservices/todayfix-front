@@ -20,6 +20,7 @@ import { useOutletContext } from "react-router";
 import { IMAGE_URL } from "../../services/axiosClient";
 import { dateMonthYearFormater } from "../../utils/dateFormater";
 import { IconLocation } from "@tabler/icons-react";
+import MapPicker from "../../components/modals/MapPicker";
 
 const INITIAL_GALLERY = [
   "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&q=80&w=400",
@@ -32,6 +33,7 @@ const PortfolioTab = () => {
   const [gallery, setGallery] = useState(INITIAL_GALLERY);
   const [profileId, setProfileId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [isMapOpen, setIsMapOpen] = useState(false);
   const [details, setDetails] = useState({
     name: "",
     description: "",
@@ -67,8 +69,9 @@ const PortfolioTab = () => {
       queryClient.invalidateQueries(["businessProfiles"]);
       setTimeout(() => queryClient.resetQueries(["businessProfiles"]), 2000);
     },
-    onError: () => {
+    onError: (error) => {
       toast.error("Failed to update profile");
+      console.log(error?.response?.data);
     },
   });
 
@@ -97,15 +100,18 @@ const PortfolioTab = () => {
 
   const handleSave = () => {
     if (profileId) {
-      updateProfile({
-        name: details.name,
+      const payload = {
+        business_name: details.name,
         description: details.description,
-        location: details.location,
-        email: details.email,
-        phone: details.phone,
-        website: details.website,
+        address: details.location,
         business_type: details.business_type,
-      });
+      };
+
+      if (details.email) payload.contact_email = details.email;
+      if (details.phone) payload.contact_phone = details.phone;
+      if (details.website) payload.website = details.website;
+
+      updateProfile(payload);
     } else {
       toast.error("No business profile found to update.");
     }
@@ -229,7 +235,9 @@ const PortfolioTab = () => {
     {
       id: 5,
       label: "Location",
-      value: details?.location || "Location Not Added",
+      value: details?.location?.includes("<iframe")
+        ? "Map Location Set"
+        : details?.location || "Location Not Added",
       editKey: "location",
       icon: <IconLocation className="size-5" />,
     },
@@ -409,17 +417,26 @@ const PortfolioTab = () => {
                       </div>
 
                       {isEditing && info.editKey ? (
-                        <input
-                          type={info.editKey === "email" ? "email" : "text"}
-                          value={details[info.editKey]}
-                          onChange={(e) =>
-                            setDetails({
-                              ...details,
-                              [info.editKey]: e.target.value,
-                            })
-                          }
-                          className="text-text-primary font-semibold text-[15px] bg-surface-secondary border border-border-primary rounded-lg px-3 py-1 focus:outline-none focus:border-text-primary text-right w-1/2"
-                        />
+                        info.editKey === "location" ? (
+                          <button
+                            onClick={() => setIsMapOpen(true)}
+                            className="text-text-primary font-semibold text-[15px] bg-surface-secondary border border-border-primary rounded-lg px-3 py-1 hover:border-text-primary transition-colors text-right w-1/2"
+                          >
+                            Select Map Location
+                          </button>
+                        ) : (
+                          <input
+                            type={info.editKey === "email" ? "email" : "text"}
+                            value={details[info.editKey]}
+                            onChange={(e) =>
+                              setDetails({
+                                ...details,
+                                [info.editKey]: e.target.value,
+                              })
+                            }
+                            className="text-text-primary font-semibold text-[15px] bg-surface-secondary border border-border-primary rounded-lg px-3 py-1 focus:outline-none focus:border-text-primary text-right w-1/2"
+                          />
+                        )
                       ) : (
                         <div className="text-text-primary font-semibold text-[15px]">
                           {isEditing
@@ -432,6 +449,14 @@ const PortfolioTab = () => {
                     </div>
                   ))}
                 </div>
+
+                <MapPicker
+                  isOpen={isMapOpen}
+                  onClose={() => setIsMapOpen(false)}
+                  onConfirm={(iframeString) =>
+                    setDetails({ ...details, location: iframeString })
+                  }
+                />
 
                 <div className="w-full h-px bg-surface-secondary my-5"></div>
 

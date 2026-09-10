@@ -3,12 +3,14 @@ import { useNavigate } from "react-router";
 import CustomDropdown from "../components/ui/CustomDropdown";
 import SEO from "../components/seo/SEO";
 import { useCategoryStore } from "../store/categoryStore";
+import MapPicker from "../components/modals/MapPicker";
 
 const ListBusinessPage = () => {
   const navigate = useNavigate();
   const [providerType, setProviderType] = useState("COMPANY"); // "COMPANY" | "INDIVIDUAL" | "INVESTOR"
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
+  const [isMapOpen, setIsMapOpen] = useState(false);
   const [website, setWebsite] = useState("");
 
   // Bank Details
@@ -225,20 +227,24 @@ const ListBusinessPage = () => {
               <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
                 Location <span className="text-red-500">*</span>
               </label>
-              <input
-                type="text"
-                placeholder="e.g. Hoskote, Bengaluru Rural, Karnataka"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                required
-                className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400"
-              />
+              <button
+                type="button"
+                onClick={() => setIsMapOpen(true)}
+                className="w-full text-left bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400 hover:border-text-primary/50"
+              >
+                {location ? (location.includes("<iframe") ? "Map Location Selected" : location) : "Select your business location on map"}
+              </button>
               <p className="text-xs text-text-muted mt-2 font-medium">
-                Enter your full business location including area, city, and
-                state.
+                Choose your business location precisely using the map. This is required for customers to find you.
               </p>
             </div>
           </div>
+          
+          <MapPicker
+            isOpen={isMapOpen}
+            onClose={() => setIsMapOpen(false)}
+            onConfirm={(iframeString) => setLocation(iframeString)}
+          />
 
           {/* SECTION 3: Bank Details */}
           <div className="bg-surface-primary rounded-xl p-8 md:p-12 shadow-2xl shadow-black/5 border border-border-primary">

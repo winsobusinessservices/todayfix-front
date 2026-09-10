@@ -69,7 +69,10 @@ const EmployeesTab = () => {
       });
       setIsAddModalOpen(false);
     },
-    onError: () => toast.error("Failed to create employee"),
+    onError: (error) => {
+      const msg = error?.response?.data?.message || error?.response?.data?.detail || "Failed to create employee"
+      toast.error(msg)
+    }
   });
 
   const { mutate: updateEmployee, isPending: isUpdating } = useMutation({
