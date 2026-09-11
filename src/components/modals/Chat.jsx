@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { chatApi } from "../../services/chatApi";
 import { useUserStore } from "../../store/userStore";
+import { IMAGE_URL } from "../../services/axiosClient";
 
 
 const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
@@ -19,6 +20,8 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   const targetName =
     targetBooking?.user?.first_name + " " + targetBooking?.user?.last_name ||
     "User";
+
+  const isChatDisabled = targetBooking && ["COMPLETED", "CANCELLED", "REJECTED"].includes(targetBooking.status);
 
   // 1. Fetch Conversations
   const { data: conversations } = useQuery({
@@ -37,9 +40,10 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   const activeConversation = conversationList.find(
     (c) => c.scheduled_booking === bookingId || c.instant_booking === bookingId,
   );
-  // console.log(bookingId);
+  console.log(conversationList);
 
-  const conversationId = activeConversation?.conversation_uuid;
+  // const conversationId = activeConversation?.conversation_uuid;
+  const conversationId = "e05e66ca-3442-44a1-9cf5-3bbf22ff5181";
   // console.log(conversationList);
 
   // 2. Fetch Messages
@@ -62,15 +66,16 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   useEffect(() => {
     if (!conversationId) return;
 
-    // Use wss:// for production, ws:// for local
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const host =
-      window.location.hostname === "localhost"
-        ? "localhost:8000"
-        : window.location.host;
+    // ... inside useEffect:
+    let wsBaseUrl = IMAGE_URL || "http://localhost:8000";
+    if (wsBaseUrl.startsWith("https://")) {
+      wsBaseUrl = wsBaseUrl.replace("https://", "wss://");
+    } else if (wsBaseUrl.startsWith("http://")) {
+      wsBaseUrl = wsBaseUrl.replace("http://", "ws://");
+    }
 
     // Connect to chat websocket
-    const ws = new WebSocket(`${protocol}//${host}/ws/chat/${conversationId}/`);
+    const ws = new WebSocket(`${wsBaseUrl}/ws/chat/${conversationId}/`);
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -198,7 +203,7 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
               </div>
             )}
 
-            {messagesList.map((msg) => {
+            {messagesList.toReversed().map((msg) => {
               // msg.sender might be an ID or an object. If it's an object, it usually has user_uuid or id
               const senderId = msg.sender?.user_uuid || msg.sender?.id || msg.sender;
               const isOutgoing = senderId === currentUserId;
@@ -235,28 +240,34 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
 
           {/* Input Area */}
           <div className="p-4 bg-surface-secondary border-t border-border-primary shrink-0">
-            <div className="flex items-center gap-2 relative">
-              <input
-                type="text"
-                placeholder="Type your message..."
-                value={newMessage}
-                disabled={!conversationId || isSending}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && newMessage.trim()) {
-                    handleSend();
-                  }
-                }}
-                className="flex-1 bg-surface-primary border border-border-primary rounded-2xl pl-5 pr-14 py-4 text-sm font-medium text-text-primary focus:outline-none focus:border-text-primary transition-colors shadow-inner disabled:opacity-50"
-              />
-              <button
-                onClick={handleSend}
-                disabled={!conversationId || !newMessage.trim() || isSending}
-                className={`absolute right-2 p-2.5 rounded-xl transition-all duration-300 ${newMessage.trim() ? "bg-text-primary text-surface-primary scale-100 cursor-pointer" : "bg-surface-secondary text-zinc-400 scale-90 cursor-not-allowed"}`}
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
+            {isChatDisabled ? (
+              <div className="text-center text-sm font-bold text-zinc-500 py-3 bg-surface-primary border border-border-primary rounded-xl">
+                This booking is {targetBooking?.status.toLowerCase()}, chat is closed.
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 relative">
+                <input
+                  type="text"
+                  placeholder="Type your message..."
+                  value={newMessage}
+                  disabled={!conversationId || isSending}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && newMessage.trim()) {
+                      handleSend();
+                    }
+                  }}
+                  className="flex-1 bg-surface-primary border border-border-primary rounded-2xl pl-5 pr-14 py-4 text-sm font-medium text-text-primary focus:outline-none focus:border-text-primary transition-colors shadow-inner disabled:opacity-50"
+                />
+                <button
+                  onClick={handleSend}
+                  disabled={!newMessage.trim() || !conversationId || isSending || isChatDisabled}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-text-primary text-surface-primary rounded-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100 shadow-md"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
+              </div>
+            )}
           </div>
         </motion.div>
       </div>

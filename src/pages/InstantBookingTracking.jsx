@@ -23,7 +23,11 @@ const InstantBookingTracking = () => {
   const [tipAmount, setTipAmount] = useState(50);
 
   // Poll every 5 seconds if we are in SEARCHING or TIP_REQUIRED state
-  const { data: bookingData, isLoading, error } = useQuery({
+  const {
+    data: bookingData,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["instantBookingTracking", id],
     queryFn: async () => {
       const res = await bookingApi.getCustomerInstantBookingDetails(id);
@@ -39,7 +43,7 @@ const InstantBookingTracking = () => {
   });
 
   const { mutate: cancelBooking, isPending: isCanceling } = useMutation({
-    mutationFn: bookingApi.cancelCustomerInstantBooking,
+    mutationFn: () => bookingApi.cancelCustomerInstantBooking(id),
     onSuccess: () => {
       toast.success("Booking cancelled successfully.");
       queryClient.invalidateQueries(["instantBookingTracking", id]);
@@ -91,6 +95,7 @@ const InstantBookingTracking = () => {
 
   const booking = bookingData;
   const status = booking.status;
+  // console.log(booking);
 
   const getStatusDisplay = () => {
     switch (status) {
@@ -188,19 +193,23 @@ const InstantBookingTracking = () => {
           {status === "SEARCHING" && booking.expires_at && (
             <div className="mt-8 inline-flex items-center gap-2 bg-blue-50 text-blue-700 px-4 py-2 rounded-full font-bold border border-blue-100 relative z-10">
               <Clock className="w-4 h-4" />
-              <span>Search expires at: {new Date(booking.expires_at).toLocaleTimeString()}</span>
+              <span>
+                Search expires at:{" "}
+                {new Date(booking.expires_at).toLocaleTimeString()}
+              </span>
             </div>
           )}
         </div>
 
         {/* Tip Required Actions */}
-        {status === "TIP_REQUIRED" && (
+        {status === "SEARCHING" && (
           <div className="bg-surface-primary border border-border-primary rounded-3xl p-6 shadow-sm">
             <h3 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
               <IndianRupee className="w-5 h-5" /> Add a Tip to Expedite
             </h3>
             <p className="text-text-secondary mb-6 text-sm">
-              Increase your chances of a provider accepting by adding a tip to the total cost.
+              Increase your chances of a provider accepting by adding a tip to
+              the total cost.
             </p>
             <div className="flex gap-4 items-end">
               <div className="flex-1">
@@ -228,27 +237,32 @@ const InstantBookingTracking = () => {
         )}
 
         {/* Provider Details */}
-        {(status === "CONFIRMED" || status === "IN_PROGRESS" || status === "COMPLETED") && booking.business_name && (
-          <div className="bg-surface-primary border border-border-primary rounded-3xl p-6 shadow-sm">
-            <h3 className="text-xl font-bold text-text-primary mb-4 border-b border-border-primary pb-4">
-              Assigned Provider
-            </h3>
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 bg-surface-secondary rounded-full flex items-center justify-center border border-border-primary">
-                  <User className="w-6 h-6 text-zinc-500" />
+        {(status === "CONFIRMED" ||
+          status === "IN_PROGRESS" ||
+          status === "COMPLETED") &&
+          booking.business_name && (
+            <div className="bg-surface-primary border border-border-primary rounded-3xl p-6 shadow-sm">
+              <h3 className="text-xl font-bold text-text-primary mb-4 border-b border-border-primary pb-4">
+                Assigned Provider
+              </h3>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 bg-surface-secondary rounded-full flex items-center justify-center border border-border-primary">
+                    <User className="w-6 h-6 text-zinc-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-bold text-lg text-text-primary">
+                      {booking.business_name}
+                    </h4>
+                    <p className="text-sm text-text-secondary font-medium">
+                      Professional: {booking.employee_name || "Owner"}
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-bold text-lg text-text-primary">{booking.business_name}</h4>
-                  <p className="text-sm text-text-secondary font-medium">
-                    Professional: {booking.employee_name || "Owner"}
-                  </p>
-                </div>
+                {/* Chat action could go here if we had a dedicated chat route for customers. For now, we will wait until Chat.jsx is global or integrated. */}
               </div>
-              {/* Chat action could go here if we had a dedicated chat route for customers. For now, we will wait until Chat.jsx is global or integrated. */}
             </div>
-          </div>
-        )}
+          )}
 
         {/* Booking Summary */}
         <div className="bg-surface-primary border border-border-primary rounded-3xl p-6 shadow-sm">
@@ -259,7 +273,9 @@ const InstantBookingTracking = () => {
             <div>
               <p className="text-sm font-bold text-zinc-500 mb-1">Service</p>
               <p className="font-bold text-text-primary text-lg">
-                {booking.requested_service_name || booking.service_name || "Instant Service"}
+                {booking.requested_service_name ||
+                  booking.service_name ||
+                  "Instant Service"}
               </p>
             </div>
             <div>
@@ -276,7 +292,9 @@ const InstantBookingTracking = () => {
               </p>
             </div>
             <div>
-              <p className="text-sm font-bold text-zinc-500 mb-1">Total Expected (Min)</p>
+              <p className="text-sm font-bold text-zinc-500 mb-1">
+                Total Expected (Min)
+              </p>
               <p className="font-bold text-text-primary flex items-center gap-1">
                 <IndianRupee className="w-4 h-4" />
                 {booking.price || "TBD"}
@@ -284,7 +302,9 @@ const InstantBookingTracking = () => {
             </div>
             {booking.tip_amount > 0 && (
               <div>
-                <p className="text-sm font-bold text-zinc-500 mb-1">Added Tip</p>
+                <p className="text-sm font-bold text-zinc-500 mb-1">
+                  Added Tip
+                </p>
                 <p className="font-bold text-emerald-600 flex items-center gap-1">
                   <IndianRupee className="w-4 h-4" />
                   {booking.tip_amount}

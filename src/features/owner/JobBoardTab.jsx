@@ -9,9 +9,14 @@ import {
   ShieldCheck,
   CheckCircle2,
   X,
+  Play,
+  CheckCircle,
+  XCircle,
+  RefreshCw,
 } from "lucide-react";
 
 import { bookingApi } from "../../services/bookingApi";
+import api from "../../services/axiosClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
@@ -19,6 +24,7 @@ const JobBoardTab = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [acceptedJobId, setAcceptedJobId] = useState(null);
+  const [actionJobId, setActionJobId] = useState(null);
 
   // Instant booking offers query
   const { data: instantOffersData, isLoading } = useQuery({
@@ -26,7 +32,8 @@ const JobBoardTab = () => {
     queryFn: bookingApi.getInstantBookingOffers,
   });
 
-  const broadcasts = instantOffersData?.data || instantOffersData?.results || [];
+  const broadcasts =
+    instantOffersData?.data || instantOffersData?.results || [];
 
   const { mutate: acceptInstantBooking, isPending: isAcceptingInstant } =
     useMutation({
@@ -34,15 +41,47 @@ const JobBoardTab = () => {
       onSuccess: () => {
         toast.success("Instant booking offer accepted!");
         queryClient.invalidateQueries(["instantBookingOffers"]);
-        queryClient.invalidateQueries(["businessBookings"]);
-        navigate("/owner-dashboard/bookings");
+        // Removed navigate to bookings so user can manage it here
       },
-      onError: () => toast.error("Failed to accept instant offer"),
+      onError: () => {
+        toast.error("Failed to accept instant offer");
+      },
     });
+
+  const { mutate: startJob, isPending: isStarting } = useMutation({
+    mutationFn: bookingApi.startInstantBooking,
+    onSuccess: () => {
+      toast.success("Job started!");
+      queryClient.invalidateQueries(["instantBookingOffers"]);
+      setActionJobId(null);
+    },
+    onError: () => {
+      toast.error("Failed to start job");
+      setActionJobId(null);
+    },
+  });
+
+  const { mutate: completeJob, isPending: isCompleting } = useMutation({
+    mutationFn: bookingApi.completeInstantBooking,
+    onSuccess: () => {
+      toast.success("Job completed!");
+      queryClient.invalidateQueries(["instantBookingOffers"]);
+      setActionJobId(null);
+    },
+    onError: () => {
+      toast.error("Failed to complete job");
+      setActionJobId(null);
+    },
+  });
 
   const handleAcceptJob = (id) => {
     setAcceptedJobId(id);
     acceptInstantBooking(id);
+  };
+
+  const handleAction = (id, actionFn) => {
+    setActionJobId(id);
+    actionFn(id);
   };
 
   return (
@@ -69,7 +108,7 @@ const JobBoardTab = () => {
               className="bg-surface-primary border border-border-primary rounded-3xl p-6 relative overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl hover:border-black transition-all duration-300 group"
             >
               {/* Accepted Overlay */}
-              <AnimatePresence>
+              {/* <AnimatePresence>
                 {acceptedJobId === (job.id || job.uuid) && (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -86,7 +125,7 @@ const JobBoardTab = () => {
                     </p>
                   </motion.div>
                 )}
-              </AnimatePresence>
+              </AnimatePresence> */}
 
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Left Side: Job Details */}
@@ -94,8 +133,22 @@ const JobBoardTab = () => {
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="px-2.5 py-1 bg-surface-dark text-text-inverted text-[10px] font-bold uppercase tracking-wider rounded-md">
-                          New Request
+                        <span
+                          className={`px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md ${
+                            job.status === "NO_PROVIDER"
+                              ? "bg-surface-dark text-text-inverted"
+                              : job.status === "ACCEPTED"
+                                ? "bg-blue-100 text-blue-700"
+                                : job.status === "IN_PROGRESS"
+                                  ? "bg-amber-100 text-amber-700"
+                                  : job.status === "COMPLETED"
+                                    ? "bg-emerald-100 text-emerald-700"
+                                    : "bg-zinc-100 text-zinc-700"
+                          }`}
+                        >
+                          {job.status === "NO_PROVIDER"
+                            ? "New Request"
+                            : job.status}
                         </span>
                         {job.urgency === "High" && (
                           <span className="px-2.5 py-1 bg-red-500/10 text-red-500 text-[10px] font-bold uppercase tracking-wider rounded-md flex items-center gap-1">
@@ -104,11 +157,15 @@ const JobBoardTab = () => {
                         )}
                       </div>
                       <h3 className="text-xl font-bold text-text-primary tracking-tight">
-                        {job.service?.name || job.service_name || "Service Request"}
+                        {job.service?.name ||
+                          job.service_name ||
+                          "Service Request"}
                       </h3>
                       <p className="text-sm font-medium text-zinc-500 flex items-center gap-1.5 mt-1">
                         <ShieldCheck size={14} className="text-emerald-500" />
-                        Customer #{job.user?.user_uuid?.split("-")[0] || "1234"} (Identity Protected)
+                        Customer #{job.user?.user_uuid?.split("-")[0] ||
+                          "1234"}{" "}
+                        (Identity Protected)
                       </p>
                     </div>
                   </div>
@@ -120,7 +177,10 @@ const JobBoardTab = () => {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex items-center gap-2 text-sm font-bold text-text-primary">
                       <MapPin size={16} className="text-zinc-400" />
-                      {job.address?.locality || job.address?.city || job.address?.address_line || "Customer Location"}
+                      {job.address?.locality ||
+                        job.address?.city ||
+                        job.address?.address_line ||
+                        "Customer Location"}
                       {job.distance_km ? ` (${job.distance_km} km)` : ""}
                     </div>
                     <div className="flex items-center gap-2 text-sm font-bold text-text-primary">
@@ -145,13 +205,54 @@ const JobBoardTab = () => {
                     </p>
                   </div>
 
-                  <button
-                    onClick={() => handleAcceptJob(job.id || job.uuid)}
-                    disabled={isAcceptingInstant}
-                    className="w-full py-3.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-lg active:scale-95 cursor-pointer disabled:opacity-50"
-                  >
-                    {isAcceptingInstant && acceptedJobId === (job.id || job.uuid) ? "Accepting..." : "Accept Job"}
-                  </button>
+                  {(!job.status ||
+                    job.status === "NO_PROVIDER" ||
+                    job.status === "PENDING") && (
+                    <button
+                      onClick={() => handleAcceptJob(job.id || job.uuid)}
+                      disabled={isAcceptingInstant}
+                      className="w-full py-3.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-lg active:scale-95 cursor-pointer disabled:opacity-50"
+                    >
+                      {isAcceptingInstant &&
+                      acceptedJobId === (job.id || job.uuid)
+                        ? "Accepting..."
+                        : "Accept Job"}
+                    </button>
+                  )}
+
+                  {job.status === "ACCEPTED" && (
+                    <div className="flex flex-col gap-2 w-full mt-2">
+                      <button
+                        onClick={() =>
+                          handleAction(job.id || job.uuid, startJob)
+                        }
+                        disabled={isStarting}
+                        className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 cursor-pointer"
+                      >
+                        <Play size={16} />
+                        {isStarting && actionJobId === (job.id || job.uuid)
+                          ? "Starting..."
+                          : "Start Job"}
+                      </button>
+                    </div>
+                  )}
+
+                  {job.status === "IN_PROGRESS" && (
+                    <div className="flex flex-col gap-2 w-full mt-2">
+                      <button
+                        onClick={() =>
+                          handleAction(job.id || job.uuid, completeJob)
+                        }
+                        disabled={isCompleting}
+                        className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-md disabled:opacity-50 cursor-pointer"
+                      >
+                        <CheckCircle size={16} />
+                        {isCompleting && actionJobId === (job.id || job.uuid)
+                          ? "Completing..."
+                          : "Complete Job"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -178,4 +279,3 @@ const JobBoardTab = () => {
 };
 
 export default JobBoardTab;
-

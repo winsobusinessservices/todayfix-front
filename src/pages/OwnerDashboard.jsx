@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link, Outlet, useLocation, useNavigate } from "react-router";
 import {
@@ -25,6 +25,7 @@ import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
 import toast from "react-hot-toast";
 import Icon from "../assets/TF_LIGHT_LOGO_TRANS.png";
+import { IMAGE_URL } from "../services/axiosClient";
 import NotificationDrawer from "../components/notifications/NotificationDrawer";
 
 const SIDEBAR_ITEMS = [
@@ -50,11 +51,41 @@ const OwnerDashboard = () => {
   const [notificationData, setNotificationData] = useState(null);
   const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+  const accessToken = useUserStore((state) => state.accessToken);
   
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const refreshToken = useUserStore((state) => state.refreshToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
+
+  // WebSocket Integration for Notifications
+  useEffect(() => {
+    if (!accessToken) return;
+    let wsBaseUrl = IMAGE_URL || "http://localhost:8000";
+    if (wsBaseUrl.startsWith("https://")) {
+      wsBaseUrl = wsBaseUrl.replace("https://", "wss://");
+    } else if (wsBaseUrl.startsWith("http://")) {
+      wsBaseUrl = wsBaseUrl.replace("http://", "ws://");
+    }
+
+    const ws = new WebSocket(`${wsBaseUrl}/ws/notifications/?token=${accessToken}`);
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === "new_booking") {
+          setNotificationData(data.data);
+          setShowMockPopup(true);
+        }
+      } catch (err) {
+        console.error("Error parsing notification ws data:", err);
+      }
+    };
+
+    return () => {
+      ws.close();
+    };
+  }, [accessToken]);
 
   const {data: profilesData, error, isLoading} = useQuery({
     queryKey: ["businessProfiles"],

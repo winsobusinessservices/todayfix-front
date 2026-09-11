@@ -178,7 +178,8 @@ const BookingsTab = () => {
                   {booking.user && (
                     <p className="text-zinc-400 font-medium uppercase">
                       Client -{" "}
-                      {booking?.status === "IN_PROGRESS" || booking?.status === "COMPLETED"
+                      {booking?.status === "IN_PROGRESS" ||
+                      booking?.status === "COMPLETED"
                         ? booking?.user?.first_name +
                           " " +
                           booking?.user?.last_name
@@ -202,8 +203,20 @@ const BookingsTab = () => {
                   </div>
                   <div className="flex items-start sm:items-center gap-2">
                     <MapPin className="w-4 h-4 text-purple-500 mt-0.5 sm:mt-0 flex-shrink-0" />
-                    {booking.status === "IN_PROGRESS" || booking.status === "COMPLETED" ? (
-                      <span className="text-zinc-300 line-clamp-2" title={[booking.address?.address_line, booking.address?.locality, booking.address?.city, booking.address?.state, booking.address?.pincode].filter(Boolean).join(", ")}>
+                    {booking.status === "IN_PROGRESS" ||
+                    booking.status === "COMPLETED" ? (
+                      <span
+                        className="text-zinc-300 line-clamp-2"
+                        title={[
+                          booking.address?.address_line,
+                          booking.address?.locality,
+                          booking.address?.city,
+                          booking.address?.state,
+                          booking.address?.pincode,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")}
+                      >
                         {[
                           booking.address?.address_line,
                           booking.address?.locality,
@@ -238,15 +251,20 @@ const BookingsTab = () => {
                 </div>
 
                 {/* Assigned Employee Details */}
-                {(booking.booking_employees?.length > 0 || booking.employee) && (
+                {(booking.booking_employees?.length > 0 ||
+                  booking.employee) && (
                   <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border-primary/50">
                     <div className="w-10 h-10 rounded-full bg-surface-secondary flex items-center justify-center border border-border-primary flex-shrink-0">
                       <User className="w-5 h-5 text-text-primary" />
                     </div>
                     <div>
-                      <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">Assigned To</p>
+                      <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">
+                        Assigned To
+                      </p>
                       <p className="text-sm font-bold text-zinc-200">
-                        {booking.booking_employees?.[0]?.name || booking.employee?.name || "Employee"}
+                        {booking.booking_employees?.[0]?.name ||
+                          booking.employee?.name ||
+                          "Employee"}
                       </p>
                     </div>
                   </div>
@@ -262,7 +280,7 @@ const BookingsTab = () => {
                 {/* Conditional Actions based on status */}
                 <div className="w-full flex flex-wrap md:justify-end gap-2 mt-4 md:mt-0">
                   {booking.status === "PENDING" && (
-                    <>
+                    <div className="flex flex-col gap-2 w-full">
                       <button
                         onClick={() => acceptBooking(booking.uuid)}
                         disabled={isAccepting}
@@ -279,10 +297,11 @@ const BookingsTab = () => {
                         <X className="w-4 h-4" />{" "}
                         {isDeclining ? "Declining..." : "Decline Job"}
                       </button>
-                    </>
+                    </div>
                   )}
                   {booking.status === "CONFIRMED" && (
-                    <>
+                        <div className="flex flex-col gap-2 w-full">
+                    
                       {isIndividual ? (
                         <button
                           onClick={() => startBooking(booking.uuid)}
@@ -293,6 +312,7 @@ const BookingsTab = () => {
                           {isStarting ? "Starting..." : "Start Job"}
                         </button>
                       ) : !(
+              
                         booking.booking_employees?.length > 0 ||
                         booking.employee
                       ) ? (
@@ -338,15 +358,15 @@ const BookingsTab = () => {
                           </button>
                         </>
                       )}
-                    </>
+                    </div>
                   )}
 
                   {booking.status === "IN_PROGRESS" && (
-                    <>
+                    <div className="flex flex-col gap-2 w-full">
                       <button
                         onClick={() =>
                           setActiveModal({
-                            type: "contact",
+                            type: "chat",
                             bookingId: booking.uuid,
                           })
                         }
@@ -362,11 +382,11 @@ const BookingsTab = () => {
                           })
                         }
                         disabled={isCompleting}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm rounded-xl hover:from-emerald-500 hover:to-teal-500 transition-all shadow-md shadow-emerald-500/25 cursor-pointer disabled:opacity-50"
+                        className="flex-1 md:flex-none text-nowrap flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm rounded-xl hover:from-emerald-500 hover:to-teal-500 transition-all shadow-md shadow-emerald-500/25 cursor-pointer disabled:opacity-50"
                       >
                         <CheckCircle2 className="w-4 h-4" /> Finish Job
                       </button>
-                    </>
+                    </div>
                   )}
                 </div>
               </div>
@@ -388,9 +408,9 @@ const BookingsTab = () => {
       </div>
 
       <AnimatePresence>
-        {activeModal?.type === "contact" && (
+        {/* {activeModal?.type === "contact" && (
           <Contact activeModal={activeModal} setActiveModal={setActiveModal} />
-        )}
+        )} */}
 
         {activeModal?.type === "chat" && (
           <Chat
