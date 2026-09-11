@@ -98,9 +98,9 @@ const AdminVerificationTab = () => {
             <p className="font-bold text-text-primary text-sm">
               {row.business_type}
             </p>
-            <p className="text-xs text-text-secondary">
+            {/* <p className="text-xs text-text-secondary">
               {row.location || "N/A"}
-            </p>
+            </p> */}
           </div>
         </div>
       ),

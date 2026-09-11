@@ -57,8 +57,14 @@ const OwnerDashboard = () => {
   // WebSocket Integration for Notifications
   useEffect(() => {
     if (!accessToken) return;
-    // Connect to notifications websocket, passing token
-    const ws = new WebSocket(`${IMAGE_URL}/ws/notifications/?token=${accessToken}`);
+    let wsBaseUrl = IMAGE_URL || "http://localhost:8000";
+    if (wsBaseUrl.startsWith("https://")) {
+      wsBaseUrl = wsBaseUrl.replace("https://", "wss://");
+    } else if (wsBaseUrl.startsWith("http://")) {
+      wsBaseUrl = wsBaseUrl.replace("http://", "ws://");
+    }
+
+    const ws = new WebSocket(`${wsBaseUrl}/ws/notifications/?token=${accessToken}`);
 
     ws.onmessage = (event) => {
       try {

@@ -37,7 +37,12 @@ const EmployeesTab = () => {
     queryKey: ["businessProfiles"],
     queryFn: businessApi.getProfiles,
   });
-  const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
+  const profile = Array.isArray(profilesData)
+    ? profilesData[0]
+    : profilesData?.data?.[0] ||
+      profilesData?.results?.[0] ||
+      profilesData ||
+      {};
   const currentBusinessType =
     profile?.business_type?.toUpperCase() || "INDIVIDUAL";
 
@@ -57,6 +62,50 @@ const EmployeesTab = () => {
   const employees =
     employeesData?.results || employeesData?.data || employeesData || [];
 
+  const { data: availabilitiesData } = useQuery({
+    queryKey: ["businessAvailability", "ALL_EMPLOYEES"],
+    queryFn: () => businessApi.getAvailability(),
+    enabled: currentBusinessType !== "INDIVIDUAL",
+  });
+
+  const availabilities = Array.isArray(availabilitiesData)
+    ? availabilitiesData
+    : availabilitiesData?.data || [];
+
+  const { mutate: createAvailability } = useMutation({
+    mutationFn: businessApi.createAvailability,
+    onSuccess: () => queryClient.invalidateQueries(["businessAvailability"]),
+    onError: () => toast.error("Failed to update availability"),
+  });
+
+  const { mutate: updateAvailability } = useMutation({
+    mutationFn: businessApi.updateAvailability,
+    onSuccess: () => queryClient.invalidateQueries(["businessAvailability"]),
+    onError: () => toast.error("Failed to update availability"),
+  });
+
+  const handleToggleAvailability = (employee) => {
+    const currentAvail = availabilities.find(
+      (a) => a.employee_uuid === employee.employee_uuid,
+    );
+    const isCurrentlyAvailable = currentAvail?.status === "AVAILABLE";
+
+    if (currentAvail) {
+      updateAvailability({
+        id: currentAvail.provider_availability_uuid,
+        data: {
+          status: isCurrentlyAvailable ? "UNAVAILABLE" : "AVAILABLE",
+          employee_uuid: employee.employee_uuid,
+        },
+      });
+    } else {
+      createAvailability({
+        status: "AVAILABLE",
+        employee_uuid: employee.employee_uuid,
+      });
+    }
+  };
+
   const { mutate: createEmployee, isPending: isCreating } = useMutation({
     mutationFn: businessApi.createEmployee,
     onSuccess: () => {
@@ -71,9 +120,12 @@ const EmployeesTab = () => {
       setIsAddModalOpen(false);
     },
     onError: (error) => {
-      const msg = error?.response?.data?.message || error?.response?.data?.detail || "Failed to create employee"
-      toast.error(msg)
-    }
+      const msg =
+        error?.response?.data?.message ||
+        error?.response?.data?.detail ||
+        "Failed to create employee";
+      toast.error(msg);
+    },
   });
 
   const { mutate: updateEmployee, isPending: isUpdating } = useMutation({
@@ -196,6 +248,37 @@ const EmployeesTab = () => {
       render: (row) => (
         <StatusBadge status={row.is_active ? "Active" : "Inactive"} />
       ),
+    },
+    {
+      header: "Online (Instant)",
+      accessor: "availability",
+      render: (row) => {
+        const avail = availabilities.find(
+          (a) => a.employee_uuid === row.employee_uuid,
+        );
+        const isAvailable = avail?.status === "AVAILABLE";
+        return (
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => handleToggleAvailability(row)}
+              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-main focus:ring-offset-2 ${
+                isAvailable ? "bg-green-500" : "bg-zinc-300"
+              }`}
+            >
+              <span className="sr-only">Toggle availability</span>
+              <span
+                aria-hidden="true"
+                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                  isAvailable ? "translate-x-4" : "translate-x-0.5"
+                }`}
+              />
+            </button>
+            <span className="text-sm font-medium text-zinc-600">
+              {isAvailable ? "Online" : "Offline"}
+            </span>
+          </div>
+        );
+      },
     },
     {
       header: "Added On",

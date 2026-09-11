@@ -643,7 +643,7 @@ const AddressSelector = () => {
 
 // Step 4: Success
 const BookingSuccess = () => {
-  const { bookingId, closeBooking, selectedService } = useBookingStore();
+  const { bookingId, closeBooking, selectedService, bookingType } = useBookingStore();
   const navigate = useNavigate();
 
   return (
@@ -652,10 +652,12 @@ const BookingSuccess = () => {
         <CheckCircle2 className="w-10 h-10 text-green-500" />
       </div>
       <h2 className="text-2xl font-black text-text-primary mb-2">
-        Booking Confirmed!
+        {bookingType === "INSTANT" ? "Request Broadcasted!" : "Booking Confirmed!"}
       </h2>
       <p className="text-text-secondary mb-6">
-        Your request for {selectedService?.name} is placed.
+        {bookingType === "INSTANT" 
+          ? `Searching for a provider for ${selectedService?.name}...`
+          : `Your request for ${selectedService?.name} is placed.`}
       </p>
       <div className="bg-surface-secondary rounded-xl p-4 mb-8">
         <p className="text-xs text-text-muted font-bold uppercase mb-1">
@@ -668,11 +670,15 @@ const BookingSuccess = () => {
       <button
         onClick={() => {
           closeBooking();
-          navigate("/profile"); // or wherever they track bookings
+          if (bookingType === "INSTANT") {
+            navigate(`/track/instant/${bookingId}`);
+          } else {
+            navigate("/profile"); 
+          }
         }}
         className="w-full py-4 bg-surface-dark text-text-inverted font-bold rounded-xl shadow-md"
       >
-        View My Bookings
+        {bookingType === "INSTANT" ? "Track My Booking" : "View My Bookings"}
       </button>
     </div>
   );

@@ -3,7 +3,6 @@ import {
   CalendarDays,
   Clock,
   AlertCircle,
-  ChevronDown,
   Plus,
   Trash2,
   Edit2,
@@ -139,8 +138,6 @@ const SlotsTab = () => {
   const allSchedules = Array.isArray(schedulesData)
     ? schedulesData
     : schedulesData?.results || [];
-
-    console.log( allEmployees)
 
   // Employee Management Check
   if (

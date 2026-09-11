@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { IndianRupee, MapPin, Calendar, Search } from "lucide-react";
 import { Link, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import {
-  userBookingHistory,
-} from "../../services/userApi";
+import { userBookingHistory } from "../../services/userApi";
 
 const ProfileServicesHistory = () => {
   const [filter, setFilter] = useState("All");
@@ -170,6 +168,19 @@ const ProfileServicesHistory = () => {
               {service.status === "NO_PROVIDER"
                 ? "NO PROVIDER"
                 : service.status}
+              {/* {service.booking_type === "INSTANT" &&
+                !["COMPLETED", "CANCELLED", "REJECTED"].includes(
+                  service.status,
+                ) && ( */}
+              <button
+                onClick={() =>
+                  navigate(`/track/instant/${service.booking_uuid}`)
+                }
+                className="px-3 py-1.5 bg-blue-600/10 text-blue-600 font-bold rounded-xl border border-blue-600/20 hover:bg-blue-600/20 transition-colors text-xs"
+              >
+                Track
+              </button>
+              {/* )} */}
             </span>
           </div>
 
@@ -245,12 +256,6 @@ const ProfileServicesHistory = () => {
           </div>
         </div>
       ))}
-
-      {/* {filteredHistory.length === 0 && (
-          
-        )} */}
-      {/* </div> */}
-
       {/* Details Modal */}
       {detailsModal && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
