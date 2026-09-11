@@ -24,7 +24,9 @@ import { businessApi } from "../services/businessApi";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
 import toast from "react-hot-toast";
+import Icon from "../assets/TF_LIGHT_LOGO_TRANS.png";
 import { IMAGE_URL } from "../services/axiosClient";
+import NotificationDrawer from "../components/notifications/NotificationDrawer";
 
 const SIDEBAR_ITEMS = [
   { id: "", label: "Overview", icon: LayoutDashboard },
@@ -47,11 +49,13 @@ const OwnerDashboard = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [showMockPopup, setShowMockPopup] = useState(false); 
   const [notificationData, setNotificationData] = useState(null);
+  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+  const accessToken = useUserStore((state) => state.accessToken);
   
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const refreshToken = useUserStore((state) => state.refreshToken);
-  const accessToken = useUserStore((state) => state.accessToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
 
   // WebSocket Integration for Notifications
@@ -181,7 +185,7 @@ const OwnerDashboard = () => {
       to="/"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary"
     >
-      <img src="/tfix.png" alt="logo" width={55} height={55} />
+      <img src={Icon} alt="logo" width={55} height={55} />
       {/* <video src="logo-vid.mp4" autoPlay muted loop height={55} width={55} className="rounded-md"></video> */}
       <Logo />
     </Link>
@@ -323,9 +327,17 @@ const OwnerDashboard = () => {
               </button>
             </div>
 
-            <button className="w-10 h-10 rounded-full bg-surface-secondary border border-border-primary flex items-center justify-center text-text-primary hover:bg-border-primary transition-colors relative cursor-pointer">
+            <button
+              type="button"
+              onClick={() => setIsNotificationDrawerOpen(true)}
+              aria-label="Open notifications"
+              aria-expanded={isNotificationDrawerOpen}
+              className="w-10 h-10 rounded-full bg-surface-secondary border border-border-primary flex items-center justify-center text-text-primary hover:bg-border-primary transition-colors relative cursor-pointer"
+            >
               <Bell size={18} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-text-primary rounded-full border border-surface-primary"></span>
+              {unreadNotificationCount > 0 && (
+                <span className="absolute top-2 right-2 w-2 h-2 bg-text-primary rounded-full border border-surface-primary" />
+              )}
             </button>
           </div>
         </header>
@@ -341,11 +353,23 @@ const OwnerDashboard = () => {
               transition={{ duration: 0.3, ease: "easeOut" }}
               className="h-full max-w-6xl mx-auto"
             >
-              <Outlet context={profilesData?.data[0]}/>
+              <Outlet context={profile} />
             </motion.div>
           </AnimatePresence>
         </main>
       </div>
+
+      <NotificationDrawer
+        open={isNotificationDrawerOpen}
+        onClose={() => setIsNotificationDrawerOpen(false)}
+        onUnreadCountChange={setUnreadNotificationCount}
+        onRealtimeNotification={(message) => {
+          if (message.type === "new_booking") {
+            setNotificationData(message.data);
+            setShowMockPopup(true);
+          }
+        }}
+      />
 
       <AnimatePresence>
         {showMockPopup && (

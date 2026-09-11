@@ -11,6 +11,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useOutletContext } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookingApi } from "../../services/bookingApi";
 import toast from "react-hot-toast";
@@ -41,6 +42,12 @@ const StatusBadge = ({ status }) => {
 
 const BookingsTab = () => {
   const queryClient = useQueryClient();
+  const businessProfile = useOutletContext();
+  const businessType = businessProfile?.business_type?.toUpperCase();
+  const isIndividual =
+    !businessType ||
+    businessType === "INDIVIDUAL" ||
+    businessType === "INDIVISUAL";
   const [activeTab, setActiveTab] = useState("SCHEDULED"); // "SCHEDULED" | "INSTANT"
   const [filter, setFilter] = useState("ALL");
   const [activeModal, setActiveModal] = useState(null); // { type: 'otp' | 'contact' | 'chat', bookingId: string }
@@ -293,8 +300,19 @@ const BookingsTab = () => {
                     </div>
                   )}
                   {booking.status === "CONFIRMED" && (
-                    <div className="flex flex-col gap-2 w-full">
-                      {!(
+                        <div className="flex flex-col gap-2 w-full">
+                    
+                      {isIndividual ? (
+                        <button
+                          onClick={() => startBooking(booking.uuid)}
+                          disabled={isStarting}
+                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:opacity-90 transition-all shadow-md cursor-pointer disabled:opacity-50"
+                        >
+                          <Clock className="w-4 h-4" />{" "}
+                          {isStarting ? "Starting..." : "Start Job"}
+                        </button>
+                      ) : !(
+              
                         booking.booking_employees?.length > 0 ||
                         booking.employee
                       ) ? (
@@ -402,7 +420,7 @@ const BookingsTab = () => {
           />
         )}
 
-        {activeModal?.type === "assign" && (
+        {activeModal?.type === "assign" && !isIndividual && (
           <AssignEmployee
             activeModal={activeModal}
             setActiveModal={setActiveModal}
