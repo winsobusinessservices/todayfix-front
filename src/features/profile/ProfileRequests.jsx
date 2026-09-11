@@ -13,8 +13,9 @@ import { useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookingApi } from "../../services/bookingApi";
 import toast from "react-hot-toast";
-import { Star, X } from "lucide-react";
+import { Star, X, MessageSquare } from "lucide-react";
 import { dateFormater } from "../../utils/dateFormater";
+import Chat from "../../components/modals/Chat";
 
 const StatusBadge = ({ status }) => {
   if (status === "PENDING") {
@@ -65,6 +66,7 @@ const ProfileRequests = ({ addresses }) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
+  const [activeModal, setActiveModal] = useState(null);
 
   // Review Modal State
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -216,24 +218,32 @@ const ProfileRequests = ({ addresses }) => {
               </div>
             </div>
             {/* Accepted Info Box */}
-            {req.status === "CONFIRMED" || "IN_PROGRESS" && req.business && (
-              <div className="mt-6 bg-surface-primary border border-blue-500/30 rounded-2xl p-4 flex items-start gap-3">
-                <AlertCircle
-                  className="text-blue-500 shrink-0 mt-0.5"
-                  size={18}
-                />
-                <div>
-                  <h4 className="text-sm font-bold text-blue-500 mb-1">
-                    Vendor Assigned
-                  </h4>
-                  <p className="text-sm text-zinc-400">
-                    <span className="text-text-primary font-bold">
-                      {req.business.name}
-                    </span>{" "}
-                    has been assigned to your request. They will contact you
-                    shortly on your registered mobile number.
-                  </p>
+            {(req.status === "CONFIRMED" || req.status === "IN_PROGRESS") && req.business && (
+              <div className="mt-6 bg-surface-primary border border-blue-500/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle
+                    className="text-blue-500 shrink-0 mt-0.5"
+                    size={18}
+                  />
+                  <div>
+                    <h4 className="text-sm font-bold text-blue-500 mb-1">
+                      Vendor Assigned
+                    </h4>
+                    <p className="text-sm text-zinc-400">
+                      <span className="text-text-primary font-bold">
+                        {req.business.name}
+                      </span>{" "}
+                      has been assigned to your request.
+                    </p>
+                  </div>
                 </div>
+                <button
+                  onClick={() => setActiveModal({ type: 'chat', bookingId: req.uuid })}
+                  className="px-5 py-2.5 bg-blue-500/10 text-blue-500 font-bold flex items-center gap-2 rounded-xl text-sm hover:bg-blue-500/20 transition-colors whitespace-nowrap border border-blue-500/20 shrink-0"
+                >
+                  <MessageSquare size={16} />
+                  Chat
+                </button>
               </div>
             )}
 
@@ -443,6 +453,16 @@ const ProfileRequests = ({ addresses }) => {
               </button>
             </motion.div>
           </div>
+        )}
+      </AnimatePresence>
+      {/* Chat Modal */}
+      <AnimatePresence>
+        {activeModal?.type === "chat" && (
+          <Chat
+            activeModal={activeModal}
+            setActiveModal={setActiveModal}
+            bookingsList={bookings}
+          />
         )}
       </AnimatePresence>
     </div>

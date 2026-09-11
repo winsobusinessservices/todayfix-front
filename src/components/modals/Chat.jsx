@@ -1,27 +1,43 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Phone, XCircle, Send } from "lucide-react";
+import {
+  Phone,
+  XCircle,
+  Send,
+  Circle,
+  Rotate3DIcon,
+  CheckCheck,
+  Check,
+  Pencil,
+  Trash2,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { chatApi } from "../../services/chatApi";
 import { useUserStore } from "../../store/userStore";
 import { IMAGE_URL } from "../../services/axiosClient";
 
-
 const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   const [newMessage, setNewMessage] = useState("");
+  const [editingMessage, setEditingMessage] = useState(null);
   const messagesEndRef = useRef(null);
   const queryClient = useQueryClient();
-  const { user } = useUserStore();
+  const { user, accessToken } = useUserStore();
   const currentUserId = user?.user_uuid || user?.id;
   const bookingId = activeModal?.bookingId;
 
   // Derive target user info from bookingsList if available
   const targetBooking = bookingsList?.find((b) => b.uuid === bookingId);
-  const targetName =
-    targetBooking?.user?.first_name + " " + targetBooking?.user?.last_name ||
-    "User";
+  const isCustomer =
+    targetBooking?.user?.id === currentUserId ||
+    targetBooking?.user?.user_uuid === currentUserId;
+  const targetName = isCustomer
+    ? targetBooking?.business?.name || "Service Provider"
+    : targetBooking?.user?.first_name + " " + targetBooking?.user?.last_name ||
+      "Customer";
 
-  const isChatDisabled = targetBooking && ["COMPLETED", "CANCELLED", "REJECTED"].includes(targetBooking.status);
+  const isChatDisabled =
+    targetBooking &&
+    ["COMPLETED", "CANCELLED", "REJECTED"].includes(targetBooking.status);
 
   // 1. Fetch Conversations
   const { data: conversations } = useQuery({
@@ -40,7 +56,7 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   const activeConversation = conversationList.find(
     (c) => c.scheduled_booking === bookingId || c.instant_booking === bookingId,
   );
-  console.log(conversationList);
+  // console.log(conversationList);
 
   // const conversationId = activeConversation?.conversation_uuid;
   const conversationId = "e05e66ca-3442-44a1-9cf5-3bbf22ff5181";
@@ -55,12 +71,12 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
     },
     enabled: !!conversationId,
   });
-  // console.log(messagesData);
-  
 
   const messagesList = Array.isArray(messagesData)
     ? messagesData
     : messagesData?.results || [];
+
+  // console.log(messagesList);
 
   // WebSocket Integration for Chat
   useEffect(() => {
@@ -74,13 +90,15 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
       wsBaseUrl = wsBaseUrl.replace("http://", "ws://");
     }
 
-    // Connect to chat websocket
-    const ws = new WebSocket(`${wsBaseUrl}/ws/chat/${conversationId}/`);
+    // Connect to chat websocket with token for authentication
+    const ws = new WebSocket(
+      `${wsBaseUrl}/ws/chat/${conversationId}/?token=${accessToken}`,
+    );
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       // Determine if it's a typing event or a message
-      if (data.type === 'typing_started' || data.type === 'typing_stopped') {
+      if (data.type === "typing_started" || data.type === "typing_stopped") {
         // Handle typing (could add a typing indicator state here in the future)
         return;
       }
@@ -123,13 +141,22 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
 
   // 3. Send Message Mutation
   const { mutate: sendMsg, isPending: isSending } = useMutation({
-    mutationFn: (text) =>
-      chatApi.sendMessage(conversationId, { text }),
+    mutationFn: (text) => chatApi.sendMessage(conversationId, { text }),
     onSuccess: () => {
-      // Invalidate to ensure consistency, though WebSocket will append it
-      // queryClient.invalidateQueries(["chatMessages", conversationId]);
       setNewMessage("");
     },
+  });
+
+  const { mutate: updateMsg, isPending: isUpdating } = useMutation({
+    mutationFn: ({ id, text }) => chatApi.updateMessage(id, { text }),
+    onSuccess: () => {
+      setNewMessage("");
+      setEditingMessage(null);
+    },
+  });
+
+  const { mutate: deleteMsg } = useMutation({
+    mutationFn: (id) => chatApi.deleteMessage(id),
   });
 
   // Scroll to bottom on new messages
@@ -139,9 +166,26 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
     }
   }, [messagesList]);
 
+  // Mark incoming messages as read
+  useEffect(() => {
+    messagesList.forEach((msg) => {
+      const senderId = msg.sender?.user_uuid || msg.sender?.id || msg.sender;
+      if (senderId !== currentUserId && !msg.is_read) {
+        chatApi.markMessageAsRead(msg.message_uuid || msg.id).catch(() => {});
+      }
+    });
+  }, [messagesList, currentUserId]);
+
   const handleSend = () => {
-    if (newMessage.trim() && conversationId && !isSending) {
-      sendMsg(newMessage.trim());
+    if (newMessage.trim() && conversationId && !isSending && !isUpdating) {
+      if (editingMessage) {
+        updateMsg({
+          id: editingMessage.message_uuid || editingMessage.id,
+          text: newMessage.trim(),
+        });
+      } else {
+        sendMsg(newMessage.trim());
+      }
     }
   };
 
@@ -205,32 +249,70 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
 
             {messagesList.toReversed().map((msg) => {
               // msg.sender might be an ID or an object. If it's an object, it usually has user_uuid or id
-              const senderId = msg.sender?.user_uuid || msg.sender?.id || msg.sender;
+              const senderId =
+                msg.sender?.user_uuid || msg.sender?.id || msg.sender;
               const isOutgoing = senderId === currentUserId;
-
               return (
                 <div
                   key={msg.message_uuid || msg.id}
                   className={`flex ${isOutgoing ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${
-                      isOutgoing
-                        ? "bg-text-primary text-surface-primary rounded-br-none"
-                        : "bg-surface-secondary border border-border-primary text-text-primary rounded-bl-none"
-                    }`}
+                    className={`flex items-center gap-2 group ${isOutgoing ? "flex-row-reverse" : "flex-row"}`}
                   >
-                    <p className="text-sm font-medium leading-relaxed">
-                      {msg.text}
-                    </p>
-                    <p className={`text-[10px] mt-1 text-right font-bold ${isOutgoing ? "text-surface-secondary/70" : "text-zinc-500"}`}>
-                      {msg.created_at
-                        ? new Date(msg.created_at).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })
-                        : ""}
-                    </p>
+                    <div
+                      className={`w-fit rounded-xl p-2 shadow-sm ${
+                        isOutgoing
+                          ? "bg-text-primary text-surface-primary rounded-br-none"
+                          : "bg-surface-secondary border border-border-primary text-text-primary rounded-bl-none"
+                      }`}
+                    >
+                      <p className="text-sm font-medium leading-relaxed">
+                        {msg.text}
+                      </p>
+
+                      <div className="flex gap-1 items-center">
+                        {msg.isEdited && (
+                          <span className="italic text-[10px]">Edited</span>
+                        )}
+                        <p
+                          className={`text-[10px] mt-1 text-right font-bold ${isOutgoing ? "text-surface-secondary/70" : "text-zinc-500"}`}
+                        >
+                          {msg.created_at
+                            ? new Date(msg.created_at).toLocaleTimeString([], {
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })
+                            : ""}
+                        </p>
+                        {msg?.is_read ? (
+                          <CheckCheck className="h-3" />
+                        ) : (
+                          <Check className="h-3" />
+                        )}
+                      </div>
+                    </div>
+                    {isOutgoing && !isChatDisabled && (
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity flex flex-col gap-2">
+                        <button
+                          onClick={() => {
+                            setEditingMessage(msg);
+                            setNewMessage(msg.text);
+                          }}
+                          className="text-zinc-400 hover:text-blue-500 cursor-pointer"
+                          title="Edit"
+                        >
+                          <Pencil size={14} />
+                        </button>
+                        <button
+                          onClick={() => deleteMsg(msg.message_uuid || msg.id)}
+                          className="text-zinc-400 hover:text-red-500 cursor-pointer"
+                          title="Delete"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               );
@@ -242,30 +324,56 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
           <div className="p-4 bg-surface-secondary border-t border-border-primary shrink-0">
             {isChatDisabled ? (
               <div className="text-center text-sm font-bold text-zinc-500 py-3 bg-surface-primary border border-border-primary rounded-xl">
-                This booking is {targetBooking?.status.toLowerCase()}, chat is closed.
+                This booking is {targetBooking?.status.toLowerCase()}, chat is
+                closed.
               </div>
             ) : (
-              <div className="flex items-center gap-2 relative">
-                <input
-                  type="text"
-                  placeholder="Type your message..."
-                  value={newMessage}
-                  disabled={!conversationId || isSending}
-                  onChange={(e) => setNewMessage(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && newMessage.trim()) {
-                      handleSend();
+              <div className="flex flex-col gap-2 relative">
+                {editingMessage && (
+                  <div className="flex items-center justify-between bg-surface-primary border border-blue-500/30 rounded-xl px-4 py-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <Pencil size={12} className="text-blue-500" />
+                      <span className="text-zinc-500">Editing Message</span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setEditingMessage(null);
+                        setNewMessage("");
+                      }}
+                      className="text-zinc-400 hover:text-text-primary"
+                    >
+                      <XCircle size={14} />
+                    </button>
+                  </div>
+                )}
+                <div className="flex items-center gap-2 relative">
+                  <input
+                    type="text"
+                    placeholder="Type your message..."
+                    value={newMessage}
+                    disabled={!conversationId || isSending || isUpdating}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && newMessage.trim()) {
+                        handleSend();
+                      }
+                    }}
+                    className="flex-1 bg-surface-primary border border-border-primary rounded-2xl pl-5 pr-14 py-4 text-sm font-medium text-text-primary focus:outline-none focus:border-text-primary transition-colors shadow-inner disabled:opacity-50"
+                  />
+                  <button
+                    onClick={handleSend}
+                    disabled={
+                      !newMessage.trim() ||
+                      !conversationId ||
+                      isSending ||
+                      isUpdating ||
+                      isChatDisabled
                     }
-                  }}
-                  className="flex-1 bg-surface-primary border border-border-primary rounded-2xl pl-5 pr-14 py-4 text-sm font-medium text-text-primary focus:outline-none focus:border-text-primary transition-colors shadow-inner disabled:opacity-50"
-                />
-                <button
-                  onClick={handleSend}
-                  disabled={!newMessage.trim() || !conversationId || isSending || isChatDisabled}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-text-primary text-surface-primary rounded-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100 shadow-md"
-                >
-                  <Send className="w-5 h-5" />
-                </button>
+                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-text-primary text-surface-primary rounded-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100 shadow-md cursor-pointer"
+                  >
+                    <Send className="w-5 h-5" />
+                  </button>
+                </div>
               </div>
             )}
           </div>
