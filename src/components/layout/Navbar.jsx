@@ -10,8 +10,11 @@ import {
 import { cn } from "../../utils/cn";
 import Logo from "../brand/Logo";
 import { useUserStore } from "../../store/userStore";
-import Icon from "../../assets/tfix.png";
+import Icon from "../../assets/TF_LIGHT_LOGO_TRANS.png";
 import { areasData } from "../../data/collectedData";
+import { Bell } from "lucide-react";
+import NotificationDrawer from "../notifications/NotificationDrawer";
+import ProfileMenu from "./ProfileMenu";
 
 export default function Navbar() {
   const ref = useRef(null);
@@ -22,6 +25,8 @@ export default function Navbar() {
   // State for dropdowns
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const navigate = useNavigate();
   const userData = useUserStore((state) => state.user);
 
@@ -60,7 +65,7 @@ export default function Navbar() {
   const logoMarkup = (
     <Link
       to="/"
-      className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary"
+      className="relative z-20 mr-2 flex shrink-0 items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary sm:mr-4"
     >
       <img src={Icon} alt="logo" width={55} height={55} />
       {/* <video src="logo-vid.mp4" autoPlay muted loop height={55} width={55} className="rounded-md"></video> */}
@@ -96,7 +101,7 @@ export default function Navbar() {
               setHoveredItem(null);
               setDropdownOpen(false);
             }}
-            className="absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-xl font-medium text-text-primary transition duration-200 lg:flex lg:space-x-2"
+            className="hidden min-w-0 flex-1 flex-row items-center justify-center space-x-1 whitespace-nowrap text-xl font-medium text-text-primary transition duration-200 lg:flex xl:space-x-2"
           >
             {navItems.map((item, idx) => {
               if (item.type === "dropdown") {
@@ -179,31 +184,23 @@ export default function Navbar() {
           </motion.div>
 
           {/* Desktop Buttons */}
-          <div className="flex items-center gap-4">
-            {loggedIn ? (
+          <div className="relative z-20 flex shrink-0 items-center justify-center gap-1 xl:gap-2">
+            {loggedIn && (
               <button
-                onClick={() => navigate("/profile")}
-                className={cn(buttonBase, buttonSecondary)}
+                type="button"
+                onClick={() => setIsNotificationDrawerOpen(true)}
+                aria-label="Open notifications"
+                aria-expanded={isNotificationDrawerOpen}
+                className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-transparent text-text-primary transition-colors hover:border-border-primary hover:bg-surface-secondary"
               >
-                <span className="">
-                  <svg viewBox="0 0 16 16" fill="#000000" height={30}>
-                    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                    <g
-                      id="SVGRepo_tracerCarrier"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    ></g>
-                    <g id="SVGRepo_iconCarrier">
-                      {" "}
-                      <path
-                        fill="#000000"
-                        fillRule="evenodd"
-                        d="M8,16 C12.4183,16 16,12.4183 16,8 C16,3.58172 12.4183,0 8,0 C3.58172,0 0,3.58172 0,8 C0,12.4183 3.58172,16 8,16 Z M12.9533,11.387 C13.6137,10.4231 14,9.25665 14,8 C14,4.68629 11.3137,2 8,2 C4.68629,2 2,4.68629 2,8 C2,9.25665 2.38632,10.4231 3.04668,11.387 C3.25368,10.0411 4.13147,8.91649 5.32791,8.36519 C5.11827,7.95568 5,7.49165 5,7 C5,5.34315 6.34315,4 8,4 C9.65685,4 11,5.34315 11,7 C11,7.49165 10.8817,7.95568 10.6721,8.36519 C11.8685,8.91649 12.7463,10.0411 12.9533,11.387 Z M11,13.1973 L11,12 C11,10.8954 10.1046,10 9,10 L7,10 C5.89543,10 5,10.8954 5,12 L5,13.1973 C5.88252,13.7078 6.90714,14 8,14 C9.09286,14 10.1175,13.7078 11,13.1973 Z M8,8 C8.55228,8 9,7.55228 9,7 C9,6.44772 8.55228,6 8,6 C7.44772,6 7,6.44772 7,7 C7,7.55228 7.44772,8 8,8 Z"
-                      ></path>{" "}
-                    </g>
-                  </svg>
-                </span>
+                <Bell size={20} />
+                {unreadNotificationCount > 0 && (
+                  <span className="absolute right-0 top-2 h-2 w-2 rounded-full border border-surface-primary bg-red-500" />
+                )}
               </button>
+            )}
+            {loggedIn ? (
+              <ProfileMenu user={userData} />
             ) : (
               <button
                 onClick={() => navigate("/login")}
@@ -268,17 +265,33 @@ export default function Navbar() {
           {/* Mobile Header (Logo + Toggle) */}
           <div className="flex w-full flex-row items-center justify-between">
             {logoMarkup}
-            {isMobileMenuOpen ? (
-              <IconX
-                className="cursor-pointer text-text-primary "
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              />
-            ) : (
-              <IconMenu2
-                className="cursor-pointer text-text-primary "
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              />
-            )}
+            <div className="flex items-center gap-3">
+              {loggedIn && (
+                <button
+                  type="button"
+                  onClick={() => setIsNotificationDrawerOpen(true)}
+                  aria-label="Open notifications"
+                  aria-expanded={isNotificationDrawerOpen}
+                  className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-text-primary hover:bg-surface-secondary"
+                >
+                  <Bell size={20} />
+                  {unreadNotificationCount > 0 && (
+                    <span className="absolute right-2 top-2 h-2 w-2 rounded-full border border-surface-primary bg-red-500" />
+                  )}
+                </button>
+              )}
+              {isMobileMenuOpen ? (
+                <IconX
+                  className="cursor-pointer text-text-primary"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                />
+              ) : (
+                <IconMenu2
+                  className="cursor-pointer text-text-primary"
+                  onClick={() => setIsMobileMenuOpen(true)}
+                />
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Dropdown */}
@@ -350,21 +363,11 @@ export default function Navbar() {
                 })}
                 <div className="flex w-full flex-col gap-4 mt-2">
                   {loggedIn ? (
-                    <button
-                      onClick={() => {
-                        setIsMobileMenuOpen(false);
-                        navigate("/profile");
-                      }}
-                      className={cn(
-                        buttonBase,
-                        buttonSecondary,
-                        "w-full shadow-sm ring-1 ring-black/5 text-text-primary",
-                      )}
-                    >
-                      <span className="flex items-end gap-1 justify-center">
-                        Profile
-                      </span>
-                    </button>
+                    <ProfileMenu
+                      user={userData}
+                      mobile
+                      onNavigate={() => setIsMobileMenuOpen(false)}
+                    />
                   ) : (
                     <button
                       onClick={() => {
@@ -431,6 +434,14 @@ export default function Navbar() {
           </AnimatePresence>
         </motion.div>
       </motion.div>
+
+      {loggedIn && (
+        <NotificationDrawer
+          open={isNotificationDrawerOpen}
+          onClose={() => setIsNotificationDrawerOpen(false)}
+          onUnreadCountChange={setUnreadNotificationCount}
+        />
+      )}
     </>
   );
 }

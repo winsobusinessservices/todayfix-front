@@ -1,4 +1,3 @@
-import { useState } from "react";
 import ProfileDetails from "../features/profile/ProfileDetails";
 import ProfileServicesHistory from "../features/profile/ProfileServicesHistory";
 import ProfileReviews from "../features/profile/ProfileReviews";
@@ -6,13 +5,19 @@ import ProfileRequests from "../features/profile/ProfileRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../services/authApi";
 import { userDetails, userReviews } from "../services/userApi";
-import { useNavigate } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState("requests");
+  const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const requestedTab = searchParams.get("tab");
+  const activeTab = ["requests", "profile", "history", "reviews"].includes(
+    requestedTab,
+  )
+    ? requestedTab
+    : "requests";
   const refreshToken = useUserStore((state) => state.refreshToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
   const queryClient = useQueryClient();
@@ -52,27 +57,21 @@ const Profile = () => {
     queryFn: userReviews,
   });
 
-  const { mutate, isPending, isError, error } = useMutation({
+  const finishLogout = () => {
+    clearAuth();
+    queryClient.clear();
+    navigate("/", { replace: true });
+    popup("Logout Successful", "You've been safely logged out.", "logout");
+  };
+
+  const { mutate, isPending } = useMutation({
     mutationFn: logout,
-    onSuccess: (response) => {
-      if (response.success) {
-        window.location.href = "/";
-        clearAuth();
-        queryClient.removeQueries(["user"]);
-        queryClient.removeQueries(["serviceHistory"]);
-        queryClient.removeQueries(["userReviews"]);
-        queryClient.removeQueries(["userPendingServices"]);
-        queryClient.removeQueries(["addresses"]);
-        popup("Logout Successful", "You've been safely logged out.", "logout");
-      }
-    },
-    onError: (error) => {
-      popup("Error", error.message, "error");
-    },
+    onSettled: finishLogout,
   });
 
   const handleLogout = () => {
-    mutate(refreshToken);
+    if (refreshToken) mutate(refreshToken);
+    else finishLogout();
   };
 
   if (
@@ -83,7 +82,7 @@ const Profile = () => {
   }
 
   if (userDataError) {
-    console.log(error.message);
+    console.error(userDataError.message);
   }
 
   return (
@@ -94,7 +93,8 @@ const Profile = () => {
           <div className="absolute top-2 right-2">
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-1 lg:py-2 bg-red-500/10 text-red-500 font-bold rounded-xl border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer"
+              disabled={isPending}
+              className="flex items-center gap-2 px-4 py-1 lg:py-2 bg-red-500/10 text-red-500 font-bold rounded-xl border border-red-500/20 hover:bg-red-500/20 transition-colors cursor-pointer disabled:cursor-wait disabled:opacity-50"
             >
               <svg
                 className="w-4 h-4"
@@ -109,7 +109,7 @@ const Profile = () => {
                   d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                 />
               </svg>
-              Logout
+              {isPending ? "Logging out..." : "Logout"}
             </button>
           </div>
 
@@ -201,7 +201,7 @@ const Profile = () => {
           {["requests", "profile", "history", "reviews"].map((tab) => (
             <button
               key={tab}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => setSearchParams({ tab })}
               className={`px-8 py-3.5 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-300 flex-1 ${
                 activeTab === tab
                   ? "bg-surface-dark text-text-inverted shadow-md scale-[0.98]"
