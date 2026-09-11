@@ -7,6 +7,7 @@ import {
   IconBrandLinkedin,
 } from "@tabler/icons-react";
 import Logo from "../brand/Logo";
+import Icon from "../../assets/TF_LIGHT_LOGO_TRANS.png"
 import { footerData as footerLinkColumns } from "../../data/footerData";
 
 const Footer = () => {
@@ -18,7 +19,14 @@ const Footer = () => {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <span className="text-3xl font-extrabold text-text-primary tracking-tight">
+            <Link
+              to="/"
+              className="relative z-20 mr-2 flex shrink-0 items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary sm:mr-4"
+            >
+              <img src={Icon} alt="logo" width={55} height={55} />
+              {/* <video src="logo-vid.mp4" autoPlay muted loop height={55} width={55} className="rounded-md"></video> */}
               <Logo />
+            </Link>            
             </span>
           </div>
 

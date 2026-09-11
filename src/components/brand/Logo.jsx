@@ -7,12 +7,12 @@ const Logo = () => {
   const suffix = "ix".split("");
 
   return (
-    <div className="relative flex items-baseline text-xl font-extrabold tracking-tighter text-[#8E7692] select-none cursor-pointer group">
+    <div className="group relative flex cursor-pointer select-none items-baseline text-xl font-extrabold tracking-tighter text-text-primary">
       {/* Animate 'Today' */}
       {prefix.map((char, index) => (
         <span
           key={`prefix-${index}`}
-          className="animate-letter transition-colors duration-300 group-hover:text-[#8E7692]"
+          className="animate-letter transition-colors duration-300 group-hover:text-text-secondary"
           style={{ animationDelay: `${index * 0.05}s` }}
         >
           {char}
@@ -21,18 +21,18 @@ const Logo = () => {
 
       {/* Animated 'f' Wrapper */}
       <div className="relative mx-[2px] flex flex-col items-center justify-end z-20">
-        <span className="animate-f-special text-[#8E7692] drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]">
+        <span className="animate-f-special transition-colors duration-300 group-hover:text-text-secondary">
           f
         </span>
 
-        <div className="animate-bottom-line absolute bottom-[12%] w-full h-[4px] md:h-[6px] bg-[#8E7692] rounded-full"></div>
+        <div className="animate-bottom-line absolute bottom-[12%] h-[4px] w-full rounded-full bg-text-primary md:h-[6px]"></div>
       </div>
 
       {/* Animate 'ix' */}
       {suffix.map((char, index) => (
         <span
           key={`suffix-${index}`}
-          className="animate-letter transition-colors duration-300 group-hover:text-[#8E7692]"
+          className="animate-letter transition-colors duration-300 group-hover:text-text-secondary"
           // Continue the timing delay cascade after the 'f'
           style={{ animationDelay: `${(index + prefix.length + 1) * 0.05}s` }}
         >

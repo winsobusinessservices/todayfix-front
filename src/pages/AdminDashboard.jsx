@@ -29,8 +29,10 @@ import toast, { Toaster } from "react-hot-toast";
 import Logo from "../components/brand/Logo";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
+import Icon from "../assets/TF_LIGHT_LOGO_TRANS.png";
 import { logout } from "../services/authApi";
 import { useMutation } from "@tanstack/react-query";
+import NotificationDrawer from "../components/notifications/NotificationDrawer";
 
 const SIDEBAR_SECTIONS = [
   {
@@ -82,6 +84,8 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const refreshToken = useUserStore((state) => state.refreshToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
@@ -106,7 +110,7 @@ const AdminDashboard = () => {
       to="/"
       className="relative z-20 flex items-center space-x-2 text-sm font-normal text-text-primary"
     >
-      <img src="/tfix.png" alt="logo" width={45} height={45} />
+      <img src={Icon} alt="logo" width={45} height={45} />
       <Logo />
     </Link>
   );
@@ -314,13 +318,16 @@ const AdminDashboard = () => {
             </button>
 
             <button
-              onClick={() =>
-                toast("You have 3 unread notifications", { icon: "🔔" })
-              }
+              type="button"
+              onClick={() => setIsNotificationDrawerOpen(true)}
+              aria-label="Open notifications"
+              aria-expanded={isNotificationDrawerOpen}
               className="relative w-10 h-10 rounded-full flex items-center justify-center text-zinc-500 hover:bg-surface-secondary border border-transparent hover:border-border-primary transition-all cursor-pointer"
             >
               <Bell size={20} />
-              <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-surface-primary"></span>
+              {unreadNotificationCount > 0 && (
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-surface-primary" />
+              )}
             </button>
 
             <div className="h-8 w-px bg-border-secondary mx-1"></div>
@@ -355,6 +362,11 @@ const AdminDashboard = () => {
           </div>
         </main>
       </div>
+      <NotificationDrawer
+        open={isNotificationDrawerOpen}
+        onClose={() => setIsNotificationDrawerOpen(false)}
+        onUnreadCountChange={setUnreadNotificationCount}
+      />
     </div>
   );
 };

@@ -3,11 +3,9 @@
   0%,
   75% {
     transform: translateY(0) scale(1);
-    color: #8E7692;
   }
   80% {
     transform: translateY(-8px) scale(1.05);
-    color: #8E7692; /* slate-200 */
   }
   85% {
     transform: translateY(2px) scale(0.98);
@@ -15,7 +13,6 @@
   90%,
   100% {
     transform: translateY(0) scale(1);
-    color: #8E7692;
   }
 }
 
@@ -24,17 +21,14 @@
   0%,
   70% {
     transform: translateY(0) scaleY(1) rotate(0deg);
-    color: #8E7692;
   }
   75% {
     transform: translateY(10px) scaleY(0.05) scaleX(1.8);
     transform-origin: bottom center;
-    color: #8E7692;
   }
   82% {
     transform: translateY(0) scaleY(1.15) rotate(24deg);
     transform-origin: bottom center;
-    color: #8E7692;
   }
   88% {
     transform: translateY(0) scaleY(0.95) rotate(-12deg);
@@ -46,7 +40,6 @@
   }
   100% {
     transform: translateY(0) scaleY(1) rotate(0deg);
-    color: #8E7692;
   }
 }
 
@@ -61,7 +54,7 @@
   75% {
     opacity: 1;
     transform: scaleX(1);
-    box-shadow: 0 0 12px #8E7692;
+    box-shadow: 0 0 12px currentColor;
   }
   82% {
     opacity: 0;

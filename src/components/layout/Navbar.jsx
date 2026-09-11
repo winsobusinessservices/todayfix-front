@@ -10,8 +10,10 @@ import {
 import { cn } from "../../utils/cn";
 import Logo from "../brand/Logo";
 import { useUserStore } from "../../store/userStore";
-import Icon from "../../assets/tfix.png";
+import Icon from "../../assets/TF_LIGHT_LOGO_TRANS.png";
 import { areasData } from "../../data/collectedData";
+import { Bell } from "lucide-react";
+import NotificationDrawer from "../notifications/NotificationDrawer";
 
 export default function Navbar() {
   const ref = useRef(null);
@@ -22,6 +24,8 @@ export default function Navbar() {
   // State for dropdowns
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
+  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const navigate = useNavigate();
   const userData = useUserStore((state) => state.user);
 
@@ -30,6 +34,7 @@ export default function Navbar() {
   const hasBusiness =
     userData?.role === "BUSINESS" || userData?.role === "OWNER";
   const isAdmin = userData?.role === "ADMIN";
+  const isCustomer = loggedIn && userData?.role === "USER";
   // console.log(userData);
 
   const { scrollY } = useScroll({
@@ -60,7 +65,7 @@ export default function Navbar() {
   const logoMarkup = (
     <Link
       to="/"
-      className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary"
+      className="relative z-20 mr-2 flex shrink-0 items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary sm:mr-4"
     >
       <img src={Icon} alt="logo" width={55} height={55} />
       {/* <video src="logo-vid.mp4" autoPlay muted loop height={55} width={55} className="rounded-md"></video> */}
@@ -96,7 +101,7 @@ export default function Navbar() {
               setHoveredItem(null);
               setDropdownOpen(false);
             }}
-            className="absolute inset-0 hidden flex-1 flex-row items-center justify-center space-x-2 text-xl font-medium text-text-primary transition duration-200 lg:flex lg:space-x-2"
+            className="hidden min-w-0 flex-1 flex-row items-center justify-center space-x-1 whitespace-nowrap text-xl font-medium text-text-primary transition duration-200 lg:flex xl:space-x-2"
           >
             {navItems.map((item, idx) => {
               if (item.type === "dropdown") {
@@ -179,7 +184,21 @@ export default function Navbar() {
           </motion.div>
 
           {/* Desktop Buttons */}
-          <div className="flex items-center gap-4">
+          <div className="relative z-20 flex shrink-0 items-center justify-center gap-1 xl:gap-2">
+            {isCustomer && (
+              <button
+                type="button"
+                onClick={() => setIsNotificationDrawerOpen(true)}
+                aria-label="Open notifications"
+                aria-expanded={isNotificationDrawerOpen}
+                className="relative -mr-3 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-transparent text-text-primary transition-colors hover:border-border-primary hover:bg-surface-secondary xl:-mr-4"
+              >
+                <Bell size={20} />
+                {unreadNotificationCount > 0 && (
+                  <span className="absolute right-0 top-2 h-2 w-2 rounded-full border border-surface-primary bg-red-500" />
+                )}
+              </button>
+            )}
             {loggedIn ? (
               <button
                 onClick={() => navigate("/profile")}
@@ -268,17 +287,33 @@ export default function Navbar() {
           {/* Mobile Header (Logo + Toggle) */}
           <div className="flex w-full flex-row items-center justify-between">
             {logoMarkup}
-            {isMobileMenuOpen ? (
-              <IconX
-                className="cursor-pointer text-text-primary "
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              />
-            ) : (
-              <IconMenu2
-                className="cursor-pointer text-text-primary "
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              />
-            )}
+            <div className="flex items-center gap-3">
+              {isCustomer && (
+                <button
+                  type="button"
+                  onClick={() => setIsNotificationDrawerOpen(true)}
+                  aria-label="Open notifications"
+                  aria-expanded={isNotificationDrawerOpen}
+                  className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-text-primary hover:bg-surface-secondary"
+                >
+                  <Bell size={20} />
+                  {unreadNotificationCount > 0 && (
+                    <span className="absolute right-2 top-2 h-2 w-2 rounded-full border border-surface-primary bg-red-500" />
+                  )}
+                </button>
+              )}
+              {isMobileMenuOpen ? (
+                <IconX
+                  className="cursor-pointer text-text-primary"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                />
+              ) : (
+                <IconMenu2
+                  className="cursor-pointer text-text-primary"
+                  onClick={() => setIsMobileMenuOpen(true)}
+                />
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Dropdown */}
@@ -431,6 +466,14 @@ export default function Navbar() {
           </AnimatePresence>
         </motion.div>
       </motion.div>
+
+      {isCustomer && (
+        <NotificationDrawer
+          open={isNotificationDrawerOpen}
+          onClose={() => setIsNotificationDrawerOpen(false)}
+          onUnreadCountChange={setUnreadNotificationCount}
+        />
+      )}
     </>
   );
 }
