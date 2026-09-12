@@ -103,7 +103,7 @@ const ProfileServicesHistory = () => {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg text-sm font-bold flex-1 sm:flex-none transition-colors ${filter === f ? "bg-surface-primary shadow-sm text-text-primary" : "text-text-secondary hover:text-text-primary"}`}
+              className={`px-4 py-2 rounded-lg text-sm font-bold flex-1 sm:flex-none transition-colors ${filter === f ? "btn-primary shadow-sm" : "text-text-secondary hover:bg-surface-accent hover:text-text-primary"}`}
             >
               {f}
             </button>
@@ -116,7 +116,7 @@ const ProfileServicesHistory = () => {
             placeholder="Search services..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-surface-secondary border border-border-secondary rounded-xl py-2 pl-9 pr-4 text-sm font-medium focus:outline-none focus:border-zinc-500"
+            className="w-full bg-surface-secondary border border-border-secondary rounded-xl py-2 pl-9 pr-4 text-sm font-medium text-text-primary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary"
           />
         </div>
       </div>

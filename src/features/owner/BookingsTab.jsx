@@ -139,8 +139,8 @@ const BookingsTab = () => {
                 onClick={() => setFilter(f)}
                 className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all duration-300 ${
                   filter === f
-                    ? "bg-surface-secondary text-text-primary shadow-sm border border-border-primary"
-                    : "text-zinc-500 hover:text-text-primary border border-transparent"
+                    ? "btn-primary shadow-sm border border-brand-primary"
+                    : "text-text-secondary hover:bg-surface-accent hover:text-text-primary border border-transparent"
                 }`}
               >
                 {f.toLowerCase()}

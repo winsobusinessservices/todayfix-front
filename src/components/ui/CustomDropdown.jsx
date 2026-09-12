@@ -67,7 +67,7 @@ const CustomDropdown = ({
                     }}
                     className={`px-3 py-2 cursor-pointer text-sm rounded-lg transition-colors ${
                       value === opt
-                        ? "bg-surface-secondary text-text-primary font-bold"
+                        ? "bg-brand-primary text-white font-bold"
                         : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                     }`}
                   >
@@ -86,7 +86,11 @@ const CustomDropdown = ({
     <div className={`relative w-full ${isOpen ? "z-50" : "z-0"}`} ref={ref}>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between bg-surface-primary border border-border-primary text-text-primary text-sm font-medium rounded-xl py-2 pl-9 pr-8 hover:border-black cursor-pointer shadow-sm transition-all"
+        className={`w-full flex items-center justify-between bg-surface-primary border text-text-primary text-sm font-medium rounded-xl py-2 pl-9 pr-8 cursor-pointer shadow-sm transition-all ${
+          isOpen
+            ? "border-brand-primary ring-2 ring-brand-primary/15"
+            : "border-border-primary hover:border-brand-primary"
+        }`}
       >
         <div className="absolute left-3 flex items-center pointer-events-none text-text-muted group-hover:text-text-primary transition-colors">
           {icon}
@@ -127,7 +131,7 @@ const CustomDropdown = ({
                 }}
                 className={`px-3 py-2 cursor-pointer text-sm rounded-xl transition-colors ${
                   !value
-                    ? "bg-surface-secondary text-text-primary font-bold"
+                    ? "bg-brand-primary text-white font-bold"
                     : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                 }`}
               >
@@ -142,7 +146,7 @@ const CustomDropdown = ({
                   }}
                   className={`px-3 py-2 cursor-pointer text-sm rounded-xl transition-colors ${
                     value === opt
-                      ? "bg-surface-secondary text-text-primary font-bold"
+                      ? "bg-brand-primary text-white font-bold"
                       : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                   }`}
                 >

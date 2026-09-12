@@ -63,7 +63,7 @@ const FAQSection = () => {
                     }}
                     className={`w-full text-left px-5 py-3 text-[15px] transition-all duration-300 rounded-xl font-semibold ${
                       activeCategory === category
-                        ? "bg-surface-dark text-text-inverted shadow-md"
+                        ? "btn-primary shadow-md"
                         : "bg-transparent text-text-secondary hover:bg-zinc-200/50 hover:text-text-primary"
                     }`}
                   >
@@ -91,7 +91,7 @@ const FAQSection = () => {
                       key={`${activeCategory}-${index}`} // Force re-render on category change
                       className={`border rounded-2xl overflow-hidden transition-all duration-300 ${
                         isOpen
-                          ? "border-black bg-surface-primary shadow-xl shadow-black/5"
+                          ? "border-brand-primary bg-surface-primary shadow-xl shadow-black/5"
                           : "border-border-primary bg-surface-primary hover:border-border-tertiary hover:shadow-md"
                       }`}
                     >
@@ -104,7 +104,7 @@ const FAQSection = () => {
                           className={`text-lg font-bold pr-8 transition-colors duration-300 ${
                             isOpen
                               ? "text-text-primary"
-                              : "text-zinc-700 group-hover:text-text-primary"
+                              : "text-text-secondary group-hover:text-text-primary"
                           }`}
                         >
                           {faq.question}
@@ -113,7 +113,7 @@ const FAQSection = () => {
                         <div
                           className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all duration-300 flex-shrink-0 ${
                             isOpen
-                              ? "bg-surface-dark border-black text-text-inverted rotate-180"
+                              ? "bg-brand-primary border-brand-primary text-white rotate-180"
                               : "bg-surface-primary border-border-primary text-text-muted group-hover:border-zinc-400 group-hover:text-zinc-600"
                           }`}
                         >
@@ -166,20 +166,20 @@ const FAQSection = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-surface-dark rounded-3xl p-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-2xl relative overflow-hidden"
+              className="relative flex flex-col items-start justify-between gap-6 overflow-hidden rounded-3xl border border-brand-soft bg-gradient-to-br from-white to-[#f0eaff] p-8 shadow-[0_16px_45px_rgba(76,29,149,0.10)] sm:flex-row sm:items-center dark:border-white/10 dark:from-[#221b2e] dark:to-[#2a2140]"
             >
               {/* Subtle Background Glow */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-surface-primary opacity-5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
+              <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/4 rounded-full bg-brand-primary/15 blur-3xl"></div>
 
               {/* Info Text */}
               <div className="flex gap-5 items-start relative z-10">
-                <div className="mt-1 w-12 h-12 rounded-full bg-white/10 flex items-center justify-center flex-shrink-0 border border-white/10">
+                <div className="mt-1 flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl border border-brand-soft bg-surface-accent text-brand-primary shadow-sm dark:bg-brand-background dark:text-brand-accent">
                   <svg
                     width="24"
                     height="24"
                     viewBox="0 0 24 24"
                     fill="none"
-                    stroke="white"
+                    stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -188,10 +188,10 @@ const FAQSection = () => {
                   </svg>
                 </div>
                 <div>
-                  <h4 className="text-xl font-bold text-text-inverted mb-2">
+                  <h4 className="mb-2 text-xl font-bold text-text-primary">
                     Still have a question?
                   </h4>
-                  <p className="text-text-muted text-sm leading-relaxed max-w-sm">
+                  <p className="max-w-sm text-sm leading-relaxed text-text-secondary">
                     If you didn't find your answer, feel free to reach out to
                     our dedicated support team.
                   </p>
@@ -202,7 +202,7 @@ const FAQSection = () => {
               <div className="self-end sm:self-auto relative z-10">
                 <Link
                   to="/contact"
-                  className="px-6 py-3 bg-surface-primary text-text-primary font-bold rounded-full hover:scale-105 hover:bg-zinc-200 transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] whitespace-nowrap"
+                  className="btn-primary whitespace-nowrap rounded-full px-6 py-3 font-bold shadow-lg shadow-brand-primary/20 transition-all duration-300 hover:scale-105"
                 >
                   Contact Support
                 </Link>

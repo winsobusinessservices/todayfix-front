@@ -143,7 +143,7 @@ const AdminSubscriptionsTab = () => {
            <p className="text-3xl font-black mt-2 text-text-inverted">482</p>
            <p className="text-xs font-medium text-purple-200 mt-2">₹2.4L Monthly Recurring Revenue</p>
         </div>
-        <div className="bg-zinc-900 rounded-2xl p-6 shadow-md relative overflow-hidden text-text-inverted">
+        <div className="bg-surface-dark rounded-2xl p-6 shadow-md relative overflow-hidden text-text-inverted">
            <div className="absolute top-0 right-0 p-4 opacity-10"><Crown className="w-16 h-16" /></div>
            <p className="text-sm font-bold text-zinc-400 uppercase tracking-widest">Enterprise</p>
            <p className="text-3xl font-black mt-2 text-text-inverted">45</p>

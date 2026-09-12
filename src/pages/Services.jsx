@@ -122,7 +122,7 @@ const Services = () => {
                       className={`w-full text-left px-4 py-2.5 rounded-xl transition-all duration-200 font-medium text-sm
                         ${
                           selectedCategory === catName
-                            ? "bg-surface-dark text-white shadow-md"
+                            ? "btn-primary shadow-md"
                             : "text-text-secondary hover:bg-surface-accent hover:text-text-primary"
                         }
                       `}

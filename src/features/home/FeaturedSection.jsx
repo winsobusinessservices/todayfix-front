@@ -8,7 +8,7 @@ const FeaturedSection = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="w-full bg-surface-primary pt-16 pb-20 font-sans border-t border-border-secondary">
+    <section className="w-full border-t border-border-secondary bg-[#fbfaff] pb-20 pt-20 font-sans dark:bg-surface-primary">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         {/* Header Section */}
         <motion.div
@@ -20,13 +20,13 @@ const FeaturedSection = () => {
         >
           <div className="max-w-full flex md:items-center md:justify-between gap-6 flex-col md:flex-row">
             <h2 className="text-4xl text-center md:text-5xl lg:text-6xl font-extrabold text-text-primary  tracking-tight leading-tight">
-              Featured 
-              <span className="text-text-muted"> Businesses.</span>
+              Featured
+              <span className="text-brand-primary"> Businesses.</span>
             </h2>
 
              <button
             onClick={() => navigate("/services")}
-            className="shrink-0 h-12 px-6 rounded-full bg-surface-dark text-text-inverted font-medium hover:scale-105 transition-transform duration-300"
+            className="btn-primary shrink-0 h-12 px-6 rounded-full font-medium hover:scale-105 transition-transform duration-300"
           >
             View All Providers
           </button>
@@ -44,10 +44,7 @@ const FeaturedSection = () => {
         {/* Standard Grid (3 columns on lg) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 min-h-[420px]">
           {businesses.map((business, index) => {
-            const isFeatured = index === 0;
             const isHovered = hoveredIndex === index;
-            const isDimmed = hoveredIndex !== null && hoveredIndex !== index;
-
             return (
               <motion.div
                 key={business.id}
@@ -61,25 +58,28 @@ const FeaturedSection = () => {
                   delay: index * 0.1,
                   ease: [0.22, 1, 0.36, 1],
                 }}
-                className={`group relative overflow-hidden rounded-[2rem] max-h-[490px] flex flex-col justify-between cursor-pointer border transition-all duration-500 h-full min-h-[420px]
-                } ${isDimmed
-                    ? "opacity-40 blur-[2px] scale-[0.98]"
-                    : isHovered
-                      ? "scale-[1.02] z-10"
-                      : "scale-100"
-                  }`}
+                className={`group relative flex min-h-[430px] cursor-pointer flex-col overflow-hidden rounded-[1.75rem] border border-border-primary bg-surface-primary shadow-[0_14px_40px_rgba(76,29,149,0.08)] transition-all duration-500 hover:-translate-y-1.5 hover:border-brand-soft hover:shadow-[0_22px_55px_rgba(76,29,149,0.15)] dark:bg-[#221b2e] ${
+                  isHovered ? "z-10" : ""
+                }`}
               >
-                <div className="flex items-center justify-between bg-surface-dark px-3">
+                <div className="relative h-56 overflow-hidden">
+                  <img
+                    src={business.bg}
+                    alt={business.name}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-black/10" />
+
                   <div
-                    className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase bg-surface-dark text-text-inverted`}
+                    className="absolute left-4 top-4 rounded-full border border-white/60 bg-white/90 px-3.5 py-2 text-xs font-bold uppercase tracking-wide text-brand-dark shadow-sm backdrop-blur-md"
                   >
                     {business.service}
                   </div>
                   <div
-                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-bold text-text-inverted`}
+                    className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full bg-zinc-950/80 px-3.5 py-2 text-sm font-bold text-white shadow-sm backdrop-blur-md"
                   >
                     <svg
-                      className={`w-4 h-4 text-text-inverted`}
+                      className="h-4 w-4 text-amber-400"
                       viewBox="0 0 20 20"
                       fill="currentColor"
                     >
@@ -88,31 +88,29 @@ const FeaturedSection = () => {
                     {business.rating}
                   </div>
                 </div>
-                {/* <div className="h-24"></div> */}
 
-                <img
-                  src={business.bg}
-                  alt={business.name}
-                  className="max-h-2/3 h-[50%] object-cover w-full min-h-1/2"
-                />
                 {/* Bottom: Details & Action */}
-                <div className="bg-black h-full w-full text-text-inverted px-8 py-2">
-                  <div className="relative z-10 flex flex-col gap-2">
-                    <h3 className="font-bold tracking-tight text-2xl text-text-inverted">
+                <div className="relative flex flex-1 flex-col px-6 pb-6 pt-11 md:px-7">
+                  <div className="absolute -top-8 left-6 flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border-4 border-surface-primary bg-white p-2 shadow-lg dark:border-[#221b2e]">
+                    <img
+                      src={business.logo}
+                      alt={`${business.name} logo`}
+                      className="h-full w-full object-contain"
+                    />
+                  </div>
+
+                  <div className="relative z-10 flex h-full flex-col gap-2">
+                    <h3 className="text-2xl font-extrabold tracking-tight text-text-primary">
                       {business.name}
                     </h3>
-                    <p
-                      className={`text-sm leading-relaxed max-w-md text-white`}
-                    >
+                    <p className="max-w-md text-sm leading-relaxed text-text-secondary">
                       {business.description}
                     </p>
                     <Link
                       to={"/partners/" + business.name.split(" ").join("-")}
-                      className="flex items-center justify-between mt-4 pt-4 border-t border-white/10"
+                      className="mt-auto flex items-center justify-between border-t border-border-primary pt-5"
                     >
-                      <span
-                        className={`text-sm font-medium flex items-center gap-1.5 text-white/80`}
-                      >
+                      <span className="flex items-center gap-1.5 text-sm font-semibold text-text-secondary">
                         <svg
                           className="w-4 h-4"
                           fill="none"
@@ -137,10 +135,7 @@ const FeaturedSection = () => {
                       {/* View Action - Translates on hover */}
                       <motion.div
                         animate={isHovered ? { x: 5 } : { x: 0 }}
-                        className={`p-2 rounded-full ${isFeatured
-                            ? "bg-surface-primary text-text-primary"
-                            : "bg-surface-dark text-text-inverted"
-                          }`}
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-button-primary text-button-primary-text shadow-md shadow-brand-primary/20 transition-colors group-hover:bg-button-primary-hover"
                       >
                         <svg
                           className="w-4 h-4"

@@ -249,13 +249,13 @@ const OwnerDashboard = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${
                   isActive
-                    ? "bg-surface-dark text-text-inverted shadow-lg scale-[0.98]"
-                    : "text-zinc-500 hover:text-text-primary hover:bg-surface-secondary"
+                    ? "sidebar-link-active scale-[0.98]"
+                    : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                 }`}
               >
                 <Icon
                   size={20}
-                  className={isActive ? "text-text-inverted" : "text-zinc-400"}
+                  className={isActive ? "text-button-primary-text" : "text-text-muted"}
                 />
                 {item.label}
               </Link>

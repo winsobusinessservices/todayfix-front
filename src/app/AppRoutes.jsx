@@ -109,7 +109,7 @@ function AppRoutes() {
         <Route path="/professionals/faq" element={<ProFAQ />} />
         <Route path="/partners/:name" element={<Demo />} />
         <Route path="*" element={<NotFound />} />
-        <Route element={<ProtectedRoute allowedRoles={["USER", "BUSINESS", "ADMIN"]} />}>
+        <Route element={<ProtectedRoute allowedRoles={["USER", "BUSINESS", "OWNER", "ADMIN"]} />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/list-business" element={<ListBusinessPage />} />
           <Route path="/list-business/documents" element={<BusinessDocumentsPage />} />
@@ -117,7 +117,7 @@ function AppRoutes() {
         </Route>
       </Route>
 
-      <Route element={<ProtectedRoute allowedRoles={["BUSINESS", "ADMIN"]} />}>
+      <Route element={<ProtectedRoute allowedRoles={["BUSINESS", "OWNER", "ADMIN"]} />}>
         <Route path="/owner-dashboard" element={<OwnerDashboard />}>
           <Route index element={<OverviewTab />} />
           <Route path="job-board" element={<JobBoardTab />} />

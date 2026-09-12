@@ -1,8 +1,7 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import { Wrench } from "lucide-react";
 import { servicesData } from "../../data/collectedData";
 
 // Import Swiper styles
@@ -12,26 +11,25 @@ import "swiper/css/pagination";
 import { useNavigate } from "react-router";
 
 const Services = () => {
-  const [isPaused, setIsPaused] = useState(false);
   const swiperRef = useRef(null);
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center w-full font-sans overflow-hidden bg-surface-accent py-20 md:py-28 border-t border-border-secondary">
+    <div className="flex w-full flex-col items-center justify-center overflow-hidden border-t border-border-secondary bg-section-soft py-20 font-sans md:py-28">
       {/* Custom Styles to Override Default Swiper Pagination */}
       <style>
         {`
           .swiper-pagination-bullet {
             width: 10px;
             height: 10px;
-            background: #ffff;
+            background: var(--color-card-primary);
             opacity: 1;
             transition: all 0.3s ease;
           }
           .swiper-pagination-bullet-active {
             width: 32px;
             border-radius: 9999px;
-            background: #18181b; /* zinc-900 / text-primary */
+            background: var(--color-button-primary);
           }
           .swiper-container-free-mode > .swiper-wrapper {
             transition-timing-function: linear;
@@ -62,7 +60,7 @@ const Services = () => {
             className="text-4xl md:text-6xl font-extrabold text-text-primary tracking-tight leading-tight"
           >
             What Do You Need{" "}
-            <span className="bg-gradient-to-r from-zinc-400 to-zinc-600 bg-clip-text text-transparent">
+            <span className="text-brand-primary dark:text-brand-accent">
               Fixed?
             </span>
           </motion.h3>
@@ -87,22 +85,20 @@ const Services = () => {
           transition={{ delay: 0.3, duration: 0.6 }}
           className="relative group/carousel"
           onMouseEnter={() => {
-            setIsPaused(true);
             if (swiperRef.current) swiperRef.current.swiper.autoplay.stop();
           }}
           onMouseLeave={() => {
-            setIsPaused(false);
             if (swiperRef.current) swiperRef.current.swiper.autoplay.start();
           }}
         >
           {/* Left Gradient Fade */}
-          <div className="absolute top-0 left-0 bottom-0 w-16 md:w-24 bg-gradient-to-r from-surface-accent to-transparent z-10 pointer-events-none" />
+          <div className="pointer-events-none absolute bottom-0 left-0 top-0 z-10 w-16 bg-gradient-to-r from-section-soft to-transparent md:w-24" />
 
           {/* Right Gradient Fade */}
-          <div className="absolute top-0 right-0 bottom-0 w-16 md:w-24 bg-gradient-to-l from-surface-accent to-transparent z-10 pointer-events-none" />
+          <div className="pointer-events-none absolute bottom-0 right-0 top-0 z-10 w-16 bg-gradient-to-l from-section-soft to-transparent md:w-24" />
 
           {/* Custom Navigation Arrows */}
-          <button className="swiper-button-prev-custom absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-11 h-11 rounded-full bg-surface-primary border border-border-primary text-text-primary shadow-lg hover:bg-surface-dark hover:text-text-inverted hover:border-transparent hover:scale-110 transition-all duration-300 active:scale-95 opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0">
+          <button className="swiper-button-prev-custom absolute -left-2 md:-left-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-11 h-11 rounded-full bg-surface-primary border border-border-primary text-text-primary shadow-lg hover:bg-brand-primary hover:text-white hover:border-transparent hover:scale-110 transition-all duration-300 active:scale-95 opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0">
             <svg
               className="h-5 w-5"
               fill="none"
@@ -118,7 +114,7 @@ const Services = () => {
             </svg>
           </button>
 
-          <button className="swiper-button-next-custom absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-11 h-11 rounded-full bg-surface-primary border border-border-primary text-text-primary shadow-lg hover:bg-surface-dark hover:text-text-inverted hover:border-transparent hover:scale-110 transition-all duration-300 active:scale-95 opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0">
+          <button className="swiper-button-next-custom absolute -right-2 md:-right-5 top-1/2 -translate-y-1/2 z-20 hidden md:flex items-center justify-center w-11 h-11 rounded-full bg-surface-primary border border-border-primary text-text-primary shadow-lg hover:bg-brand-primary hover:text-white hover:border-transparent hover:scale-110 transition-all duration-300 active:scale-95 opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-5 w-5"
@@ -179,31 +175,31 @@ const Services = () => {
                     onClick={() => navigate("/services/" + service.link)}
                     className="py-4"
                   >
-                    <div className="group relative h-44 sm:h-52 md:h-64 flex flex-col items-center justify-center gap-3 sm:gap-5 bg-surface-primary border border-border-primary rounded-2xl sm:rounded-3xl cursor-pointer shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_12px_48px_rgba(0,0,0,0.1)] transition-all duration-500 overflow-hidden transform hover:-translate-y-2">
+                    <div className="group relative flex h-44 cursor-pointer flex-col items-center justify-center gap-3 overflow-hidden rounded-2xl border border-border-primary bg-card-primary shadow-card transition-all duration-500 hover:-translate-y-2 hover:border-brand-soft hover:shadow-card-hover sm:h-52 sm:gap-5 sm:rounded-3xl md:h-64">
                       {/* Hover Background */}
-                      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 via-zinc-800 to-zinc-900 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0" />
+                      <div className="absolute inset-0 z-0 bg-gradient-to-br from-card-primary via-surface-accent to-card-muted opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
                       {/* Decorative corner accent */}
-                      <div className="absolute -top-12 -right-12 w-24 h-24 rounded-full bg-gradient-to-br from-zinc-200 to-transparent opacity-60 group-hover:from-zinc-600 group-hover:opacity-30 transition-all duration-500" />
+                      <div className="absolute -right-12 -top-12 h-24 w-24 rounded-full bg-gradient-to-br from-brand-soft to-transparent opacity-50 transition-all duration-500 group-hover:from-brand-primary group-hover:opacity-20" />
 
                       {/* Icon */}
-                      <div className="relative z-10 p-3 sm:p-4 md:p-5 rounded-xl sm:rounded-2xl bg-surface-secondary text-text-primary transition-all duration-500 group-hover:bg-white/10 group-hover:text-white group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.15)]">
+                      <div className="relative z-10 rounded-xl bg-surface-accent p-3 text-brand-primary shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:bg-button-primary group-hover:text-button-primary-text group-hover:shadow-card sm:rounded-2xl sm:p-4 md:p-5">
                         {/* <Wrench className="w-8 h-8 md:w-10 md:h-10" /> */}
                         {service.icon}
                       </div>
 
                       {/* Label */}
-                      <span className="relative z-10 text-xs sm:text-sm md:text-base font-bold text-text-primary group-hover:text-white transition-colors duration-500 tracking-tight text-center px-2 sm:px-4 leading-tight">
+                      <span className="relative z-10 px-2 text-center text-xs font-bold leading-tight tracking-tight text-text-primary transition-colors duration-500 sm:px-4 sm:text-sm md:text-base">
                         {service.name}
                       </span>
 
                       {/* Subtle arrow on hover */}
                       <div className="relative z-10 hidden sm:flex items-center gap-1 opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                        <span className="text-xs font-semibold text-zinc-400">
+                        <span className="text-xs font-semibold text-text-brand">
                           Explore
                         </span>
                         <svg
-                          className="w-3 h-3 text-zinc-400"
+                          className="h-3 w-3 text-text-brand"
                           fill="none"
                           viewBox="0 0 24 24"
                           stroke="currentColor"

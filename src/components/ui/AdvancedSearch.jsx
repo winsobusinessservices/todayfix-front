@@ -70,7 +70,7 @@ const AdvancedSearch = () => {
           {/* Service Name Input */}
           <div className="w-full md:flex-[2] flex items-center px-4 py-3 md:py-2 group">
             <svg
-              className="w-6 h-6 text-text-muted group-focus-within:text-text-primary transition-colors flex-shrink-0"
+              className="w-6 h-6 text-text-muted group-focus-within:text-brand-primary transition-colors flex-shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -99,7 +99,7 @@ const AdvancedSearch = () => {
           {/* City Selection */}
           <div className="w-full md:flex-[1] flex items-center px-4 py-3 md:py-2 group">
             <svg
-              className="w-6 h-6 text-text-muted group-focus-within:text-text-primary transition-colors flex-shrink-0"
+              className="w-6 h-6 text-text-muted group-focus-within:text-brand-primary transition-colors flex-shrink-0"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -129,7 +129,7 @@ const AdvancedSearch = () => {
           <div className="hidden md:block pl-3 pr-1">
             <button
               type="submit"
-              className="w-14 h-14 rounded-xl bg-surface-dark hover:bg-zinc-800 text-white flex items-center justify-center transition-transform duration-300 active:scale-95 shadow-md shadow-black/20"
+              className="btn-primary w-14 h-14 rounded-xl flex items-center justify-center transition-transform duration-300 active:scale-95 shadow-md shadow-black/20"
             >
               <svg
                 className="w-6 h-6"
@@ -232,7 +232,7 @@ const AdvancedSearch = () => {
           {/* Search Button (Mobile Only) */}
           <button
             type="submit"
-            className="md:hidden w-full mt-2 py-3 rounded-xl bg-surface-dark hover:bg-zinc-800 text-white font-bold flex items-center justify-center gap-2 transition-transform duration-300 active:scale-95 shadow-md shadow-black/20"
+            className="btn-primary md:hidden w-full mt-2 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-transform duration-300 active:scale-95 shadow-md shadow-black/20"
           >
             <svg
               className="w-5 h-5"

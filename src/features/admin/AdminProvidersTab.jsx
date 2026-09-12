@@ -115,7 +115,7 @@ export default function AdminProvidersTab() {
           <button
             key={tab}
             onClick={() => setActiveFilter(tab)}
-            className={`text-sm font-bold pb-2 border-b-2 transition-all ${activeFilter === tab ? 'text-text-primary border-black' : 'text-zinc-400 border-transparent hover:text-text-primary hover:border-black'}`}
+            className={`text-sm font-bold pb-2 border-b-2 transition-all ${activeFilter === tab ? 'text-brand-primary border-brand-primary' : 'text-text-muted border-transparent hover:text-brand-primary hover:border-brand-primary'}`}
           >
             {tab}
           </button>

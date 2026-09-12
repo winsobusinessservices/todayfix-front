@@ -95,10 +95,10 @@ const Hero = () => {
           <motion.div
             animate={{ y: [-15, 15, -15] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="absolute top-[15%] right-[5%] w-64 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
+            className="absolute top-[15%] right-[5%] w-64 p-5 rounded-3xl bg-surface-primary/90 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-orange-300 rounded-2xl text-text-inverted">
+              <div className="p-3 bg-orange-300 rounded-2xl text-text-on-accent">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -131,7 +131,7 @@ const Hero = () => {
               ease: "easeInOut",
               delay: 1,
             }}
-            className="absolute top-[19%] left-[-10%] w-64 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
+            className="absolute top-[19%] left-[-10%] w-64 p-5 rounded-3xl bg-surface-primary/90 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
           >
             <div className="flex items-center gap-4">
               <div className="p-3 bg-red-400 rounded-2xl text-text-inverted flex items-center justify-center">
@@ -160,10 +160,10 @@ const Hero = () => {
               ease: "easeInOut",
               delay: 1,
             }}
-            className="absolute top-[50%] left-[-10%] w-72 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
+            className="absolute top-[50%] left-[-10%] w-72 p-5 rounded-3xl bg-surface-primary/90 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-green-400 rounded-2xl text-text-inverted">
+              <div className="p-3 bg-green-400 rounded-2xl text-text-on-accent">
                 <svg
                   className="w-6 h-6"
                   fill="none"
@@ -196,10 +196,10 @@ const Hero = () => {
               ease: "easeInOut",
               delay: 1,
             }}
-            className="absolute top-[45%] left-[66%] w-60 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
+            className="absolute top-[45%] left-[66%] w-60 p-5 rounded-3xl bg-surface-primary/90 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-30"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-purple-400 rounded-2xl text-text-inverted flex items-center justify-center">
+              <div className="p-3 bg-purple-400 rounded-2xl text-text-on-accent flex items-center justify-center">
                 <svg
                   width="24"
                   height="24"
@@ -244,10 +244,10 @@ const Hero = () => {
               ease: "easeInOut",
               delay: 2,
             }}
-            className="absolute bottom-[10%] right-[15%] w-60 p-5 rounded-3xl bg-white/80 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
+            className="absolute bottom-[10%] right-[15%] w-60 p-5 rounded-3xl bg-surface-primary/90 backdrop-blur-xl border border-border-primary shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] z-20"
           >
             <div className="flex items-center gap-4">
-              <div className="p-3 bg-blue-300 rounded-2xl text-text-inverted">
+              <div className="p-3 bg-blue-300 rounded-2xl text-text-on-accent">
                 <svg
                   className="w-6 h-6"
                   fill="none"

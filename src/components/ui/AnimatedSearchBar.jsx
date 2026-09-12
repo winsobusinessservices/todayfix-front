@@ -85,10 +85,10 @@ const AnimatedSearchBar = () => {
         {/* Main Input Wrapper */}
         <form
           onSubmit={handleSubmit}
-          className="relative flex items-center w-full h-12 bg-surface-primary rounded-full border border-border-dark focus-within:border-border-primary focus-within:ring-4 focus-within:ring-cyan-500/10 transition-all shadow-2xl overflow-hidden"
+          className="relative flex items-center w-full h-12 bg-surface-primary rounded-full border border-border-primary focus-within:border-brand-primary focus-within:ring-4 focus-within:ring-brand-primary/15 transition-all shadow-2xl overflow-hidden"
         >
           {/* Search Icon */}
-          <div className="pl-6 pr-3 text-text-primary group-focus-within:text-cyan-400 transition-colors">
+          <div className="pl-6 pr-3 text-text-primary group-focus-within:text-brand-primary transition-colors">
             <svg
               className="h-7 w-7"
               fill="none"
@@ -151,7 +151,7 @@ const AnimatedSearchBar = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="hidden sm:block bg-surface-dark hover:bg-black/70 hover:text-text-inverted text-text-inverted px-6 py-3 rounded-full font-bold text-lg tracking-wide transition-all duration-300 transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-zinc-900"
+              className="btn-primary hidden sm:block px-6 py-3 rounded-full font-bold text-lg tracking-wide transition-all duration-300 transform active:scale-95 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-surface-primary"
             >
               Search
             </button>
@@ -161,13 +161,12 @@ const AnimatedSearchBar = () => {
         {/* Secondary Filters */}
         <div className="mx-auto grid w-full max-w-xl grid-cols-2 sm:grid-cols-3 gap-2 md:gap-3 mt-4 sm:mt-6">
           {/* Area Filter */}
-          <div className="relative min-w-0 bg-zinc-800/80 rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors shadow-lg sm:col-span-1">
+          <div className="relative min-w-0 sm:col-span-1">
             <CustomDropdown
               options={areas}
               value={area}
               onChange={setArea}
               placeholder="Any Area"
-              variant="dark"
               icon={
                 <svg
                   className="w-4 h-4"
@@ -193,13 +192,12 @@ const AnimatedSearchBar = () => {
           </div>
 
           {/* Service Filter */}
-          <div className="relative min-w-0 bg-zinc-800/80 rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors shadow-lg sm:col-span-1">
+          <div className="relative min-w-0 sm:col-span-1">
             <CustomDropdown
               options={services}
               value={service}
               onChange={setService}
               placeholder="All Services"
-              variant="dark"
               icon={
                 <svg
                   className="w-4 h-4"
@@ -219,13 +217,12 @@ const AnimatedSearchBar = () => {
           </div>
 
           {/* Rating Filter */}
-          <div className="relative col-span-2 min-w-0 w-1/2 justify-self-center bg-zinc-800/80 rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors shadow-lg sm:col-span-1 sm:w-auto sm:justify-self-auto">
+          <div className="relative col-span-2 min-w-0 w-1/2 justify-self-center sm:col-span-1 sm:w-auto sm:justify-self-auto">
             <CustomDropdown
               options={ratings}
               value={rating}
               onChange={setRating}
               placeholder="Any Rating"
-              variant="dark"
               icon={
                 <svg
                   className="w-4 h-4"

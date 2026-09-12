@@ -196,20 +196,20 @@ export const DataTable = ({
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-9 pr-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm font-medium focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
+            className="w-full pl-9 pr-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm font-medium text-text-primary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-colors"
           />
         </div>
 
         <div className="flex items-center gap-2 w-full md:w-auto">
           <button
             onClick={handleFilterClick}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-border-primary rounded-xl text-sm font-bold text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
+            className="btn-primary flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-brand-primary rounded-xl text-sm font-bold transition-colors cursor-pointer"
           >
             <Filter className="w-4 h-4" /> Filter
           </button>
           <button
             onClick={handleExportClick}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-border-primary rounded-xl text-sm font-bold text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
+            className="btn-secondary flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-border-primary rounded-xl text-sm font-bold transition-colors cursor-pointer"
           >
             <Download className="w-4 h-4" /> Export
           </button>

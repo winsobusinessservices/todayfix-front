@@ -257,7 +257,7 @@ const Area = () => {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border-secondary">
-                  <button className="flex-1 bg-surface-dark hover:bg-zinc-800 text-white py-2.5 rounded-xl text-sm font-bold transition-colors shadow-md active:scale-95">
+                  <button className="btn-primary flex-1 rounded-xl py-2.5 text-sm font-bold shadow-md transition-colors active:scale-95">
                     Contact
                   </button>
                   <button

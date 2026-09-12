@@ -353,7 +353,7 @@ const Service = () => {
                       }
                         openBooking(service)
                       }}
-                      className="px-5 py-3 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:bg-zinc-800 transition-all active:scale-95 shadow-md flex items-center gap-2"
+                      className="btn-primary flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold shadow-md transition-all active:scale-95"
                     >
                       Book
                       <Icons.ChevronRight className="w-4 h-4" />

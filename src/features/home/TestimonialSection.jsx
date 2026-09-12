@@ -60,7 +60,7 @@ const TestimonialSection = () => {
           <div className="flex gap-4">
             <button
               onClick={handlePrev}
-              className="w-12 h-12 rounded-full border border-border-primary flex items-center justify-center text-text-primary hover:bg-surface-dark hover:text-text-inverted hover:border-black transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+              className="w-12 h-12 rounded-full border border-border-primary flex items-center justify-center text-text-primary hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-primary"
               aria-label="Previous testimonial"
             >
               <svg
@@ -79,7 +79,7 @@ const TestimonialSection = () => {
             </button>
             <button
               onClick={handleNext}
-              className="w-12 h-12 rounded-full border border-border-primary flex items-center justify-center text-text-primary hover:bg-surface-dark hover:text-text-inverted hover:border-black transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-zinc-900"
+              className="w-12 h-12 rounded-full border border-border-primary flex items-center justify-center text-text-primary hover:bg-brand-primary hover:text-white hover:border-brand-primary transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-brand-primary"
               aria-label="Next testimonial"
             >
               <svg
