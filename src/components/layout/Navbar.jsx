@@ -258,14 +258,14 @@ export default function Navbar() {
           }}
           transition={{ type: "spring", stiffness: 200, damping: 50 }}
           className={cn(
-            "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 lg:hidden",
+            "relative z-50 mx-auto flex w-full max-w-[calc(100vw-1rem)] flex-col items-center justify-between bg-transparent px-0 lg:hidden",
             visible && "bg-white/80 ",
           )}
         >
           {/* Mobile Header (Logo + Toggle) */}
-          <div className="flex w-full flex-row items-center justify-between">
+          <div className="flex w-full min-w-0 flex-row items-center justify-between gap-2">
             {logoMarkup}
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2">
               {loggedIn && (
                 <button
                   type="button"
@@ -280,17 +280,15 @@ export default function Navbar() {
                   )}
                 </button>
               )}
-              {isMobileMenuOpen ? (
-                <IconX
-                  className="cursor-pointer text-text-primary"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                />
-              ) : (
-                <IconMenu2
-                  className="cursor-pointer text-text-primary"
-                  onClick={() => setIsMobileMenuOpen(true)}
-                />
-              )}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen((current) => !current)}
+                aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={isMobileMenuOpen}
+                className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-text-primary hover:bg-surface-secondary"
+              >
+                {isMobileMenuOpen ? <IconX /> : <IconMenu2 />}
+              </button>
             </div>
           </div>
 
@@ -301,7 +299,7 @@ export default function Navbar() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-2xl bg-surface-primary px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] "
+                className="styled-scrollbar absolute inset-x-0 top-16 z-50 flex max-h-[calc(100dvh-6.5rem)] w-full flex-col items-start justify-start gap-4 overflow-y-auto overscroll-contain rounded-2xl bg-surface-primary px-4 py-6 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]"
               >
                 {navItems.map((item, idx) => {
                   if (item.type === "dropdown") {

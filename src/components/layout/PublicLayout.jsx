@@ -16,7 +16,7 @@ const PublicLayout = () => {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <div className="fixed inset-x-0 top-3 z-40 w-full px-10">
+      <div className="fixed inset-x-0 top-3 z-40 w-full px-2 sm:px-6 lg:px-10">
         <Navbar />
       </div>
       <main className="flex-1 pt-20">

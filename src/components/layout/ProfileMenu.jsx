@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { useNavigate } from "react-router";
 import {
@@ -23,6 +23,7 @@ const MENU_ITEMS = [
 
 const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
   const [open, setOpen] = useState(false);
+  const [desktopRightOffset, setDesktopRightOffset] = useState(8);
   const menuRef = useRef(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -49,6 +50,22 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [open]);
+
+  useLayoutEffect(() => {
+    if (!open || mobile) return undefined;
+
+    const alignToViewport = () => {
+      const triggerRight = menuRef.current?.getBoundingClientRect().right;
+      if (triggerRight === undefined) return;
+
+      const triggerGapFromScreen = window.innerWidth - triggerRight;
+      setDesktopRightOffset(8 - triggerGapFromScreen);
+    };
+
+    alignToViewport();
+    window.addEventListener("resize", alignToViewport);
+    return () => window.removeEventListener("resize", alignToViewport);
+  }, [mobile, open]);
 
   const goTo = (path) => {
     setOpen(false);
@@ -108,13 +125,14 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
         {open && (
           <motion.div
             role="menu"
+            style={mobile ? undefined : { right: desktopRightOffset }}
             initial={{ opacity: 0, y: -8, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.16, ease: "easeOut" }}
             className={mobile
               ? "relative z-[80] mt-3 w-full overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-xl"
-              : "absolute right-0 top-full z-[80] mt-3 w-80 overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-2xl shadow-black/15"}
+              : "absolute top-full z-[80] mt-3 w-80 overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-2xl shadow-black/15"}
           >
             <div className="border-b border-border-secondary bg-surface-secondary/70 p-4">
               <div className="flex items-center gap-3">
