@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useSearchParams, Link } from "react-router";
+import { useSearchParams, Link, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { serviceApi } from "../services/serviceApi";
 import SEO from "../components/seo/SEO";
@@ -7,10 +7,13 @@ import * as Icons from "lucide-react";
 import { useBookingStore } from "../store/bookingStore";
 import BookingDrawer from "../components/booking/BookingDrawer";
 import { IMAGE_URL } from "../services/axiosClient";
+import { useUserStore } from "../store/userStore";
 
 const Search = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const openBooking = useBookingStore((state) => state.openBooking);
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated);
+  const navigate = useNavigate();
 
   // Convert searchParams to an object
   const params = {};
@@ -28,6 +31,14 @@ const Search = () => {
 
   const handlePageChange = (newPage) => {
     setSearchParams({ ...params, page: newPage });
+  };
+
+  const handleAuthentication = (service) => {
+    if (isAuthenticated) {
+      openBooking(service);
+    } else {
+      navigate("/login");
+    }
   };
 
   const currentPage = parseInt(params.page || "1", 10);
@@ -87,14 +98,14 @@ const Search = () => {
                 {/* Image Section */}
                 <div className="w-full md:w-56 h-48 md:h-auto rounded-2xl overflow-hidden shrink-0 bg-surface-secondary relative border border-border-primary">
                   {service.image ? (
-                    <img 
-                      src={`${IMAGE_URL}${service.image}`} 
-                      alt={service.name} 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                    <img
+                      src={`${IMAGE_URL}${service.image}`}
+                      alt={service.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-surface-secondary">
-                       <Icons.Image className="w-8 h-8 text-zinc-300" />
+                      <Icons.Image className="w-8 h-8 text-zinc-300" />
                     </div>
                   )}
                   {/* Category Badge */}
@@ -126,7 +137,7 @@ const Search = () => {
                         ₹{service.price}
                       </div>
                       <button
-                        onClick={() => openBooking(service)}
+                        onClick={() => handleAuthentication(service)}
                         className="px-6 py-2.5 bg-text-primary text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform w-full md:w-auto flex items-center justify-center gap-2 group/btn"
                       >
                         Book Now
@@ -136,7 +147,8 @@ const Search = () => {
                   </div>
 
                   <p className="text-text-secondary text-sm leading-relaxed mb-6 line-clamp-2">
-                    {service.description || "Service delivered by verified experts."}
+                    {service.description ||
+                      "Service delivered by verified experts."}
                   </p>
 
                   <div className="mt-auto pt-4 border-t border-border-primary flex items-center gap-6">

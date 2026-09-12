@@ -59,7 +59,7 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   // console.log(conversationList);
 
   // const conversationId = activeConversation?.conversation_uuid;
-  const conversationId = "e05e66ca-3442-44a1-9cf5-3bbf22ff5181";
+  const conversationId = "6e5fd773-b54b-4775-90a9-d77a0bcfcc36";
   // console.log(conversationList);
 
   // 2. Fetch Messages

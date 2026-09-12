@@ -47,7 +47,7 @@ const Profile = () => {
     queryKey: ["user"],
     queryFn: userDetails,
   });
-  
+
   const {
     data: userReview,
     isLoading: userReviewLoading,
@@ -74,10 +74,7 @@ const Profile = () => {
     else finishLogout();
   };
 
-  if (
-    userDataLoading ||
-    userReviewLoading 
-  ) {
+  if (userDataLoading || userReviewLoading) {
     return <p>Loading...</p>;
   }
 
