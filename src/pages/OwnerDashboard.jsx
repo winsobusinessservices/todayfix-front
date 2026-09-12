@@ -59,33 +59,33 @@ const OwnerDashboard = () => {
   const clearAuth = useUserStore((state) => state.clearAuth);
 
   // WebSocket Integration for Notifications
-  useEffect(() => {
-    if (!accessToken) return;
-    let wsBaseUrl = IMAGE_URL || "http://localhost:8000";
-    if (wsBaseUrl.startsWith("https://")) {
-      wsBaseUrl = wsBaseUrl.replace("https://", "wss://");
-    } else if (wsBaseUrl.startsWith("http://")) {
-      wsBaseUrl = wsBaseUrl.replace("http://", "ws://");
-    }
+  // useEffect(() => {
+  //   if (!accessToken) return;
+  //   let wsBaseUrl = IMAGE_URL || "http://localhost:8000";
+  //   if (wsBaseUrl.startsWith("https://")) {
+  //     wsBaseUrl = wsBaseUrl.replace("https://", "wss://");
+  //   } else if (wsBaseUrl.startsWith("http://")) {
+  //     wsBaseUrl = wsBaseUrl.replace("http://", "ws://");
+  //   }
 
-    const ws = new WebSocket(`${wsBaseUrl}/ws/notifications/?token=${accessToken}`);
+  //   const ws = new WebSocket(`${wsBaseUrl}/ws/notifications/?token=${accessToken}`);
 
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.type === "new_booking") {
-          setNotificationData(data.data);
-          setShowMockPopup(true);
-        }
-      } catch (err) {
-        console.error("Error parsing notification ws data:", err);
-      }
-    };
+  //   ws.onmessage = (event) => {
+  //     try {
+  //       const data = JSON.parse(event.data);
+  //       if (data.type === "new_booking") {
+  //         setNotificationData(data.data);
+  //         setShowMockPopup(true);
+  //       }
+  //     } catch (err) {
+  //       console.error("Error parsing notification ws data:", err);
+  //     }
+  //   };
 
-    return () => {
-      ws.close();
-    };
-  }, [accessToken]);
+  //   return () => {
+  //     ws.close();
+  //   };
+  // }, [accessToken]);
 
   const {data: profilesData, error, isLoading} = useQuery({
     queryKey: ["businessProfiles"],
