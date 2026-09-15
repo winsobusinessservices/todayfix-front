@@ -223,21 +223,39 @@ const ListBusinessPage = () => {
               Location Details
             </h2>
 
-            <div>
-              <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
-                Location <span className="text-red-500">*</span>
-              </label>
-              <button
-                type="button"
-                onClick={() => setIsMapOpen(true)}
-                className="w-full text-left bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400 hover:border-text-primary/50"
-              >
-                {location ? (location.includes("<iframe") ? "Map Location Selected" : location) : "Select your business location on map"}
-              </button>
-              <p className="text-xs text-text-muted mt-2 font-medium">
-                Choose your business location precisely using the map. This is required for customers to find you.
-              </p>
-            </div>
+              <div>
+                <label className="block text-sm font-bold text-text-secondary mb-2 uppercase tracking-wide">
+                  Location <span className="text-red-500">*</span>
+                </label>
+                {location && location.includes("<iframe") ? (
+                  <div className="relative">
+                    <div
+                      className="w-full h-40 rounded-xl overflow-hidden border border-border-primary"
+                      dangerouslySetInnerHTML={{
+                        __html: location.replace('height="300"', 'height="100%"'),
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setIsMapOpen(true)}
+                      className="absolute bottom-2 right-2 px-3 py-1.5 bg-surface-primary/90 backdrop-blur-sm border border-border-primary text-text-primary text-xs font-bold rounded-lg shadow-sm hover:bg-surface-secondary transition-colors"
+                    >
+                      Change Location
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsMapOpen(true)}
+                    className="w-full text-left bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400 hover:border-text-primary/50"
+                  >
+                    Select your business location on map
+                  </button>
+                )}
+                <p className="text-xs text-text-muted mt-2 font-medium">
+                  Choose your business location precisely using the map. This is required for customers to find you.
+                </p>
+              </div>
           </div>
           
           <MapPicker
