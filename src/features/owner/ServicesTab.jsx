@@ -142,23 +142,24 @@ const ServicesTab = () => {
   });
 
   const toggleService = (service) => {
+    const payload = {
+      name: service.name,
+      description: service.description,
+      price: service.price,
+      duration: service.duration,
+      cat_uuid: service.category?.cat_uuid || catUuid,
+      subCat_uuid:
+        service.subcategory?.subCat_uuid || subCategories[0]?.subCat_uuid,
+      is_active: !service.is_active,
+    };
+
+    if (!isIndividual) {
+      payload.required_employees = service.required_employees || 1;
+    }
+
     updateService({
       id: service.service_uuid,
-      data: {
-        name: service.name,
-        description: service.description,
-        price: service.price,
-        duration: service.duration,
-        // The API currently expects this value even though individuals do not
-        // manage staff. Keep it internal and default individual services to 1.
-        required_employees: isIndividual
-          ? 1
-          : service.required_employees || 1,
-        cat_uuid: service.category?.cat_uuid || catUuid,
-        subCat_uuid:
-          service.subcategory?.subCat_uuid || subCategories[0]?.subCat_uuid,
-        is_active: !service.is_active,
-      },
+      data: payload,
     });
   };
 
