@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { bookingApi } from "../../services/bookingApi";
+import { instantBookingApi } from "../../services/instantBookingApi";
 import api from "../../services/axiosClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -29,7 +30,7 @@ const JobBoardTab = () => {
   // Instant booking offers query
   const { data: instantOffersData, isLoading } = useQuery({
     queryKey: ["instantBookingOffers"],
-    queryFn: bookingApi.getInstantBookingOffers,
+    queryFn: instantBookingApi.pendingInstantBookings,
   });
 
   const broadcasts =
@@ -37,7 +38,7 @@ const JobBoardTab = () => {
 
   const { mutate: acceptInstantBooking, isPending: isAcceptingInstant } =
     useMutation({
-      mutationFn: bookingApi.acceptInstantBookingOffer,
+      mutationFn: instantBookingApi.acceptInstantBookingOffer,
       onSuccess: () => {
         toast.success("Instant booking offer accepted!");
         queryClient.invalidateQueries(["instantBookingOffers"]);
@@ -49,7 +50,7 @@ const JobBoardTab = () => {
     });
 
   const { mutate: startJob, isPending: isStarting } = useMutation({
-    mutationFn: bookingApi.startInstantBooking,
+    mutationFn: instantBookingApi.startInstantBooking,
     onSuccess: () => {
       toast.success("Job started!");
       queryClient.invalidateQueries(["instantBookingOffers"]);
@@ -62,7 +63,7 @@ const JobBoardTab = () => {
   });
 
   const { mutate: completeJob, isPending: isCompleting } = useMutation({
-    mutationFn: bookingApi.completeInstantBooking,
+    mutationFn: instantBookingApi.completeInstantBooking,
     onSuccess: () => {
       toast.success("Job completed!");
       queryClient.invalidateQueries(["instantBookingOffers"]);

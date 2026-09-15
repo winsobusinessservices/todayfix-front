@@ -201,13 +201,14 @@ const ServicesTab = () => {
       description: formData.description,
       price: formData.price.toString(),
       duration: parseInt(formData.duration),
-      required_employees: isIndividual
-        ? 1
-        : parseInt(formData.required_employees),
       cat_uuid: catUuid,
       subCat_uuid: formData.subCat_uuid,
       is_active: formData.is_active,
     };
+
+    if (!isIndividual) {
+      payload.required_employees = parseInt(formData.required_employees);
+    }
 
     if (editingId) {
       updateService({ id: editingId, data: payload });

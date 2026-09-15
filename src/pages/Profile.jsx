@@ -4,7 +4,7 @@ import ProfileReviews from "../features/profile/ProfileReviews";
 import ProfileRequests from "../features/profile/ProfileRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../services/authApi";
-import { userDetails, userReviews } from "../services/userApi";
+import { userDetails, userProfile, userReviews } from "../services/userApi";
 import { useNavigate, useSearchParams } from "react-router";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
@@ -47,6 +47,22 @@ const Profile = () => {
     queryKey: ["user"],
     queryFn: userDetails,
   });
+
+  // console.log(userData);
+  // const {
+  //   data: userProfileData,
+  //   isLoading: userProfileLoading,
+  //   error: userProfileError,
+  // } = useQuery({
+  //   queryKey: ["userProfile"],
+  //   queryFn: () => userProfile(userData.user_uuid),
+  //   enabled: !!userData?.user_uuid,
+  //   retry: 0,
+  //   refetchOnWindowFocus: false,
+  //   refetchOnMount: false,
+  // });
+
+  // console.log(userProfileError?.response?.data?.detail);
 
   const {
     data: userReview,

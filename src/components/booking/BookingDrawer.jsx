@@ -20,6 +20,7 @@ import {
   updateAddress,
 } from "../../services/addressApi";
 import { bookingApi } from "../../services/bookingApi";
+import { instantBookingApi } from "../../services/instantBookingApi";
 import CustomDropdown from "../ui/CustomDropdown";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
@@ -333,7 +334,7 @@ const AddressSelector = () => {
   const { mutate: submitBooking, isPending } = useMutation({
     mutationFn: (payload) => {
       if (bookingType === "INSTANT") {
-        return bookingApi.createInstantBooking(payload);
+        return instantBookingApi.createInstantBooking(payload);
       }
       return bookingApi.createBooking(payload);
     },

@@ -24,6 +24,11 @@ export const userPendingBooking = async ({ page } = {}) => {
   return res.data;
 };
 
+export const userProfile = async (userId) => {
+  const res = await api.get(`/api/auth/users/${userId}/profile-picture/`);
+  return res.data;
+};
+
 export const submitBusinessApplication = async (formData) => {
   return await api
     .post("/api/business/applications/", formData, {
