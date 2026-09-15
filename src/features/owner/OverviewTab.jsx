@@ -64,30 +64,30 @@ const OverviewTab = () => {
       <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-2 md:gap-6">
         <StatCard
           title="Total Revenue"
-          value="₹45,200"
+          value="₹0"
           icon={IndianRupee}
-          trend="12.5%"
+          trend="0%"
           positive={true}
         />
         <StatCard
           title="Active Bookings"
-          value="12"
+          value="0"
           icon={Calendar}
-          trend="2"
+          trend="0"
           positive={true}
         />
         <StatCard
           title="Total Services"
-          value="156"
+          value="0"
           icon={TrendingUp}
-          trend="8"
+          trend="0"
           positive={true}
         />
         <StatCard
           title="Overall Rating"
-          value="4.8"
+          value="0"
           icon={Star}
-          trend="0.2"
+          trend="0"
           positive={true}
         />
       </div>
@@ -209,4 +209,3 @@ const OverviewTab = () => {
 };
 
 export default OverviewTab;
-

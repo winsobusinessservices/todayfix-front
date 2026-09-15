@@ -43,6 +43,27 @@ const StatusBadge = ({ status }) => {
   );
 };
 
+const getMapLink = (address) => {
+  if (!address) return "#";
+  if (address.location) {
+    const match = address.location.match(/src="([^"]+)"/);
+    if (match && match[1]) {
+      return match[1].replace(/&?output=embed/, "");
+    }
+  }
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    [
+      address.address_line,
+      address.locality,
+      address.city,
+      address.state,
+      address.pincode,
+    ]
+      .filter(Boolean)
+      .join(", ") || "Customer Location",
+  )}`;
+};
+
 const BookingsTab = () => {
   const queryClient = useQueryClient();
   const businessProfile = useOutletContext();
@@ -310,8 +331,11 @@ const BookingsTab = () => {
                       <span className="text-zinc-300">Location Hidden</span>
                     ) : booking.status === "IN_PROGRESS" ||
                       booking.status === "COMPLETED" ? (
-                      <span
-                        className="text-zinc-300 line-clamp-2"
+                      <a
+                        href={getMapLink(booking.address)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-zinc-300 line-clamp-2 hover:text-purple-400 hover:underline transition-colors"
                         title={[
                           booking.address?.address_line,
                           booking.address?.locality,
@@ -331,10 +355,13 @@ const BookingsTab = () => {
                         ]
                           .filter(Boolean)
                           .join(", ") || "Customer Location"}
-                      </span>
+                      </a>
                     ) : (
-                      <span
-                        className="truncate max-w-[200px]"
+                      <a
+                        href={getMapLink(booking.address)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="truncate max-w-[200px] hover:text-purple-400 hover:underline transition-colors"
                         title={
                           booking.address?.locality ||
                           booking.address?.city ||
@@ -350,7 +377,7 @@ const BookingsTab = () => {
                           (booking.distance_km
                             ? `${booking.distance_km} km away (${booking.estimated_travel_minutes} min)`
                             : "Customer Location")}
-                      </span>
+                      </a>
                     )}
                   </div>
                 </div>

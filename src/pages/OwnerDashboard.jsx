@@ -447,24 +447,6 @@ const OwnerDashboard = () => {
           </div>
         )}
       </AnimatePresence>
-
-      {/* Dev Tool: Trigger Mock Popup */}
-      <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
-        {/* <button 
-            onClick={() => setIsVerified(!isVerified)}
-            className={`text-[10px] font-mono px-2 py-1 rounded-md opacity-50 hover:opacity-100 transition-opacity font-bold ${isVerified ? 'bg-orange-500 text-white' : 'bg-emerald-500 text-white'}`}
-            title="Toggle Verification State"
-          >
-            {isVerified ? "Revoke Verification" : "Verify Account"}
-          </button> */}
-        <button
-          onClick={() => setShowMockPopup(true)}
-          className="text-[10px] font-mono bg-zinc-800 text-white px-2 py-1 rounded-md opacity-50 hover:opacity-100 transition-opacity"
-          title="Simulate WebSocket Ping from Admin"
-        >
-          Ping Websocket
-        </button>
-      </div>
     </div>
   );
 };

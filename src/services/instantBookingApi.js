@@ -44,10 +44,10 @@ export const instantBookingApi = {
   //   return response.data;
   // },
 
-  // POST /api/instant-bookings/provider/offers/<uuid>/accept/ (Accept Instant Offer)
-  acceptInstantBookingOffer: async (offerId) => {
+  // POST /api/instant-bookings/provider/popups/<popup_id>/accept/ (Accept Instant Offer)
+  acceptInstantBookingOffer: async (popupId) => {
     const response = await api.post(
-      `/api/instant-bookings/provider/offers/${offerId}/accept/`,
+      `/api/instant-bookings/provider/popups/${popupId}/accept/`,
     );
     return response.data;
   },
