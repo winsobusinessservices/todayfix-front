@@ -9,6 +9,9 @@ import {
   UserPlus,
   User,
   MessageSquare,
+  Phone,
+  Zap,
+  PhoneCallIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useOutletContext } from "react-router";
@@ -263,88 +266,125 @@ const BookingsTab = () => {
             <span className="w-8 h-8 border-4 border-text-primary border-t-transparent rounded-full animate-spin inline-block"></span>
           </div>
         )}
-        {filteredBookings?.map((booking) => (
-          <div
+        {filteredBookings?.map((booking, index) => (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
             key={
               booking.booking_uuid ||
               booking.instant_booking_uuid ||
               booking.uuid
             }
-            className="bg-surface-primary/80 backdrop-blur-md rounded-2xl border border-border-primary p-6 shadow-lg hover:shadow-purple-500/10 hover:border-purple-500/30 transition-all duration-300 group"
+            className="group relative bg-surface-primary rounded-2xl border border-border-primary overflow-hidden hover:border-zinc-400/50 transition-colors duration-200"
           >
-            <div className="flex flex-col md:flex-row justify-between gap-6 relative z-10">
-              <div className="flex-grow space-y-4">
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium text-zinc-500 uppercase">
-                    {
-                      (
-                        booking.booking_uuid ||
-                        booking.uuid ||
-                        booking.instant_booking_uuid ||
-                        booking.id ||
-                        "OFFER"
-                      )?.split("-")[0]
-                    }
-                  </span>
-                  <StatusBadge status={booking.status} />
-                </div>
-
-                <div>
-                  <h3 className="text-xl font-bold tracking-tight text-text-primary mb-1">
-                    {booking.service?.name ||
-                      booking.requested_service_name ||
-                      "Service Request"}
-                  </h3>
-                  {(booking.user || activeTab === "INSTANT") && (
-                    <p className="text-zinc-400 font-medium uppercase">
-                      Client -{" "}
-                      {activeTab === "INSTANT"
-                        ? "Customer (Instant Booking)"
-                        : booking?.status === "IN_PROGRESS" ||
-                            booking?.status === "COMPLETED"
-                          ? booking?.user?.first_name +
-                            " " +
-                            booking?.user?.last_name
-                          : booking.user?.user_uuid?.split("-")[0] ||
-                            "Customer"}
-                    </p>
-                  )}
-                  {(booking.notes || booking.customer_note) && (
-                    <p className="text-sm text-zinc-500 italic mt-1 bg-surface-secondary p-2 rounded-lg border border-border-primary inline-block">
-                      "{booking?.notes || booking?.customer_note}"
-                    </p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-zinc-500 mt-2">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-purple-500" />
-                    <span>
-                      {activeTab === "INSTANT"
-                        ? `${dateFormater(booking.created_at)} (ASAP)`
-                        : `${dateFormater(booking.scheduled_date)} (${booking.slot_type})`}
-                    </span>
+            <div className="p-6">
+              {/* Header: ID, Status, Price */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className="text-sm font-medium text-zinc-500 font-mono">
+                    #
+                    {(
+                      booking.booking_uuid ||
+                      booking.uuid ||
+                      booking.instant_booking_uuid ||
+                      booking.id ||
+                      "OFFER"
+                    )
+                      .split("-")[0]
+                      .toUpperCase()}
                   </div>
-                  <div className="flex items-start sm:items-center gap-2">
-                    <MapPin className="w-4 h-4 text-purple-500 mt-0.5 sm:mt-0 flex-shrink-0" />
+                  <div className="w-1 h-1 rounded-full bg-zinc-300" />
+                  <StatusBadge status={booking.status} />
+                  {activeTab === "INSTANT" && (
+                    <>
+                      <div className="w-1 h-1 rounded-full bg-zinc-300" />
+                      <span className="text-[13px] font-semibold text-amber-600 flex items-center gap-1.5">
+                        <Zap className="w-3.5 h-3.5" />
+                        Instant Request
+                      </span>
+                    </>
+                  )}
+                </div>
+
+                <div className="flex flex-col sm:items-end">
+                  <div className="text-xl font-semibold tracking-tight text-text-primary">
+                    ₹{booking.price || booking.total_payable_price || "TBD"}
+                  </div>
+                  {activeTab === "INSTANT" &&
+                    booking.tip_amount &&
+                    Number(booking.tip_amount) > 0 && (
+                      <p className="text-sm font-medium text-emerald-600 mt-0.5">
+                        + ₹{booking.tip_amount} tip
+                      </p>
+                    )}
+                </div>
+              </div>
+
+              {/* Service Title */}
+              <h3 className="text-xl font-semibold tracking-tight text-text-primary mb-6">
+                {booking.service?.name ||
+                  booking.requested_service_name ||
+                  "Service Request"}
+              </h3>
+
+              {/* Minimal Metadata Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8 mb-6 text-sm">
+                {/* Customer */}
+                {(booking.user || activeTab === "INSTANT") && (
+                  <div className="flex items-start gap-3">
+                    <User className="w-4 h-4 text-zinc-400 mt-0.5" />
+                    <div>
+                      <p className="text-zinc-500 font-medium mb-0.5">
+                        Customer
+                      </p>
+                      <p className="text-text-primary font-medium">
+                        {activeTab === "INSTANT"
+                          ? "Instant Request"
+                          : booking?.status === "IN_PROGRESS" ||
+                              booking?.status === "COMPLETED"
+                            ? `${booking?.user?.first_name || ""} ${booking?.user?.last_name || ""}`.trim()
+                            : booking.user?.user_uuid?.split("-")[0] ||
+                              "Customer"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {/* Schedule */}
+                <div className="flex items-start gap-3">
+                  <Calendar className="w-4 h-4 text-zinc-400 mt-0.5" />
+                  <div>
+                    <p className="text-zinc-500 font-medium mb-0.5">Schedule</p>
+                    <p className="text-text-primary font-medium">
+                      {activeTab === "INSTANT"
+                        ? "As soon as possible"
+                        : dateFormater(booking.scheduled_date)}
+                    </p>
+                    {activeTab !== "INSTANT" && booking.slot_type && (
+                      <p className="text-zinc-500 mt-0.5">
+                        {booking.slot_type}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className="flex items-start gap-3 sm:col-span-2">
+                  <MapPin className="w-4 h-4 text-zinc-400 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="text-zinc-500 font-medium mb-0.5">Location</p>
                     {activeTab === "INSTANT" ? (
-                      <span className="text-zinc-300">Location Hidden</span>
+                      <p className="text-zinc-500 italic">
+                        Hidden until accepted
+                      </p>
                     ) : booking.status === "IN_PROGRESS" ||
                       booking.status === "COMPLETED" ? (
                       <a
                         href={getMapLink(booking.address)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-zinc-300 line-clamp-2 hover:text-purple-400 hover:underline transition-colors"
-                        title={[
-                          booking.address?.address_line,
-                          booking.address?.locality,
-                          booking.address?.city,
-                          booking.address?.state,
-                          booking.address?.pincode,
-                        ]
-                          .filter(Boolean)
-                          .join(", ")}
+                        className="text-text-primary font-medium hover:underline hover:text-text-secondary transition-colors inline-block"
                       >
                         {[
                           booking.address?.address_line,
@@ -354,89 +394,101 @@ const BookingsTab = () => {
                           booking.address?.pincode,
                         ]
                           .filter(Boolean)
-                          .join(", ") || "Customer Location"}
+                          .join(", ") || "View Location"}
                       </a>
                     ) : (
-                      <a
-                        href={getMapLink(booking.address)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="truncate max-w-[200px] hover:text-purple-400 hover:underline transition-colors"
-                        title={
-                          booking.address?.locality ||
-                          booking.address?.city ||
-                          booking.address?.address_line ||
-                          (booking.distance_km
-                            ? `${booking.distance_km} km away`
-                            : "")
-                        }
-                      >
+                      <p className="text-text-primary font-medium">
                         {booking.address?.locality ||
                           booking.address?.city ||
                           booking.address?.address_line ||
-                          (booking.distance_km
-                            ? `${booking.distance_km} km away (${booking.estimated_travel_minutes} min)`
-                            : "Customer Location")}
-                      </a>
+                          "Customer Location"}
+                        {booking.distance_km && (
+                          <span className="text-zinc-500 font-normal">
+                            {" "}
+                            • {booking.distance_km} km away
+                          </span>
+                        )}
+                      </p>
                     )}
                   </div>
                 </div>
 
-                {/* Assigned Employee Details */}
-                {(booking.booking_employees?.length > 0 ||
-                  booking.employee ||
-                  booking.employee_name) && (
-                  <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border-primary/50">
-                    <div className="w-10 h-10 rounded-full bg-surface-secondary flex items-center justify-center border border-border-primary flex-shrink-0">
-                      <User className="w-5 h-5 text-text-primary" />
-                    </div>
+                {/* Notes */}
+                {(booking.notes || booking.customer_note) && (
+                  <div className="flex items-start gap-3 sm:col-span-2">
+                    <MessageSquare className="w-4 h-4 text-zinc-400 mt-0.5" />
                     <div>
-                      <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">
-                        Assigned To
-                      </p>
-                      <p className="text-sm font-bold text-zinc-200">
-                        {booking.booking_employees?.[0]?.name ||
-                          booking.employee?.name ||
-                          booking.employee_name ||
-                          "Employee"}
+                      <p className="text-zinc-500 font-medium mb-0.5">Notes</p>
+                      <p className="text-text-primary">
+                        {booking?.notes || booking?.customer_note}
                       </p>
                     </div>
                   </div>
                 )}
               </div>
 
-              <div className="flex flex-col justify-end items-start md:items-end md:min-w-[150px] border-t md:border-t-0 md:border-l border-border-primary pt-4 md:pt-0 md:pl-6">
-                <div className="flex items-center gap-1 text-2xl font-black tracking-tight text-text-primary md:self-center md: mb-3">
-                  <IndianRupee className="w-5 h-5 text-zinc-400" />
-                  {booking.price || booking.total_payable_price || "TBD"}
+              {/* Assigned Staff & Actions */}
+              <div className="pt-5 border-t border-border-primary flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+                {/* Assigned Staff */}
+                <div className="flex-1">
+                  {(booking.booking_employees?.length > 0 ||
+                    booking.employee ||
+                    booking.employee_name) && (
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-medium text-zinc-500">
+                        Assigned to:
+                      </span>
+                      <span className="text-sm font-medium text-text-primary">
+                        {booking.booking_employees?.[0]?.name ||
+                          booking.employee?.name ||
+                          booking.employee_name ||
+                          "Employee"}
+                      </span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Conditional Actions based on status */}
-                <div className="w-full flex flex-wrap md:justify-end gap-2 mt-4 md:mt-0">
+                {/* Actions */}
+                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                   {booking.status === "PENDING" && (
-                    <div className="flex flex-col gap-2 w-full">
-                      <button
-                        onClick={() => acceptBooking(booking.uuid)}
-                        disabled={isAccepting}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-text-primary text-text-inverted font-bold text-sm rounded-xl hover:bg-surface-dark transition-colors shadow-md cursor-pointer disabled:opacity-50"
-                      >
-                        <CheckCircle2 className="w-4 h-4" />{" "}
-                        {isAccepting ? "Accepting..." : "Accept Job"}
-                      </button>
+                    <>
                       <button
                         onClick={() => declineBooking(booking.uuid)}
                         disabled={isDeclining}
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-red-500/10 text-red-500 border border-red-500/20 font-bold text-sm rounded-xl hover:bg-red-500/20 transition-colors cursor-pointer disabled:opacity-50"
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-surface-secondary transition-all disabled:opacity-50"
                       >
-                        <X className="w-4 h-4" />{" "}
-                        {isDeclining ? "Declining..." : "Decline Job"}
+                        {isDeclining ? "Declining..." : "Decline"}
                       </button>
-                    </div>
+                      <button
+                        onClick={() => acceptBooking(booking.uuid)}
+                        disabled={isAccepting}
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-text-primary text-surface-primary hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                      >
+                        <CheckCircle2 className="w-4 h-4" />
+                        {isAccepting ? "Accepting..." : "Accept"}
+                      </button>
+                    </>
                   )}
+
                   {(booking.status === "CONFIRMED" ||
                     booking.status === "ASSIGNED" ||
                     booking.status === "ACCEPTED") && (
-                    <div className="flex flex-col gap-2 w-full">
+                    <>
+                      {/* <button
+                        onClick={() =>
+                          setActiveModal({
+                            type: "chat",
+                            bookingId:
+                              booking.id ||
+                              booking.uuid ||
+                              booking.instant_booking_uuid,
+                            booking: booking,
+                          })
+                        }
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-surface-secondary transition-all flex items-center justify-center gap-2"
+                      >
+                        <MessageSquare className="w-4 h-4" /> Chat
+                      </button> */}
                       {isIndividual || activeTab === "INSTANT" ? (
                         <button
                           onClick={() => {
@@ -453,9 +505,9 @@ const BookingsTab = () => {
                             }
                           }}
                           disabled={isStarting || isStartingInstant}
-                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:opacity-90 transition-all shadow-md cursor-pointer disabled:opacity-50"
+                          className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-text-primary text-surface-primary hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                         >
-                          <Clock className="w-4 h-4" />{" "}
+                          <Clock className="w-4 h-4" />
                           {isStarting || isStartingInstant
                             ? "Starting..."
                             : "Start Job"}
@@ -475,11 +527,12 @@ const BookingsTab = () => {
                                 booking.instant_booking_uuid,
                               serviceId: booking.service?.service_uuid,
                               isReassign: false,
+                              booking: booking,
                             })
                           }
-                          className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-sm rounded-xl hover:from-purple-500 hover:to-indigo-500 transition-all shadow-md shadow-purple-500/25 cursor-pointer"
+                          className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-text-primary text-surface-primary hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                         >
-                          <UserPlus className="w-4 h-4" /> Assign Employee
+                          <UserPlus className="w-4 h-4" /> Assign
                         </button>
                       ) : (
                         <>
@@ -498,9 +551,10 @@ const BookingsTab = () => {
                                     ?.employee_uuid ||
                                   booking.employee?.employee_uuid ||
                                   booking.employee_uuid,
+                                booking: booking,
                               })
                             }
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-surface-secondary text-text-secondary border border-border-primary font-bold text-sm rounded-xl hover:bg-surface-tertiary transition-colors shadow-sm cursor-pointer"
+                            className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-surface-secondary transition-all"
                           >
                             Reassign
                           </button>
@@ -519,21 +573,21 @@ const BookingsTab = () => {
                               }
                             }}
                             disabled={isStarting || isStartingInstant}
-                            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:opacity-90 transition-all shadow-md cursor-pointer disabled:opacity-50"
+                            className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-text-primary text-surface-primary hover:bg-zinc-800 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                           >
-                            <Clock className="w-4 h-4" />{" "}
+                            <Clock className="w-4 h-4" />
                             {isStarting || isStartingInstant
                               ? "Starting..."
                               : "Start Job"}
                           </button>
                         </>
                       )}
-                    </div>
+                    </>
                   )}
 
                   {booking.status === "IN_PROGRESS" && (
-                    <div className="flex flex-col gap-2 w-full">
-                      <button
+                    <>
+                      {/* <button
                         onClick={() =>
                           setActiveModal({
                             type: "chat",
@@ -541,12 +595,19 @@ const BookingsTab = () => {
                               booking.id ||
                               booking.uuid ||
                               booking.instant_booking_uuid,
+                            booking: booking,
                           })
                         }
-                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-surface-secondary text-text-primary border border-border-primary font-bold text-sm rounded-xl hover:bg-zinc-800 transition-colors cursor-pointer"
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-surface-secondary transition-all flex items-center justify-center gap-2"
                       >
-                        <MessageSquare className="w-4 h-4" /> Contact
-                      </button>
+                        <MessageSquare className="w-4 h-4" /> Chat
+                      </button> */}
+                      <a
+                        href={`tel:${booking?.user?.phone}`}
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-surface-secondary transition-all flex items-center justify-center gap-2"
+                      >
+                        <PhoneCallIcon className="w-4 h-4" /> Contact
+                      </a>
                       <button
                         onClick={() =>
                           setActiveModal({
@@ -555,22 +616,23 @@ const BookingsTab = () => {
                               booking.id ||
                               booking.uuid ||
                               booking.instant_booking_uuid,
+                            booking: booking,
                           })
                         }
                         disabled={isCompleting || isCompletingInstant}
-                        className="flex-1 md:flex-none text-nowrap flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm rounded-xl hover:from-emerald-500 hover:to-teal-500 transition-all shadow-md shadow-emerald-500/25 cursor-pointer disabled:opacity-50"
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-nowrap text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
-                        <CheckCircle2 className="w-4 h-4" />{" "}
+                        <CheckCircle2 className="w-4 h-4" />
                         {isCompleting || isCompletingInstant
                           ? "Completing..."
                           : "Finish Job"}
                       </button>
-                    </div>
+                    </>
                   )}
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
 
         {!isLoading && filteredBookings.length === 0 && (
@@ -587,16 +649,8 @@ const BookingsTab = () => {
       </div>
 
       <AnimatePresence>
-        {/* {activeModal?.type === "contact" && (
-          <Contact activeModal={activeModal} setActiveModal={setActiveModal} />
-        )} */}
-
         {activeModal?.type === "chat" && (
-          <Chat
-            activeModal={activeModal}
-            setActiveModal={setActiveModal}
-            bookingsList={bookingsList}
-          />
+          <Chat activeModal={activeModal} setActiveModal={setActiveModal} />
         )}
 
         {activeModal?.type === "assign" && !isIndividual && (
@@ -614,6 +668,7 @@ const BookingsTab = () => {
             setOtpError={setOtpError}
             handleVerifyOtp={handleVerifyOtp}
             setActiveModal={setActiveModal}
+            isLoading={isCompleting || isCompletingInstant}
           />
         )}
       </AnimatePresence>

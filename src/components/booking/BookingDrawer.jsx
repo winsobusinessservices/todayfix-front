@@ -24,7 +24,7 @@ import { instantBookingApi } from "../../services/instantBookingApi";
 import CustomDropdown from "../ui/CustomDropdown";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { Map } from "lucide-react";
+import { Map, MessageSquare } from "lucide-react";
 import MapPicker from "../modals/MapPicker";
 
 const ADD_ADDRESS_OPTION = "+ Add New Address";
@@ -41,7 +41,8 @@ const emptyAddressForm = {
 
 // Step 1: Instant vs Scheduled
 const BookingTypeSelector = () => {
-  const { setBookingType, nextStep } = useBookingStore();
+  const { setBookingType, nextStep, selectedService } = useBookingStore();
+  const vendorName = selectedService?.business?.name || "Professional";
 
   const handleSelect = (type) => {
     setBookingType(type);
@@ -50,48 +51,99 @@ const BookingTypeSelector = () => {
 
   return (
     <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
-      <h3 className="text-xl font-bold text-text-primary mb-6">
-        When do you need this?
-      </h3>
+      <div className="mb-6">
+        <h3 className="text-[28px] font-black text-black leading-tight mb-2">
+          How would you like
+          <br />
+          to book?
+        </h3>
+        <p className="text-zinc-500 text-[15px]">
+          Choose the option that works best for you.
+        </p>
+      </div>
 
-      <button
-        onClick={() => handleSelect("INSTANT")}
-        className="w-full text-left p-5 rounded-[1.5rem] border-2 border-border-primary hover:border-text-primary hover:shadow-lg transition-all bg-surface-secondary flex items-center justify-between gap-4 group"
-      >
-        <div className="flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-blue-50 flex items-center justify-center shrink-0 border border-blue-100 group-hover:scale-110 group-hover:bg-blue-100 transition-all duration-300">
-            <Clock className="w-7 h-7 text-blue-600" />
+      <div className="space-y-4">
+        <button
+          onClick={() => handleSelect("SCHEDULED")}
+          className="w-full text-left p-6 rounded-2xl border border-zinc-200 hover:border-zinc-400 transition-colors bg-white flex items-center justify-between gap-4 group shadow-sm"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
+              <Calendar className="w-5 h-5 text-black" strokeWidth={1.5} />
+            </div>
+            <div>
+              <h4 className="font-bold text-black text-[15px]">
+                Schedule with {vendorName}
+              </h4>
+              <p className="text-[13px] text-zinc-500 mt-1 leading-snug pr-4">
+                Secure this exact professional at their listed price of ₹
+                {Math.round(selectedService?.price || 0)}.
+              </p>
+            </div>
+          </div>
+          <ArrowRight
+            className="w-5 h-5 text-zinc-400 group-hover:text-black shrink-0"
+            strokeWidth={1.5}
+          />
+        </button>
+
+        <button
+          onClick={() => handleSelect("INSTANT")}
+          className="w-full text-left p-6 rounded-2xl border border-zinc-200 hover:border-zinc-400 transition-colors bg-white flex items-center justify-between gap-4 group shadow-sm"
+        >
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
+              <Clock className="w-5 h-5 text-black" strokeWidth={1.5} />
+            </div>
+            <div>
+              <h4 className="font-bold text-black text-[15px]">
+                Find Any Professional Instantly
+              </h4>
+              <p className="text-[13px] text-zinc-500 mt-1 leading-snug pr-2">
+                Broadcast this request to all available vendors.
+                <br />
+                <span className="text-blue-600 font-bold mt-1 block">
+                  *Final price may vary based on who accepts.*
+                </span>
+              </p>
+            </div>
+          </div>
+          <ArrowRight
+            className="w-5 h-5 text-zinc-400 group-hover:text-black shrink-0"
+            strokeWidth={1.5}
+          />
+        </button>
+      </div>
+
+      <div className="relative py-4">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-zinc-200"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-3 bg-surface-primary text-zinc-500 text-[13px]">
+            Not sure which to choose?
+          </span>
+        </div>
+      </div>
+
+      <button className="w-full text-left p-4 rounded-2xl bg-zinc-50 flex items-center justify-between group hover:bg-zinc-100 transition-colors border border-border-primary">
+        <div className="flex items-center gap-4">
+          <div className="w-10 h-10 rounded-full border border-zinc-200 bg-white flex items-center justify-center shrink-0">
+            <MessageSquare className="w-4 h-4 text-black" strokeWidth={1.5} />
           </div>
           <div>
-            <h4 className="font-black text-text-primary text-lg">
-              Right Now (Instant)
+            <h4 className="font-bold text-black text-[14px]">
+              We're here to help
             </h4>
-            <p className="text-sm font-medium text-text-secondary mt-0.5">
-              Provider arrives ASAP.
+            <p className="text-[12px] text-zinc-500 mt-0.5">
+              Chat with our support team for guidance.
             </p>
           </div>
         </div>
-        <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-text-primary group-hover:translate-x-1 transition-all" />
-      </button>
-
-      <button
-        onClick={() => handleSelect("SCHEDULED")}
-        className="w-full text-left p-5 rounded-[1.5rem] border-2 border-border-primary hover:border-text-primary hover:shadow-lg transition-all bg-surface-secondary flex items-center justify-between gap-4 group"
-      >
-        <div className="flex items-center gap-5">
-          <div className="w-14 h-14 rounded-full bg-purple-50 flex items-center justify-center shrink-0 border border-purple-100 group-hover:scale-110 group-hover:bg-purple-100 transition-all duration-300">
-            <Calendar className="w-7 h-7 text-purple-600" />
-          </div>
-          <div>
-            <h4 className="font-black text-text-primary text-lg">
-              Schedule for Later
-            </h4>
-            <p className="text-sm font-medium text-text-secondary mt-0.5">
-              Pick a date and time slot.
-            </p>
-          </div>
-        </div>
-        <ArrowRight className="w-5 h-5 text-zinc-400 group-hover:text-text-primary group-hover:translate-x-1 transition-all" />
+        <ArrowRight
+          className="w-4 h-4 text-zinc-400 group-hover:text-black shrink-0"
+          strokeWidth={1.5}
+        />
       </button>
     </div>
   );
@@ -116,6 +168,23 @@ const DateTimeSelector = () => {
     enabled: !!(selectedService && schedule.date),
   });
 
+  const todayStr = new Date().toISOString().split("T")[0];
+
+  const handleDateChange = (e) => {
+    const selected = e.target.value;
+    if (!selected) {
+      setSchedule({ date: "", timeSlot: "" });
+      return;
+    }
+
+    if (selected < todayStr) {
+      toast.error("Please select a date from today onwards.");
+      return;
+    }
+
+    setSchedule({ date: selected, timeSlot: "" });
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
       <h3 className="text-xl font-bold text-text-primary mb-4">
@@ -129,8 +198,8 @@ const DateTimeSelector = () => {
         <input
           type="date"
           value={schedule.date}
-          onChange={(e) => setSchedule({ date: e.target.value, timeSlot: "" })}
-          min={new Date().toISOString().split("T")[0]}
+          onChange={handleDateChange}
+          min={todayStr}
           className="w-full bg-surface-secondary border border-border-primary rounded-xl py-3 px-4 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors"
         />
       </div>
@@ -258,10 +327,7 @@ const AddressSelector = () => {
   const savedAddressOptions = addresses.map(
     (a) => `${a.address_type} : ${a.address_line.slice(0, 30)} - ${a.pincode}`,
   );
-  const addressOptions =
-    bookingType === "SCHEDULED"
-      ? [...savedAddressOptions, ADD_ADDRESS_OPTION]
-      : savedAddressOptions;
+  const addressOptions = [...savedAddressOptions, ADD_ADDRESS_OPTION];
 
   const { mutate: addAddress, isPending: isAddingAddress } = useMutation({
     mutationFn: createAddress,
@@ -327,6 +393,7 @@ const AddressSelector = () => {
       city: newAddress.city.trim(),
       state: newAddress.state.trim(),
       pincode: newAddress.pincode.trim(),
+      location: mapEmbed,
       is_default: addresses.length === 0,
     });
   };
@@ -341,14 +408,19 @@ const AddressSelector = () => {
     onSuccess: (data) => {
       // Handle the case where the backend returns success: true, but no provider is available
       if (
-        data?.data?.status === "NO_PROVIDER" || 
+        data?.data?.status === "NO_PROVIDER" ||
         data?.message?.toLowerCase().includes("no provider")
       ) {
-        toast.error(data?.message || "No provider is currently available for this service.");
+        toast.error(
+          data?.message ||
+            "No provider is currently available for this service.",
+        );
         return;
       }
-      
-      setBookingId(data?.data?.uuid || data?.data?.instant_booking_uuid || "TF-SUCCESS");
+
+      setBookingId(
+        data?.data?.uuid || data?.data?.instant_booking_uuid || "TF-SUCCESS",
+      );
       nextStep();
     },
     onError: (error) => {
@@ -374,7 +446,8 @@ const AddressSelector = () => {
     });
 
   const handleConfirm = () => {
-    if (!address_uuid) return toast.error("Please select an address");
+    if (!address_uuid)
+      return toast.error("Please select a saved address or add a new one");
 
     let payload;
     if (bookingType === "INSTANT") {
@@ -388,18 +461,6 @@ const AddressSelector = () => {
         requested_service_name: selectedService?.name,
         customer_note: notes,
       };
-
-      const selectedAddr = addresses.find(
-        (a) => (a.uuid || a.id || a.add_uuid) === address_uuid,
-      );
-      if (selectedAddr && selectedAddr.location !== mapEmbed) {
-        setCurrentPayload(payload);
-        updateAddressMutate({
-          addressId: address_uuid,
-          addressData: { ...selectedAddr, location: mapEmbed },
-        });
-        return;
-      }
     } else {
       payload = {
         service_uuid: selectedService?.service_uuid,
@@ -410,6 +471,20 @@ const AddressSelector = () => {
         business_uuid: selectedService?.business?.business_profile_uuid,
       };
     }
+
+    // Save map embed to address if it was added/changed
+    const selectedAddr = addresses.find(
+      (a) => (a.uuid || a.id || a.add_uuid) === address_uuid,
+    );
+    if (selectedAddr && mapEmbed && selectedAddr.location !== mapEmbed) {
+      setCurrentPayload(payload);
+      updateAddressMutate({
+        addressId: address_uuid,
+        addressData: { ...selectedAddr, location: mapEmbed },
+      });
+      return;
+    }
+
     submitBooking(payload);
   };
 
@@ -453,7 +528,7 @@ const AddressSelector = () => {
             variant="transparent"
           />
         </div>
-        {bookingType === "SCHEDULED" && showAddAddress && (
+        {showAddAddress && (
           <form
             onSubmit={handleAddAddress}
             className="mt-4 space-y-4 rounded-2xl border border-border-primary bg-surface-secondary p-4"
@@ -535,7 +610,41 @@ const AddressSelector = () => {
               </label>
             </div>
 
-            <div className="flex gap-3">
+            <div className="col-span-2 mt-2">
+              <label className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-2 block">
+                Precise Location (Map)
+              </label>
+              {mapEmbed ? (
+                <div className="relative">
+                  <div
+                    className="w-full h-32 rounded-xl overflow-hidden border border-border-primary"
+                    dangerouslySetInnerHTML={{
+                      __html: mapEmbed.replace('height="300"', 'height="100%"'),
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsMapOpen(true)}
+                    className="absolute bottom-2 right-2 px-3 py-1.5 bg-surface-primary/90 backdrop-blur-sm border border-border-primary text-text-primary text-xs font-bold rounded-lg shadow-sm hover:bg-surface-secondary transition-colors"
+                  >
+                    Change Location
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setIsMapOpen(true)}
+                    className="w-full bg-purple-500/10 text-purple-600 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
+                  >
+                    <Map className="w-5 h-5" />
+                    Select Location on Map
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-4">
               <button
                 type="submit"
                 disabled={isAddingAddress}
@@ -562,12 +671,9 @@ const AddressSelector = () => {
         </p>
       </div>
 
-      {bookingType === "INSTANT" && (
+      {!showAddAddress && (
         <div>
-          <label className="block text-sm font-bold text-text-secondary mb-3">
-            Service Location (Required)
-          </label>
-          {mapEmbed ? (
+          {mapEmbed && (
             <div className="relative">
               <div
                 className="w-full h-32 rounded-xl overflow-hidden border border-border-primary"
@@ -582,37 +688,14 @@ const AddressSelector = () => {
                 Change Location
               </button>
             </div>
-          ) : (
-            <div className="flex flex-col gap-3">
-              <button
-                onClick={() => setIsMapOpen(true)}
-                className="w-full bg-purple-500/10 text-purple-600 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
-              >
-                <Map className="w-5 h-5" />
-                Select Location on Map
-              </button>
-              <button
-                onClick={handleGetCurrentLocation}
-                disabled={isLoadingLocation}
-                className="w-full bg-blue-500/10 text-blue-600 border border-blue-500/20 hover:bg-blue-500/20 hover:border-blue-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <Navigation
-                  className={`w-5 h-5 ${isLoadingLocation ? "animate-spin" : ""}`}
-                />
-                {isLoadingLocation
-                  ? "Getting Location..."
-                  : "Use Current Location"}
-              </button>
-            </div>
           )}
-
-          <MapPicker
-            isOpen={isMapOpen}
-            onClose={() => setIsMapOpen(false)}
-            onConfirm={(iframeString) => setMapEmbed(iframeString)}
-          />
         </div>
       )}
+      <MapPicker
+        isOpen={isMapOpen}
+        onClose={() => setIsMapOpen(false)}
+        onConfirm={(iframeString) => setMapEmbed(iframeString)}
+      />
 
       <div>
         <label className="block text-sm font-bold text-text-secondary mb-3">
@@ -644,7 +727,8 @@ const AddressSelector = () => {
 
 // Step 4: Success
 const BookingSuccess = () => {
-  const { bookingId, closeBooking, selectedService, bookingType } = useBookingStore();
+  const { bookingId, closeBooking, selectedService, bookingType } =
+    useBookingStore();
   const navigate = useNavigate();
 
   return (
@@ -653,10 +737,12 @@ const BookingSuccess = () => {
         <CheckCircle2 className="w-10 h-10 text-green-500" />
       </div>
       <h2 className="text-2xl font-black text-text-primary mb-2">
-        {bookingType === "INSTANT" ? "Request Broadcasted!" : "Booking Confirmed!"}
+        {bookingType === "INSTANT"
+          ? "Request Broadcasted!"
+          : "Booking Confirmed!"}
       </h2>
       <p className="text-text-secondary mb-6">
-        {bookingType === "INSTANT" 
+        {bookingType === "INSTANT"
           ? `Searching for a provider for ${selectedService?.name}...`
           : `Your request for ${selectedService?.name} is placed.`}
       </p>
@@ -674,7 +760,7 @@ const BookingSuccess = () => {
           if (bookingType === "INSTANT") {
             navigate(`/track/instant/${bookingId}`);
           } else {
-            navigate("/profile"); 
+            navigate("/profile");
           }
         }}
         className="w-full py-4 bg-surface-dark text-text-inverted font-bold rounded-xl shadow-md"
@@ -715,8 +801,8 @@ const BookingDrawer = () => {
 
   // Handle back button behavior
   const handleBack = () => {
-    if (step === 2 && bookingType === "INSTANT") {
-      // If we are on address step but it's instant, going back means back to step 1
+    if (step === 3 && bookingType === "INSTANT") {
+      // If we are on address step (step 3) but it's instant, going back means back to step 1
       setStep(1);
     } else {
       prevStep();
@@ -746,7 +832,7 @@ const BookingDrawer = () => {
           >
             {/* Header */}
             <div className="px-6 py-4 border-b border-border-primary flex items-center justify-between bg-surface-primary shrink-0">
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1">
                 {step > 1 && step < 4 ? (
                   <button
                     onClick={handleBack}

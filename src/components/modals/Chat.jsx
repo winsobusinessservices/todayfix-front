@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import {
   Phone,
   XCircle,
@@ -10,23 +10,27 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { chatApi } from "../../services/chatApi";
 import { useUserStore } from "../../store/userStore";
 import { IMAGE_URL } from "../../services/axiosClient";
+import { useChatWebSocket } from "../../hooks/useChatWebSocket";
 
 const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   const [newMessage, setNewMessage] = useState("");
   const [editingMessage, setEditingMessage] = useState(null);
+  const [isOtherTyping, setIsOtherTyping] = useState(false);
+  const typingTimeoutRef = useRef(null);
   const messagesEndRef = useRef(null);
   const queryClient = useQueryClient();
   const { user, accessToken } = useUserStore();
   const currentUserId = user?.user_uuid || user?.id;
   const bookingId = activeModal?.bookingId;
 
-  // Derive target user info from bookingsList if available
-  const targetBooking = bookingsList?.find((b) => b.uuid === bookingId);
+  // Extract target booking from the modal payload
+  const targetBooking = activeModal?.booking;
+
   const isCustomer =
     targetBooking?.user?.id === currentUserId ||
     targetBooking?.user?.user_uuid === currentUserId;
@@ -48,73 +52,37 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
     },
     enabled: !!bookingId,
   });
-  // console.log(conversations);
 
   const conversationList = Array.isArray(conversations)
     ? conversations
     : conversations?.results || [];
-  const activeConversation = conversationList.find(
-    (c) => c.scheduled_booking === bookingId || c.instant_booking === bookingId,
-  );
-  // console.log(conversationList);
 
-  // const conversationId = activeConversation?.conversation_uuid;
-  const conversationId = "6e5fd773-b54b-4775-90a9-d77a0bcfcc36";
-  // console.log(conversationList);
-
-  // 2. Fetch Messages
-  const { data: messagesData, isLoading: messagesLoading } = useQuery({
-    queryKey: ["chatMessages", conversationId],
-    queryFn: async () => {
-      const res = await chatApi.getMessages(conversationId);
-      return res.data || res;
-    },
-    enabled: !!conversationId,
+  const activeConversation = conversationList.find((c) => {
+    const sBooking = c.scheduled_booking;
+    const iBooking = c.instant_booking;
+    console.log(sBooking, iBooking);
+    return (
+      sBooking == bookingId ||
+      iBooking == bookingId ||
+      (targetBooking?.id && sBooking == targetBooking.id) ||
+      (targetBooking?.id && iBooking == targetBooking.id) ||
+      sBooking === targetBooking?.uuid ||
+      iBooking === targetBooking?.uuid ||
+      sBooking === targetBooking?.booking_uuid
+    );
   });
 
-  const messagesList = Array.isArray(messagesData)
-    ? messagesData
-    : messagesData?.results || [];
+  const conversationId = activeConversation?.conversation_uuid || activeConversation?.uuid;
+  // const conversationId = targetBooking?.uuid;
 
-  // console.log(messagesList);
-
-  // WebSocket Integration for Chat
-  useEffect(() => {
-    if (!conversationId) return;
-
-    // ... inside useEffect:
-    let wsBaseUrl = IMAGE_URL || "http://localhost:8000";
-    if (wsBaseUrl.startsWith("https://")) {
-      wsBaseUrl = wsBaseUrl.replace("https://", "wss://");
-    } else if (wsBaseUrl.startsWith("http://")) {
-      wsBaseUrl = wsBaseUrl.replace("http://", "ws://");
-    }
-
-    // Connect to chat websocket with token for authentication
-    const ws = new WebSocket(
-      `${wsBaseUrl}/ws/chat/${conversationId}/?token=${accessToken}`,
-    );
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      // Determine if it's a typing event or a message
-      if (data.type === "typing_started" || data.type === "typing_stopped") {
-        // Handle typing (could add a typing indicator state here in the future)
-        return;
-      }
-
-      // We assume it's a message object
-      const messageData = data.message || data; // handle both { message: {...} } and direct message payload
-
-      if (!messageData.message_uuid && !messageData.id) return; // not a message
-
-      // Update React Query cache instantly
+  // 1. Setup WebSocket Hook First (so we can use isConnected)
+  const handleWebSocketMessage = useCallback(
+    (messageData) => {
       queryClient.setQueryData(["chatMessages", conversationId], (oldData) => {
         const oldList = Array.isArray(oldData)
           ? oldData
           : oldData?.results || [];
 
-        // Prevent duplicate appending if we just sent it
         if (
           oldList.find(
             (m) =>
@@ -126,18 +94,48 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
         }
 
         const newList = [...oldList, messageData];
-
         if (oldData && !Array.isArray(oldData) && oldData.results) {
           return { ...oldData, results: newList };
         }
         return newList;
       });
-    };
+    },
+    [conversationId, queryClient],
+  );
 
-    return () => {
-      ws.close();
-    };
-  }, [conversationId, queryClient]);
+  const handleTypingEvent = useCallback(
+    (data) => {
+      if (data.user_uuid !== currentUserId) {
+        if (data.type === "typing_started") {
+          setIsOtherTyping(true);
+        } else if (data.type === "typing_stopped") {
+          setIsOtherTyping(false);
+        }
+      }
+    },
+    [currentUserId],
+  );
+
+  const { isConnected, sendTypingEvent } = useChatWebSocket({
+    conversationId,
+    onMessageReceived: handleWebSocketMessage,
+    onTypingEvent: handleTypingEvent,
+  });
+
+  // 2. Fetch Messages
+  const { data: messagesData, isLoading: messagesLoading } = useQuery({
+    queryKey: ["chatMessages", conversationId],
+    queryFn: async () => {
+      const res = await chatApi.getMessages(conversationId);
+      return res.data || res;
+    },
+    enabled: !!conversationId,
+    refetchInterval: isConnected ? false : 3000, // Fallback to polling every 3s if WebSocket fails
+  });
+
+  const messagesList = Array.isArray(messagesData)
+    ? messagesData
+    : messagesData?.results || [];
 
   // 3. Send Message Mutation
   const { mutate: sendMsg, isPending: isSending } = useMutation({
@@ -170,11 +168,17 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
   useEffect(() => {
     messagesList.forEach((msg) => {
       const senderId = msg.sender?.user_uuid || msg.sender?.id || msg.sender;
-      if (senderId !== currentUserId && !msg.is_read) {
+      const isOwnMessage =
+        senderId === user?.user_uuid ||
+        senderId === user?.id ||
+        String(senderId) === String(user?.id) ||
+        String(senderId) === String(user?.user_uuid);
+
+      if (!isOwnMessage && !msg.is_read) {
         chatApi.markMessageAsRead(msg.message_uuid || msg.id).catch(() => {});
       }
     });
-  }, [messagesList, currentUserId]);
+  }, [messagesList, user]);
 
   const handleSend = () => {
     if (newMessage.trim() && conversationId && !isSending && !isUpdating) {
@@ -324,7 +328,7 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
           <div className="p-4 bg-surface-secondary border-t border-border-primary shrink-0">
             {isChatDisabled ? (
               <div className="text-center text-sm font-bold text-zinc-500 py-3 bg-surface-primary border border-border-primary rounded-xl">
-                This booking is {targetBooking?.status.toLowerCase()}, chat is
+                This booking is {bookingsList?.status.toLowerCase()}, chat is
                 closed.
               </div>
             ) : (
@@ -347,14 +351,53 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
                   </div>
                 )}
                 <div className="flex items-center gap-2 relative">
+                  <AnimatePresence>
+                    {isOtherTyping && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10 }}
+                        className="absolute -top-7 left-2 text-xs font-bold text-zinc-500 bg-surface-primary px-3 py-1 rounded-full border border-border-primary shadow-sm flex items-center gap-1.5"
+                      >
+                        <span className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"></span>
+                        <span
+                          className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.1s" }}
+                        ></span>
+                        <span
+                          className="w-1.5 h-1.5 bg-zinc-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.2s" }}
+                        ></span>
+                        <span className="ml-1">{targetName} is typing...</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <input
                     type="text"
                     placeholder="Type your message..."
                     value={newMessage}
                     disabled={!conversationId || isSending || isUpdating}
-                    onChange={(e) => setNewMessage(e.target.value)}
+                    onChange={(e) => {
+                      setNewMessage(e.target.value);
+
+                      // Handle typing events
+                      sendTypingEvent(true);
+
+                      if (typingTimeoutRef.current) {
+                        clearTimeout(typingTimeoutRef.current);
+                      }
+
+                      typingTimeoutRef.current = setTimeout(() => {
+                        sendTypingEvent(false);
+                      }, 1500);
+                    }}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" && newMessage.trim()) {
+                        if (typingTimeoutRef.current) {
+                          clearTimeout(typingTimeoutRef.current);
+                        }
+                        sendTypingEvent(false);
                         handleSend();
                       }
                     }}
