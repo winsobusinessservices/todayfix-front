@@ -400,7 +400,7 @@ const Login = () => {
                         value={formData.phone || ""}
                         onChange={handleInputChange}
                         required={loginMethod === "phone"}
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="+91 00000 00000"
                         disabled={otpSent}
                         className={`w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400 ${otpSent ? "opacity-60 cursor-not-allowed" : ""}`}
                       />

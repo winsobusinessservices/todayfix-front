@@ -14,6 +14,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useOutletContext } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookingApi } from "../../services/bookingApi";
+import { instantBookingApi } from "../../services/instantBookingApi";
 import toast from "react-hot-toast";
 import Contact from "../../components/modals/Contact";
 import Chat from "../../components/modals/Chat";
@@ -25,6 +26,8 @@ const StatusBadge = ({ status }) => {
   const styles = {
     PENDING: "bg-orange-500/10 text-orange-500 border-orange-500/20",
     CONFIRMED: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
+    ACCEPTED: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
+    ASSIGNED: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
     IN_PROGRESS: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
     COMPLETED: "bg-green-500/10 text-green-500 border-green-500/20",
     CANCELLED: "bg-red-500/10 text-red-500 border-red-500/20",
@@ -33,7 +36,7 @@ const StatusBadge = ({ status }) => {
 
   return (
     <span
-      className={`px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${styles[status]}`}
+      className={`px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${styles[status] || "bg-zinc-500/10 text-zinc-600 border-zinc-500/20"}`}
     >
       {status}
     </span>
@@ -60,7 +63,27 @@ const BookingsTab = () => {
     queryFn: bookingApi.getBusinessBookings,
   });
 
-  const bookingsList = bookingsData?.results || bookingsData || [];
+  const bookingsList = Array.isArray(bookingsData?.results)
+    ? bookingsData.results
+    : Array.isArray(bookingsData)
+      ? bookingsData
+      : bookingsData?.data && Array.isArray(bookingsData.data)
+        ? bookingsData.data
+        : [];
+
+  // Instant bookings query
+  const { data: instantBookingsData, isLoading: isLoadingInstant } = useQuery({
+    queryKey: ["instantBusinessBookings"],
+    queryFn: instantBookingApi.acceptedInstantBookingOffer,
+  });
+
+  const instantBookingsList = Array.isArray(instantBookingsData?.results)
+    ? instantBookingsData.results
+    : Array.isArray(instantBookingsData)
+      ? instantBookingsData
+      : instantBookingsData?.data && Array.isArray(instantBookingsData.data)
+        ? instantBookingsData.data
+        : [];
 
   const { mutate: acceptBooking, isPending: isAccepting } = useMutation({
     mutationFn: bookingApi.acceptBooking,
@@ -103,20 +126,61 @@ const BookingsTab = () => {
 
   const handleVerifyOtp = () => {
     if (otpValue === "1234") {
-      completeBooking(activeModal.bookingId);
+      if (activeTab === "INSTANT") {
+        completeInstantBooking(activeModal.bookingId);
+      } else {
+        completeBooking(activeModal.bookingId);
+      }
     } else {
       setOtpError(true);
     }
   };
 
+  const { mutate: startInstantBooking, isPending: isStartingInstant } =
+    useMutation({
+      mutationFn: instantBookingApi.startInstantBooking,
+      onSuccess: () => {
+        toast.success("Job started!");
+        queryClient.invalidateQueries(["instantBusinessBookings"]);
+      },
+      onError: () => toast.error("Failed to start job"),
+    });
+
+  const { mutate: completeInstantBooking, isPending: isCompletingInstant } =
+    useMutation({
+      mutationFn: instantBookingApi.completeInstantBooking,
+      onSuccess: () => {
+        toast.success("Job completed!");
+        queryClient.invalidateQueries(["instantBusinessBookings"]);
+        setActiveModal(null);
+        setOtpValue("");
+        setOtpError(false);
+      },
+      onError: () => toast.error("Failed to complete job"),
+    });
+
+  const currentList = Array.isArray(
+    activeTab === "INSTANT" ? instantBookingsList : bookingsList,
+  )
+    ? activeTab === "INSTANT"
+      ? instantBookingsList
+      : bookingsList
+    : [];
+
   const filteredBookings =
     filter === "ALL"
-      ? bookingsList
-      : bookingsList.filter((b) => {
+      ? currentList
+      : currentList.filter((b) => {
           if (filter === "ACTIVE")
-            return b.status === "CONFIRMED" || b.status === "IN_PROGRESS";
+            return (
+              b.status === "CONFIRMED" ||
+              b.status === "IN_PROGRESS" ||
+              b.status === "ACCEPTED"
+            );
           return b.status === filter;
         });
+  // console.log(currentList);
+
   return (
     <div className="space-y-6">
       {/* Header & Tabs */}
@@ -131,64 +195,102 @@ const BookingsTab = () => {
             </p>
           </div>
 
-          {/* Filter Pills */}
-          <div className="flex flex-wrap gap-2 bg-surface-primary p-1 rounded-2xl border border-border-primary w-fit">
-            {["ALL", "PENDING", "ACTIVE", "COMPLETED"].map((f) => (
-              <button
-                key={f}
-                onClick={() => setFilter(f)}
-                className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all duration-300 ${
-                  filter === f
-                    ? "bg-surface-secondary text-text-primary shadow-sm border border-border-primary"
-                    : "text-zinc-500 hover:text-text-primary border border-transparent"
-                }`}
-              >
-                {f.toLowerCase()}
-              </button>
-            ))}
+          <div className="flex flex-col gap-4">
+            {/* Tab Switcher */}
+            <div className="flex bg-surface-secondary p-1 rounded-2xl w-fit">
+              {["SCHEDULED", "INSTANT"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
+                    activeTab === tab
+                      ? "bg-surface-primary text-text-primary shadow-sm"
+                      : "text-zinc-500 hover:text-text-primary"
+                  }`}
+                >
+                  {tab === "SCHEDULED"
+                    ? "Scheduled Bookings"
+                    : "Instant Bookings"}
+                </button>
+              ))}
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex flex-wrap gap-2 bg-surface-primary p-1 rounded-2xl border border-border-primary w-fit">
+              {["ALL", "PENDING", "ACTIVE", "COMPLETED"].map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all duration-300 ${
+                    filter === f
+                      ? "bg-surface-secondary text-text-primary shadow-sm border border-border-primary"
+                      : "text-zinc-500 hover:text-text-primary border border-transparent"
+                  }`}
+                >
+                  {f.toLowerCase()}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bookings List */}
       <div className="grid gap-4">
-        {isLoading && (
+        {(isLoading || isLoadingInstant) && (
           <div className="text-center py-16">
             <span className="w-8 h-8 border-4 border-text-primary border-t-transparent rounded-full animate-spin inline-block"></span>
           </div>
         )}
-        {filteredBookings.map((booking) => (
+        {filteredBookings?.map((booking) => (
           <div
-            key={booking.uuid}
+            key={
+              booking.booking_uuid ||
+              booking.instant_booking_uuid ||
+              booking.uuid
+            }
             className="bg-surface-primary/80 backdrop-blur-md rounded-2xl border border-border-primary p-6 shadow-lg hover:shadow-purple-500/10 hover:border-purple-500/30 transition-all duration-300 group"
           >
             <div className="flex flex-col md:flex-row justify-between gap-6 relative z-10">
               <div className="flex-grow space-y-4">
                 <div className="flex items-center gap-3">
                   <span className="text-sm font-medium text-zinc-500 uppercase">
-                    {(booking.uuid || booking.id || "OFFER")?.split("-")[0]}
+                    {
+                      (
+                        booking.booking_uuid ||
+                        booking.uuid ||
+                        booking.instant_booking_uuid ||
+                        booking.id ||
+                        "OFFER"
+                      )?.split("-")[0]
+                    }
                   </span>
                   <StatusBadge status={booking.status} />
                 </div>
 
                 <div>
                   <h3 className="text-xl font-bold tracking-tight text-text-primary mb-1">
-                    {booking.service?.name || "Service Request"}
+                    {booking.service?.name ||
+                      booking.requested_service_name ||
+                      "Service Request"}
                   </h3>
-                  {booking.user && (
+                  {(booking.user || activeTab === "INSTANT") && (
                     <p className="text-zinc-400 font-medium uppercase">
                       Client -{" "}
-                      {booking?.status === "IN_PROGRESS" ||
-                      booking?.status === "COMPLETED"
-                        ? booking?.user?.first_name +
-                          " " +
-                          booking?.user?.last_name
-                        : booking.user?.user_uuid.split("-")[0] || "Customer"}
+                      {activeTab === "INSTANT"
+                        ? "Customer (Instant Booking)"
+                        : booking?.status === "IN_PROGRESS" ||
+                            booking?.status === "COMPLETED"
+                          ? booking?.user?.first_name +
+                            " " +
+                            booking?.user?.last_name
+                          : booking.user?.user_uuid?.split("-")[0] ||
+                            "Customer"}
                     </p>
                   )}
-                  {booking.notes && (
+                  {(booking.notes || booking.customer_note) && (
                     <p className="text-sm text-zinc-500 italic mt-1 bg-surface-secondary p-2 rounded-lg border border-border-primary inline-block">
-                      "{booking?.notes}"
+                      "{booking?.notes || booking?.customer_note}"
                     </p>
                   )}
                 </div>
@@ -197,14 +299,17 @@ const BookingsTab = () => {
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-purple-500" />
                     <span>
-                      {dateFormater(booking.scheduled_date)} (
-                      {booking.slot_type})
+                      {activeTab === "INSTANT"
+                        ? `${dateFormater(booking.created_at)} (ASAP)`
+                        : `${dateFormater(booking.scheduled_date)} (${booking.slot_type})`}
                     </span>
                   </div>
                   <div className="flex items-start sm:items-center gap-2">
                     <MapPin className="w-4 h-4 text-purple-500 mt-0.5 sm:mt-0 flex-shrink-0" />
-                    {booking.status === "IN_PROGRESS" ||
-                    booking.status === "COMPLETED" ? (
+                    {activeTab === "INSTANT" ? (
+                      <span className="text-zinc-300">Location Hidden</span>
+                    ) : booking.status === "IN_PROGRESS" ||
+                      booking.status === "COMPLETED" ? (
                       <span
                         className="text-zinc-300 line-clamp-2"
                         title={[
@@ -252,7 +357,8 @@ const BookingsTab = () => {
 
                 {/* Assigned Employee Details */}
                 {(booking.booking_employees?.length > 0 ||
-                  booking.employee) && (
+                  booking.employee ||
+                  booking.employee_name) && (
                   <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border-primary/50">
                     <div className="w-10 h-10 rounded-full bg-surface-secondary flex items-center justify-center border border-border-primary flex-shrink-0">
                       <User className="w-5 h-5 text-text-primary" />
@@ -264,6 +370,7 @@ const BookingsTab = () => {
                       <p className="text-sm font-bold text-zinc-200">
                         {booking.booking_employees?.[0]?.name ||
                           booking.employee?.name ||
+                          booking.employee_name ||
                           "Employee"}
                       </p>
                     </div>
@@ -274,7 +381,7 @@ const BookingsTab = () => {
               <div className="flex flex-col justify-end items-start md:items-end md:min-w-[150px] border-t md:border-t-0 md:border-l border-border-primary pt-4 md:pt-0 md:pl-6">
                 <div className="flex items-center gap-1 text-2xl font-black tracking-tight text-text-primary md:self-center md: mb-3">
                   <IndianRupee className="w-5 h-5 text-zinc-400" />
-                  {booking.price || "TBD"}
+                  {booking.price || booking.total_payable_price || "TBD"}
                 </div>
 
                 {/* Conditional Actions based on status */}
@@ -299,28 +406,46 @@ const BookingsTab = () => {
                       </button>
                     </div>
                   )}
-                  {booking.status === "CONFIRMED" && (
-                        <div className="flex flex-col gap-2 w-full">
-                    
-                      {isIndividual ? (
+                  {(booking.status === "CONFIRMED" ||
+                    booking.status === "ASSIGNED" ||
+                    booking.status === "ACCEPTED") && (
+                    <div className="flex flex-col gap-2 w-full">
+                      {isIndividual || activeTab === "INSTANT" ? (
                         <button
-                          onClick={() => startBooking(booking.uuid)}
-                          disabled={isStarting}
+                          onClick={() => {
+                            if (activeTab === "INSTANT") {
+                              startInstantBooking(
+                                booking.id ||
+                                  booking.uuid ||
+                                  booking.instant_booking_uuid,
+                              );
+                            } else {
+                              startBooking(
+                                booking.booking_uuid || booking.uuid,
+                              );
+                            }
+                          }}
+                          disabled={isStarting || isStartingInstant}
                           className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:opacity-90 transition-all shadow-md cursor-pointer disabled:opacity-50"
                         >
                           <Clock className="w-4 h-4" />{" "}
-                          {isStarting ? "Starting..." : "Start Job"}
+                          {isStarting || isStartingInstant
+                            ? "Starting..."
+                            : "Start Job"}
                         </button>
                       ) : !(
-              
-                        booking.booking_employees?.length > 0 ||
-                        booking.employee
-                      ) ? (
+                          booking.booking_employees?.length > 0 ||
+                          booking.employee ||
+                          booking.employee_uuid
+                        ) ? (
                         <button
                           onClick={() =>
                             setActiveModal({
                               type: "assign",
-                              bookingId: booking.uuid,
+                              bookingId:
+                                booking.id ||
+                                booking.uuid ||
+                                booking.instant_booking_uuid,
                               serviceId: booking.service?.service_uuid,
                               isReassign: false,
                             })
@@ -335,13 +460,17 @@ const BookingsTab = () => {
                             onClick={() =>
                               setActiveModal({
                                 type: "assign",
-                                bookingId: booking.uuid,
+                                bookingId:
+                                  booking.id ||
+                                  booking.uuid ||
+                                  booking.instant_booking_uuid,
                                 serviceId: booking.service?.service_uuid,
                                 isReassign: true,
                                 oldEmployeeId:
                                   booking.booking_employees?.[0]
                                     ?.employee_uuid ||
-                                  booking.employee?.employee_uuid,
+                                  booking.employee?.employee_uuid ||
+                                  booking.employee_uuid,
                               })
                             }
                             className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-surface-secondary text-text-secondary border border-border-primary font-bold text-sm rounded-xl hover:bg-surface-tertiary transition-colors shadow-sm cursor-pointer"
@@ -349,12 +478,26 @@ const BookingsTab = () => {
                             Reassign
                           </button>
                           <button
-                            onClick={() => startBooking(booking.uuid)}
-                            disabled={isStarting}
+                            onClick={() => {
+                              if (activeTab === "INSTANT") {
+                                startInstantBooking(
+                                  booking.id ||
+                                    booking.uuid ||
+                                    booking.instant_booking_uuid,
+                                );
+                              } else {
+                                startBooking(
+                                  booking.booking_uuid || booking.uuid,
+                                );
+                              }
+                            }}
+                            disabled={isStarting || isStartingInstant}
                             className="flex-1 md:flex-none flex items-center justify-center gap-2 px-5 py-2.5 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:opacity-90 transition-all shadow-md cursor-pointer disabled:opacity-50"
                           >
                             <Clock className="w-4 h-4" />{" "}
-                            {isStarting ? "Starting..." : "Start Job"}
+                            {isStarting || isStartingInstant
+                              ? "Starting..."
+                              : "Start Job"}
                           </button>
                         </>
                       )}
@@ -367,7 +510,10 @@ const BookingsTab = () => {
                         onClick={() =>
                           setActiveModal({
                             type: "chat",
-                            bookingId: booking.uuid,
+                            bookingId:
+                              booking.id ||
+                              booking.uuid ||
+                              booking.instant_booking_uuid,
                           })
                         }
                         className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 bg-surface-secondary text-text-primary border border-border-primary font-bold text-sm rounded-xl hover:bg-zinc-800 transition-colors cursor-pointer"
@@ -378,13 +524,19 @@ const BookingsTab = () => {
                         onClick={() =>
                           setActiveModal({
                             type: "otp",
-                            bookingId: booking.uuid,
+                            bookingId:
+                              booking.id ||
+                              booking.uuid ||
+                              booking.instant_booking_uuid,
                           })
                         }
-                        disabled={isCompleting}
+                        disabled={isCompleting || isCompletingInstant}
                         className="flex-1 md:flex-none text-nowrap flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold text-sm rounded-xl hover:from-emerald-500 hover:to-teal-500 transition-all shadow-md shadow-emerald-500/25 cursor-pointer disabled:opacity-50"
                       >
-                        <CheckCircle2 className="w-4 h-4" /> Finish Job
+                        <CheckCircle2 className="w-4 h-4" />{" "}
+                        {isCompleting || isCompletingInstant
+                          ? "Completing..."
+                          : "Finish Job"}
                       </button>
                     </div>
                   )}

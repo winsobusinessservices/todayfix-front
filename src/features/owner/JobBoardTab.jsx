@@ -49,32 +49,6 @@ const JobBoardTab = () => {
       },
     });
 
-  const { mutate: startJob, isPending: isStarting } = useMutation({
-    mutationFn: instantBookingApi.startInstantBooking,
-    onSuccess: () => {
-      toast.success("Job started!");
-      queryClient.invalidateQueries(["instantBookingOffers"]);
-      setActionJobId(null);
-    },
-    onError: () => {
-      toast.error("Failed to start job");
-      setActionJobId(null);
-    },
-  });
-
-  const { mutate: completeJob, isPending: isCompleting } = useMutation({
-    mutationFn: instantBookingApi.completeInstantBooking,
-    onSuccess: () => {
-      toast.success("Job completed!");
-      queryClient.invalidateQueries(["instantBookingOffers"]);
-      setActionJobId(null);
-    },
-    onError: () => {
-      toast.error("Failed to complete job");
-      setActionJobId(null);
-    },
-  });
-
   const handleAcceptJob = (id) => {
     setAcceptedJobId(id);
     acceptInstantBooking(id);
@@ -221,39 +195,7 @@ const JobBoardTab = () => {
                     </button>
                   )}
 
-                  {job.status === "ACCEPTED" && (
-                    <div className="flex flex-col gap-2 w-full mt-2">
-                      <button
-                        onClick={() =>
-                          handleAction(job.id || job.uuid, startJob)
-                        }
-                        disabled={isStarting}
-                        className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 cursor-pointer"
-                      >
-                        <Play size={16} />
-                        {isStarting && actionJobId === (job.id || job.uuid)
-                          ? "Starting..."
-                          : "Start Job"}
-                      </button>
-                    </div>
-                  )}
 
-                  {job.status === "IN_PROGRESS" && (
-                    <div className="flex flex-col gap-2 w-full mt-2">
-                      <button
-                        onClick={() =>
-                          handleAction(job.id || job.uuid, completeJob)
-                        }
-                        disabled={isCompleting}
-                        className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-md disabled:opacity-50 cursor-pointer"
-                      >
-                        <CheckCircle size={16} />
-                        {isCompleting && actionJobId === (job.id || job.uuid)
-                          ? "Completing..."
-                          : "Complete Job"}
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             </motion.div>

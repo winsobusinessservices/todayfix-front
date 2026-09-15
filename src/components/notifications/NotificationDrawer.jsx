@@ -30,13 +30,16 @@ const formatNotificationTime = (value) => {
   );
   if (elapsedSeconds < 60) return "Just now";
   if (elapsedSeconds < 3600) return `${Math.floor(elapsedSeconds / 60)}m ago`;
-  if (elapsedSeconds < 86400) return `${Math.floor(elapsedSeconds / 3600)}h ago`;
-  if (elapsedSeconds < 604800) return `${Math.floor(elapsedSeconds / 86400)}d ago`;
+  if (elapsedSeconds < 86400)
+    return `${Math.floor(elapsedSeconds / 3600)}h ago`;
+  if (elapsedSeconds < 604800)
+    return `${Math.floor(elapsedSeconds / 86400)}d ago`;
 
   return new Intl.DateTimeFormat("en-IN", {
     day: "numeric",
     month: "short",
-    year: date.getFullYear() === new Date().getFullYear() ? undefined : "numeric",
+    year:
+      date.getFullYear() === new Date().getFullYear() ? undefined : "numeric",
   }).format(date);
 };
 
@@ -248,8 +251,12 @@ const NotificationDrawer = ({
                             </h3>
                             <button
                               type="button"
-                              onClick={() => deleteNotification(notification.id)}
-                              disabled={pendingAction === `delete-${notification.id}`}
+                              onClick={() =>
+                                deleteNotification(notification.id)
+                              }
+                              disabled={
+                                pendingAction === `delete-${notification.id}`
+                              }
                               aria-label={`Delete ${notification.title}`}
                               className="-mt-1 flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-zinc-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:cursor-wait disabled:opacity-50"
                             >
@@ -270,7 +277,9 @@ const NotificationDrawer = ({
                             <button
                               type="button"
                               onClick={() => acknowledge(notification.id)}
-                              disabled={pendingAction === `read-${notification.id}`}
+                              disabled={
+                                pendingAction === `read-${notification.id}`
+                              }
                               className="mt-4 flex cursor-pointer items-center gap-1.5 rounded-lg border border-border-primary bg-surface-primary px-3 py-2 text-xs font-bold text-text-primary shadow-sm transition-colors hover:bg-surface-secondary disabled:cursor-wait disabled:opacity-50"
                             >
                               {pendingAction === `read-${notification.id}` ? (
@@ -291,7 +300,9 @@ const NotificationDrawer = ({
                   <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-surface-secondary text-zinc-400">
                     <Bell size={26} />
                   </div>
-                  <h3 className="font-black text-text-primary">No notifications</h3>
+                  <h3 className="font-black text-text-primary">
+                    No notifications
+                  </h3>
                   <p className="mt-1 max-w-xs text-sm font-medium text-text-secondary">
                     New updates will appear here when they arrive.
                   </p>
