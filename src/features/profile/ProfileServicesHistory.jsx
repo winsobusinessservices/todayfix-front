@@ -174,27 +174,29 @@ const ProfileServicesHistory = () => {
   return (
     <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-6">
       {/* Header Summary */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-2">
-        <div className="bg-surface-primary border border-border-primary rounded-2xl p-6 shadow-sm">
-          <p className="text-zinc-500 font-medium mb-1 text-sm">
+      <div className="grid grid-cols-3 gap-4 mb-2">
+        <div className="bg-surface-primary border border-border-primary rounded-2xl p-3 md:p-6 shadow-sm text-center">
+          <p className="text-zinc-500 font-medium mb-1 text-xs md:text-sm">
             Completed Services
           </p>
-          <p className="text-3xl font-black text-text-primary tracking-tight">
+          <p className="text-xl md:text-3xl font-black text-text-primary tracking-tight text-center">
             {completedServices.length}
           </p>
         </div>
-        <div className="bg-surface-primary border border-border-primary rounded-2xl p-6 shadow-sm">
-          <p className="text-zinc-500 font-medium mb-1 text-sm">Total Spent</p>
-          <p className="text-3xl font-black text-text-primary tracking-tight flex items-center">
+        <div className="bg-surface-primary border border-border-primary rounded-2xl p-3 md:p-6 shadow-sm text-center">
+          <p className="text-zinc-500 font-medium mb-1 text-xs md:text-sm">
+            Total Spent
+          </p>
+          <p className="text-xl md:text-3xl text-center font-black text-text-primary tracking-tight flex items-center">
             <IndianRupee className="w-6 h-6 mr-1 stroke-[3]" />
             {totalSpent.toLocaleString()}
           </p>
         </div>
-        <div className="bg-surface-primary border border-border-primary rounded-2xl p-6 shadow-sm">
-          <p className="text-zinc-500 font-medium mb-1 text-sm">
+        <div className="bg-surface-primary border border-border-primary rounded-2xl p-3 md:p-6 shadow-sm text-center">
+          <p className="text-zinc-500 font-medium mb-1 text-xs md:text-sm">
             Average Rating
           </p>
-          <p className="text-3xl font-black text-text-primary tracking-tight flex items-center gap-2">
+          <p className="text-xl md:text-3xl text-center font-black text-text-primary tracking-tight flex items-center gap-2">
             {averageRating}
             <svg className="w-6 h-6 fill-amber-500" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
@@ -258,11 +260,11 @@ const ProfileServicesHistory = () => {
             key={service.uuid || index}
             className="group relative bg-surface-primary rounded-2xl border border-border-primary overflow-hidden hover:border-zinc-400/50 transition-colors duration-200"
           >
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               {/* Header: ID, Status, Price */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
-                <div className="flex flex-wrap items-center gap-3">
-                  <div className="text-sm font-medium text-zinc-500 font-mono">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <div className="text-xs sm:text-sm font-medium text-zinc-500 font-mono">
                     #
                     {(
                       service.instant_booking_uuid ||
@@ -274,33 +276,35 @@ const ProfileServicesHistory = () => {
                       .toUpperCase()}
                   </div>
                   <div className="w-1 h-1 rounded-full bg-zinc-300" />
-                  <StatusBadge status={service.status} />
+                  <div className="scale-90 origin-left sm:scale-100">
+                    <StatusBadge status={service.status} />
+                  </div>
                   {service.booking_type === "INSTANT" && (
                     <>
                       <div className="w-1 h-1 rounded-full bg-zinc-300" />
-                      <span className="text-[13px] font-semibold text-amber-600 flex items-center gap-1.5">
-                        <Zap className="w-3.5 h-3.5" />
+                      <span className="text-xs sm:text-[13px] font-semibold text-amber-600 flex items-center gap-1 sm:gap-1.5">
+                        <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
                         Instant Request
                       </span>
                     </>
                   )}
                 </div>
                 <div className="flex flex-col sm:items-end">
-                  <div className="text-xl font-semibold tracking-tight text-text-primary">
+                  <div className="text-lg sm:text-xl font-semibold tracking-tight text-text-primary">
                     ₹{service.price || "TBD"}
                   </div>
                 </div>
               </div>
               {/* Service Title */}
-              <h3 className="text-xl font-semibold tracking-tight text-text-primary mb-6">
+              <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-text-primary mb-4 sm:mb-6 leading-tight">
                 {service.service?.name || "Service Request"}
               </h3>
 
               {/* Minimal Metadata Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-5 gap-x-8 mb-6 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 sm:gap-y-5 gap-x-4 sm:gap-x-8 mb-4 sm:mb-6 text-xs sm:text-sm">
                 {/* Professional */}
-                <div className="flex items-start gap-3">
-                  <User className="w-4 h-4 text-zinc-400 mt-0.5" />
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-zinc-500 font-medium mb-0.5">
                       Professional
@@ -315,8 +319,8 @@ const ProfileServicesHistory = () => {
                 </div>
 
                 {/* Schedule */}
-                <div className="flex items-start gap-3">
-                  <Calendar className="w-4 h-4 text-zinc-400 mt-0.5" />
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 mt-0.5 shrink-0" />
                   <div>
                     <p className="text-zinc-500 font-medium mb-0.5">Schedule</p>
                     <p className="text-text-primary font-medium">
@@ -334,8 +338,8 @@ const ProfileServicesHistory = () => {
                 </div>
 
                 {/* Location */}
-                <div className="flex items-start gap-3 sm:col-span-2">
-                  <MapPin className="w-4 h-4 text-zinc-400 mt-0.5" />
+                <div className="flex items-start gap-2 sm:gap-3 sm:col-span-2">
+                  <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 mt-0.5 shrink-0" />
                   <div className="flex-1">
                     <p className="text-zinc-500 font-medium mb-0.5">Location</p>
                     <p className="text-text-primary font-medium">
@@ -348,7 +352,7 @@ const ProfileServicesHistory = () => {
               </div>
 
               {/* Actions */}
-              <div className="pt-5 border-t border-border-primary flex flex-col sm:flex-row sm:items-center justify-between gap-4 mt-2">
+              <div className="pt-4 sm:pt-5 border-t border-border-primary flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mt-2">
                 <div className="flex-1">
                   {service.booking_type === "INSTANT" &&
                     !["COMPLETED", "CANCELLED", "REJECTED"].includes(
@@ -366,9 +370,9 @@ const ProfileServicesHistory = () => {
                       </button>
                     )}
                 </div>
-                <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
                   <button
-                    className="flex-1 sm:flex-none px-4 py-2 bg-surface-primary text-text-primary border border-border-primary font-medium rounded-lg hover:bg-surface-secondary transition-colors text-sm cursor-pointer"
+                    className="flex-1 sm:flex-none px-3 py-1.5 sm:px-4 sm:py-2 bg-surface-primary text-text-primary border border-border-primary font-medium rounded-lg hover:bg-surface-secondary transition-colors text-sm cursor-pointer"
                     onClick={() => setDetailsModal(service)}
                   >
                     Details

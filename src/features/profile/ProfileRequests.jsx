@@ -87,7 +87,7 @@ const ReviewAction = ({ service, onRate, onBookAgain, onViewReview }) => {
   }
 
   return (
-    <span className="flex gap-2 w-full sm:w-auto">
+    <span className="flex gap-2 w-full sm:w-auto text-nowrap">
       {service.status === "COMPLETED" && service.booking_type !== "INSTANT" && (
         <button
           onClick={onBookAgain}
