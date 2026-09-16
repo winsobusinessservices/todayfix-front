@@ -7,6 +7,12 @@ export const adminApi = {
     return response.data;
   },
 
+  // PATCH /api/business/admin/profiles/<uuid>/rank/ (Update Business Rank)
+  updateBusinessRank: async (profileId, rank) => {
+    const response = await api.patch(`/api/business/admin/profiles/${profileId}/rank/`, { rank });
+    return response.data;
+  },
+
   // GET /api/business/admin/applications/<status>/ (List Business Applications by status)
   getPendingApplications: async () => {
     const response = await api.get("/api/business/admin/applications/pending/");

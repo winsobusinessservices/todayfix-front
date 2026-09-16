@@ -269,7 +269,7 @@ const Demo = () => {
                   href="tel:+919939958616"
                   className="w-full flex items-center justify-between px-6 py-4 bg-surface-dark hover:bg-zinc-800 text-text-inverted font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
                 >
-                  <span>Call Now</span>
+                  <span>Call +91 99399 58616</span>
                   <Phone className="w-5 h-5" />
                 </a>
 

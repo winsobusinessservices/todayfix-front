@@ -11,7 +11,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 
-export const AdminModal = ({ isOpen, onClose, title, children, footer }) => {
+export const AdminModal = ({ isOpen, onClose, title, children, footer, locationPreview }) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -52,7 +52,13 @@ export const AdminModal = ({ isOpen, onClose, title, children, footer }) => {
             </div>
 
             {/* Body */}
-            <div className="p-6 overflow-y-auto styled-scrollbar flex-1">
+            <div className="p-6 overflow-y-auto styled-scrollbar flex-1 space-y-4">
+              {locationPreview && (
+                <div 
+                  className="w-full h-48 sm:h-64 rounded-xl overflow-hidden bg-zinc-100 dark:bg-zinc-800 [&>iframe]:w-full [&>iframe]:h-full"
+                  dangerouslySetInnerHTML={{ __html: locationPreview }}
+                />
+              )}
               {children}
             </div>
 

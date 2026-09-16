@@ -298,7 +298,7 @@ const InstantBookingTracking = () => {
               </p>
               <p className="font-bold text-text-primary flex items-center gap-1">
                 <IndianRupee className="w-4 h-4" />
-                {booking.price || "TBD"}
+                {booking.total_payable_price || "TBD"}
               </p>
             </div>
             {booking.tip_amount > 0 && (

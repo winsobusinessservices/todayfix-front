@@ -4,7 +4,7 @@ import ProfileReviews from "../features/profile/ProfileReviews";
 import ProfileRequests from "../features/profile/ProfileRequests";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../services/authApi";
-import { userDetails, userProfile, userReviews } from "../services/userApi";
+import { userDetails, userProfile } from "../services/userApi";
 import { useNavigate, useSearchParams } from "react-router";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
@@ -13,11 +13,11 @@ const Profile = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const requestedTab = searchParams.get("tab");
-  const activeTab = ["requests", "profile", "history", "reviews"].includes(
+  const activeTab = ["schedule", "profile", "instant", "reviews"].includes(
     requestedTab,
   )
     ? requestedTab
-    : "requests";
+    : "schedule";
   const refreshToken = useUserStore((state) => state.refreshToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
   const queryClient = useQueryClient();
@@ -64,14 +64,14 @@ const Profile = () => {
 
   // console.log(userProfileError?.response?.data?.detail);
 
-  const {
-    data: userReview,
-    isLoading: userReviewLoading,
-    error: userReviewError,
-  } = useQuery({
-    queryKey: ["userReviews"],
-    queryFn: userReviews,
-  });
+  // const {
+  //   data: userReview,
+  //   isLoading: userReviewLoading,
+  //   error: userReviewError,
+  // } = useQuery({
+  //   queryKey: ["userReviews"],
+  //   queryFn: userReviews,
+  // });
 
   const finishLogout = () => {
     clearAuth();
@@ -90,12 +90,8 @@ const Profile = () => {
     else finishLogout();
   };
 
-  if (userDataLoading || userReviewLoading) {
+  if (userDataLoading) {
     return <p>Loading...</p>;
-  }
-
-  if (userDataError) {
-    console.error(userDataError.message);
   }
 
   return (
@@ -211,7 +207,7 @@ const Profile = () => {
 
         {/* --- Navigation Tabs --- */}
         <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-10 bg-surface-primary border border-border-primary p-2 rounded-2xl shadow-sm">
-          {["requests", "profile", "history", "reviews"].map((tab) => (
+          {["schedule", "profile", "instant", "reviews"].map((tab) => (
             <button
               key={tab}
               onClick={() => setSearchParams({ tab })}
@@ -221,9 +217,9 @@ const Profile = () => {
                   : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
               }`}
             >
-              {tab === "requests" && "My Requests"}
+              {tab === "schedule" && "Schedule Booking"}
               {tab === "profile" && "Profile"}
-              {tab === "history" && "Service History"}
+              {tab === "instant" && "Instant Booking"}
               {tab === "reviews" && "My Reviews"}
             </button>
           ))}
@@ -231,23 +227,14 @@ const Profile = () => {
 
         {/* --- Tab Content Area --- */}
         <div className="bg-surface-primary border border-border-primary rounded-2xl p-8 md:p-12 shadow-2xl shadow-black/5 min-h-[500px]">
-          {/* TAB 0: My Requests */}
-          {activeTab === "requests" && (
+          {activeTab === "schedule" && (
             <ProfileRequests addresses={userData?.addresses} />
           )}
-
-          {/* TAB 1: Profile & Addresses */}
           {activeTab === "profile" && (
             <ProfileDetails userData={userData} setUserData={setUserData} />
           )}
-
-          {/* TAB 2: Service History */}
-          {activeTab === "history" && <ProfileServicesHistory />}
-
-          {/* TAB 3: User Reviews */}
-          {activeTab === "reviews" && (
-            <ProfileReviews userReviews={userReview} />
-          )}
+          {activeTab === "instant" && <ProfileServicesHistory />}
+          {activeTab === "reviews" && <ProfileReviews />}
         </div>
       </div>
     </div>

@@ -73,7 +73,7 @@ const JobBoardTab = () => {
 
       <div className="grid gap-6">
         <AnimatePresence>
-          {broadcasts.map((job) => (
+          {broadcasts?.map((job) => (
             <motion.div
               key={job.id || job.uuid}
               layout
@@ -83,7 +83,7 @@ const JobBoardTab = () => {
               className="bg-surface-primary border border-border-primary rounded-3xl p-6 relative overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl hover:border-black transition-all duration-300 group"
             >
               {/* Accepted Overlay */}
-              {/* <AnimatePresence>
+              <AnimatePresence>
                 {acceptedJobId === (job.id || job.uuid) && (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -100,7 +100,7 @@ const JobBoardTab = () => {
                     </p>
                   </motion.div>
                 )}
-              </AnimatePresence> */}
+              </AnimatePresence> 
 
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Left Side: Job Details */}

@@ -24,6 +24,7 @@ import {
   Search,
   Command,
   ArrowUpCircle,
+  User,
 } from "lucide-react";
 import toast, { Toaster } from "react-hot-toast";
 import Logo from "../components/brand/Logo";
@@ -31,8 +32,9 @@ import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
 import Icon from "../assets/TF_LIGHT_LOGO_TRANS.png";
 import { logout } from "../services/authApi";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import NotificationDrawer from "../components/notifications/NotificationDrawer";
+import { userDetails } from "../services/userApi";
 
 const SIDEBAR_SECTIONS = [
   {
@@ -84,7 +86,8 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] =
+    useState(false);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const refreshToken = useUserStore((state) => state.refreshToken);
@@ -114,6 +117,10 @@ const AdminDashboard = () => {
       <Logo />
     </Link>
   );
+  const { data: adminData } = useQuery({
+    queryKey: ["admin"],
+    queryFn: () => userDetails(),
+  });
 
   const { mutate, isPending, isError, error } = useMutation({
     mutationFn: logout,
@@ -133,7 +140,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="bg-surface-secondary h-screen flex overflow-hidden font-sans">
-      <Toaster
+      {/* <Toaster
         position="top-right"
         toastOptions={{
           style: {
@@ -144,7 +151,7 @@ const AdminDashboard = () => {
             fontWeight: "bold",
           },
         }}
-      />
+      /> */}
       {/* Global Search Modal */}
       <AnimatePresence>
         {isSearchOpen && (
@@ -336,19 +343,15 @@ const AdminDashboard = () => {
               onClick={() =>
                 toast.success("Logged in as Alex Admin (Super Admin)")
               }
-              className="flex items-center gap-3 p-1 pr-3 rounded-full hover:bg-surface-secondary border border-transparent hover:border-border-primary transition-all cursor-pointer"
+              className="flex items-center gap-3 p-1 pr-3 rounded-full bg-surface-secondary border border-border-primary transition-all cursor-pointer"
             >
-              <img
-                src="https://i.pravatar.cc/150?img=11"
-                alt="Admin"
-                className="w-8 h-8 rounded-full border border-border-primary"
-              />
+              <User className="w-8 h-8 rounded-full border border-border-primary p-1 bg-zinc-200" />
               <div className="hidden sm:block text-left">
                 <p className="text-sm font-bold text-text-primary leading-none">
-                  Alex Admin
+                  {adminData?.firstName}
                 </p>
                 <p className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mt-1">
-                  Super Admin
+                  {adminData?.role}
                 </p>
               </div>
             </button>

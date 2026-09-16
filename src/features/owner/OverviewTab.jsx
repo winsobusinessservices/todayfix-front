@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IndianRupee, TrendingUp, Calendar, Star, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { instantBookingApi } from "../../services/instantBookingApi";
+import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
 
 const StatCard = ({ title, value, icon: Icon, trend, positive }) => (
   <div className="bg-surface-primary rounded-2xl border border-border-primary p-6 shadow-2xl shadow-black/5">
@@ -27,14 +31,16 @@ const StatCard = ({ title, value, icon: Icon, trend, positive }) => (
 );
 
 const OverviewTab = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [alerts, setAlerts] = useState([
-    {
-      id: 1,
-      type: "booking",
-      title: "New Booking Request",
-      desc: "John Doe requested AC Servicing for tomorrow.",
-      color: "orange",
-    },
+    // {
+    //   id: 1,
+    //   type: "booking",
+    //   title: "New Booking Request",
+    //   desc: "John Doe requested AC Servicing for tomorrow.",
+    //   color: "orange",
+    // },
     {
       id: 2,
       type: "profile",
@@ -43,9 +49,49 @@ const OverviewTab = () => {
       color: "zinc",
     },
   ]);
+  const [acceptedJobId, setAcceptedJobId] = useState(null);
 
   const dismissAlert = (id) => {
     setAlerts(alerts.filter((a) => a.id !== id));
+  };
+
+  const { data: instantOffersData, isLoading } = useQuery({
+    queryKey: ["instantBookingOffers"],
+    queryFn: instantBookingApi.pendingInstantBookings,
+  });
+
+  const { mutate: acceptInstantBooking, isPending: isAcceptingInstant } =
+    useMutation({
+      mutationFn: instantBookingApi.acceptInstantBookingOffer,
+      onSuccess: () => {
+        toast.success("Instant booking offer accepted!");
+        queryClient.invalidateQueries(["instantBookingOffers"]);
+      },
+      onError: () => {
+        toast.error("Failed to accept instant offer");
+      },
+    });
+
+  const broadcasts =
+    instantOffersData?.data || instantOffersData?.results || [];
+
+  useEffect(() => {
+    if (broadcasts?.length > 0) {
+      setAlerts([
+        ...alerts,
+        {
+          id: broadcasts[0]?.id,
+          type: "booking",
+          title: "New Booking Request",
+          desc: `New request for ${broadcasts[0].service_name} service.`,
+          color: "orange",
+        },
+      ]);
+    }
+  }, [broadcasts]);
+  const handleAcceptJob = (id) => {
+    setAcceptedJobId(id);
+    acceptInstantBooking(id);
   };
 
   return (
@@ -177,13 +223,19 @@ const OverviewTab = () => {
                   {alert.type === "booking" && (
                     <div className="flex gap-2">
                       <button
-                        onClick={() => dismissAlert(alert.id)}
+                        onClick={() => {
+                          dismissAlert(alert.id || alert.uuid);
+                          handleAcceptJob(alert.id || alert.uuid);
+                        }}
                         className="px-4 py-2 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:scale-[0.98] transition-transform shadow-md"
                       >
-                        Accept
+                        {isAcceptingInstant &&
+                        acceptedJobId === (alert.id || alert.uuid)
+                          ? "Accepting..."
+                          : "Accept"}
                       </button>
                       <button
-                        onClick={() => dismissAlert(alert.id)}
+                        onClick={() => navigate("/owner-dashboard/job-board")}
                         className="px-4 py-2 bg-surface-secondary text-text-primary font-bold text-sm rounded-xl hover:bg-surface-dark hover:text-text-inverted transition-colors border border-border-primary"
                       >
                         Review

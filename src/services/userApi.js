@@ -68,14 +68,3 @@ export const userPendingServices = async () => {
   return data;
 };
 
-export const userReviews = async () => {
-  const res = await new Promise((resolve) =>
-    resolve(
-      new Response(JSON.stringify([]), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
-    ),
-  );
-  return await res.json();
-};
