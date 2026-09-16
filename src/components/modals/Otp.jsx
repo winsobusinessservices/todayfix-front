@@ -28,8 +28,6 @@ const Otp = ({
           <p className="text-sm text-zinc-400 mb-6">
             Ask the customer for the 6-digit PIN displayed on their dashboard to
             mark this job as complete. <br />
-            <br />
-            (Hint for demo: Use 1234)
           </p>
 
           <input

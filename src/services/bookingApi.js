@@ -69,9 +69,15 @@ export const bookingApi = {
     return response.data;
   },
 
-  // POST /api/bookings/business/<uuid>/complete/ (Mark Completed)
+  // POST /api/bookings/business/<uuid>/complete/ (Mark Completed, Generates OTP)
   completeBooking: async (bookingId) => {
     const response = await api.post(`/api/bookings/business/${bookingId}/complete/`);
+    return response.data;
+  },
+
+  // POST /api/bookings/business/<uuid>/complete/verify/ (Mark Completed with OTP)
+  completeBookingVerify: async ({ bookingId, otp }) => {
+    const response = await api.post(`/api/bookings/business/${bookingId}/complete/verify/`, { otp });
     return response.data;
   },
 

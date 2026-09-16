@@ -129,6 +129,11 @@ const BookingsTab = () => {
 
   const { mutate: completeBooking, isPending: isCompleting } = useMutation({
     mutationFn: bookingApi.completeBooking,
+    onError: () => toast.error("Failed to initiate completion"),
+  });
+
+  const { mutate: verifyBooking, isPending: isVerifying } = useMutation({
+    mutationFn: bookingApi.completeBookingVerify,
     onSuccess: () => {
       toast.success("Booking marked as complete!");
       queryClient.invalidateQueries(["businessBookings"]);
@@ -136,7 +141,7 @@ const BookingsTab = () => {
       setOtpValue("");
       setOtpError(false);
     },
-    onError: () => toast.error("Failed to complete booking"),
+    onError: () => toast.error("Failed to verify OTP"),
   });
 
   const { mutate: startBooking, isPending: isStarting } = useMutation({
@@ -149,11 +154,11 @@ const BookingsTab = () => {
   });
 
   const handleVerifyOtp = () => {
-    if (otpValue === "1234") {
+    if (otpValue && otpValue.length > 0) {
       if (activeTab === "INSTANT") {
-        completeInstantBooking(activeModal.bookingId);
+        verifyInstantBooking({ bookingId: activeModal.bookingId, otp: otpValue });
       } else {
-        completeBooking(activeModal.bookingId);
+        verifyBooking({ bookingId: activeModal.bookingId, otp: otpValue });
       }
     } else {
       setOtpError(true);
@@ -173,6 +178,12 @@ const BookingsTab = () => {
   const { mutate: completeInstantBooking, isPending: isCompletingInstant } =
     useMutation({
       mutationFn: instantBookingApi.completeInstantBooking,
+      onError: () => toast.error("Failed to initiate completion"),
+    });
+
+  const { mutate: verifyInstantBooking, isPending: isVerifyingInstant } =
+    useMutation({
+      mutationFn: instantBookingApi.completeInstantBookingVerify,
       onSuccess: () => {
         toast.success("Job completed!");
         queryClient.invalidateQueries(["instantBusinessBookings"]);
@@ -180,7 +191,7 @@ const BookingsTab = () => {
         setOtpValue("");
         setOtpError(false);
       },
-      onError: () => toast.error("Failed to complete job"),
+      onError: () => toast.error("Failed to verify OTP"),
     });
 
   const currentList = Array.isArray(
@@ -609,16 +620,30 @@ const BookingsTab = () => {
                         <PhoneCallIcon className="w-4 h-4" /> Contact
                       </a>
                       <button
-                        onClick={() =>
-                          setActiveModal({
-                            type: "otp",
-                            bookingId:
-                              booking.id ||
-                              booking.uuid ||
-                              booking.instant_booking_uuid,
-                            booking: booking,
-                          })
-                        }
+                        onClick={() => {
+                          const targetId = booking.id || booking.uuid || booking.instant_booking_uuid;
+                          if (activeTab === "INSTANT") {
+                            completeInstantBooking(targetId, {
+                              onSuccess: () => {
+                                setActiveModal({
+                                  type: "otp",
+                                  bookingId: targetId,
+                                  booking: booking,
+                                });
+                              }
+                            });
+                          } else {
+                            completeBooking(targetId, {
+                              onSuccess: () => {
+                                setActiveModal({
+                                  type: "otp",
+                                  bookingId: targetId,
+                                  booking: booking,
+                                });
+                              }
+                            });
+                          }
+                        }}
                         disabled={isCompleting || isCompletingInstant}
                         className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-nowrap text-sm font-medium bg-emerald-600 text-white hover:bg-emerald-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                       >
@@ -668,7 +693,7 @@ const BookingsTab = () => {
             setOtpError={setOtpError}
             handleVerifyOtp={handleVerifyOtp}
             setActiveModal={setActiveModal}
-            isLoading={isCompleting || isCompletingInstant}
+            isLoading={isVerifying || isVerifyingInstant}
           />
         )}
       </AnimatePresence>
