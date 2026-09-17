@@ -56,7 +56,8 @@ const SIDEBAR_SECTIONS = [
     items: [
       { id: "requests", label: "Service Requests", icon: ClipboardList },
       { id: "categories", label: "Categories", icon: FolderTree },
-      { id: "services", label: "Sub Categories", icon: Wrench },
+      { id: "subcategories", label: "Subcategories", icon: FolderTree },
+      { id: "services", label: "Services", icon: Wrench },
       { id: "cities", label: "Cities & Locations", icon: MapPin },
       { id: "reviews", label: "Reviews", icon: Star },
     ],

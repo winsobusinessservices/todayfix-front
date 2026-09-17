@@ -156,7 +156,10 @@ const BookingsTab = () => {
   const handleVerifyOtp = () => {
     if (otpValue && otpValue.length > 0) {
       if (activeTab === "INSTANT") {
-        verifyInstantBooking({ bookingId: activeModal.bookingId, otp: otpValue });
+        verifyInstantBooking({
+          bookingId: activeModal.bookingId,
+          otp: otpValue,
+        });
       } else {
         verifyBooking({ bookingId: activeModal.bookingId, otp: otpValue });
       }
@@ -353,7 +356,8 @@ const BookingsTab = () => {
                         {activeTab === "INSTANT"
                           ? "Instant Request"
                           : booking?.status === "IN_PROGRESS" ||
-                              booking?.status === "COMPLETED"
+                              booking?.status === "COMPLETED" ||
+                              booking?.status === "CONFIRMED"
                             ? `${booking?.user?.first_name || ""} ${booking?.user?.last_name || ""}`.trim()
                             : booking.user?.user_uuid?.split("-")[0] ||
                               "Customer"}
@@ -385,14 +389,16 @@ const BookingsTab = () => {
                   <MapPin className="w-4 h-4 text-zinc-400 mt-0.5" />
                   <div className="flex-1">
                     <p className="text-zinc-500 font-medium mb-0.5">Location</p>
-                    {activeTab === "INSTANT" ? (
-                      <p className="text-zinc-500 italic">
-                        Hidden until accepted
-                      </p>
-                    ) : booking.status === "IN_PROGRESS" ||
-                      booking.status === "COMPLETED" ? (
+                    {booking.status === "IN_PROGRESS" ||
+                    booking.status === "COMPLETED" ||
+                    booking?.status === "CONFIRMED" ||
+                    booking.status === "ASSIGNED" ? (
                       <a
-                        href={getMapLink(booking.address)}
+                        href={
+                          booking.instant_booking_uuid
+                            ? getMapLink(booking)
+                            : getMapLink(booking?.address)
+                        }
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-text-primary font-medium hover:underline hover:text-text-secondary transition-colors inline-block"
@@ -405,7 +411,9 @@ const BookingsTab = () => {
                           booking.address?.pincode,
                         ]
                           .filter(Boolean)
-                          .join(", ") || "View Location"}
+                          .join(", ") ||
+                          booking?.address ||
+                          "View Location"}
                       </a>
                     ) : (
                       <p className="text-text-primary font-medium">
@@ -614,14 +622,17 @@ const BookingsTab = () => {
                         <MessageSquare className="w-4 h-4" /> Chat
                       </button> */}
                       <a
-                        href={`tel:${booking?.user?.phone}`}
+                        href={`tel:${booking?.user?.phone || booking.customer_phone}`}
                         className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-surface-secondary transition-all flex items-center justify-center gap-2"
                       >
                         <PhoneCallIcon className="w-4 h-4" /> Contact
                       </a>
                       <button
                         onClick={() => {
-                          const targetId = booking.id || booking.uuid || booking.instant_booking_uuid;
+                          const targetId =
+                            booking.id ||
+                            booking.uuid ||
+                            booking.instant_booking_uuid;
                           if (activeTab === "INSTANT") {
                             completeInstantBooking(targetId, {
                               onSuccess: () => {
@@ -630,7 +641,7 @@ const BookingsTab = () => {
                                   bookingId: targetId,
                                   booking: booking,
                                 });
-                              }
+                              },
                             });
                           } else {
                             completeBooking(targetId, {
@@ -640,7 +651,7 @@ const BookingsTab = () => {
                                   bookingId: targetId,
                                   booking: booking,
                                 });
-                              }
+                              },
                             });
                           }
                         }}

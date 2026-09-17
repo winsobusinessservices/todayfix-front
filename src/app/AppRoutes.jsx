@@ -56,6 +56,7 @@ import AdminUsersTab from "../features/admin/AdminUsersTab";
 import AdminProvidersTab from "../features/admin/AdminProvidersTab";
 import AdminBusinessesTab from "../features/admin/AdminBusinessesTab";
 import AdminServicesTab from "../features/admin/AdminServicesTab";
+import AdminSubcategoriesTab from "../features/admin/AdminSubcategoriesTab";
 import AdminCategoriesTab from "../features/admin/AdminCategoriesTab";
 import AdminCitiesTab from "../features/admin/AdminCitiesTab";
 import AdminReviewsTab from "../features/admin/AdminReviewsTab";
@@ -147,8 +148,9 @@ function AppRoutes() {
           
           {/* Operations */}
           <Route path="requests" element={<AdminRequestsTab />} />
-          <Route path="services" element={<AdminServicesTab />} />
           <Route path="categories" element={<AdminCategoriesTab />} />
+          <Route path="subcategories" element={<AdminSubcategoriesTab />} />
+          <Route path="services" element={<AdminServicesTab />} />
           <Route path="cities" element={<AdminCitiesTab />} />
           <Route path="reviews" element={<AdminReviewsTab />} />
           

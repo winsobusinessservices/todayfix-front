@@ -10,13 +10,18 @@ import {
   ChevronRight,
   Zap,
   X,
+  Phone,
+  PhoneCallIcon,
 } from "lucide-react";
 import { Link, useNavigate } from "react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { userBookingHistory } from "../../services/userApi";
 import { reviewApi } from "../../services/reviewApi";
 import { motion, AnimatePresence } from "framer-motion";
 import ReviewModel from "../../components/modals/ReviewModel";
+import { instantBookingApi } from "../../services/instantBookingApi";
+import toast from "react-hot-toast";
+import { dateFormater } from "../../utils/dateFormater";
 
 const StatusBadge = ({ status }) => {
   const styles = {
@@ -47,7 +52,7 @@ const ReviewAction = ({ service, onRate, onBookAgain, onViewReview }) => {
     service.booking_uuid ||
     service.uuid ||
     service.instant_booking_uuid ||
-    service._id;
+    service.service_uuid;
 
   const { data, isLoading } = useQuery({
     queryKey: ["reviewEligibility", targetId],
@@ -118,6 +123,7 @@ const ProfileServicesHistory = () => {
   const [reportModal, setReportModal] = useState(null);
   const [reportType, setReportType] = useState("");
   const [reportDetails, setReportDetails] = useState("");
+  const queryClient = useQueryClient();
 
   // Review Modal State
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
@@ -132,6 +138,17 @@ const ProfileServicesHistory = () => {
   const { data: bookingsData, isLoading } = useQuery({
     queryKey: ["userBookingsHistory", currentPage],
     queryFn: () => userBookingHistory({ page: currentPage }),
+  });
+
+  const { mutate: cancelBooking, isPending: isCanceling } = useMutation({
+    mutationFn: (id) => instantBookingApi.cancelCustomerInstantBooking(id),
+    onSuccess: () => {
+      toast.success("Booking cancelled successfully.");
+      queryClient.invalidateQueries(["instantBookingTracking", id]);
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || "Failed to cancel booking.");
+    },
   });
 
   const rawServiceHistory =
@@ -370,9 +387,50 @@ const ProfileServicesHistory = () => {
                       </button>
                     )}
                 </div>
+                {/* {console.log(service)} */}
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                  {(service?.status === "SEARCHING" ||
+                    service?.status === "TIP_REQUIRED") && (
+                    <button
+                      onClick={() =>
+                        cancelBooking(
+                          service.instant_booking_uuid || service.booking_uuid,
+                        )
+                      }
+                      disabled={isCanceling}
+                      className="flex-1 sm:flex-none px-3 py-1.5 sm:px-4 sm:py-2 bg-red-500 text-white border border-border-primary font-medium rounded-lg hover:bg-red-400 transition-colors text-sm cursor-pointer"
+                    >
+                      {isCanceling ? "Canceling..." : "Cancel"}
+                    </button>
+                  )}
+                  {service?.status === "ASSIGNED" ||
+                    (service?.status === "IN_PROGRESS" && (
+                      <>
+                        {/* <button
+                        onClick={() =>
+                          setActiveModal({
+                            type: "chat",
+                            bookingId:
+                              booking.id ||
+                              booking.uuid ||
+                              booking.instant_booking_uuid,
+                            booking: booking,
+                          })
+                        }
+                        className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-surface-secondary transition-all flex items-center justify-center gap-2"
+                      >
+                        <MessageSquare className="w-4 h-4" /> Chat
+                      </button> */}
+                        <a
+                          href={`tel:${service?.business?.phone || service?.employee?.phone}`}
+                          className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-surface-secondary transition-all flex items-center justify-center gap-2"
+                        >
+                          <PhoneCallIcon className="w-4 h-4" /> Contact
+                        </a>
+                      </>
+                    ))}
                   <button
-                    className="flex-1 sm:flex-none px-3 py-1.5 sm:px-4 sm:py-2 bg-surface-primary text-text-primary border border-border-primary font-medium rounded-lg hover:bg-surface-secondary transition-colors text-sm cursor-pointer"
+                    className="flex-1 sm:flex-none px-3 py-1.5 sm:px-4 sm:py-2 bg-surface-dark text-text-inverted font-medium rounded-lg hover:bg-surface-dark/80 transition-colors text-sm cursor-pointer"
                     onClick={() => setDetailsModal(service)}
                   >
                     Details
@@ -423,15 +481,14 @@ const ProfileServicesHistory = () => {
                     Professional
                   </span>
                   <span className="font-bold text-text-primary">
-                    {detailsModal.business?.name}
+                    {detailsModal.business?.name || '"Not Assigned"'}
                   </span>
                 </div>
                 <div className="flex justify-between border-b border-border-primary pb-4">
                   <span className="text-zinc-500 font-medium">Date & Time</span>
                   <p className="text-sm font-bold text-text-primary flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-zinc-400" />
-                    {detailsModal.scheduled_date} at{" "}
-                    {detailsModal.scheduled_time} ({detailsModal.slot_type})
+                    {dateFormater(detailsModal?.created_at)}
                   </p>
                 </div>
                 <div className="pt-2">
@@ -477,8 +534,8 @@ const ProfileServicesHistory = () => {
         {/* Review Modal */}
         {reviewModalOpen && (
           <ReviewModel
-            selectedBookingForReview={reviewModal}
-            setReviewModalOpen={setReviewModal}
+            selectedBookingForReview={reviewModalOpen}
+            setReviewModalOpen={setReviewModalOpen}
           />
         )}
 
