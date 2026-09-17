@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AnimatedSearchBar from "../../components/ui/AnimatedSearchBar";
 import { servicesData as services } from "../../data/collectedData";
+import UrbanCompanyHero from "./UrbanCompanyHero";
 
 const Hero = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -78,7 +79,7 @@ const Hero = () => {
             </div>
           </div>
         </div>
-        <div className="relative hidden lg:flex w-full h-[600px] items-center justify-center">
+        {/* <div className="relative hidden lg:flex w-full h-[600px] items-center justify-center">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
@@ -272,7 +273,8 @@ const Hero = () => {
               </div>
             </div>
           </motion.div>
-        </div>
+        </div> */}
+        <UrbanCompanyHero />
       </div>
     </div>
   );

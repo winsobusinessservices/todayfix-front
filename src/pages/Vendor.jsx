@@ -1,56 +1,87 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useParams } from "react-router";
 import { api } from "../api";
 import SEO from "../components/seo/SEO";
+import { useQuery } from "@tanstack/react-query";
+import { businessApi } from "../services/businessApi";
+import { dateFormater } from "../utils/dateFormater";
+import {
+  MapPin,
+  Clock,
+  Star,
+  CheckCircle2,
+  ShieldCheck,
+  Mail,
+  Phone,
+  Globe,
+  ChevronDown,
+  ChevronUp,
+  MessageCircle,
+  Briefcase,
+  Users,
+  Calendar,
+  AlertTriangle,
+} from "lucide-react";
+import {
+  IconBrandFacebook,
+  IconBrandInstagram,
+  IconBrandLinkedin,
+  IconBrandTwitter,
+} from "@tabler/icons-react";
+
+const FaqItem = ({ question, answer }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <div className="border border-border-secondary rounded-xl overflow-hidden mb-3 bg-surface-primary transition-all">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full px-4 py-3 flex justify-between items-center text-left focus:outline-none hover:bg-surface-secondary/50 transition-colors"
+      >
+        <span className="font-semibold text-text-primary text-sm">
+          {question}
+        </span>
+        {isOpen ? (
+          <ChevronUp className="w-4 h-4 text-text-secondary flex-shrink-0" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-text-secondary flex-shrink-0" />
+        )}
+      </button>
+      <div
+        className={`px-4 overflow-hidden transition-all ${isOpen ? "max-h-96 pb-4 opacity-100" : "max-h-0 opacity-0"}`}
+      >
+        <p className="text-text-secondary text-sm">{answer}</p>
+      </div>
+    </div>
+  );
+};
 
 const Vendor = () => {
   const { id } = useParams();
-  const [vendor, setVendor] = useState(null);
   const [reviews, setReviews] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [canReview, setCanReview] = useState(false);
 
   // Review Modal State
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [newReview, setNewReview] = useState({ rating: 5, text: "" });
 
-  useEffect(() => {
-    const fetchVendorDetails = async () => {
-      try {
-        setIsLoading(true);
-        const currentUserId = 1; // Mock current user ID
-        const [vendorData, reviewsData, bookingsData] = await Promise.all([
-          api.getVendorById(id),
-          api.getReviewsByVendorId(id),
-          api.getBookingsByCustomerId(currentUserId),
-        ]);
-        setVendor(vendorData);
-        setReviews(reviewsData);
+  const { data: businessPortfolioData, isLoading } = useQuery({
+    queryKey: ["vendor", id],
+    queryFn: () => businessApi.businessPortfolio(id),
+  });
 
-        // Check if user has taken a service from this vendor
-        const hasCompletedBooking = bookingsData.some(
-          (booking) =>
-            String(booking.vendorId) === String(id) &&
-            booking.status === "COMPLETED",
-        );
-        setCanReview(hasCompletedBooking);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    if (id) {
-      fetchVendorDetails();
-    }
-  }, [id]);
+  const businessPortfolio =
+    businessPortfolioData?.results ||
+    businessPortfolioData?.data ||
+    businessPortfolioData ||
+    {};
+    // console.log(businessPortfolio);
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
     try {
       const reviewData = {
         vendorId: id,
-        user: "Current User", // Mock user for now
+        user: "Current User",
         avatar:
           "https://api.dicebear.com/7.x/avataaars/svg?seed=CurrentUser&backgroundColor=fca5a5",
         rating: Number(newReview.rating),
@@ -59,7 +90,6 @@ const Vendor = () => {
       await api.addReview(reviewData);
       setIsReviewModalOpen(false);
       setNewReview({ rating: 5, text: "" });
-      // Refresh reviews
       const reviewsData = await api.getReviewsByVendorId(id);
       setReviews(reviewsData);
     } catch (error) {
@@ -67,338 +97,356 @@ const Vendor = () => {
     }
   };
 
-  if (isLoading)
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-surface-secondary text-text-primary p-10 flex items-center justify-center">
-        Loading vendor profile...
+      <div className="min-h-screen bg-surface-secondary flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
       </div>
     );
-  if (!vendor)
-    return (
-      <div className="min-h-screen bg-surface-secondary text-text-primary p-10 flex items-center justify-center">
-        Vendor not found.
-      </div>
-    );
+  }
 
-  // Map API properties to UI properties
-  const displayVendor = {
-    ...vendor,
-    banner:
-      vendor.bg ||
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80",
-    avatar:
-      vendor.logo ||
-      `https://api.dicebear.com/7.x/shapes/svg?seed=${vendor.name}&backgroundColor=0284c7`,
-    memberSince: "2024",
-    address: vendor.location,
-    about: vendor.description || "No description provided.",
-    services: [
-      {
-        id: 1,
-        name: vendor.service || "General Service",
-        price: "Contact for pricing",
-      },
-    ],
-    gallery: [
-      "https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1616594039964-ae9021a400a0?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1616137422495-1e9e46e2aa77?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    ],
-    mapEmbedUrl:
-      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31104.23456!2d77.615!3d12.978!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae16a50614532b%3A0x7d28711e5ab37dcb!2sIndiranagar%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
-    stats: {
-      rating: vendor.rating || "4.5",
-      reviews: vendor.reviews || reviews.length,
-      tasksCompleted: 450,
-      responseTime: "Under 2 hours",
-      onTimeRate: "98%",
-    },
+  // Parse fields safely
+  const faqs =
+    typeof businessPortfolio?.faqs === "string"
+      ? JSON.parse(businessPortfolio.faqs || "[]")
+      : businessPortfolio?.faqs || [];
+  const gallery =
+    typeof businessPortfolio?.gallery_images === "string"
+      ? JSON.parse(businessPortfolio.gallery_images || "[]")
+      : businessPortfolio?.gallery_images || [];
+
+  const bannerImage =
+    gallery.length > 0
+      ? gallery[0].image || gallery[0]
+      : "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80";
+  const avatarImage = `https://api.dicebear.com/7.x/shapes/svg?seed=${businessPortfolio?.name || "Vendor"}&backgroundColor=0284c7`;
+
+  // Format Working Hours
+  const formatWorkingHours = (hoursArray) => {
+    if (!hoursArray || hoursArray.length === 0) return [];
+    const days = [...new Set(hoursArray.map((h) => h.day_of_week))];
+    const order = {
+      MONDAY: 1,
+      TUESDAY: 2,
+      WEDNESDAY: 3,
+      THURSDAY: 4,
+      FRIDAY: 5,
+      SATURDAY: 6,
+      SUNDAY: 7,
+    };
+    days.sort((a, b) => order[a] - order[b]);
+    return days.map((day) => {
+      const slots = hoursArray.filter((h) => h.day_of_week === day);
+      const startTime = slots.reduce(
+        (min, p) => (p.start_time < min ? p.start_time : min),
+        slots[0].start_time,
+      );
+      const endTime = slots.reduce(
+        (max, p) => (p.end_time > max ? p.end_time : max),
+        slots[0].end_time,
+      );
+      return { day, startTime, endTime };
+    });
   };
+  const activeHours = formatWorkingHours(businessPortfolio?.working_hours);
 
   return (
-    <div className="min-h-screen bg-surface-secondary font-sans pb-24 lg:pb-12">
+    <div className="min-h-screen bg-surface-secondary font-sans pb-16">
       <SEO
-        title={`${displayVendor.name} - ${displayVendor.category} | TodayFix`}
+        title={`${businessPortfolio?.name || "Loading"} - ${businessPortfolio?.category?.name || ""} | TodayFix`}
         description={
-          displayVendor.about
-            ? `${displayVendor.about.substring(0, 150)}...`
-            : `Book ${displayVendor.name} for premium ${displayVendor.category} services in ${displayVendor.address}.`
+          businessPortfolio?.description
+            ? `${businessPortfolio?.description?.substring(0, 150)}...`
+            : `Book ${businessPortfolio?.name} for premium ${businessPortfolio?.category?.name} services in Bangalore.`
         }
-        ogImage={displayVendor.avatar}
+        ogImage={avatarImage}
       />
-      {/* Banner */}
-      <div className="relative w-full h-64 md:h-80 bg-surface-dark">
+
+      {/* Banner Area */}
+      <div className="w-full h-48 md:h-64 bg-zinc-200">
         <img
-          src={displayVendor.banner}
+          src={bannerImage}
           alt="Vendor Banner"
-          className="w-full h-full object-cover opacity-60"
+          className="w-full h-full object-cover"
         />
       </div>
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
-        {/* Profile Header */}
-        <div className="flex flex-col md:flex-row items-center md:items-end justify-between -mt-16 md:-mt-20 mb-8 z-10 relative gap-4">
-          <div className="flex flex-col md:flex-row items-center md:items-end gap-6 w-full text-center md:text-left">
-            <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl bg-surface-primary p-2 shadow-xl flex-shrink-0">
-              <img
-                src={displayVendor.avatar}
-                alt={displayVendor.name}
-                className="w-full h-full object-cover rounded-2xl bg-surface-secondary"
-              />
-            </div>
-            <div className="mb-2">
-              <div className="flex items-center justify-center gap-2">
-                <h1 className="text-3xl md:text-4xl font-extrabold text-text-primary">
-                  {displayVendor.name}
-                </h1>
-                {displayVendor.status === "APPROVED" && (
-                  <svg
-                    className="w-6 h-6 text-emerald-500 mt-2.5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                )}
+        {/* Profile Header Card */}
+        <div className="bg-surface-primary rounded-2xl p-5 md:p-6 shadow-sm border border-border-secondary -mt-12 md:-mt-16 relative z-10 flex flex-col md:flex-row gap-5 items-start">
+          <div className="w-24 h-24 md:w-32 md:h-32 rounded-xl bg-surface-secondary p-1 shadow-sm flex-shrink-0 -mt-10 md:-mt-14 mx-auto md:mx-0 border-4 border-surface-primary relative z-20">
+            <img
+              src={avatarImage}
+              alt={businessPortfolio?.name}
+              className="w-full h-full object-cover rounded-lg"
+            />
+            {businessPortfolio?.is_active && (
+              <div className="absolute -bottom-2 -right-2 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-surface-primary flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span>{" "}
+                ACTIVE
               </div>
-              <p className="text-text-secondary font-medium text-lg">
-                {displayVendor.category}
-              </p>
-              <div className="flex items-center justify-center md:justify-start gap-1 text-text-secondary text-sm mt-2">
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                {displayVendor.location}
-              </div>
-            </div>
+            )}
           </div>
 
-          <div className="hidden md:flex flex-shrink-0 gap-3 mb-2">
-            {/* <button className="px-6 py-2.5 cursor-pointer bg-surface-primary border border-border-secondary text-text-primary font-semibold rounded-xl hover:bg-surface-secondary shadow-[0_2px_10px_rgb(0,0,0,0.02)] transition-colors">
-              Share Profile
-            </button> */}
-            <button
-              className="px-6 py-2.5 cursor-pointer bg-red-500/10 border border-red-500/20 text-red-600 font-semibold rounded-xl hover:bg-red-500/20 transition-colors"
-              onClick={() => alert("Vendor reported to admin support.")}
-            >
-              Report Vendor
-            </button>
+          <div className="flex-1 text-center md:text-left w-full">
+            <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
+              <div>
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-1">
+                  <h1 className="text-xl md:text-2xl font-bold text-text-primary">
+                    {businessPortfolio?.name}
+                  </h1>
+                  <div className="flex gap-1">
+                    {businessPortfolio?.verification_badges
+                      ?.aadhaar_verified && (
+                      <div
+                        className="text-emerald-500 tooltip"
+                        title="Aadhaar Verified"
+                      >
+                        <ShieldCheck className="w-4 h-4" />
+                      </div>
+                    )}
+                    {businessPortfolio?.verification_badges?.gst_verified && (
+                      <div
+                        className="text-indigo-500 tooltip"
+                        title="GST Verified"
+                      >
+                        <Briefcase className="w-4 h-4" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <p className="text-text-secondary text-sm font-medium flex items-center justify-center md:justify-start gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                  {businessPortfolio?.category?.name}
+                </p>
+
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-text-secondary text-sm mt-3">
+                  {businessPortfolio?.address && (
+                    <div className="flex items-center gap-1">
+                      <MapPin className="w-3.5 h-3.5 text-text-muted" />
+                      {businessPortfolio?.address}
+                    </div>
+                  )}
+                  {businessPortfolio?.established_year && (
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5 text-text-muted" />
+                      Est. {businessPortfolio.established_year}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-1 font-medium">
+                    <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                    <span className="text-text-primary">
+                      {businessPortfolio?.average_rating || "New"}
+                    </span>
+                    <span className="text-text-muted">
+                      ({businessPortfolio?.review_count || 0})
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div className="flex flex-wrap justify-center md:justify-end gap-2 mt-4 md:mt-0">
+                {businessPortfolio?.phone && (
+                  <a
+                    href={`tel:${businessPortfolio.phone}`}
+                    className="p-2.5 bg-surface-secondary text-text-primary border border-border-secondary rounded-lg hover:bg-border-secondary transition-colors"
+                    title="Call"
+                  >
+                    <Phone className="w-4 h-4" />
+                  </a>
+                )}
+                {businessPortfolio?.email && (
+                  <a
+                    href={`mailto:${businessPortfolio.email}`}
+                    className="p-2.5 bg-surface-secondary text-text-primary border border-border-secondary rounded-lg hover:bg-border-secondary transition-colors"
+                    title="Email"
+                  >
+                    <Mail className="w-4 h-4" />
+                  </a>
+                )}
+                {businessPortfolio?.website && (
+                  <a
+                    href={businessPortfolio.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2.5 bg-surface-secondary text-text-primary border border-border-secondary rounded-lg hover:bg-border-secondary transition-colors"
+                    title="Website"
+                  >
+                    <Globe className="w-4 h-4" />
+                  </a>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
         {/* Main Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
           {/* Left Column (Main Details) */}
-          <div className="lg:col-span-2 space-y-10">
+          <div className="lg:col-span-2 space-y-6">
             {/* About Section */}
-            <section className="bg-surface-primary rounded-2xl p-6 md:p-8 border border-border-primary shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
-              <h2 className="text-2xl font-bold text-text-primary mb-4">
-                About the Vendor
+            <section className="bg-surface-primary rounded-2xl p-5 md:p-6 shadow-sm border border-border-secondary">
+              <h2 className="text-lg font-bold text-text-primary mb-3 flex items-center gap-2">
+                About Us
               </h2>
-              <p className="text-text-secondary leading-relaxed">
-                {displayVendor.about}
+              <p className="text-text-secondary text-sm leading-relaxed">
+                {businessPortfolio?.description ||
+                  "No description provided yet."}
               </p>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <span className="px-3 py-1 bg-surface-secondary text-text-secondary text-sm font-medium rounded-lg">
-                  Verified Identity
-                </span>
-                <span className="px-3 py-1 bg-surface-secondary text-text-secondary text-sm font-medium rounded-lg">
-                  Background Checked
-                </span>
-                <span className="px-3 py-1 bg-surface-secondary text-text-secondary text-sm font-medium rounded-lg">
-                  Member since {displayVendor.memberSince}
-                </span>
-              </div>
             </section>
 
-            <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-2xl font-bold text-text-primary">
-                  Portfolio Gallery
+            {/* Gallery */}
+            {gallery && gallery.length > 0 && (
+              <section className="bg-surface-primary rounded-2xl p-5 md:p-6 shadow-sm border border-border-secondary">
+                <h2 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                  Work Gallery
                 </h2>
-                <button className="text-text-primary cursor-pointer font-semibold text-sm hover:underline">
-                  View All
-                </button>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {displayVendor.gallery.map((imgUrl, index) => (
-                  <div
-                    key={index}
-                    className="relative aspect-square rounded-md overflow-hidden bg-surface-secondary cursor-pointer group shadow-[0_2px_10px_rgb(0,0,0,0.02)] border border-border-primary"
-                  >
-                    <img
-                      src={imgUrl}
-                      alt={`Gallery work ${index + 1}`}
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {gallery.map((img, index) => {
+                    const imgSrc = img.image || img;
+                    return (
+                      <div
+                        key={index}
+                        className="aspect-square rounded-lg overflow-hidden bg-surface-secondary border border-border-secondary group relative"
+                      >
+                        <img
+                          src={imgSrc}
+                          alt={`Gallery work ${index + 1}`}
+                          className="w-full h-full object-cover"
+                        />
+                        {img.caption && (
+                          <div className="absolute inset-x-0 bottom-0 bg-black/60 p-2">
+                            <p className="text-white text-xs truncate text-center">
+                              {img.caption}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+
+            {/* Our Team */}
+            {businessPortfolio?.employees &&
+              businessPortfolio.employees.length > 0 && (
+                <section className="bg-surface-primary rounded-2xl p-5 md:p-6 shadow-sm border border-border-secondary">
+                  <h2 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                    Our Team
+                  </h2>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {businessPortfolio.employees.map((emp) => (
+                      <div
+                        key={emp.employee_uuid}
+                        className="flex items-center gap-3 p-3 rounded-xl bg-surface-secondary border border-border-secondary"
+                      >
+                        <img
+                          src={`https://api.dicebear.com/7.x/initials/svg?seed=${emp.name}&backgroundColor=0284c7`}
+                          alt={emp.name}
+                          className="w-10 h-10 rounded-lg object-cover bg-white"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-semibold text-text-primary text-sm truncate">
+                            {emp.name}
+                          </h4>
+                          {emp.phone && (
+                            <p className="text-xs text-text-secondary truncate">
+                              {emp.phone}
+                            </p>
+                          )}
+                        </div>
+                        {emp.is_active && (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-500 flex-shrink-0" />
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+            {/* FAQs */}
+            {faqs && faqs.length > 0 && (
+              <section className="bg-surface-primary rounded-2xl p-5 md:p-6 shadow-sm border border-border-secondary">
+                <h2 className="text-lg font-bold text-text-primary mb-4 flex items-center gap-2">
+                  Frequently Asked Questions
+                </h2>
+                <div className="space-y-2">
+                  {faqs.map((faq, index) => (
+                    <FaqItem
+                      key={index}
+                      question={faq.question}
+                      answer={faq.answer}
                     />
-                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            {/* Performance Stats */}
-            <section>
-              <h2 className="text-2xl font-bold text-text-primary mb-4">
-                Performance Overview
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-surface-primary p-4 rounded-2xl border border-border-primary shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col items-center justify-center text-center">
-                  <span className="text-3xl font-extrabold text-text-primary mb-1">
-                    {displayVendor.stats.tasksCompleted}+
-                  </span>
-                  <span className="text-xs font-bold text-text-muted uppercase tracking-wide">
-                    Tasks Completed
-                  </span>
+                  ))}
                 </div>
-
-                <div className="bg-surface-primary p-4 rounded-2xl border border-border-primary shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col items-center justify-center text-center">
-                  <div className="flex items-center gap-1 text-3xl font-extrabold text-amber-500 mb-1">
-                    {displayVendor.stats.rating}
-                    <svg className="w-6 h-6 fill-current" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                  </div>
-                  <span className="text-xs font-bold text-text-muted uppercase tracking-wide">
-                    Rating ({displayVendor.stats.reviews})
-                  </span>
-                </div>
-
-                <div className="bg-surface-primary p-4 rounded-2xl border border-border-primary shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col items-center justify-center text-center">
-                  <span className="text-xl font-bold text-text-primary mb-2">
-                    {displayVendor.stats.responseTime}
-                  </span>
-                  <span className="text-xs font-bold text-text-muted uppercase tracking-wide">
-                    Response Time
-                  </span>
-                </div>
-
-                <div className="bg-surface-primary p-4 rounded-2xl border border-border-primary shadow-[0_2px_10px_rgb(0,0,0,0.02)] flex flex-col items-center justify-center text-center">
-                  <span className="text-2xl font-extrabold text-emerald-600 mb-1">
-                    {displayVendor.stats.onTimeRate}
-                  </span>
-                  <span className="text-xs font-bold text-text-muted uppercase tracking-wide">
-                    On-Time Rate
-                  </span>
-                </div>
-              </div>
-            </section>
-
-            {/* Location Map Section */}
-            <section className="bg-surface-primary rounded-2xl p-6 md:p-8 border border-border-primary shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
-              <h2 className="text-2xl font-bold text-text-primary mb-3">
-                Location & Coverage
-              </h2>
-              <div className="flex items-start md:items-center gap-2 mb-6 text-text-secondary">
-                <svg
-                  className="w-5 h-5 flex-shrink-0 mt-0.5 md:mt-0"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.242-4.243a8 8 0 1111.314 0z"
-                  />
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                  />
-                </svg>
-                <span className="leading-tight">{displayVendor.address}</span>
-              </div>
-              {/* Map iFrame Container */}
-              <div className="w-full h-64 sm:h-80 rounded-xl overflow-hidden bg-surface-secondary border border-border-secondary relative">
-                <iframe
-                  src={displayVendor.mapEmbedUrl}
-                  className="absolute top-0 left-0 w-full h-full border-0"
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Vendor Location Map"
-                ></iframe>
-              </div>
-            </section>
+              </section>
+            )}
 
             {/* Reviews Section */}
-            <section>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-text-primary">
+            <section className="bg-surface-primary rounded-2xl p-5 md:p-6 shadow-sm border border-border-secondary">
+              <div className="flex items-center justify-between mb-5">
+                <h2 className="text-lg font-bold text-text-primary flex items-center gap-2">
                   Customer Reviews
                 </h2>
-                {canReview && (
-                  <button
-                    onClick={() => setIsReviewModalOpen(true)}
-                    className="bg-surface-dark text-text-inverted px-4 py-2 rounded-xl text-sm font-bold shadow-md hover:scale-[0.98] transition-transform"
-                  >
-                    Write a Review
-                  </button>
-                )}
+                <button
+                  onClick={() => setIsReviewModalOpen(true)}
+                  className="bg-surface-secondary border border-border-primary text-text-primary px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-border-secondary transition-colors"
+                >
+                  Write a Review
+                </button>
               </div>
 
-              {reviews.length === 0 ? (
-                <div className="bg-surface-primary p-6 rounded-2xl border border-border-primary shadow-[0_2px_10px_rgb(0,0,0,0.02)] text-center text-text-muted">
-                  No reviews yet. Be the first to leave one!
+              {businessPortfolio?.recent_reviews?.length === 0 ? (
+                <div className="bg-surface-secondary p-6 rounded-xl border border-border-secondary text-center">
+                  <p className="font-medium text-text-primary mb-1 text-sm">
+                    No Reviews Yet
+                  </p>
+                  <p className="text-text-muted text-xs">
+                    Be the first to leave a review for {businessPortfolio?.name}
+                  </p>
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {reviews.map((review) => (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {businessPortfolio?.recent_reviews?.map((review) => (
                     <div
-                      key={review.id}
-                      className="bg-surface-primary p-6 rounded-2xl border border-border-primary shadow-[0_2px_10px_rgb(0,0,0,0.02)]"
+                      key={review?.review_uuid}
+                      className="bg-surface-secondary p-4 rounded-xl border border-border-secondary"
                     >
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex items-center gap-3">
+                      <div className="flex justify-between items-start mb-3">
+                        <div className="flex items-center gap-2">
                           <img
-                            src={review.avatar}
-                            alt={review.user}
-                            className="w-10 h-10 rounded-full bg-surface-secondary"
+                            src={
+                              review?.avatar ||
+                              `https://api.dicebear.com/7.x/initials/svg?seed=${review?.user || "U"}`
+                            }
+                            alt={review?.user}
+                            className="w-8 h-8 rounded-full bg-surface-primary"
                           />
                           <div>
-                            <h4 className="font-bold text-text-primary leading-tight">
-                              {review.user}
+                            <h4 className="font-semibold text-text-primary text-xs">
+                              {review?.user || "Customer"}
                             </h4>
-                            <span className="text-xs text-text-secondary">
-                              {new Date(review.date).toLocaleDateString()}
-                            </span>
+                            {review?.date && (
+                              <span className="text-[11px] text-text-secondary">
+                                {new Date(review.date).toLocaleDateString()}
+                              </span>
+                            )}
                           </div>
                         </div>
-                        <div className="flex text-amber-500">
+                        <div className="flex gap-0.5">
                           {[...Array(5)].map((_, i) => (
-                            <svg
+                            <Star
                               key={i}
-                              className={`w-4 h-4 ${i < review.rating ? "fill-current" : "text-slate-200 fill-current"}`}
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                            </svg>
+                              className={`w-3 h-3 ${i < review.rating ? "text-amber-500 fill-amber-500" : "text-zinc-200 fill-zinc-200"}`}
+                            />
                           ))}
                         </div>
                       </div>
-                      <p className="text-text-secondary text-sm leading-relaxed">
-                        "{review.text}"
+                      <p className="text-text-secondary text-xs leading-relaxed line-clamp-3">
+                        {review?.message || "No comments provided."}
                       </p>
                     </div>
                   ))}
@@ -409,50 +457,186 @@ const Vendor = () => {
 
           {/* Right Column (Sticky Sidebar) */}
           <div className="lg:col-span-1">
-            <div className="sticky top-8 space-y-6">
-              <div className="bg-surface-primary p-6 rounded-2xl border border-border-primary shadow-xl shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-                <div className="flex items-start gap-3 p-4 bg-emerald-50 rounded-xl border border-emerald-100 mb-4">
-                  <svg
-                    className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2.5}
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <p className="text-sm text-emerald-800 font-medium">
-                    This is a Verified Professional. They maintain a high
-                    standard of quality and on-time delivery across the
-                    platform.
-                  </p>
+            <div className="sticky top-24 space-y-6">
+              {/* Stats Overview */}
+              <div className="bg-surface-primary p-5 md:p-6 rounded-2xl border border-border-secondary shadow-sm">
+                <h3 className="text-base font-bold text-text-primary mb-4">
+                  Performance
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-surface-secondary p-3 rounded-xl border border-border-secondary">
+                    <p className="text-xl font-bold text-text-primary mb-0.5">
+                      {businessPortfolio?.completed_bookings_count || 0}
+                    </p>
+                    <p className="text-xs font-medium text-text-secondary">
+                      Bookings
+                    </p>
+                  </div>
+                  <div className="bg-surface-secondary p-3 rounded-xl border border-border-secondary">
+                    <p className="text-xl font-bold text-text-primary mb-0.5">
+                      {businessPortfolio?.average_rating || 0}
+                    </p>
+                    <p className="text-xs font-medium text-text-secondary">
+                      Rating
+                    </p>
+                  </div>
+                  <div className="bg-surface-secondary p-3 rounded-xl border border-border-secondary">
+                    <p className="text-lg font-bold text-text-primary mb-0.5">
+                      {businessPortfolio?.on_time_rate || "N/A"}
+                    </p>
+                    <p className="text-xs font-medium text-text-secondary">
+                      On-Time
+                    </p>
+                  </div>
+                  <div className="bg-surface-secondary p-3 rounded-xl border border-border-secondary">
+                    <p className="text-lg font-bold text-text-primary mb-0.5 truncate">
+                      {businessPortfolio?.response_time === "WITHIN_AN_HOUR"
+                        ? "1 hr"
+                        : businessPortfolio?.response_time ===
+                            "WITHIN_A_FEW_HOURS"
+                          ? "Few hrs"
+                          : businessPortfolio?.response_time === "WITHIN_A_DAY"
+                            ? "1 day"
+                            : businessPortfolio?.response_time ===
+                                "MORE_THAN_A_DAY"
+                              ? "> 1 day"
+                              : businessPortfolio?.response_time || "N/A"}
+                    </p>
+                    <p className="text-xs font-medium text-text-secondary">
+                      Response
+                    </p>
+                  </div>
                 </div>
               </div>
 
-              <div className="bg-surface-primary p-6 rounded-2xl border border-border-primary shadow-[0_2px_10px_rgb(0,0,0,0.02)]">
-                <h3 className="text-lg font-bold text-text-primary mb-4">
-                  Services Offered
-                </h3>
-                <ul className="space-y-4">
-                  {displayVendor.services.map((service) => (
-                    <li
-                      key={service.id}
-                      className="flex flex-col border-b border-border-secondary pb-3 last:border-0 last:pb-0"
-                    >
-                      <span className="font-semibold text-text-primary">
-                        {service.name}
-                      </span>
-                      <span className="text-sm text-text-muted mt-1">
-                        {service.price}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {/* Working Hours */}
+              {activeHours.length > 0 && (
+                <div className="bg-surface-primary p-5 md:p-6 rounded-2xl border border-border-secondary shadow-sm">
+                  <h3 className="text-base font-bold text-text-primary mb-4">
+                    Working Hours
+                  </h3>
+                  <div className="space-y-2">
+                    {activeHours.map((slot, i) => (
+                      <div
+                        key={i}
+                        className="flex justify-between items-center text-sm"
+                      >
+                        <span className="font-medium text-text-secondary capitalize">
+                          {slot.day.toLowerCase()}
+                        </span>
+                        <span className="font-medium text-text-primary">
+                          {slot.startTime.substring(0, 5)} -{" "}
+                          {slot.endTime.substring(0, 5)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Services Offered */}
+              {businessPortfolio?.services &&
+                businessPortfolio.services.length > 0 && (
+                  <div className="bg-surface-primary p-5 md:p-6 rounded-2xl border border-border-secondary shadow-sm">
+                    <h3 className="text-base font-bold text-text-primary mb-4">
+                      Services
+                    </h3>
+                    <ul className="space-y-2">
+                      {businessPortfolio.services.map((service) => (
+                        <li
+                          key={service?.service_uuid}
+                          className="bg-surface-secondary p-3 rounded-xl border border-border-secondary"
+                        >
+                          <div className="flex justify-between items-start">
+                            <span className="font-semibold text-sm text-text-primary pr-3">
+                              {service?.name}
+                            </span>
+                            <span className="font-bold text-sm text-text-primary whitespace-nowrap">
+                              ₹{service?.price}
+                            </span>
+                          </div>
+                          {service.duration && (
+                            <div className="flex items-center gap-1 text-xs text-text-muted mt-1.5">
+                              <Clock className="w-3 h-3" /> {service.duration}{" "}
+                              mins
+                            </div>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                    {businessPortfolio?.starting_price && (
+                      <div className="mt-4 pt-4 border-t border-border-secondary flex justify-between items-center text-sm">
+                        <span className="text-text-secondary font-medium">
+                          Starting Price
+                        </span>
+                        <span className="text-text-primary font-bold">
+                          ₹{businessPortfolio.starting_price}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+              {/* Social Links */}
+              {businessPortfolio?.social_links &&
+                Object.values(businessPortfolio.social_links).some(
+                  (v) => v,
+                ) && (
+                  <div className="bg-surface-primary p-5 md:p-6 rounded-2xl border border-border-secondary shadow-sm flex flex-wrap justify-center gap-3">
+                    {businessPortfolio.social_links.facebook_url && (
+                      <a
+                        href={businessPortfolio.social_links.facebook_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2.5 bg-surface-secondary text-text-secondary hover:text-text-primary rounded-lg border border-border-secondary transition-colors"
+                        title="Facebook"
+                      >
+                        <IconBrandFacebook className="w-4 h-4" />
+                      </a>
+                    )}
+                    {businessPortfolio.social_links.instagram_url && (
+                      <a
+                        href={businessPortfolio.social_links.instagram_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2.5 bg-surface-secondary text-text-secondary hover:text-text-primary rounded-lg border border-border-secondary transition-colors"
+                        title="Instagram"
+                      >
+                        <IconBrandInstagram className="w-4 h-4" />
+                      </a>
+                    )}
+                    {businessPortfolio.social_links.twitter_url && (
+                      <a
+                        href={businessPortfolio.social_links.twitter_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2.5 bg-surface-secondary text-text-secondary hover:text-text-primary rounded-lg border border-border-secondary transition-colors"
+                        title="Twitter"
+                      >
+                        <IconBrandTwitter className="w-4 h-4" />
+                      </a>
+                    )}
+                    {businessPortfolio.social_links.linkedin_url && (
+                      <a
+                        href={businessPortfolio.social_links.linkedin_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-2.5 bg-surface-secondary text-text-secondary hover:text-text-primary rounded-lg border border-border-secondary transition-colors"
+                        title="LinkedIn"
+                      >
+                        <IconBrandLinkedin className="w-4 h-4" />
+                      </a>
+                    )}
+                  </div>
+                )}
+
+              {/* Report Vendor */}
+              <button
+                className="w-full py-2.5 text-red-500 hover:bg-red-50 font-medium text-sm rounded-lg transition-colors border border-transparent hover:border-red-100 flex items-center justify-center gap-2"
+                onClick={() => alert("Vendor reported to support.")}
+              >
+                <AlertTriangle className="w-4 h-4" /> Report Vendor
+              </button>
             </div>
           </div>
         </div>
@@ -460,35 +644,32 @@ const Vendor = () => {
 
       {/* Review Modal */}
       {isReviewModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-surface-primary rounded-2xl max-w-lg w-full p-6 md:p-8 shadow-2xl">
-            <h2 className="text-2xl font-bold text-text-primary mb-6">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-surface-primary rounded-2xl max-w-lg w-full p-6 shadow-xl border border-border-secondary">
+            <h2 className="text-xl font-bold text-text-primary mb-5">
               Write a Review
             </h2>
-            <form onSubmit={handleSubmitReview} className="space-y-6">
+            <form onSubmit={handleSubmitReview} className="space-y-5">
               <div>
-                <label className="block text-sm font-bold text-text-secondary mb-2">
+                <label className="block text-sm font-medium text-text-secondary mb-2">
                   Rating
                 </label>
                 <div className="flex gap-2 text-amber-500">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <svg
+                    <Star
                       key={star}
                       onClick={() =>
                         setNewReview({ ...newReview, rating: star })
                       }
-                      className={`w-8 h-8 cursor-pointer transition-transform hover:scale-110 ${star <= newReview.rating ? "fill-current" : "text-slate-200 fill-current"}`}
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
+                      className={`w-8 h-8 cursor-pointer transition-transform ${star <= newReview.rating ? "fill-amber-500" : "text-zinc-200 fill-zinc-200"}`}
+                    />
                   ))}
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-text-secondary mb-2">
-                  Review Details
+                <label className="block text-sm font-medium text-text-secondary mb-2">
+                  Share more details
                 </label>
                 <textarea
                   required
@@ -497,23 +678,23 @@ const Vendor = () => {
                   onChange={(e) =>
                     setNewReview({ ...newReview, text: e.target.value })
                   }
-                  placeholder="Share your experience working with this professional..."
-                  className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-text-primary resize-none"
+                  placeholder="Describe your experience..."
+                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary text-sm rounded-xl p-3 focus:outline-none focus:border-indigo-500 resize-none"
                 />
               </div>
 
-              <div className="flex gap-3 pt-4">
+              <div className="flex gap-3 pt-2">
                 <button
                   type="button"
                   onClick={() => setIsReviewModalOpen(false)}
-                  className="flex-1 px-4 py-3 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors"
+                  className="flex-1 px-4 py-2 bg-surface-secondary text-text-primary font-medium text-sm rounded-xl hover:bg-border-secondary transition-colors"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={!newReview.text.trim()}
-                  className="flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-text-primary text-surface-primary font-medium text-sm rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   Post Review
                 </button>

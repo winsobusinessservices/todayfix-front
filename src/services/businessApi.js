@@ -125,4 +125,48 @@ export const businessApi = {
     });
     return response.data;
   },
+
+  // GET /api/business/profiles/public/{subCat_uuid}/s
+  businessProfileBySubcategory: async (subCategoryId) => {
+    const response = await api.get(`/api/business/profiles/public/${subCategoryId}/s`);
+    return response.data;
+  },
+
+  // GET /api/business/portfolio/{business_profile_uuid}/
+  businessPortfolio: async (businessId) => {
+    const response = await api.get(`/api/business/portfolio/${businessId}/`)
+    return response.data;
+  },
+
+  // POST /api/business/portfolio/create/
+  businessCreatePortfolio: async (data) => {
+    const response = await api.post("/api/business/portfolio/create/", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
+  // PATCH /api/business/portfolio/update/
+  businessUpdatePortfolio: async (data) => {
+    const response = await api.patch(`/api/business/portfolio/update/`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  },
+
+  // DELETE /api/business/portfolio/faqs/{faq_uuid}/delete/
+  businessDeletePortfolioFaq: async (faqId) => {
+    const response = await api.delete(`/api/business/portfolio/faqs/${faqId}/delete/`);
+    return response.data;
+  },
+
+  // DELETE /api/business/portfolio/gallery/{gallery_image_uuid}/delete/
+  businessPortfolioDeleteGalleryImage: async (galleryId) => {
+    const response = await api.delete(`/api/business/portfolio/gallery/${galleryId}/delete/`);
+    return response.data;
+  },
 };

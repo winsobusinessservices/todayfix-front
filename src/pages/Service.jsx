@@ -14,7 +14,7 @@ import { useBookingStore } from "../store/bookingStore";
 import { useUserStore } from "../store/userStore";
 import BookingDrawer from "../components/booking/BookingDrawer";
 import { useNavigate, useLocation } from "react-router";
-
+import { businessApi } from "../services/businessApi";
 
 const Service = () => {
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const Service = () => {
   const { slug } = useParams();
   const [sortBy, setSortBy] = useState("Recommended");
   const isAuthenticated = useUserStore((state) => state.isAuthenticated);
-  
+
   const openBooking = useBookingStore((state) => state.openBooking);
 
   // 1. Fetch Categories to find the one matching `slug`
@@ -44,7 +44,16 @@ const Service = () => {
     enabled: !!currentSubcategory?.subCat_uuid,
   });
 
+  const { data: businessesData } = useQuery({
+    queryKey: ["businesses", currentSubcategory?.subCat_uuid],
+    queryFn: () =>
+      businessApi.businessProfileBySubcategory(currentSubcategory?.subCat_uuid),
+    enabled: !!currentSubcategory?.subCat_uuid,
+    retry: false,
+  });
+
   const services = servicesData?.results || [];
+  const businesses = businessesData?.data || businessesData || [];
 
   if (isLoadingCategories) {
     return (
@@ -143,16 +152,19 @@ const Service = () => {
 
             {/* Vendors List (Mock Data) */}
             <div className="flex flex-col gap-4">
-              {vendors.map((vendor) => (
+              {businesses.map((vendor) => (
                 <div
-                  key={vendor.id}
+                  key={vendor?.business_profile_uuid}
                   className="bg-surface-primary rounded-2xl p-5 border border-border-primary hover:border-black/30 shadow-sm transition-all duration-300 flex flex-col md:flex-row gap-6"
                 >
                   <div className="flex items-center gap-4 md:w-32 flex-shrink-0">
                     <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden bg-surface-secondary border border-border-secondary shrink-0">
                       <img
-                        src={vendor.avatar}
-                        alt={vendor.name}
+                        src={
+                          vendor?.icon ||
+                          "https://api.dicebear.com/7.x/shapes/svg?seed=Aura&backgroundColor=0284c7"
+                        }
+                        alt={vendor?.name}
                         className="w-full h-full object-cover p-2"
                       />
                     </div>
@@ -162,29 +174,29 @@ const Service = () => {
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
                       <div>
                         <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">
-                          {vendor.name}
-                          {vendor.verified && (
+                          {vendor?.name}
+                          {vendor?.is_active && (
                             <Icons.BadgeCheck className="w-5 h-5 text-blue-500" />
                           )}
                         </h3>
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-text-secondary mt-1">
                           <div className="flex items-center gap-1 font-bold text-text-primary">
                             <Icons.Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                            {vendor.rating}{" "}
+                            {vendor?.rating || 0}{" "}
                             <span className="font-normal text-text-muted">
-                              ({vendor.reviews})
+                              ({vendor?.number_of_reviews || 0})
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
                             <Icons.MapPin className="w-3.5 h-3.5" />
-                            {vendor.location}
+                            {vendor?.city || "Bengaluru"}
                           </div>
                         </div>
                       </div>
 
                       <div className="hidden md:block">
                         <Link
-                          to={`/vendor/${vendor.id}`}
+                          to={`/vendor/${vendor?.business_profile_uuid}`}
                           className="px-5 py-2 bg-surface-secondary hover:bg-zinc-200 text-text-primary font-bold rounded-xl text-sm transition-colors"
                         >
                           View Profile
@@ -193,23 +205,37 @@ const Service = () => {
                     </div>
 
                     <p className="text-text-secondary text-sm leading-relaxed mb-4 line-clamp-2">
-                      {vendor.description}
+                      {vendor?.description ||
+                        "Premium end-to-end interior design with a focus on smart home automation and luxury finishes."}
                     </p>
 
                     <div className="flex flex-wrap gap-2">
-                      {vendor.tags.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="bg-surface-secondary text-text-secondary px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider"
-                        >
-                          {tag}
-                        </span>
-                      ))}
+                      {!vendor?.services?.length > 0
+                        ? [
+                            "Free Consultation",
+                            "Modular Kitchens",
+                            "3D Renders",
+                          ].map((service, idx) => (
+                            <span
+                              key={idx}
+                              className="bg-surface-secondary text-text-secondary px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider"
+                            >
+                              {service}
+                            </span>
+                          ))
+                        : vendor?.services?.slice(0, 3)?.map((service, idx) => (
+                            <span
+                              key={idx}
+                              className="bg-surface-secondary text-text-secondary px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider"
+                            >
+                              {service?.service_name}
+                            </span>
+                          ))}
                     </div>
 
                     <div className="md:hidden mt-4 pt-4 border-t border-border-secondary">
                       <Link
-                        to={`/vendor/${vendor.id}`}
+                        to={`/vendor/${vendor?.business_profile_uuid}`}
                         className="w-full text-center block px-5 py-2.5 bg-surface-secondary text-text-primary font-bold rounded-xl text-sm"
                       >
                         View Profile
@@ -345,12 +371,12 @@ const Service = () => {
                     </div>
                     <button
                       onClick={() => {
-                      if (!isAuthenticated) {
-                        toast.error("Please log in booking a service.");
-                        navigate("/login", { state: { from: location } });
-                        return;
-                      }
-                        openBooking(service)
+                        if (!isAuthenticated) {
+                          toast.error("Please log in booking a service.");
+                          navigate("/login", { state: { from: location } });
+                          return;
+                        }
+                        openBooking(service);
                       }}
                       className="px-5 py-3 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:bg-zinc-800 transition-all active:scale-95 shadow-md flex items-center gap-2"
                     >
