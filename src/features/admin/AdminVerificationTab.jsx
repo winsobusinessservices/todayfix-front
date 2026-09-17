@@ -83,6 +83,17 @@ const AdminVerificationTab = () => {
 
   const columns = [
     {
+      header: "Bank Account Name",
+      accessor: "user_name",
+      render: (row) => (
+        <div className="flex items-center gap-3">
+          <div className="bg-surface-secondary flex items-center justify-center text-purple-500 text-nowrap">
+            {row?.bank_account?.account_holder_name || "N/A"}
+          </div>
+        </div>
+      ),
+    },
+    {
       header: "Business Type",
       accessor: "business_type",
       render: (row) => (
@@ -238,6 +249,7 @@ const AdminVerificationTab = () => {
               </button>
             )
           }
+          locationPreview={selectedVendor?.location}
         >
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4 text-sm bg-surface-secondary p-4 rounded-xl border border-border-secondary">
@@ -261,14 +273,14 @@ const AdminVerificationTab = () => {
                 </p>
                 <p className="font-semibold">{selectedVendor.business_type}</p>
               </div>
-              <div>
+              {/* <div>
                 <p className="text-xs text-zinc-400 font-bold uppercase mb-1">
                   Location
                 </p>
                 <p className="font-semibold">
                   {selectedVendor.location || "N/A"}
                 </p>
-              </div>
+              </div> */}
               <div className="col-span-2">
                 <p className="text-xs text-zinc-400 font-bold uppercase mb-1">
                   Identity / PAN / Registration
@@ -309,63 +321,66 @@ const AdminVerificationTab = () => {
               <h4 className="font-bold text-text-primary text-sm">
                 Uploaded Documents
               </h4>
-              {/* Assuming identity field holds document details or there are actual fields like pan_document */}
-              {selectedVendor.identity?.pan_document && (
-                <div className="p-4 rounded-xl border border-border-secondary flex items-center justify-between hover:border-border-dark transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-surface-secondary text-text-primary rounded-lg flex items-center justify-center">
-                      <FileText size={20} />
-                    </div>
-                    <div>
-                      <p className="font-bold text-text-primary text-sm">
-                        PAN Document
-                      </p>
-                      <p className="text-xs text-text-secondary">
-                        Click to view
-                      </p>
-                    </div>
-                  </div>
-                  <a
-                    href={IMAGE_URL + selectedVendor.identity.pan_document}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-bold text-text-primary hover:underline cursor-pointer"
+              {(() => {
+                const docTypes = [
+                  { key: "pan_document", label: "PAN Document" },
+                  { key: "aadhaar_document", label: "Aadhaar Document" },
+                  {
+                    key: "cancelled_gst_bill_book_photo",
+                    label: "Cancelled GST / Bill Book",
+                  },
+                  {
+                    key: "external_store_photo",
+                    label: "External Store Photo",
+                  },
+                  {
+                    key: "internal_store_photo",
+                    label: "Internal Store Photo",
+                  },
+                  { key: "logo", label: "Business Logo" },
+                ];
+
+                const uploadedDocs = docTypes.filter(
+                  (doc) => selectedVendor.identity?.[doc.key],
+                );
+
+                if (uploadedDocs.length === 0) {
+                  return (
+                    <p className="text-sm text-text-secondary italic">
+                      No documents uploaded or parsed from response.
+                    </p>
+                  );
+                }
+
+                return uploadedDocs.map((doc) => (
+                  <div
+                    key={doc.key}
+                    className="p-4 rounded-xl border border-border-secondary flex items-center justify-between hover:border-border-dark transition-colors"
                   >
-                    View
-                  </a>
-                </div>
-              )}
-              {selectedVendor.identity?.aadhaar_document && (
-                <div className="p-4 rounded-xl border border-border-secondary flex items-center justify-between hover:border-border-dark transition-colors">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-surface-secondary text-text-primary rounded-lg flex items-center justify-center">
-                      <FileText size={20} />
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-surface-secondary text-text-primary rounded-lg flex items-center justify-center">
+                        <FileText size={20} />
+                      </div>
+                      <div>
+                        <p className="font-bold text-text-primary text-sm">
+                          {doc.label}
+                        </p>
+                        <p className="text-xs text-text-secondary">
+                          Click to view
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-bold text-text-primary text-sm">
-                        Aadhaar Document
-                      </p>
-                      <p className="text-xs text-text-secondary">
-                        Click to view
-                      </p>
-                    </div>
+                    <a
+                      href={IMAGE_URL + selectedVendor.identity[doc.key]}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm font-bold text-text-primary hover:underline cursor-pointer"
+                    >
+                      View
+                    </a>
                   </div>
-                  <a
-                    href={IMAGE_URL + selectedVendor.identity.aadhaar_document}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm font-bold text-text-primary hover:underline cursor-pointer"
-                  >
-                    View
-                  </a>
-                </div>
-              )}
-              {!selectedVendor.identity?.pan_document &&
-                !selectedVendor.identity?.aadhaar_document && (
-                  <p className="text-sm text-text-secondary italic">
-                    No documents uploaded or parsed from response.
-                  </p>
-                )}
+                ));
+              })()}
             </div>
 
             {isRejectingState && (

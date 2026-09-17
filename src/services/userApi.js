@@ -24,6 +24,11 @@ export const userPendingBooking = async ({ page } = {}) => {
   return res.data;
 };
 
+export const userProfile = async (userId) => {
+  const res = await api.get(`/api/auth/users/${userId}/profile-picture/`);
+  return res.data;
+};
+
 export const submitBusinessApplication = async (formData) => {
   return await api
     .post("/api/business/applications/", formData, {
@@ -63,14 +68,3 @@ export const userPendingServices = async () => {
   return data;
 };
 
-export const userReviews = async () => {
-  const res = await new Promise((resolve) =>
-    resolve(
-      new Response(JSON.stringify([]), {
-        status: 200,
-        headers: { "Content-Type": "application/json" },
-      }),
-    ),
-  );
-  return await res.json();
-};

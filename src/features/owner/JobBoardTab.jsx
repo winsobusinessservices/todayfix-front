@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { bookingApi } from "../../services/bookingApi";
+import { instantBookingApi } from "../../services/instantBookingApi";
 import api from "../../services/axiosClient";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
@@ -29,7 +30,7 @@ const JobBoardTab = () => {
   // Instant booking offers query
   const { data: instantOffersData, isLoading } = useQuery({
     queryKey: ["instantBookingOffers"],
-    queryFn: bookingApi.getInstantBookingOffers,
+    queryFn: instantBookingApi.pendingInstantBookings,
   });
 
   const broadcasts =
@@ -37,7 +38,7 @@ const JobBoardTab = () => {
 
   const { mutate: acceptInstantBooking, isPending: isAcceptingInstant } =
     useMutation({
-      mutationFn: bookingApi.acceptInstantBookingOffer,
+      mutationFn: instantBookingApi.acceptInstantBookingOffer,
       onSuccess: () => {
         toast.success("Instant booking offer accepted!");
         queryClient.invalidateQueries(["instantBookingOffers"]);
@@ -47,32 +48,6 @@ const JobBoardTab = () => {
         toast.error("Failed to accept instant offer");
       },
     });
-
-  const { mutate: startJob, isPending: isStarting } = useMutation({
-    mutationFn: bookingApi.startInstantBooking,
-    onSuccess: () => {
-      toast.success("Job started!");
-      queryClient.invalidateQueries(["instantBookingOffers"]);
-      setActionJobId(null);
-    },
-    onError: () => {
-      toast.error("Failed to start job");
-      setActionJobId(null);
-    },
-  });
-
-  const { mutate: completeJob, isPending: isCompleting } = useMutation({
-    mutationFn: bookingApi.completeInstantBooking,
-    onSuccess: () => {
-      toast.success("Job completed!");
-      queryClient.invalidateQueries(["instantBookingOffers"]);
-      setActionJobId(null);
-    },
-    onError: () => {
-      toast.error("Failed to complete job");
-      setActionJobId(null);
-    },
-  });
 
   const handleAcceptJob = (id) => {
     setAcceptedJobId(id);
@@ -98,7 +73,7 @@ const JobBoardTab = () => {
 
       <div className="grid gap-6">
         <AnimatePresence>
-          {broadcasts.map((job) => (
+          {broadcasts?.map((job) => (
             <motion.div
               key={job.id || job.uuid}
               layout
@@ -108,7 +83,7 @@ const JobBoardTab = () => {
               className="bg-surface-primary border border-border-primary rounded-3xl p-6 relative overflow-hidden shadow-[0_4px_20px_rgb(0,0,0,0.03)] hover:shadow-xl hover:border-black transition-all duration-300 group"
             >
               {/* Accepted Overlay */}
-              {/* <AnimatePresence>
+              <AnimatePresence>
                 {acceptedJobId === (job.id || job.uuid) && (
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -125,7 +100,7 @@ const JobBoardTab = () => {
                     </p>
                   </motion.div>
                 )}
-              </AnimatePresence> */}
+              </AnimatePresence> 
 
               <div className="flex flex-col md:flex-row gap-6">
                 {/* Left Side: Job Details */}
@@ -220,39 +195,7 @@ const JobBoardTab = () => {
                     </button>
                   )}
 
-                  {job.status === "ACCEPTED" && (
-                    <div className="flex flex-col gap-2 w-full mt-2">
-                      <button
-                        onClick={() =>
-                          handleAction(job.id || job.uuid, startJob)
-                        }
-                        disabled={isStarting}
-                        className="w-full flex items-center justify-center gap-2 py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition-colors shadow-md disabled:opacity-50 cursor-pointer"
-                      >
-                        <Play size={16} />
-                        {isStarting && actionJobId === (job.id || job.uuid)
-                          ? "Starting..."
-                          : "Start Job"}
-                      </button>
-                    </div>
-                  )}
 
-                  {job.status === "IN_PROGRESS" && (
-                    <div className="flex flex-col gap-2 w-full mt-2">
-                      <button
-                        onClick={() =>
-                          handleAction(job.id || job.uuid, completeJob)
-                        }
-                        disabled={isCompleting}
-                        className="w-full flex items-center justify-center gap-2 py-3 bg-emerald-600 text-white font-bold rounded-xl hover:bg-emerald-700 transition-colors shadow-md disabled:opacity-50 cursor-pointer"
-                      >
-                        <CheckCircle size={16} />
-                        {isCompleting && actionJobId === (job.id || job.uuid)
-                          ? "Completing..."
-                          : "Complete Job"}
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             </motion.div>

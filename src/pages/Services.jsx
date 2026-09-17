@@ -6,19 +6,23 @@ import SEO from "../components/seo/SEO";
 import { useQuery } from "@tanstack/react-query";
 import { categoryApi } from "../services/categoryApi";
 import { useCategoryStore } from "../store/categoryStore";
+import { useSearchParams } from "react-router";
 
 const Services = () => {
-  const [selectedCategory, setSelectedCategory] = useState("All Categories");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const requestedTab = searchParams.get("term");
+  const [selectedCategory, setSelectedCategory] = useState(
+    requestedTab || "All Categories",
+  );
   const isLoading = false;
   const categoriesData = useCategoryStore((state) => state.categories);
-
-  // console.log(categoriesData);
-
   const categoriesList = categoriesData?.data || categoriesData || [];
   const activeCategories = categoriesList.filter((c) => c.is_active);
 
   const selectedCategoryObj = useMemo(() => {
-    return activeCategories.find((c) => c.name === selectedCategory);
+    return activeCategories.find(
+      (c) => c.name.toLowerCase() === selectedCategory.toLowerCase(),
+    );
   }, [activeCategories, selectedCategory]);
 
   const { data: subcategoriesData, isLoading: isLoadingSubcategories } =
@@ -29,9 +33,9 @@ const Services = () => {
           return categoryApi.getSubcategories(selectedCategoryObj.cat_uuid);
         } else {
           // Fetch subcategories for all active categories
-          const promises = activeCategories.slice(0,3).map((cat) =>
-            categoryApi.getSubcategories(cat.cat_uuid),
-          );
+          const promises = activeCategories
+            .slice(0, 3)
+            .map((cat) => categoryApi.getSubcategories(cat.cat_uuid));
           const results = await Promise.all(promises);
           const allSubcategories = results.flatMap(
             (res) => res?.data || res || [],
@@ -93,7 +97,7 @@ const Services = () => {
                 </div>
                 <CustomDropdown
                   options={filterOptions}
-                  value={selectedCategory}
+                  value={selectedCategory.toLowerCase()}
                   onChange={setSelectedCategory}
                   icon={
                     <svg
@@ -121,7 +125,8 @@ const Services = () => {
                       onClick={() => setSelectedCategory(catName)}
                       className={`w-full text-left px-4 py-2.5 rounded-xl transition-all duration-200 font-medium text-sm
                         ${
-                          selectedCategory === catName
+                          selectedCategory.toLowerCase() ===
+                          catName.toLowerCase()
                             ? "bg-surface-dark text-white shadow-md"
                             : "text-text-secondary hover:bg-surface-accent hover:text-text-primary"
                         }

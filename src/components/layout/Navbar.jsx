@@ -25,7 +25,8 @@ export default function Navbar() {
   // State for dropdowns
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false);
-  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] =
+    useState(false);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const navigate = useNavigate();
   const userData = useUserStore((state) => state.user);
@@ -47,7 +48,7 @@ export default function Navbar() {
   });
 
   const navItems = [
-    { name: "Services", link: "/services" },
+    { name: "Services", link: "/services?term=all categories" },
     { name: "Pricing", link: "/pricing" },
     {
       name: "Areas",

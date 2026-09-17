@@ -14,6 +14,7 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { bookingApi } from "../services/bookingApi";
+import { instantBookingApi } from "../services/instantBookingApi";
 import toast from "react-hot-toast";
 
 const InstantBookingTracking = () => {
@@ -30,7 +31,7 @@ const InstantBookingTracking = () => {
   } = useQuery({
     queryKey: ["instantBookingTracking", id],
     queryFn: async () => {
-      const res = await bookingApi.getCustomerInstantBookingDetails(id);
+      const res = await instantBookingApi.getCustomerInstantBookingDetails(id);
       return res.data || res;
     },
     refetchInterval: (query) => {
@@ -43,7 +44,7 @@ const InstantBookingTracking = () => {
   });
 
   const { mutate: cancelBooking, isPending: isCanceling } = useMutation({
-    mutationFn: () => bookingApi.cancelCustomerInstantBooking(id),
+    mutationFn: () => instantBookingApi.cancelCustomerInstantBooking(id),
     onSuccess: () => {
       toast.success("Booking cancelled successfully.");
       queryClient.invalidateQueries(["instantBookingTracking", id]);
@@ -54,7 +55,7 @@ const InstantBookingTracking = () => {
   });
 
   const { mutate: retryBooking, isPending: isRetrying } = useMutation({
-    mutationFn: () => bookingApi.retryCustomerInstantBooking(id, tipAmount),
+    mutationFn: () => instantBookingApi.retryCustomerInstantBooking(id, tipAmount),
     onSuccess: () => {
       toast.success("Retrying with additional tip!");
       queryClient.invalidateQueries(["instantBookingTracking", id]);
@@ -297,7 +298,7 @@ const InstantBookingTracking = () => {
               </p>
               <p className="font-bold text-text-primary flex items-center gap-1">
                 <IndianRupee className="w-4 h-4" />
-                {booking.price || "TBD"}
+                {booking.total_payable_price || "TBD"}
               </p>
             </div>
             {booking.tip_amount > 0 && (
