@@ -6,7 +6,7 @@
   --font-outfit: "Outfit", sans-serif;
 
   /* Brand */
-  --color-brand-primary:  #51386f;
+  --color-brand-primary:#a78bfa;
   --color-brand-dark: #4c1d95;
   --color-brand-accent: #8b5cf6;
   --color-brand-soft: #c4b5fd;
@@ -41,7 +41,6 @@
   --color-text-brand: #6d28d9;
   --color-text-on-accent: #18181b;
   --color-text-on-dark-muted: #d4d4d8;
-
   /* Borders */
   --color-border-primary: #e7e2ee;
   --color-border-secondary: #f2eff7;
@@ -66,18 +65,6 @@
   --color-illustration-mid: #52525b;
   --color-illustration-muted: #71717a;
   --color-illustration-soft: #e4e4e7;
-
-    --color-zinc-50: #151518;
-  --color-zinc-100: #1c1c20;
-  --color-zinc-200: #29282e;
-  --color-zinc-300: #45414d;
-  --color-zinc-400: #918a9c;
-  --color-zinc-500: #b0a9b8;
-  --color-zinc-600: #d0cad6;
-  --color-zinc-700: #45414d;
-  --color-zinc-800: #27272a;
-  --color-zinc-900: #18181b;
-  --color-zinc-950: #09090b;
 
 }
 
@@ -159,6 +146,7 @@ html.dark {
   --color-zinc-900: #18181b;
   --color-zinc-950: #09090b;
 
+  --color-neutral-50: #151518;
   --color-neutral-100: #1c1c20;
   --color-neutral-200: #29282e;
   --color-neutral-300: #45414d;
@@ -372,4 +360,37 @@ html.dark {
   ):not(.btn-secondary, .btn-danger, .btn-inverse):hover {
   background-color: var(--color-button-primary-hover);
   color: var(--color-button-primary-text);
+}
+
+/* Shared filter/dropdown colors for both light and dark themes. */
+.filter-control {
+  border-color: var(--color-border-primary);
+  background-color: var(--color-surface-primary);
+  color: var(--color-text-primary);
+}
+
+.filter-control:hover {
+  border-color: var(--color-brand-primary);
+  background-color: var(--color-surface-secondary);
+}
+
+.filter-dropdown-panel {
+  border-color: var(--color-border-primary);
+  background-color: var(--color-surface-primary);
+  color: var(--color-text-primary);
+}
+
+.filter-option {
+  color: var(--color-text-secondary);
+}
+
+.filter-option:hover {
+  background-color: var(--color-surface-secondary);
+  color: var(--color-text-primary);
+}
+
+.filter-option-active {
+  background-color: var(--color-button-primary);
+  color: var(--color-button-primary-text);
+  box-shadow: none;
 }

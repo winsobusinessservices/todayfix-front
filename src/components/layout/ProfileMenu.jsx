@@ -109,17 +109,18 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
         {open && (
           <motion.div
             role="menu"
+            style={mobile ? undefined : { left: "calc(50% - 10rem)" }}
             initial={{ opacity: 0, y: -8, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.16, ease: "easeOut" }}
             className={mobile
               ? "relative z-[80] mt-3 w-full overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-xl"
-              : "absolute right-0 top-full z-[80] mt-3 w-80 overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-2xl shadow-black/15"}
+              : "absolute top-full z-[80] mt-3 w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-2xl shadow-black/15"}
           >
             <div className="border-b border-border-secondary bg-surface-secondary/70 p-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-dark text-sm font-black text-text-inverted">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-primary text-sm font-black text-text-inverted">
                   {profileImage ? (
                     <img src={profileImage} alt={`${firstName} ${lastName}`} className="h-full w-full object-cover" />
                   ) : initials}
@@ -143,7 +144,7 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
                     onClick={() => goTo(item.to)}
                     className="group flex w-full cursor-pointer items-center gap-3 rounded-xl p-3 text-left transition-colors hover:bg-surface-secondary"
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border-primary bg-surface-primary text-text-secondary transition-colors group-hover:bg-surface-dark group-hover:text-text-inverted">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border-primary bg-surface-primary text-text-secondary transition-colors group-hover:bg-brand-primary group-hover:text-text-inverted">
                       <ItemIcon size={17} />
                     </span>
                     <span className="min-w-0 flex-1">

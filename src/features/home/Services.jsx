@@ -19,17 +19,19 @@ const Services = () => {
       {/* Custom Styles to Override Default Swiper Pagination */}
       <style>
         {`
-          .swiper-pagination-bullet {
+          .swiper-custom-pagination .swiper-pagination-bullet {
             width: 10px;
             height: 10px;
-            background: var(--color-card-primary);
+            background: var(--color-border-tertiary);
+            box-shadow: inset 0 0 0 1px var(--color-text-muted);
             opacity: 1;
             transition: all 0.3s ease;
           }
-          .swiper-pagination-bullet-active {
+          .swiper-custom-pagination .swiper-pagination-bullet-active {
             width: 32px;
             border-radius: 9999px;
             background: var(--color-button-primary);
+            box-shadow: none;
           }
           .swiper-container-free-mode > .swiper-wrapper {
             transition-timing-function: linear;

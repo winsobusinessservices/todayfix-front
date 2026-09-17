@@ -55,7 +55,7 @@ const CustomDropdown = ({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 5, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-primary border border-border-primary rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] z-50 overflow-hidden"
+              className="filter-dropdown-panel absolute left-0 top-full mt-2 w-full min-w-[160px] border rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] z-50 overflow-hidden"
             >
               <div className="max-h-60 overflow-y-auto p-1">
                 {options.map((opt, idx) => (
@@ -67,8 +67,8 @@ const CustomDropdown = ({
                     }}
                     className={`px-3 py-2 cursor-pointer text-sm rounded-lg transition-colors ${
                       value === opt
-                        ? "bg-brand-primary text-white font-bold"
-                        : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                        ? "filter-option-active font-bold"
+                        : "filter-option"
                     }`}
                   >
                     {opt}
@@ -86,7 +86,7 @@ const CustomDropdown = ({
     <div className={`relative w-full ${isOpen ? "z-50" : "z-0"}`} ref={ref}>
       <div
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between bg-surface-primary border text-text-primary text-sm font-medium rounded-xl py-2 pl-9 pr-8 cursor-pointer shadow-sm transition-all ${
+        className={`filter-control w-full flex items-center justify-between border text-sm font-medium rounded-xl py-2 pl-9 pr-8 cursor-pointer shadow-sm transition-all ${
           isOpen
             ? "border-brand-primary ring-2 ring-brand-primary/15"
             : "border-border-primary hover:border-brand-primary"
@@ -96,7 +96,7 @@ const CustomDropdown = ({
           {icon}
         </div>
         <span className="truncate whitespace-nowrap">{selectedDisplay}</span>
-        <div className="absolute right-3 flex items-center pointer-events-none text-text-muted">
+        <div className="absolute right-3 flex items-center pointer-events-none text-text-muted group-hover:text-text-primary transition-colors">
           <motion.svg
             animate={{ rotate: isOpen ? 180 : 0 }}
             className="w-4 h-4"
@@ -121,7 +121,7 @@ const CustomDropdown = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute left-0 top-full mt-2 w-full bg-surface-primary border border-border-primary rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] z-50 overflow-hidden"
+            className="filter-dropdown-panel absolute left-0 top-full mt-2 w-full border rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.08)] z-50 overflow-hidden"
           >
             <div className="max-h-60 overflow-y-auto p-1.5">
               <div
@@ -131,8 +131,8 @@ const CustomDropdown = ({
                 }}
                 className={`px-3 py-2 cursor-pointer text-sm rounded-xl transition-colors ${
                   !value
-                    ? "bg-brand-primary text-white font-bold"
-                    : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                    ? "filter-option-active font-bold"
+                    : "filter-option"
                 }`}
               >
                 {placeholder}
@@ -146,8 +146,8 @@ const CustomDropdown = ({
                   }}
                   className={`px-3 py-2 cursor-pointer text-sm rounded-xl transition-colors ${
                     value === opt
-                      ? "bg-brand-primary text-white font-bold"
-                      : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
+                      ? "filter-option-active font-bold"
+                      : "filter-option"
                   }`}
                 >
                   {opt}

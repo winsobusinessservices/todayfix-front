@@ -36,7 +36,7 @@ const Hero = () => {
                     stiffness: 120,
                     damping: 20,
                   }}
-                  className="block max-w-full break-words text-text-muted origin-bottom sm:text-6xl"
+                  className="block max-w-full break-words text-brand-primary origin-bottom sm:text-6xl"
                 >
                   {services?.[currentIndex]?.name}
                 </motion.span>
