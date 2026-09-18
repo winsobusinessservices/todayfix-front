@@ -85,7 +85,7 @@ const ReviewAction = ({ service, onRate, onBookAgain, onViewReview }) => {
       {service.status === "COMPLETED" && service.booking_type !== "INSTANT" && (
         <button
           onClick={onBookAgain}
-          className="flex-1 sm:flex-none px-4 py-2 bg-text-primary text-surface-primary font-medium rounded-lg hover:bg-zinc-800 transition-colors text-sm cursor-pointer"
+          className="btn-primary flex-1 sm:flex-none px-4 py-2 bg-text-primary text-surface-primary font-medium rounded-lg hover:bg-zinc-800 transition-colors text-sm cursor-pointer"
         >
           Book Again
         </button>
@@ -430,7 +430,7 @@ const ProfileServicesHistory = () => {
                       </>
                     ))}
                   <button
-                    className="flex-1 sm:flex-none px-3 py-1.5 sm:px-4 sm:py-2 bg-surface-dark text-text-inverted font-medium rounded-lg hover:bg-surface-dark/80 transition-colors text-sm cursor-pointer"
+                    className="btn-primary flex-1 sm:flex-none px-3 py-1.5 sm:px-4 sm:py-2 bg-surface-dark text-text-inverted font-medium rounded-lg hover:bg-surface-dark/80 transition-colors text-sm cursor-pointer"
                     onClick={() => setDetailsModal(service)}
                   >
                     Details
@@ -575,7 +575,7 @@ const ProfileServicesHistory = () => {
                     onClick={() =>
                       navigate(`/services/${detailsModal.service?.slug || ""}`)
                     }
-                    className="flex-1 px-4 py-3 bg-text-primary text-surface-primary font-bold rounded-xl hover:bg-zinc-800 transition-colors text-sm text-center"
+                  className="btn-primary flex-1 px-4 py-3 font-bold rounded-xl transition-colors text-sm text-center"
                   >
                     Book Again
                   </button>

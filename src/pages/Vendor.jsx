@@ -393,7 +393,7 @@ const Vendor = () => {
                 </h2>
                 <button
                   onClick={() => setIsReviewModalOpen(true)}
-                  className="bg-surface-secondary border border-border-primary text-text-primary px-4 py-1.5 rounded-lg text-sm font-medium hover:bg-border-secondary transition-colors"
+                className="btn-primary px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
                 >
                   Write a Review
                 </button>
@@ -694,7 +694,7 @@ const Vendor = () => {
                 <button
                   type="submit"
                   disabled={!newReview.text.trim()}
-                  className="flex-1 px-4 py-2 bg-text-primary text-surface-primary font-medium text-sm rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
+                  className="btn-primary flex-1 px-4 py-3 font-medium text-sm rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   Post Review
                 </button>

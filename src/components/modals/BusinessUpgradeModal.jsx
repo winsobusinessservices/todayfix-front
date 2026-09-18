@@ -238,7 +238,7 @@ const BusinessUpgradeModal = ({ isOpen, onClose, currentType }) => {
             {step === 1 ? (
               <button
                 onClick={handleNext}
-                className="px-6 py-2.5 rounded-xl text-sm font-bold bg-text-primary text-surface-primary hover:opacity-90 transition-opacity flex items-center gap-2"
+                className="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold bg-text-primary text-surface-primary hover:opacity-90 transition-opacity flex items-center gap-2"
               >
                 Next <ArrowRight className="w-4 h-4" />
               </button>
@@ -248,7 +248,7 @@ const BusinessUpgradeModal = ({ isOpen, onClose, currentType }) => {
                 disabled={
                   createReqMutation.isPending || uploadDocsMutation.isPending
                 }
-                className="px-6 py-2.5 rounded-xl text-sm font-bold bg-text-primary text-surface-primary hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
+                className="btn-primary px-6 py-2.5 rounded-xl text-sm font-bold bg-text-primary text-surface-primary hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
               >
                 {createReqMutation.isPending || uploadDocsMutation.isPending ? (
                   "Submitting..."

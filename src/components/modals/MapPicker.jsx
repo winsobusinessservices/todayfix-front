@@ -122,19 +122,19 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
             <h3 className="text-xl font-bold text-text-primary">
               Select Location
             </h3>
-            <p className="text-zinc-400 text-sm mt-1">
+            <p className="text-text-secondary text-sm mt-1">
               Tap anywhere on the map to drop a pin.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-surface-secondary rounded-xl transition-colors text-zinc-400 hover:text-text-primary"
+            className="p-2 hover:bg-surface-secondary rounded-xl transition-colors text-text-muted hover:text-text-primary"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        <div className="relative h-[400px] w-full bg-zinc-900">
+        <div className="relative h-[400px] w-full bg-surface-secondary">
           <MapContainer
             center={position || defaultCenter}
             zoom={position ? 15 : 12}
@@ -190,7 +190,7 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
             <button
               onClick={handleConfirm}
               disabled={!position}
-              className="w-full sm:w-auto px-6 py-3.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed flex-shrink-0"
+              className="btn-primary w-full sm:w-auto px-6 py-3.5 font-bold rounded-xl transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed flex-shrink-0"
             >
               Confirm Location
             </button>

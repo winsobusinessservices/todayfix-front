@@ -303,7 +303,7 @@ const AdminSubcategoriesTab = () => {
                   type="button"
                   onClick={handleSaveEditSubcategory}
                   disabled={isUpdating}
-                  className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer disabled:opacity-50"
+                  className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer disabled:opacity-50"
                 >
                   {isUpdating ? "Saving..." : "Save Changes"}
                 </button>
@@ -499,7 +499,7 @@ const AdminSubcategoriesTab = () => {
             <button
               onClick={handleAddSubcategory}
               disabled={isCreating}
-              className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer disabled:opacity-50"
+              className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer disabled:opacity-50"
             >
               {isCreating ? "Adding..." : "Add Subcategory"}
             </button>

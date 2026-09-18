@@ -28,6 +28,7 @@ import toast from "react-hot-toast";
 import Icon from "../assets/TF_LIGHT_LOGO_TRANS.png";
 import { IMAGE_URL } from "../services/axiosClient";
 import NotificationDrawer from "../components/notifications/NotificationDrawer";
+import ThemeToggle from "../components/ui/ThemeToggle";
 
 const SIDEBAR_ITEMS = [
   { id: "", label: "Overview", icon: LayoutDashboard },
@@ -254,13 +255,13 @@ const OwnerDashboard = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${
                   isActive
-                    ? "bg-surface-dark text-text-inverted shadow-lg scale-[0.98]"
-                    : "text-zinc-500 hover:text-text-primary hover:bg-surface-secondary"
+                    ? "btn-primary sidebar-link-active scale-[0.98]"
+                    : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                 }`}
               >
                 <Icon
                   size={20}
-                  className={isActive ? "text-text-inverted" : "text-zinc-400"}
+                  className={isActive ? "text-button-primary-text" : "text-text-muted"}
                 />
                 {item.label}
               </Link>
@@ -310,6 +311,8 @@ const OwnerDashboard = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <ThemeToggle />
+
             {/* Store Status Toggle */}
             <div className="sm:flex items-center gap-3 bg-surface-secondary px-3 py-1.5 rounded-full border border-border-primary shadow-sm mr-2">
               <span

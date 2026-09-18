@@ -105,7 +105,7 @@ const Area = () => {
           alt={areaInfo.name}
           className="w-full h-full object-cover opacity-50"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-surface-dark via-surface-dark/60 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900 via-zinc-900/60 to-transparent"></div>
 
         <div className="absolute bottom-0 left-0 w-full px-6 pb-12">
           <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -139,7 +139,7 @@ const Area = () => {
                 <p className="text-2xl font-extrabold text-white">
                   {areaInfo.stats.avgResponseTime}
                 </p>
-                <p className="text-xs text-text-muted font-bold uppercase tracking-wider mt-1">
+                <p className="text-xs text-text-on-dark-muted font-bold uppercase tracking-wider mt-1">
                   Avg Response
                 </p>
               </div>
@@ -148,7 +148,7 @@ const Area = () => {
                 <p className="text-2xl font-extrabold text-emerald-400">
                   {areaInfo.stats.jobsCompleted}
                 </p>
-                <p className="text-xs text-text-muted font-bold uppercase tracking-wider mt-1">
+                <p className="text-xs text-text-on-dark-muted font-bold uppercase tracking-wider mt-1">
                   Jobs Done Here
                 </p>
               </div>
@@ -170,8 +170,8 @@ const Area = () => {
                 onClick={() => setActiveService(srv)}
                 className={`whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-bold transition-all active:scale-95 border ${
                   activeService === srv
-                    ? "bg-surface-dark text-white border-slate-900 shadow-md"
-                    : "bg-surface-primary text-text-secondary border-border-primary hover:border-black hover:bg-surface-secondary"
+                    ? "bg-surface-dark text-white border-border-dark shadow-md"
+                    : "bg-surface-primary text-text-secondary border-border-primary hover:border-border-dark hover:bg-surface-secondary"
                 }`}
               >
                 {srv}
@@ -257,7 +257,7 @@ const Area = () => {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border-secondary">
-                  <button className="flex-1 bg-surface-dark hover:bg-zinc-800 text-white py-2.5 rounded-xl text-sm font-bold transition-colors shadow-md active:scale-95">
+                  <button className="btn-primary flex-1 rounded-xl py-2.5 text-sm font-bold shadow-md transition-colors active:scale-95">
                     Contact
                   </button>
                   <button

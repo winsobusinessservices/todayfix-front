@@ -90,7 +90,7 @@ const ProFAQ = () => {
         </div>
 
         <div className="max-w-3xl mx-auto mt-12 text-center">
-          <Link to="/become-a-professional" className="inline-block px-8 py-4 bg-surface-dark text-text-inverted rounded-xl font-bold shadow-md hover:scale-[0.98] transition-transform">
+          <Link to="/become-a-professional" className="btn-primary inline-block px-8 py-4 bg-surface-dark text-text-inverted rounded-xl font-bold shadow-md hover:scale-[0.98] transition-transform">
             Start Earning Today
           </Link>
         </div>

@@ -30,7 +30,7 @@ const FeatureMarquee = () => {
         </p> */}
 
         {/* Marquee Container */}
-        <div className="w-full relative flex items-center bg-surface-tertiary py-6 overflow-hidden font-sans border-y border-gray-100">
+        <div className="w-full relative flex items-center bg-surface-tertiary py-6 overflow-hidden font-sans border-y border-border-secondary">
           {/* Left & Right Gradient Overlays for smooth fade effect */}
           <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-surface-tertiary to-transparent z-10 pointer-events-none"></div>
           <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-surface-tertiary to-transparent z-10 pointer-events-none"></div>
@@ -45,7 +45,7 @@ const FeatureMarquee = () => {
               >
                 {/* Decorative Icon (Optional: mimics logo marks) */}
                 <svg
-                  className="w-6 h-6 md:w-8 md:h-8 text-gray-400"
+                  className="w-6 h-6 md:w-8 md:h-8 text-text-muted"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -59,7 +59,7 @@ const FeatureMarquee = () => {
                 </svg>
 
                 {/* Feature Text */}
-                <span className="text-gray-900 font-extrabold text-2xl md:text-4xl tracking-tighter">
+                <span className="text-text-primary font-extrabold text-2xl md:text-4xl tracking-tighter">
                   {feature}
                 </span>
               </div>

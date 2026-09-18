@@ -95,7 +95,7 @@ const AdminPayoutsTab = () => {
           >
             <History className="w-4 h-4" /> Payout History
           </button>
-          <button onClick={handleProcessBatch} className="flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm shadow-black/20 hover:bg-zinc-800 transition-colors cursor-pointer">
+          <button onClick={handleProcessBatch} className="btn-primary flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm shadow-black/20 hover:bg-zinc-800 transition-colors cursor-pointer">
             <Send className="w-4 h-4" /> Process Batch
           </button>
         </div>

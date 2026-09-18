@@ -194,7 +194,7 @@ const ResetPassword = () => {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group cursor-pointer mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
+              className="btn-primary w-full bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group cursor-pointer mt-6 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isPending ? (
                 <>

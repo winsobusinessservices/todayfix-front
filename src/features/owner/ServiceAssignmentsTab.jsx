@@ -273,7 +273,7 @@ const ServiceAssignmentsTab = () => {
                   <button
                     type="submit"
                     disabled={isAssigning || !employeeToAssign}
-                    className="px-6 py-3 bg-text-primary text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0"
+                    className="btn-primary px-6 py-3 bg-text-primary text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer shrink-0"
                   >
                     {isAssigning ? "Assigning..." : "Assign to Service"}
                   </button>

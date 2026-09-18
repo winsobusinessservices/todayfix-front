@@ -31,13 +31,11 @@ const SpotlightSwiper = ({ services }) => {
         {services.map((opt, index) => {
           // Determine tag type based on index for variety
           const tagText = index % 2 === 0 ? "New launch" : "Trending";
-          const tagBg = index % 2 === 0 ? "bg-[#8B184F]" : "bg-[#6A1B41]";
-
           // Different subtle background gradients for variety
           const bgGradients = [
             "from-[#D9E1D9] to-[#C9D6C9]",
             "from-[#E6DFD7] to-[#D6CFC7]",
-            "from-[#111111] to-[#222222]",
+            "from-[#F1E3E3] to-[#DBCECE]",
             "from-[#E5E7EB] to-[#D1D5DB]",
             "from-[#F3E8FF] to-[#E9D5FF]",
           ];
@@ -51,16 +49,14 @@ const SpotlightSwiper = ({ services }) => {
 
           return (
             <SwiperSlide key={index} className="pb-8">
-              <Link to={opt.link} className="block">
+              <Link to={opt.link} className="group block">
                 <div
                   className={`relative h-56 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow flex bg-gradient-to-br ${bgClass}`}
                 >
                   {/* Left Content */}
                   <div className="w-[55%] p-6 flex flex-col justify-between relative z-10">
                     <div>
-                      <span
-                        className={`inline-block ${tagBg} text-white text-[11px] font-bold px-2.5 py-1 rounded-sm mb-4`}
-                      >
+                      <span className="mb-4 inline-block rounded-full border border-text-inverted/70 bg-text-inverted/80 px-3 py-1 text-[11px] font-bold text-text-brand shadow-sm backdrop-blur-sm">
                         {tagText}
                       </span>
                       <h3
@@ -77,9 +73,9 @@ const SpotlightSwiper = ({ services }) => {
                     </div>
 
                     <div>
-                      <button className="bg-white text-zinc-900 text-sm font-bold py-2.5 px-5 rounded-lg shadow-sm hover:scale-105 transition-transform">
+                      <span className="inline-flex rounded-full btn-primary px-5 py-2.5 text-sm font-bold text-white shadow-sm transition-all duration-300 group-hover:-translate-y-0.5 group-hover:bg-brand-dark group-hover:shadow-md">
                         {isDarkBg ? "Buy now" : "Book now"}
-                      </button>
+                      </span>
                     </div>
                   </div>
 

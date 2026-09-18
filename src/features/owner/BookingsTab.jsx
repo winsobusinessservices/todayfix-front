@@ -233,42 +233,21 @@ const BookingsTab = () => {
             </p>
           </div>
 
-          <div className="flex flex-col gap-4">
-            {/* Tab Switcher */}
-            <div className="flex bg-surface-secondary p-1 rounded-2xl w-fit">
-              {["SCHEDULED", "INSTANT"].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 ${
-                    activeTab === tab
-                      ? "bg-surface-primary text-text-primary shadow-sm"
-                      : "text-zinc-500 hover:text-text-primary"
-                  }`}
-                >
-                  {tab === "SCHEDULED"
-                    ? "Scheduled Bookings"
-                    : "Instant Bookings"}
-                </button>
-              ))}
-            </div>
-
-            {/* Filter Pills */}
-            <div className="flex flex-wrap gap-2 bg-surface-primary p-1 rounded-2xl border border-border-primary w-fit">
-              {["ALL", "PENDING", "ACTIVE", "COMPLETED"].map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all duration-300 ${
-                    filter === f
-                      ? "bg-surface-secondary text-text-primary shadow-sm border border-border-primary"
-                      : "text-zinc-500 hover:text-text-primary border border-transparent"
-                  }`}
-                >
-                  {f.toLowerCase()}
-                </button>
-              ))}
-            </div>
+          {/* Filter Pills */}
+          <div className="flex flex-wrap gap-2 bg-surface-primary p-1 rounded-2xl border border-border-primary w-fit">
+            {["ALL", "PENDING", "ACTIVE", "COMPLETED"].map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-4 py-2 rounded-xl text-sm font-bold capitalize transition-all duration-300 ${
+                  filter === f
+                    ? "btn-primary shadow-sm border border-brand-primary"
+                    : "text-text-secondary hover:bg-surface-accent hover:text-text-primary border border-transparent"
+                }`}
+              >
+                {f.toLowerCase()}
+              </button>
+            ))}
           </div>
         </div>
       </div>

@@ -74,7 +74,7 @@ const Service = () => {
         </p>
         <Link
           to="/services"
-          className="px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-semibold"
+          className="btn-primary px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-semibold"
         >
           Browse All Services
         </Link>
@@ -96,7 +96,7 @@ const Service = () => {
       <div className="w-full bg-surface-secondary pt-12">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-            <div className="w-36 h-36 md:w-40 md:h-40 bg-white rounded-3xl shadow-sm border border-border-primary flex items-center justify-center shrink-0">
+            <div className="w-36 h-36 md:w-40 md:h-40 rounded-3xl shadow-sm border border-border-primary flex items-center justify-center shrink-0">
               <img
                 src={IMAGE_URL + currentSubcategory?.image}
                 alt={currentSubcategory?.name}
@@ -197,7 +197,7 @@ const Service = () => {
                       <div className="hidden md:block">
                         <Link
                           to={`/vendor/${vendor?.business_profile_uuid}`}
-                          className="px-5 py-2 bg-surface-secondary hover:bg-zinc-200 text-text-primary font-bold rounded-xl text-sm transition-colors"
+                          className="px-5 py-2 btn-primary font-bold rounded-xl text-sm transition-colors"
                         >
                           View Profile
                         </Link>
@@ -250,7 +250,7 @@ const Service = () => {
           {/* Pricing & Booking Panel (Right Sticky Sidebar) */}
           <div className="w-full lg:w-[360px] flex-shrink-0">
             <div className="sticky top-[100px] bg-surface-primary rounded-3xl p-6 border border-border-primary shadow-[0_8px_40px_rgb(0,0,0,0.08)]">
-              <div className="bg-purple-50 rounded-2xl p-5 mb-6 border border-purple-100">
+              <div className="bg-surface-secondary rounded-2xl p-5 mb-6 border border-purple-100">
                 <span className="text-text-secondary font-bold text-xs uppercase tracking-wider block mb-1">
                   Standard Pricing from
                 </span>
@@ -378,7 +378,7 @@ const Service = () => {
                         }
                         openBooking(service);
                       }}
-                      className="px-5 py-3 bg-surface-dark text-text-inverted font-bold text-sm rounded-xl hover:bg-zinc-800 transition-all active:scale-95 shadow-md flex items-center gap-2"
+                      className="btn-primary flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold shadow-md transition-all active:scale-95"
                     >
                       Book
                       <Icons.ChevronRight className="w-4 h-4" />

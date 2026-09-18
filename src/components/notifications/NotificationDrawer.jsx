@@ -226,7 +226,7 @@ const NotificationDrawer = ({
                   </button>
                 </div>
               ) : notifications.length > 0 ? (
-                <div className="divide-y divide-border-secondary">
+                <div className="divide-y divide-border-secondary p-2">
                   <AnimatePresence initial={false}>
                     {notifications.map((notification) => (
                       <motion.article

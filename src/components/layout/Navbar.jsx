@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import React, { useRef, useState } from "react";
 import { IconMenu2, IconX, IconChevronDown } from "@tabler/icons-react";
 import {
@@ -15,6 +15,7 @@ import { areasData } from "../../data/collectedData";
 import { Bell } from "lucide-react";
 import NotificationDrawer from "../notifications/NotificationDrawer";
 import ProfileMenu from "./ProfileMenu";
+import ThemeToggle from "../ui/ThemeToggle";
 
 export default function Navbar() {
   const ref = useRef(null);
@@ -29,6 +30,7 @@ export default function Navbar() {
     useState(false);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
   const userData = useUserStore((state) => state.user);
 
   const loggedIn =
@@ -57,11 +59,22 @@ export default function Navbar() {
     },
   ];
 
+  const isNavItemActive = (item) => {
+    if (item.type === "dropdown") {
+      return location.pathname.startsWith("/cities/");
+    }
+    return (
+      location.pathname === item.link ||
+      (item.link !== "/" && location.pathname.startsWith(`${item.link}/`))
+    );
+  };
+
   const buttonBase =
-    "px-4 py-2 rounded-md bg-surface-primary button bg-surface-dark text-text-inverted text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
+    "px-4 py-2 rounded-md text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-200 inline-block text-center";
   const buttonPrimary =
-    "shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]";
-  const buttonSecondary = "bg-transparent shadow-none !text-text-primary";
+    "btn-primary shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset]";
+  const buttonSecondary =
+    "border border-border-primary bg-transparent text-text-primary shadow-none hover:bg-surface-secondary";
 
   const logoMarkup = (
     <Link
@@ -91,7 +104,7 @@ export default function Navbar() {
           style={{ minWidth: "850px" }}
           className={cn(
             "relative z-[60] mx-auto hidden h-14 w-full flex-row items-center justify-between self-start rounded-3xl bg-transparent px-4 py-2 lg:flex ",
-            visible && "bg-white/80 ",
+            visible && "bg-surface-primary/80",
           )}
         >
           {logoMarkup}
@@ -105,6 +118,8 @@ export default function Navbar() {
             className="hidden min-w-0 flex-1 flex-row items-center justify-center space-x-1 whitespace-nowrap text-xl font-medium text-text-primary transition duration-200 lg:flex xl:space-x-2"
           >
             {navItems.map((item, idx) => {
+              const isActive = isNavItemActive(item);
+
               if (item.type === "dropdown") {
                 return (
                   <div
@@ -114,14 +129,15 @@ export default function Navbar() {
                       setDropdownOpen(true);
                     }}
                     className={cn(
-                      "relative flex cursor-pointer items-center gap-1 px-4 py-1.5 transition-colors hover:text-text-inverted text-neutral-600 font-medium",
-                      visible && "text-text-primary",
+                      "relative flex cursor-pointer items-center gap-1 px-4 py-1.5 font-medium text-text-secondary transition-colors hover:text-white",
+                      visible && !isActive && "text-text-primary",
+                      (isActive || hoveredItem === idx) && "text-white",
                     )}
                   >
-                    {hoveredItem === idx && (
+                    {(isActive || hoveredItem === idx) && (
                       <motion.div
-                        layoutId="hovered"
-                        className="absolute inset-0 h-full w-full rounded-full bg-surface-dark"
+                        layoutId={hoveredItem === idx ? "hovered" : undefined}
+                        className="absolute inset-0 h-full w-full rounded-full bg-button-primary"
                       />
                     )}
                     <span className="relative z-20">{item.name}</span>
@@ -141,13 +157,13 @@ export default function Navbar() {
                           animate={{ opacity: 1, y: 0, scale: 1 }}
                           exit={{ opacity: 0, y: 10, scale: 0.95 }}
                           transition={{ duration: 0.2 }}
-                          className="absolute left-1/2 top-full mt-2 grid w-64 -translate-x-1/2 grid-cols-2 rounded-2xl bg-surface-primary p-2 shadow-[0_0_24px_rgba(34,_42,_53,_0.1)] ring-1 ring-black/5 z-50 "
+                          className="absolute left-1/2 top-full mt-2 grid w-64 -translate-x-1/2 grid-cols-2 rounded-2xl bg-surface-primary p-2 shadow-[0_0_24px_rgba(34,_42,_53,_0.1)] ring-1 ring-border-primary z-50 "
                         >
                           {item.items.map((subItem, subIdx) => (
                             <Link
                               key={subIdx}
                               to={"/cities" + subItem.link}
-                              className="px-4 py-2 text-sm text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-text-primary rounded-xl"
+                              className="px-4 py-2 text-sm text-text-secondary transition-colors hover:bg-surface-accent hover:text-brand-primary rounded-xl"
                             >
                               {subItem.name}
                             </Link>
@@ -168,14 +184,15 @@ export default function Navbar() {
                     setDropdownOpen(false);
                   }}
                   className={cn(
-                    "relative px-4 py-1.5 transition-colors hover:text-text-inverted text-neutral-600 font-medium",
-                    visible && "text-text-primary",
+                    "relative px-4 py-1.5 font-medium text-text-secondary transition-colors hover:text-white",
+                    visible && !isActive && "text-text-primary",
+                    (isActive || hoveredItem === idx) && "text-white",
                   )}
                 >
-                  {hoveredItem === idx && (
+                  {(isActive || hoveredItem === idx) && (
                     <motion.div
-                      layoutId="hovered"
-                      className="absolute inset-0 h-full w-full rounded-full bg-surface-dark "
+                      layoutId={hoveredItem === idx ? "hovered" : undefined}
+                      className="absolute inset-0 h-full w-full rounded-full bg-button-primary"
                     />
                   )}
                   <span className="relative z-20">{item.name}</span>
@@ -200,6 +217,7 @@ export default function Navbar() {
                 )}
               </button>
             )}
+            {!loggedIn && <ThemeToggle />}
             {loggedIn ? (
               <ProfileMenu user={userData} />
             ) : (
@@ -251,7 +269,7 @@ export default function Navbar() {
             boxShadow: visible
               ? "0 0 24px rgba(34, 42, 53, 0.06), 0 1px 1px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(34, 42, 53, 0.04), 0 0 4px rgba(34, 42, 53, 0.08), 0 16px 68px rgba(47, 48, 55, 0.05), 0 1px 0 rgba(255, 255, 255, 0.1) inset"
               : "none",
-            width: visible ? "90%" : "100%",
+            width: visible && !isMobileMenuOpen ? "90%" : "100%",
             paddingRight: visible ? "12px" : "0px",
             paddingLeft: visible ? "12px" : "0px",
             borderRadius: visible ? "25px" : "2rem",
@@ -259,14 +277,14 @@ export default function Navbar() {
           }}
           transition={{ type: "spring", stiffness: 200, damping: 50 }}
           className={cn(
-            "relative z-50 mx-auto flex w-full max-w-[calc(100vw-2rem)] flex-col items-center justify-between bg-transparent px-0 lg:hidden",
-            visible && "bg-white/80 ",
+            "relative z-50 mx-auto flex w-full max-w-[calc(100vw-1rem)] flex-col items-center justify-between bg-transparent px-0 lg:hidden",
+            visible && "bg-surface-primary/80",
           )}
         >
           {/* Mobile Header (Logo + Toggle) */}
-          <div className="flex w-full flex-row items-center justify-between">
+          <div className="flex w-full min-w-0 flex-row items-center justify-between gap-2">
             {logoMarkup}
-            <div className="flex items-center gap-3">
+            <div className="flex shrink-0 items-center gap-2">
               {loggedIn && (
                 <button
                   type="button"
@@ -281,17 +299,15 @@ export default function Navbar() {
                   )}
                 </button>
               )}
-              {isMobileMenuOpen ? (
-                <IconX
-                  className="cursor-pointer text-text-primary"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                />
-              ) : (
-                <IconMenu2
-                  className="cursor-pointer text-text-primary"
-                  onClick={() => setIsMobileMenuOpen(true)}
-                />
-              )}
+              <button
+                type="button"
+                onClick={() => setIsMobileMenuOpen((current) => !current)}
+                aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+                aria-expanded={isMobileMenuOpen}
+                className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-text-primary transition-colors hover:bg-surface-secondary"
+              >
+                {isMobileMenuOpen ? <IconX /> : <IconMenu2 />}
+              </button>
             </div>
           </div>
 
@@ -302,9 +318,11 @@ export default function Navbar() {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-x-0 top-16 z-50 flex w-full flex-col items-start justify-start gap-4 rounded-2xl bg-surface-primary px-4 py-8 shadow-[0_0_24px_rgba(34,_42,_53,_0.06),_0_1px_1px_rgba(0,_0,_0,_0.05),_0_0_0_1px_rgba(34,_42,_53,_0.04),_0_0_4px_rgba(34,_42,_53,_0.08),_0_16px_68px_rgba(47,_48,_55,_0.05),_0_1px_0_rgba(255,_255,_255,_0.1)_inset] "
+                className="styled-scrollbar absolute inset-x-0 top-16 z-50 flex max-h-[calc(100dvh-6.5rem)] w-full flex-col items-start justify-start gap-4 overflow-y-auto overscroll-contain rounded-2xl border border-border-primary bg-surface-primary px-4 py-6 shadow-card-hover"
               >
                 {navItems.map((item, idx) => {
+                  const isActive = isNavItemActive(item);
+
                   if (item.type === "dropdown") {
                     return (
                       <div
@@ -312,7 +330,10 @@ export default function Navbar() {
                         className="flex w-full flex-col"
                       >
                         <div
-                          className="flex w-full cursor-pointer items-center justify-between py-1 text-neutral-600 "
+                          className={cn(
+                            "flex w-full cursor-pointer items-center justify-between rounded-xl px-3 py-2 text-text-secondary transition-colors hover:bg-surface-accent hover:text-brand-primary",
+                            isActive && "bg-brand-primary text-white hover:bg-brand-primary hover:text-white",
+                          )}
                           onClick={() =>
                             setMobileDropdownOpen(!mobileDropdownOpen)
                           }
@@ -332,14 +353,14 @@ export default function Navbar() {
                               initial={{ height: 0, opacity: 0 }}
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
-                              className="grid grid-cols-2 gap-2 overflow-hidden pl-4 pt-2 border-y pb-2 border-neutral-200 "
+                              className="grid grid-cols-2 gap-2 overflow-hidden pl-4 pt-2 border-y pb-2 border-border-primary "
                             >
                               {item.items.map((subItem, subIdx) => (
                                 <Link
                                   key={subIdx}
-                                  to={"cities" + subItem.link}
+                                  to={"/cities" + subItem.link}
                                   onClick={() => setIsMobileMenuOpen(false)}
-                                  className="block py-1 text-sm text-neutral-500 hover:text-text-primary"
+                                  className="block rounded-lg px-2 py-1.5 text-sm text-text-secondary hover:bg-surface-accent hover:text-brand-primary"
                                 >
                                   {subItem.name}
                                 </Link>
@@ -356,12 +377,22 @@ export default function Navbar() {
                       key={`mobile-link-${idx}`}
                       to={item.link}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="relative w-full py-1 text-neutral-600 "
+                      className={cn(
+                        "relative w-full rounded-xl px-3 py-2 text-text-secondary transition-colors hover:bg-surface-accent hover:text-brand-primary",
+                        isActive && "bg-brand-primary text-white hover:bg-brand-primary hover:text-white",
+                      )}
                     >
                       <span className="block">{item.name}</span>
                     </Link>
                   );
                 })}
+                <div className="flex w-full items-center justify-between rounded-xl border border-border-primary bg-surface-secondary px-3 py-2.5">
+                  <div>
+                    <p className="text-sm font-bold text-text-primary">Appearance</p>
+                    <p className="text-xs text-text-secondary">Light or dark theme</p>
+                  </div>
+                  <ThemeToggle />
+                </div>
                 <div className="flex w-full flex-col gap-4 mt-2">
                   {loggedIn ? (
                     <ProfileMenu
@@ -378,7 +409,7 @@ export default function Navbar() {
                       className={cn(
                         buttonBase,
                         buttonSecondary,
-                        "w-full shadow-sm ring-1 ring-black/5 text-text-primary",
+                        "w-full shadow-sm ring-1 ring-border-primary text-text-primary",
                       )}
                     >
                       <span className="flex items-end gap-1 justify-center">

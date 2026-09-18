@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X, CheckCircle, AlertTriangle } from "lucide-react";
+import { StatusBadge } from "../../components/ui/AdminShared";
 
 // Mock data
 const INITIAL_DISPUTES = [
@@ -49,13 +50,7 @@ const AdminDisputesTab = () => {
                   <p className="text-xs text-text-secondary">Vendor: {dispute.vendor}</p>
                 </td>
                 <td className="px-6 py-4">
-                  <span className={`px-3 py-1 text-xs font-bold rounded-full border ${
-                    dispute.status === "Open" 
-                      ? "bg-red-500/10 text-red-600 border-red-500/20"
-                      : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
-                  }`}>
-                    {dispute.status}
-                  </span>
+                  <StatusBadge status={dispute.status} />
                 </td>
                 <td className="px-6 py-4 text-right">
                   <button 

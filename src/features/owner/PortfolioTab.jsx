@@ -583,7 +583,7 @@ const PortfolioTab = () => {
                       <button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="flex items-center gap-2 text-sm font-bold text-text-inverted bg-surface-dark hover:bg-zinc-800 transition-colors px-3 py-1.5 rounded-full disabled:opacity-50"
+                        className="btn-primary flex items-center gap-2 text-sm font-bold text-text-inverted bg-surface-dark hover:bg-zinc-800 transition-colors px-3 py-1.5 rounded-full disabled:opacity-50"
                       >
                         {isSaving ? (
                           <Loader2 className="w-4 h-4 animate-spin" />

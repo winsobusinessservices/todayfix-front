@@ -8,6 +8,7 @@ import { userDetails, userProfile } from "../services/userApi";
 import { useNavigate, useSearchParams } from "react-router";
 import { useUserStore } from "../store/userStore";
 import { popup } from "../components/pop-up/pop-up";
+import ThemeToggle from "../components/ui/ThemeToggle";
 
 const Profile = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -223,6 +224,7 @@ const Profile = () => {
               {tab === "reviews" && "My Reviews"}
             </button>
           ))}
+
         </div>
 
         {/* --- Tab Content Area --- */}

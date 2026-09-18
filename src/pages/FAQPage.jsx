@@ -88,7 +88,7 @@ const FAQPage = () => {
 
         <div className="max-w-3xl mx-auto mt-12 text-center">
           <p className="text-text-secondary font-medium mb-4">Still have questions?</p>
-          <Link to="/contact" className="inline-block px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-bold shadow-md hover:scale-[0.98] transition-transform">
+          <Link to="/contact" className="btn-primary inline-block px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-bold shadow-md hover:scale-[0.98] transition-transform">
             Contact Support
           </Link>
         </div>

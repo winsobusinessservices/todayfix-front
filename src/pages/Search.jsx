@@ -83,7 +83,7 @@ const Search = () => {
             </p>
             <Link
               to="/"
-              className="inline-flex mt-6 px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-semibold"
+              className="btn-primary inline-flex mt-6 px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-semibold"
             >
               Back to Home
             </Link>

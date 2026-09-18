@@ -67,7 +67,7 @@ const Contact = () => {
         <div className="relative z-10">
           <h1 className="text-4xl md:text-6xl font-black text-text-primary tracking-tight mb-4">
             How can we{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-900">
+            <span className="text-primary">
               help?
             </span>
           </h1>
@@ -162,7 +162,7 @@ const Contact = () => {
             </div>
             <button
               type="submit"
-              className="w-full py-4 bg-surface-dark text-text-inverted rounded-xl font-bold hover:scale-[0.98] transition-transform shadow-md"
+              className="btn-primary w-full py-4 bg-surface-dark text-text-inverted rounded-xl font-bold hover:scale-[0.98] transition-transform shadow-md"
             >
               Send Message
             </button>

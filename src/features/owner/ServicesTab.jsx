@@ -252,7 +252,7 @@ const ServicesTab = () => {
 
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 px-5 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md cursor-pointer"
+          className="btn-primary flex items-center gap-2 px-5 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md cursor-pointer"
         >
           <Plus size={20} />
           Add New Service
@@ -508,7 +508,7 @@ const ServicesTab = () => {
                   <button
                     type="submit"
                     disabled={isCreating || isUpdating}
-                    className="flex-1 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md disabled:opacity-50 cursor-pointer"
+                    className="btn-primary flex-1 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md disabled:opacity-50 cursor-pointer"
                   >
                     {isCreating || isUpdating ? "Saving..." : "Save Service"}
                   </button>

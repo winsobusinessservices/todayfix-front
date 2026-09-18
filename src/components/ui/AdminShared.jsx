@@ -77,29 +77,48 @@ export const AdminModal = ({ isOpen, onClose, title, children, footer, locationP
 
 export const StatusBadge = ({ status, children }) => {
   const colorConfig = {
-    active: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    success: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    verified: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    published: "bg-emerald-50 text-emerald-600 border-emerald-200",
-    resolved: "bg-emerald-50 text-emerald-600 border-emerald-200",
+    active: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    success: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    verified: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    approved: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    accepted: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    published: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    resolved: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    completed: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    processed: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    paid: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
+    sent: "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/25",
 
-    pending: "bg-amber-50 text-amber-600 border-amber-200",
-    review: "bg-amber-50 text-amber-600 border-amber-200",
-    warning: "bg-amber-50 text-amber-600 border-amber-200",
-    investigating: "bg-amber-50 text-amber-600 border-amber-200",
+    pending: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25",
+    "pending approval": "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25",
+    "pending launch": "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25",
+    "pending broadcast": "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25",
+    "under review": "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25",
+    review: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25",
+    warning: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25",
+    investigating: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/25",
 
-    suspended: "bg-red-50 text-red-600 border-red-200",
-    rejected: "bg-red-50 text-red-600 border-red-200",
-    hidden: "bg-red-50 text-red-600 border-red-200",
-    error: "bg-red-50 text-red-600 border-red-200",
+    suspended: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/25",
+    rejected: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/25",
+    hidden: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/25",
+    error: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/25",
+    failed: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/25",
+    cancelled: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/25",
 
-    assigned: "bg-blue-50 text-blue-600 border-blue-200",
-    broadcasting: "bg-blue-50 text-blue-600 border-blue-200",
+    assigned: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25",
+    "in progress": "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25",
+    broadcasting: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25",
+    broadcasted: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25",
+    scheduled: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/25",
+    open: "bg-red-500/10 text-red-700 dark:text-red-300 border-red-500/25",
 
-    default: "bg-zinc-100 text-zinc-700 border-zinc-200",
+    inactive: "bg-surface-secondary text-text-muted border-border-primary",
+    default: "bg-surface-secondary text-text-secondary border-border-primary",
   };
 
-  const statusKey = status?.toLowerCase() || "default";
+  const statusKey = status
+    ? String(status).trim().toLowerCase().replace(/[_-]+/g, " ")
+    : "default";
 
   return (
     <span
@@ -202,20 +221,20 @@ export const DataTable = ({
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            className="w-full pl-9 pr-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm font-medium focus:outline-none focus:border-black focus:ring-1 focus:ring-black transition-colors"
+            className="w-full pl-9 pr-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm font-medium text-text-primary focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary transition-colors"
           />
         </div>
 
         <div className="flex items-center gap-2 w-full md:w-auto">
           <button
             onClick={handleFilterClick}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-border-primary rounded-xl text-sm font-bold text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
+            className="btn-primary flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-brand-primary rounded-xl text-sm font-bold transition-colors cursor-pointer"
           >
             <Filter className="w-4 h-4" /> Filter
           </button>
           <button
             onClick={handleExportClick}
-            className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-border-primary rounded-xl text-sm font-bold text-text-primary hover:bg-surface-secondary transition-colors cursor-pointer"
+            className="btn-secondary flex-1 md:flex-none flex items-center justify-center gap-2 px-4 py-2.5 border border-border-primary rounded-xl text-sm font-bold transition-colors cursor-pointer"
           >
             <Download className="w-4 h-4" /> Export
           </button>

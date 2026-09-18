@@ -70,7 +70,7 @@ const AdminReportsTab = () => {
           <button
             onClick={handleExportPDF}
             disabled={isExporting}
-            className="flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50"
+            className="btn-primary flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50"
           >
             <Download className="w-4 h-4" /> {isExporting ? "Exporting..." : "Export PDF"}
           </button>

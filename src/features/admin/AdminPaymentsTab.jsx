@@ -101,7 +101,7 @@ const AdminPaymentsTab = () => {
           <button 
             onClick={handleExport}
             disabled={isExporting}
-            className="flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+            className="btn-primary flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
           >
             {isExporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
             {isExporting ? "Exporting..." : "Export Ledger"}

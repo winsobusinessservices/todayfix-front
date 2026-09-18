@@ -92,7 +92,7 @@ const ReviewAction = ({ service, onRate, onBookAgain, onViewReview }) => {
       {service.status === "COMPLETED" && service.booking_type !== "INSTANT" && (
         <button
           onClick={onBookAgain}
-          className="flex-1 sm:flex-none px-4 py-2 bg-text-primary text-surface-primary font-medium rounded-lg hover:bg-zinc-800 transition-colors text-sm cursor-pointer"
+          className="btn-primary flex-1 sm:flex-none px-4 py-2 bg-text-primary text-surface-primary font-medium rounded-lg hover:bg-zinc-800 transition-colors text-sm cursor-pointer"
         >
           Book Again
         </button>
@@ -182,7 +182,7 @@ const ProfileRequests = ({ addresses }) => {
         </div>
         <button
           onClick={handleRequest}
-          className="px-5 text-nowrap py-2.5 bg-text-primary text-surface-primary font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-sm cursor-pointer"
+          className="btn-primary px-5 text-nowrap py-2.5 bg-text-primary text-surface-primary font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-sm cursor-pointer"
         >
           New Request
         </button>

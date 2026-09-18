@@ -318,7 +318,7 @@ const SlotsTab = () => {
           </button>
           <button
             onClick={openModalForNew}
-            className="flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md border border-zinc-700 text-sm cursor-pointer"
+            className="btn-primary flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md border border-zinc-700 text-sm cursor-pointer"
           >
             <Plus size={16} /> Add Slot
           </button>
@@ -338,7 +338,7 @@ const SlotsTab = () => {
           </p>
           <button
             onClick={openModalForNew}
-            className="px-6 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md border border-zinc-700 text-sm cursor-pointer"
+            className="btn-primary px-6 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md border border-zinc-700 text-sm cursor-pointer"
           >
             Add First Slot
           </button>
@@ -578,7 +578,7 @@ const SlotsTab = () => {
                 <button
                   type="submit"
                   disabled={isCreating || isUpdating}
-                  className="flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm disabled:opacity-50 flex justify-center items-center gap-2 cursor-pointer"
+                  className="btn-primary flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm disabled:opacity-50 flex justify-center items-center gap-2 cursor-pointer"
                 >
                   {isCreating || isUpdating ? (
                     <span className="w-5 h-5 border-2 border-text-inverted border-t-transparent rounded-full animate-spin"></span>
@@ -723,7 +723,7 @@ const SlotsTab = () => {
                   <button
                     type="submit"
                     disabled={isApplying}
-                    className="flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm disabled:opacity-50 flex justify-center items-center gap-2 cursor-pointer"
+                    className="btn-primary flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm disabled:opacity-50 flex justify-center items-center gap-2 cursor-pointer"
                   >
                     {isApplying ? (
                       <span className="w-5 h-5 border-2 border-text-inverted border-t-transparent rounded-full animate-spin"></span>

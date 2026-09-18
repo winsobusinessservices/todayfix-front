@@ -131,7 +131,7 @@ const AssignEmployee = ({ activeModal, setActiveModal }) => {
               <button
                 onClick={handleAssign}
                 disabled={isPending || !selectedEmployee}
-                className="w-full py-3.5 bg-surface-dark text-text-inverted font-black text-lg rounded-xl hover:opacity-90 transition-colors shadow-lg disabled:opacity-50 mt-4 cursor-pointer"
+                className="btn-primary w-full py-3.5 bg-surface-dark text-text-inverted font-black text-lg rounded-xl hover:opacity-90 transition-colors shadow-lg disabled:opacity-50 mt-4 cursor-pointer"
               >
                 {isPending
                   ? activeModal.isReassign

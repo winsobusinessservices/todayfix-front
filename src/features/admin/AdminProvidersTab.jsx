@@ -115,7 +115,7 @@ export default function AdminProvidersTab() {
           <button
             key={tab}
             onClick={() => setActiveFilter(tab)}
-            className={`text-sm font-bold pb-2 border-b-2 transition-all ${activeFilter === tab ? 'text-text-primary border-black' : 'text-zinc-400 border-transparent hover:text-text-primary hover:border-black'}`}
+            className={`text-sm font-bold pb-2 border-b-2 transition-all ${activeFilter === tab ? 'text-brand-primary border-brand-primary' : 'text-text-muted border-transparent hover:text-brand-primary hover:border-brand-primary'}`}
           >
             {tab}
           </button>
@@ -243,7 +243,7 @@ export default function AdminProvidersTab() {
             </button>
             <button 
               onClick={handleAddProvider}
-              className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
+              className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
             >
               Add Provider
             </button>
@@ -363,7 +363,7 @@ export default function AdminProvidersTab() {
               </button>
               <button 
                 onClick={handleSendMessage}
-                className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
+                className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
               >
                 Send Message
               </button>

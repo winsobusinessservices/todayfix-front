@@ -293,7 +293,7 @@ const ReviewModel = ({
             {!existingReview && <button
               onClick={handleSubmitReview}
               disabled={isWorking}
-              className="flex-1 px-3 py-2.5 sm:px-4 sm:py-3 text-sm sm:text-base bg-text-primary text-surface-primary font-bold rounded-xl hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50"
+              className="btn-primary flex-1 px-3 py-2.5 sm:px-4 sm:py-3 text-sm sm:text-base bg-text-primary text-surface-primary font-bold rounded-xl hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50"
             >
               {isAdding ? "Saving..." : "Submit Review"}
             </button>}

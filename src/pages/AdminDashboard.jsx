@@ -35,6 +35,7 @@ import { logout } from "../services/authApi";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import NotificationDrawer from "../components/notifications/NotificationDrawer";
 import { userDetails } from "../services/userApi";
+import ThemeToggle from "../components/ui/ThemeToggle";
 
 const SIDEBAR_SECTIONS = [
   {
@@ -254,14 +255,14 @@ const AdminDashboard = () => {
                       onClick={() => setIsMobileMenuOpen(false)}
                       className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 font-bold text-sm ${
                         isActive
-                          ? "bg-surface-dark text-text-inverted shadow-md"
-                          : "text-zinc-500 hover:text-text-primary hover:bg-surface-secondary"
+                          ? "btn-primary sidebar-link-active"
+                          : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                       }`}
                     >
                       <Icon
                         size={18}
                         className={
-                          isActive ? "text-text-inverted" : "text-zinc-400"
+                          isActive ? "text-button-primary-text" : "text-text-muted"
                         }
                       />
                       {item.label}
@@ -324,6 +325,8 @@ const AdminDashboard = () => {
             >
               <Search size={20} />
             </button>
+
+            <ThemeToggle />
 
             <button
               type="button"

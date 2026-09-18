@@ -12,6 +12,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../../services/authApi";
 import { useUserStore } from "../../store/userStore";
 import { popup } from "../pop-up/pop-up";
+import ThemeToggle from "../ui/ThemeToggle";
 
 const MENU_ITEMS = [
   {
@@ -107,22 +108,22 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
             : "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-text-primary transition-colors hover:bg-surface-secondary"
         }
       >
-        <svg viewBox="0 0 16 16" fill="#000000" height={30}>
-          <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-          <g
-            id="SVGRepo_tracerCarrier"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          ></g>
-          <g id="SVGRepo_iconCarrier">
-            {" "}
-            <path
-              fill="#000000"
-              fillRule="evenodd"
-              d="M8,16 C12.4183,16 16,12.4183 16,8 C16,3.58172 12.4183,0 8,0 C3.58172,0 0,3.58172 0,8 C0,12.4183 3.58172,16 8,16 Z M12.9533,11.387 C13.6137,10.4231 14,9.25665 14,8 C14,4.68629 11.3137,2 8,2 C4.68629,2 2,4.68629 2,8 C2,9.25665 2.38632,10.4231 3.04668,11.387 C3.25368,10.0411 4.13147,8.91649 5.32791,8.36519 C5.11827,7.95568 5,7.49165 5,7 C5,5.34315 6.34315,4 8,4 C9.65685,4 11,5.34315 11,7 C11,7.49165 10.8817,7.95568 10.6721,8.36519 C11.8685,8.91649 12.7463,10.0411 12.9533,11.387 Z M11,13.1973 L11,12 C11,10.8954 10.1046,10 9,10 L7,10 C5.89543,10 5,10.8954 5,12 L5,13.1973 C5.88252,13.7078 6.90714,14 8,14 C9.09286,14 10.1175,13.7078 11,13.1973 Z M8,8 C8.55228,8 9,7.55228 9,7 C9,6.44772 8.55228,6 8,6 C7.44772,6 7,6.44772 7,7 C7,7.55228 7.44772,8 8,8 Z"
-            ></path>{" "}
-          </g>
-        </svg>
+                          <svg viewBox="0 0 16 16" fill="currentColor" height={30}>
+                    <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      {" "}
+                      <path
+                        fill="currentColor"
+                        fillRule="evenodd"
+                        d="M8,16 C12.4183,16 16,12.4183 16,8 C16,3.58172 12.4183,0 8,0 C3.58172,0 0,3.58172 0,8 C0,12.4183 3.58172,16 8,16 Z M12.9533,11.387 C13.6137,10.4231 14,9.25665 14,8 C14,4.68629 11.3137,2 8,2 C4.68629,2 2,4.68629 2,8 C2,9.25665 2.38632,10.4231 3.04668,11.387 C3.25368,10.0411 4.13147,8.91649 5.32791,8.36519 C5.11827,7.95568 5,7.49165 5,7 C5,5.34315 6.34315,4 8,4 C9.65685,4 11,5.34315 11,7 C11,7.49165 10.8817,7.95568 10.6721,8.36519 C11.8685,8.91649 12.7463,10.0411 12.9533,11.387 Z M11,13.1973 L11,12 C11,10.8954 10.1046,10 9,10 L7,10 C5.89543,10 5,10.8954 5,12 L5,13.1973 C5.88252,13.7078 6.90714,14 8,14 C9.09286,14 10.1175,13.7078 11,13.1973 Z M8,8 C8.55228,8 9,7.55228 9,7 C9,6.44772 8.55228,6 8,6 C7.44772,6 7,6.44772 7,7 C7,7.55228 7.44772,8 8,8 Z"
+                      ></path>{" "}
+                    </g>
+                  </svg>
         {mobile && <span>Profile</span>}
       </button>
 
@@ -130,19 +131,18 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
         {open && (
           <motion.div
             role="menu"
+            style={mobile ? undefined : { left: "calc(50% - 10rem)" }}
             initial={{ opacity: 0, y: -8, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -6, scale: 0.98 }}
             transition={{ duration: 0.16, ease: "easeOut" }}
-            className={
-              mobile
-                ? "relative z-[80] mt-3 w-full overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-xl"
-                : "absolute right-0 top-full z-[80] mt-3 w-80 overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-2xl shadow-black/15"
-            }
+            className={mobile
+              ? "relative z-[80] mt-3 w-full overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-xl"
+              : "absolute top-full z-[80] mt-3 w-80 max-w-[calc(100vw-1rem)] overflow-hidden rounded-2xl border border-border-primary bg-surface-primary text-left shadow-2xl shadow-black/15"}
           >
             <div className="border-b border-border-secondary bg-surface-secondary/70 p-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-dark text-sm font-black text-text-inverted">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-primary text-sm font-black text-text-inverted">
                   {profileImage ? (
                     <img
                       src={profileImage}
@@ -153,14 +153,11 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
                     initials
                   )}
                 </div>
-                <div className="min-w-0">
-                  <p className="truncate text-sm font-black text-text-primary">
-                    {firstName} {lastName}
-                  </p>
-                  <p className="truncate text-xs font-medium text-text-secondary">
-                    {email}
-                  </p>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-black text-text-primary">{firstName} {lastName}</p>
+                  <p className="truncate text-xs font-medium text-text-secondary">{email}</p>
                 </div>
+                {!mobile && <ThemeToggle className="!h-9 !w-9" />}
               </div>
             </div>
 
@@ -175,7 +172,7 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
                     onClick={() => goTo(item.to)}
                     className="group flex w-full cursor-pointer items-center gap-3 rounded-xl p-3 text-left transition-colors hover:bg-surface-secondary"
                   >
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border-primary bg-surface-primary text-text-secondary transition-colors group-hover:bg-surface-dark group-hover:text-text-inverted">
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-border-primary bg-surface-primary text-text-secondary transition-colors group-hover:bg-brand-primary group-hover:text-text-inverted">
                       <ItemIcon size={17} />
                     </span>
                     <span className="min-w-0 flex-1">

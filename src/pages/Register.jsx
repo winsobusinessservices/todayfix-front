@@ -571,7 +571,7 @@ const Register = () => {
               <button
                 type="submit"
                 disabled={isPending || verifyOtpMutation.isPending}
-                className="animate-fade-in-up delay-500 w-full mt-6 bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="btn-primary animate-fade-in-up delay-500 w-full mt-6 bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isPending || verifyOtpMutation.isPending ? (
                   <>

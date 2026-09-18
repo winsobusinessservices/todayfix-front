@@ -104,7 +104,7 @@ const VerificationPage = () => {
           </button>) : (
             <button
               onClick={handleSubmit}
-              className="w-full bg-surface-dark cursor-pointer text-text-inverted hover:scale-[1.02] rounded-full py-4 text-[15px] font-medium transition-colors mb-6"
+              className="btn-primary w-full bg-surface-dark cursor-pointer text-text-inverted hover:scale-[1.02] rounded-full py-4 text-[15px] font-medium transition-colors mb-6"
             >
               Confirm
             </button>

@@ -412,7 +412,7 @@ const Chat = ({ activeModal, setActiveModal, bookingsList }) => {
                       isUpdating ||
                       isChatDisabled
                     }
-                    className="absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-text-primary text-surface-primary rounded-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100 shadow-md cursor-pointer"
+                    className="btn-primary absolute right-2 top-1/2 -translate-y-1/2 p-2.5 bg-text-primary text-surface-primary rounded-xl hover:scale-105 transition-transform disabled:opacity-50 disabled:hover:scale-100 shadow-md cursor-pointer"
                   >
                     <Send className="w-5 h-5" />
                   </button>
