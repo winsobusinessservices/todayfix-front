@@ -105,7 +105,7 @@ const AboutUs = () => {
             </span>
             <h1 className="text-5xl md:text-7xl font-black text-text-primary tracking-tighter leading-tight mb-6">
               Fixing the way the world <br className="hidden md:block" /> finds{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-900">
+              <span className="text-primary">
                 local expertise.
               </span>
             </h1>
@@ -204,7 +204,7 @@ const AboutUs = () => {
               <div className="mt-10">
                 <Link
                   to="/services"
-                  className="inline-flex items-center justify-center px-8 py-4 bg-surface-dark text-white rounded-full font-bold transition-transform active:scale-95 shadow-lg shadow-black/10 group"
+                  className="btn-primary inline-flex items-center justify-center px-8 py-4 bg-surface-dark text-white rounded-full font-bold transition-transform active:scale-95 shadow-lg shadow-black/10 group"
                 >
                   Explore Services
                   <svg

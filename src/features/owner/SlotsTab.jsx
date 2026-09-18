@@ -7,7 +7,8 @@ import {
   Trash2,
   Edit2,
   User,
-  // ChevronDown,
+  ChevronDown,
+  Copy,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { businessApi } from "../../services/businessApi";
@@ -43,6 +44,7 @@ const SLOT_TYPES = ["MORNING", "AFTERNOON", "EVENING"];
 const SlotsTab = () => {
   const queryClient = useQueryClient();
   const [modalOpen, setModalOpen] = useState(false);
+  const [copyModalOpen, setCopyModalOpen] = useState(false);
   const [editingSlot, setEditingSlot] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
@@ -54,6 +56,13 @@ const SlotsTab = () => {
     start_time: "09:00",
     end_time: "12:00",
     is_active: true,
+  });
+
+  const [copyFormData, setCopyFormData] = useState({
+    employee_uuid: "",
+    source_day_of_week: "MONDAY",
+    apply_to_all_days: false,
+    target_days: [],
   });
 
   // Fetch Business Profile to get business type
@@ -131,6 +140,18 @@ const SlotsTab = () => {
     },
   });
 
+  // Apply to Days Mutation
+  const { mutate: applySlots, isPending: isApplying } = useMutation({
+    mutationFn: businessApi.applySlotsToDays,
+    onSuccess: (res) => {
+      toast.success(res?.message || "Slots copied successfully");
+      queryClient.invalidateQueries(["workingSchedules"]);
+      closeCopyModal();
+    },
+    onError: (err) =>
+      toast.error(extractErrorMessage(err, "Failed to copy slots")),
+  });
+
   const allEmployees = Array.isArray(employeesData)
     ? employeesData
     : employeesData?.results.filter((emp) => emp.is_active) || [];
@@ -173,6 +194,42 @@ const SlotsTab = () => {
       </div>
     );
   }
+
+  const openCopyModal = () => {
+    setCopyFormData({
+      employee_uuid: allEmployees[0]?.employee_uuid || "",
+      source_day_of_week: "MONDAY",
+      apply_to_all_days: false,
+      target_days: [],
+    });
+    setCopyModalOpen(true);
+  };
+
+  const closeCopyModal = () => {
+    setCopyModalOpen(false);
+  };
+
+  const handleCopySubmit = (e) => {
+    e.preventDefault();
+    if (currentBusinessType !== "INDIVIDUAL" && !copyFormData.employee_uuid) {
+      return toast.error("Please select an employee");
+    }
+    
+    if (!copyFormData.apply_to_all_days && copyFormData.target_days.length === 0) {
+      return toast.error("Please select at least one target day, or check 'Apply to all days'");
+    }
+
+    const payload = {
+      ...(currentBusinessType !== "INDIVIDUAL" && {
+        employee_uuid: copyFormData.employee_uuid,
+      }),
+      source_day_of_week: copyFormData.source_day_of_week,
+      apply_to_all_days: copyFormData.apply_to_all_days,
+      target_days: copyFormData.target_days,
+    };
+
+    applySlots(payload);
+  };
 
   const openModalForNew = () => {
     setEditingSlot(null);
@@ -252,12 +309,20 @@ const SlotsTab = () => {
             Manage availability slots for your employees.
           </p>
         </div>
-        <button
-          onClick={openModalForNew}
-          className="flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md border border-zinc-700 text-sm cursor-pointer"
-        >
-          <Plus size={16} /> Add Slot
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={openCopyModal}
+            className="flex items-center gap-2 px-4 py-2.5 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors shadow-sm border border-border-primary text-sm cursor-pointer"
+          >
+            <Copy size={16} /> Copy Schedule
+          </button>
+          <button
+            onClick={openModalForNew}
+            className="btn-primary flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md border border-zinc-700 text-sm cursor-pointer"
+          >
+            <Plus size={16} /> Add Slot
+          </button>
+        </div>
       </div>
 
       {/* Grid of Slots */}
@@ -273,7 +338,7 @@ const SlotsTab = () => {
           </p>
           <button
             onClick={openModalForNew}
-            className="px-6 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md border border-zinc-700 text-sm cursor-pointer"
+            className="btn-primary px-6 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md border border-zinc-700 text-sm cursor-pointer"
           >
             Add First Slot
           </button>
@@ -513,7 +578,7 @@ const SlotsTab = () => {
                 <button
                   type="submit"
                   disabled={isCreating || isUpdating}
-                  className="flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm disabled:opacity-50 flex justify-center items-center gap-2 cursor-pointer"
+                  className="btn-primary flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm disabled:opacity-50 flex justify-center items-center gap-2 cursor-pointer"
                 >
                   {isCreating || isUpdating ? (
                     <span className="w-5 h-5 border-2 border-text-inverted border-t-transparent rounded-full animate-spin"></span>
@@ -523,6 +588,152 @@ const SlotsTab = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Copy Schedule Modal */}
+      {copyModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-surface-primary rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <h3 className="text-xl font-black text-text-primary mb-6">
+                Copy Schedule
+              </h3>
+
+              <form onSubmit={handleCopySubmit} className="space-y-5">
+                {currentBusinessType !== "INDIVIDUAL" && (
+                  <div>
+                    <label className="block text-sm font-bold text-text-secondary mb-2">
+                      Select Employee
+                    </label>
+                    <select
+                      value={copyFormData.employee_uuid}
+                      onChange={(e) =>
+                        setCopyFormData({
+                          ...copyFormData,
+                          employee_uuid: e.target.value,
+                        })
+                      }
+                      className="w-full bg-surface-secondary border border-border-primary rounded-xl px-4 py-3 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors appearance-none"
+                      required
+                    >
+                      {allEmployees.map((emp) => (
+                        <option key={emp.employee_uuid} value={emp.employee_uuid}>
+                          {emp.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-bold text-text-secondary mb-2">
+                    Source Day
+                  </label>
+                  <select
+                    value={copyFormData.source_day_of_week}
+                    onChange={(e) =>
+                      setCopyFormData({
+                        ...copyFormData,
+                        source_day_of_week: e.target.value,
+                      })
+                    }
+                    className="w-full bg-surface-secondary border border-border-primary rounded-xl px-4 py-3 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors appearance-none"
+                  >
+                    {DAYS_OF_WEEK.map((day) => (
+                      <option key={day} value={day}>
+                        {day}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-3 pt-2">
+                  <input
+                    type="checkbox"
+                    id="applyToAllDays"
+                    checked={copyFormData.apply_to_all_days}
+                    onChange={(e) =>
+                      setCopyFormData({
+                        ...copyFormData,
+                        apply_to_all_days: e.target.checked,
+                      })
+                    }
+                    className="w-4 h-4 rounded text-text-primary focus:ring-0 cursor-pointer"
+                  />
+                  <label
+                    htmlFor="applyToAllDays"
+                    className="text-sm font-bold text-text-primary cursor-pointer"
+                  >
+                    Apply to all remaining days
+                  </label>
+                </div>
+
+                {!copyFormData.apply_to_all_days && (
+                  <div>
+                    <label className="block text-sm font-bold text-text-secondary mb-2">
+                      Target Days
+                    </label>
+                    <div className="grid grid-cols-2 gap-3 mt-2">
+                      {DAYS_OF_WEEK.filter(
+                        (day) => day !== copyFormData.source_day_of_week
+                      ).map((day) => (
+                        <label
+                          key={day}
+                          className="flex items-center gap-2 cursor-pointer bg-surface-secondary border border-border-primary rounded-lg px-3 py-2 hover:bg-zinc-200 transition-colors"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={copyFormData.target_days.includes(day)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setCopyFormData({
+                                  ...copyFormData,
+                                  target_days: [...copyFormData.target_days, day],
+                                });
+                              } else {
+                                setCopyFormData({
+                                  ...copyFormData,
+                                  target_days: copyFormData.target_days.filter(
+                                    (d) => d !== day
+                                  ),
+                                });
+                              }
+                            }}
+                            className="w-4 h-4 rounded text-text-primary focus:ring-0"
+                          />
+                          <span className="text-sm font-bold text-text-primary">
+                            {day.substring(0, 3)}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex gap-3 pt-4 border-t border-border-primary">
+                  <button
+                    type="button"
+                    onClick={closeCopyModal}
+                    className="flex-1 px-4 py-3 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors text-sm cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isApplying}
+                    className="btn-primary flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md text-sm disabled:opacity-50 flex justify-center items-center gap-2 cursor-pointer"
+                  >
+                    {isApplying ? (
+                      <span className="w-5 h-5 border-2 border-text-inverted border-t-transparent rounded-full animate-spin"></span>
+                    ) : (
+                      "Apply"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
       )}

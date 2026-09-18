@@ -254,7 +254,7 @@ const SettingsTab = () => {
           <button
             type="submit"
             disabled={isSaving}
-            className="px-6 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md mt-2 flex items-center justify-center gap-2 min-w-[180px]"
+            className="btn-primary px-6 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md mt-2 flex items-center justify-center gap-2 min-w-[180px]"
           >
             {isSaving ? (
               <span className="w-5 h-5 border-2 border-text-inverted border-t-transparent rounded-full animate-spin"></span>

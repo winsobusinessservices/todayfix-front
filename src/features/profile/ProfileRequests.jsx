@@ -7,58 +7,115 @@ import {
   CheckCircle2,
   AlertCircle,
   Trash2,
+  User,
+  MessageSquare,
+  ChevronRight,
+  Zap,
+  Calendar,
+  X,
+  Star,
+  View,
+  Check,
+  CheckCheck,
+  BookOpen,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { bookingApi } from "../../services/bookingApi";
 import toast from "react-hot-toast";
-import { Star, X, MessageSquare } from "lucide-react";
 import { dateFormater } from "../../utils/dateFormater";
 import Chat from "../../components/modals/Chat";
+import ReviewModel from "../../components/modals/ReviewModel";
+
+import { reviewApi } from "../../services/reviewApi";
 
 const StatusBadge = ({ status }) => {
-  if (status === "PENDING") {
-    return (
-      <div className="flex items-center gap-1.5 text-orange-500 bg-orange-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-orange-500/20 w-fit">
-        <Clock size={14} /> Pending Review
-      </div>
-    );
-  }
-  if (status === "CONFIRMED" || status === "IN_PROGRESS") {
-    return (
-      <div className="flex items-center gap-1.5 text-text-primary bg-surface-secondary px-3 py-1.5 rounded-full text-xs font-bold border border-border-primary w-fit">
-        <Search size={14} className="animate-pulse" />{" "}
-        {status === "CONFIRMED" ? "Confirmed" : "In Progress"}
-      </div>
-    );
-  }
-  if (status === "COMPLETED") {
-    return (
-      <div className="flex items-center gap-1.5 text-green-500 bg-green-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-green-500/20 w-fit">
-        <CheckCircle2 size={14} /> Completed
-      </div>
-    );
-  }
-  if (status === "CANCELLED" || status === "REJECTED") {
-    return (
-      <div className="flex items-center gap-1.5 text-red-500 bg-red-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-red-500/20 w-fit">
-        <AlertCircle size={14} />{" "}
-        {status === "CANCELLED" ? "Cancelled" : "Rejected"}
-      </div>
-    );
-  }
-  if (status === "NO_PROVIDER") {
-    return (
-      <div className="flex items-center gap-1.5 text-zinc-500 bg-zinc-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-zinc-500/20 w-fit">
-        <AlertCircle size={14} /> No Provider Found
-      </div>
-    );
-  }
+  const styles = {
+    PENDING: "bg-orange-500/10 text-orange-500 border-orange-500/20",
+    CONFIRMED: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
+    ACCEPTED: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
+    ASSIGNED: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
+    IN_PROGRESS: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
+    COMPLETED: "bg-green-500/10 text-green-500 border-green-500/20",
+    CANCELLED: "bg-red-500/10 text-red-500 border-red-500/20",
+    REJECTED: "bg-red-500/10 text-red-500 border-red-500/20",
+    NO_PROVIDER: "bg-zinc-500/10 text-zinc-600 border-zinc-500/20",
+  };
+
   return (
-    <div className="flex items-center gap-1.5 text-zinc-500 bg-zinc-500/10 px-3 py-1.5 rounded-full text-xs font-bold border border-zinc-500/20 w-fit">
-      <AlertCircle size={14} /> {status}
-    </div>
+    <span
+      className={`px-3 py-1 rounded-full text-xs font-bold border uppercase tracking-wider ${
+        styles[status] || "bg-zinc-500/10 text-zinc-600 border-zinc-500/20"
+      }`}
+    >
+      {status === "NO_PROVIDER" ? "NO PROVIDER" : status}
+    </span>
+  );
+};
+
+const ReviewAction = ({ service, onRate, onBookAgain, onViewReview }) => {
+  const targetId =
+    service.booking_uuid ||
+    service.uuid ||
+    service.instant_booking_uuid ||
+    service._id;
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["reviewEligibility", targetId],
+    queryFn: () => reviewApi.eligibilityReview(targetId),
+    enabled:
+      service.status === "COMPLETED" &&
+      service.booking_type !== "INSTANT" &&
+      !!targetId,
+    retry: 0,
+  });
+
+  const isEligible = data?.data?.eligible === true;
+  const alreadyReviewed = data?.data?.already_reviewed === true;
+
+  const { data: bookingReview } = useQuery({
+    queryKey: ["bookingReview", targetId],
+    queryFn: () => reviewApi.bookingReview(targetId),
+    enabled: !!alreadyReviewed,
+    retry: 0,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex-1 sm:flex-none px-4 py-2 bg-surface-secondary animate-pulse rounded-lg w-28 h-[38px]" />
+    );
+  }
+
+  return (
+    <span className="flex gap-2 w-full sm:w-auto text-nowrap">
+      {service.status === "COMPLETED" && service.booking_type !== "INSTANT" && (
+        <button
+          onClick={onBookAgain}
+          className="btn-primary flex-1 sm:flex-none px-4 py-2 bg-text-primary text-surface-primary font-medium rounded-lg hover:bg-zinc-800 transition-colors text-sm cursor-pointer"
+        >
+          Book Again
+        </button>
+      )}
+      {service.status === "COMPLETED" &&
+        service.booking_type !== "INSTANT" &&
+        isEligible && (
+          <button
+            onClick={onRate}
+            className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-amber-500 text-white hover:bg-amber-600 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm shadow-amber-500/20"
+          >
+            <Star className="w-4 h-4 fill-current" /> Rate Service
+          </button>
+        )}
+      {alreadyReviewed && (
+        <button 
+          onClick={() => onViewReview && bookingReview && onViewReview(bookingReview?.data || bookingReview)}
+          className="flex-1 sm:flex-none px-4 py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-zinc-200 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-sm shadow-amber-500/20"
+        >
+          <BookOpen className="w-4 h-4 text-text-primary" /> View Review
+        </button>
+      )}
+    </span>
   );
 };
 
@@ -72,24 +129,20 @@ const ProfileRequests = ({ addresses }) => {
   const [reviewModalOpen, setReviewModalOpen] = useState(false);
   const [selectedBookingForReview, setSelectedBookingForReview] =
     useState(null);
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
-  const [reviewText, setReviewText] = useState("");
+  const [existingReviewForEdit, setExistingReviewForEdit] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
 
   const { data: bookingsData, isLoading } = useQuery({
     queryKey: ["userBookings", currentPage],
-    // queryFn: () => userPendingBoooking({ page: currentPage }),
-    queryFn:() => bookingApi.getUserBookings({ page: currentPage }),
+    queryFn: () => bookingApi.getUserBookings({ page: currentPage }),
   });
-  // console.log(bookingsData);
 
-  const bookings = bookingsData?.results?.data || bookingsData?.results || [];
+  const rawBookings =
+    bookingsData?.results?.data || bookingsData?.results || [];
+  const bookings = rawBookings.filter((req) => req.booking_type !== "INSTANT");
   const count = bookingsData?.count || 0;
   const totalPages = Math.ceil(count / 10);
-  // console.log(bookings);
-  
 
   const { mutate: cancelBooking, isPending: isCancelling } = useMutation({
     mutationFn: (id) => bookingApi.cancelBooking(id),
@@ -109,29 +162,15 @@ const ProfileRequests = ({ addresses }) => {
   };
 
   const handleRequest = () => {
-    navigate("/request-service", {
+    navigate("/services", {
       state: {
         addresses: addresses,
       },
     });
   };
 
-  const handleSubmitReview = () => {
-    if (rating === 0) {
-      toast.error("Please select a rating");
-      return;
-    }
-
-    // MOCK API CALL for Reviews
-    toast.success("Thank you for your review!");
-    setReviewModalOpen(false);
-    setSelectedBookingForReview(null);
-    setRating(0);
-    setReviewText("");
-  };
-
   return (
-    <div className="space-y-6">
+    <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-6">
       <div className="flex justify-between items-center mb-6">
         <div>
           <h2 className="text-2xl font-black tracking-tight text-text-primary">
@@ -143,169 +182,202 @@ const ProfileRequests = ({ addresses }) => {
         </div>
         <button
           onClick={handleRequest}
-          className="px-5 text-nowrap py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md border border-zinc-700"
+          className="btn-primary px-5 text-nowrap py-2.5 bg-text-primary text-surface-primary font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-sm cursor-pointer"
         >
           New Request
         </button>
       </div>
 
-      <div className="grid gap-6">
+      <div className="grid gap-4">
         {isLoading && (
           <div className="text-center py-16">
             <span className="w-8 h-8 border-4 border-text-primary border-t-transparent rounded-full animate-spin inline-block"></span>
           </div>
         )}
-        {bookings?.map((req, i) => (
-          <motion.div
-            key={req.uuid}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-surface-secondary border border-border-primary rounded-3xl p-6 relative overflow-hidden"
-          >
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
-              <div>
-                <h3 className="text-xl font-bold tracking-tight text-text-primary mb-1">
-                  {req.service?.name || "Service Request"}
-                </h3>
-                <p className="text-sm text-zinc-500 font-medium">
-                  ID: {req?.booking_uuid?.split("-")[0].toUpperCase()} •{" "}
-                  {req.booking_type === "INSTANT"
-                    ? "Instant Booking (ASAP)"
-                    : `${dateFormater(req.scheduled_date)} (${req.slot_type})`}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <StatusBadge status={req.status} />
 
-                {req.status === "PENDING" && (
-                  <button
-                    onClick={() => setConfirmDeleteId(req.uuid)}
-                    className="p-2 text-zinc-500 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors cursor-pointer"
-                    title="Cancel Request"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+        {bookings?.map((req, index) => (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.05 }}
+            key={req.uuid || index}
+            className="group relative bg-surface-primary rounded-2xl border border-border-primary overflow-hidden hover:border-zinc-400/50 transition-colors duration-200"
+          >
+            <div className="p-4 sm:p-6">
+              {/* Header: ID, Status, Price */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 mb-4 sm:mb-5">
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+                  <div className="text-xs sm:text-sm font-medium text-zinc-500 font-mono">
+                    #
+                    {(req.booking_uuid || req.uuid || "BOOKING")
+                      .split("-")[0]
+                      .toUpperCase()}
+                  </div>
+                  <div className="w-1 h-1 rounded-full bg-zinc-300" />
+                  <div className="scale-90 origin-left sm:scale-100">
+                    <StatusBadge status={req.status} />
+                  </div>
+                  {req.booking_type === "INSTANT" && (
+                    <>
+                      <div className="w-1 h-1 rounded-full bg-zinc-300" />
+                      <span className="text-xs sm:text-[13px] font-semibold text-amber-600 flex items-center gap-1 sm:gap-1.5">
+                        <Zap className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+                        Instant Request
+                      </span>
+                    </>
+                  )}
+                </div>
+                <div className="flex flex-col sm:items-end">
+                  <div className="text-lg sm:text-xl font-semibold tracking-tight text-text-primary">
+                    ₹{req.price || "TBD"}
+                  </div>
+                </div>
+              </div>
+
+              {/* Service Title */}
+              <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-text-primary mb-4 sm:mb-6 leading-tight">
+                {req.service?.name || "Service Request"}
+              </h3>
+
+              {/* Minimal Metadata Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-3 sm:gap-y-5 gap-x-4 sm:gap-x-8 mb-4 sm:mb-6 text-xs sm:text-sm">
+                {/* Professional */}
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-zinc-500 font-medium mb-0.5">
+                      Professional
+                    </p>
+                    <p className="text-text-primary font-medium">
+                      {req.business?.name ||
+                        (req.booking_type === "INSTANT" &&
+                        req.status === "PENDING"
+                          ? "Finding Provider..."
+                          : "No Provider Assigned")}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Schedule */}
+                <div className="flex items-start gap-2 sm:gap-3">
+                  <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-zinc-500 font-medium mb-0.5">Schedule</p>
+                    <p className="text-text-primary font-medium">
+                      {req.booking_type === "INSTANT"
+                        ? "Instant Booking (ASAP)"
+                        : dateFormater(req.scheduled_date)}
+                    </p>
+                    {req.booking_type !== "INSTANT" && req.slot_type && (
+                      <p className="text-zinc-500 mt-0.5">{req.slot_type}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className="flex items-start gap-2 sm:gap-3 sm:col-span-2">
+                  <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 mt-0.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-zinc-500 font-medium mb-0.5">Location</p>
+                    <p className="text-text-primary font-medium">
+                      {req.address
+                        ? `${req.address.address_type}: ${req.address.address_line}, ${req.address.locality || req.address.city}`
+                        : "Location details"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Notes */}
+                {req.notes && (
+                  <div className="flex items-start gap-2 sm:gap-3 sm:col-span-2">
+                    <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-zinc-400 mt-0.5 shrink-0" />
+                    <div>
+                      <p className="text-zinc-500 font-medium mb-0.5">Notes</p>
+                      <p className="text-text-primary">{req.notes}</p>
+                    </div>
+                  </div>
                 )}
               </div>
+
+              {/* Actions & Alerts */}
+              <div className="pt-4 sm:pt-5 border-t border-border-primary flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mt-2">
+                <div className="flex-1">
+                  {req.booking_type === "INSTANT" &&
+                    !["COMPLETED", "CANCELLED", "REJECTED"].includes(
+                      req.status,
+                    ) && (
+                      <button
+                        onClick={() =>
+                          navigate(`/track/instant/${req.booking_uuid}`)
+                        }
+                        className="text-blue-600 font-bold hover:underline text-sm flex items-center gap-1"
+                      >
+                        Track Request <ChevronRight className="w-4 h-4" />
+                      </button>
+                    )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                  {req.status === "PENDING" && (
+                    <button
+                      onClick={() => setConfirmDeleteId(req.uuid)}
+                      className="flex-1 sm:flex-none px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-all flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Cancel
+                    </button>
+                  )}
+
+                  {(req.status === "CONFIRMED" ||
+                    req.status === "IN_PROGRESS") &&
+                    req.business && (
+                      <button
+                        onClick={() =>
+                          setActiveModal({ type: "chat", bookingId: req.uuid })
+                        }
+                        className="flex-1 sm:flex-none px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm font-medium bg-surface-primary text-text-primary border border-border-primary hover:bg-surface-secondary transition-all flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <MessageSquare className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> Chat
+                      </button>
+                    )}
+
+                  {req.status === "COMPLETED" &&
+                    req.booking_type !== "INSTANT" && (
+                      <ReviewAction
+                        service={req}
+                        onRate={() => {
+                          setSelectedBookingForReview(req);
+                          setExistingReviewForEdit(null);
+                          setReviewModalOpen(true);
+                        }}
+                        onViewReview={(reviewData) => {
+                          setSelectedBookingForReview(req);
+                          setExistingReviewForEdit(reviewData);
+                          setReviewModalOpen(true);
+                        }}
+                        onBookAgain={() => handleRequest()}
+                      />
+                    )}
+
+                  {req.status === "NO_PROVIDER" && (
+                    <button
+                      onClick={() => handleRequest()}
+                      className="flex-1 sm:flex-none px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg text-sm font-medium bg-text-primary text-surface-primary hover:bg-zinc-800 transition-all flex items-center justify-center cursor-pointer"
+                    >
+                      Schedule Booking
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
-
-            {/* Description */}
-            <p className="text-sm text-zinc-300 font-medium leading-relaxed mb-6">
-              {req.notes || "No additional notes provided."}
-            </p>
-
-            {/* Bottom details */}
-            <div className="flex flex-wrap items-center gap-4 sm:gap-8 pt-4 border-t border-border-primary">
-              <div className="flex items-center gap-2 text-text-primary font-bold">
-                <IndianRupee className="w-5 h-5 text-zinc-500" />
-                {req.price ? `Rs. ${req.price}` : "To be decided"}
-              </div>
-              <div className="flex items-center gap-2 text-text-primary font-bold max-w-[60%]">
-                <MapPin className="w-5 h-5 text-zinc-500 shrink-0" />
-                <span
-                  className="truncate"
-                  title={
-                    req.address
-                      ? `${req.address.address_line}, ${req.address.locality || req.address.city}`
-                      : "Location details"
-                  }
-                >
-                  {req.address
-                    ? `${req.address.address_type}: ${req.address.address_line}, ${req.address.locality || req.address.city}`
-                    : "Location details"}
-                </span>
-              </div>
-            </div>
-            {/* Accepted Info Box */}
-            {(req.status === "CONFIRMED" || req.status === "IN_PROGRESS") && req.business && (
-              <div className="mt-6 bg-surface-primary border border-blue-500/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle
-                    className="text-blue-500 shrink-0 mt-0.5"
-                    size={18}
-                  />
-                  <div>
-                    <h4 className="text-sm font-bold text-blue-500 mb-1">
-                      Vendor Assigned
-                    </h4>
-                    <p className="text-sm text-zinc-400">
-                      <span className="text-text-primary font-bold">
-                        {req.business.name}
-                      </span>{" "}
-                      has been assigned to your request.
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => setActiveModal({ type: 'chat', bookingId: req.uuid })}
-                  className="px-5 py-2.5 bg-blue-500/10 text-blue-500 font-bold flex items-center gap-2 rounded-xl text-sm hover:bg-blue-500/20 transition-colors whitespace-nowrap border border-blue-500/20 shrink-0"
-                >
-                  <MessageSquare size={16} />
-                  Chat
-                </button>
-              </div>
-            )}
-
-            {/* Completed Review Box */}
-            {req.status === "COMPLETED" && (
-              <div className="mt-6 bg-surface-primary border border-green-500/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h4 className="text-sm font-bold text-green-500 mb-1 flex items-center gap-1.5">
-                    <CheckCircle2 size={16} /> Job Completed!
-                  </h4>
-                  <p className="text-sm text-zinc-400">
-                    Hope you liked the service. Please leave a review for the
-                    professional.
-                  </p>
-                </div>
-                <button
-                  onClick={() => {
-                    setSelectedBookingForReview(req);
-                    setReviewModalOpen(true);
-                  }}
-                  className="px-4 py-2 bg-green-500/10 text-green-500 font-bold rounded-lg border border-green-500/20 hover:bg-green-500/20 transition-colors shrink-0"
-                >
-                  Leave a Review
-                </button>
-              </div>
-            )}
-
-            {/* No Provider Info Box */}
-            {req.status === "NO_PROVIDER" && (
-              <div className="mt-6 bg-surface-primary border border-zinc-500/30 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div className="flex items-start gap-3">
-                  <AlertCircle
-                    className="text-zinc-500 shrink-0 mt-0.5"
-                    size={18}
-                  />
-                  <div>
-                    <h4 className="text-sm font-bold text-zinc-500 mb-1">
-                      No Providers Nearby
-                    </h4>
-                    <p className="text-sm text-zinc-400">
-                      We couldn't find an available professional for instant booking in your area right now. We recommend switching to a scheduled booking.
-                    </p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => handleRequest()}
-                  className="px-4 py-2 bg-zinc-500/10 text-zinc-500 font-bold rounded-lg border border-zinc-500/20 hover:bg-zinc-500/20 transition-colors shrink-0"
-                >
-                  Schedule Booking
-                </button>
-              </div>
-            )}
           </motion.div>
         ))}
 
         {bookings.length === 0 && !isLoading && (
-          <div className="text-center py-16 bg-surface-secondary rounded-3xl border border-border-primary">
-            <Search className="w-12 h-12 text-zinc-600 mx-auto mb-4 opacity-50" />
-            <h3 className="text-lg font-bold text-text-primary mb-2">
+          <div className="text-center py-20 bg-surface-primary rounded-3xl border border-border-primary">
+            <Search className="w-12 h-12 text-zinc-600 mx-auto mb-4" />
+            <h3 className="text-xl font-bold text-text-primary mb-2">
               No Active Requests
             </h3>
-            <p className="text-sm text-zinc-500">
+            <p className="text-zinc-500">
               You don't have any pending service requests.
             </p>
           </div>
@@ -335,37 +407,43 @@ const ProfileRequests = ({ addresses }) => {
         )}
       </div>
 
-      {/* Confirmation Modal */}
       <AnimatePresence>
+        {/* Confirmation Modal */}
         {confirmDeleteId && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm border">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-surface-primary border border-border-primary rounded-3xl p-6 max-w-sm w-full shadow-2xl"
+              className="bg-surface-primary rounded-2xl max-w-sm w-full p-6 md:p-8 shadow-2xl relative"
             >
+              <button
+                onClick={() => setConfirmDeleteId(null)}
+                className="absolute top-6 right-6 text-zinc-400 hover:text-text-primary cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
               <div className="flex items-center gap-3 mb-4 text-red-500">
                 <AlertCircle size={24} />
-                <h3 className="text-xl font-bold text-text-primary">
+                <h3 className="text-xl font-black tracking-tight text-text-primary">
                   Cancel Request?
                 </h3>
               </div>
-              <p className="text-text-secondary text-sm mb-6 leading-relaxed">
+              <p className="text-zinc-500 font-medium text-sm mb-8 leading-relaxed">
                 Are you sure you want to cancel this service request? This
                 action cannot be undone.
               </p>
               <div className="flex gap-3">
                 <button
                   onClick={() => setConfirmDeleteId(null)}
-                  className="flex-1 px-4 py-2.5 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors cursor-pointer"
+                  className="flex-1 px-4 py-3 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors cursor-pointer text-sm"
                 >
                   No, Keep it
                 </button>
                 <button
                   onClick={() => handleDelete(confirmDeleteId)}
                   disabled={isCancelling}
-                  className="flex-1 px-4 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors shadow-lg cursor-pointer disabled:opacity-50"
+                  className="flex-1 px-4 py-3 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors cursor-pointer disabled:opacity-50 text-sm"
                 >
                   {isCancelling ? "Cancelling..." : "Yes, Cancel"}
                 </button>
@@ -376,87 +454,14 @@ const ProfileRequests = ({ addresses }) => {
 
         {/* Review Modal */}
         {reviewModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm border">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-surface-primary border border-border-primary rounded-3xl p-6 max-w-md w-full shadow-2xl relative"
-            >
-              <button
-                onClick={() => {
-                  setReviewModalOpen(false);
-                  setRating(0);
-                  setReviewText("");
-                }}
-                className="absolute top-4 right-4 text-zinc-500 hover:text-text-primary transition-colors"
-              >
-                <X size={24} />
-              </button>
-
-              <div className="mb-6">
-                <h3 className="text-2xl font-black text-text-primary mb-1">
-                  Rate your experience
-                </h3>
-                <p className="text-zinc-400 text-sm">
-                  How was the service provided by{" "}
-                  <span className="font-bold text-text-primary">
-                    {selectedBookingForReview?.business?.name ||
-                      "the professional"}
-                  </span>
-                  ?
-                </p>
-              </div>
-
-              {/* Star Rating */}
-              <div className="flex items-center gap-2 mb-6 justify-center">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => setRating(star)}
-                    onMouseEnter={() => setHoverRating(star)}
-                    onMouseLeave={() => setHoverRating(0)}
-                    className="p-1 focus:outline-none transition-transform hover:scale-110"
-                  >
-                    <Star
-                      size={40}
-                      className={`${
-                        star <= (hoverRating || rating)
-                          ? "fill-yellow-400 text-yellow-400"
-                          : "text-zinc-600"
-                      } transition-colors`}
-                    />
-                  </button>
-                ))}
-              </div>
-
-              {/* Review Text */}
-              <div className="mb-6">
-                <label className="block text-sm font-bold text-text-secondary mb-2">
-                  Leave a comment (Optional)
-                </label>
-                <textarea
-                  rows={4}
-                  value={reviewText}
-                  onChange={(e) => setReviewText(e.target.value)}
-                  placeholder="Tell us what you liked or what could be improved..."
-                  className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:border-text-primary transition-colors resize-none font-medium"
-                />
-              </div>
-
-              <button
-                onClick={handleSubmitReview}
-                className="w-full py-3.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md"
-              >
-                Submit Review
-              </button>
-            </motion.div>
-          </div>
+          <ReviewModel
+            selectedBookingForReview={selectedBookingForReview}
+            setReviewModalOpen={setReviewModalOpen}
+            existingReview={existingReviewForEdit}
+          />
         )}
-      </AnimatePresence>
-      {/* Chat Modal */}
-      <AnimatePresence>
+
+        {/* Chat Modal */}
         {activeModal?.type === "chat" && (
           <Chat
             activeModal={activeModal}

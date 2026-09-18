@@ -291,7 +291,7 @@ const AdminSupportTab = () => {
             </button>
             <button
               onClick={handleComposeSubmit}
-              className="px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
+              className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 shadow-lg shadow-black/20 cursor-pointer"
             >
               Send & Create Ticket
             </button>
@@ -401,7 +401,7 @@ const AdminSupportTab = () => {
               />
               <button
                 type="submit"
-                className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl font-bold hover:bg-zinc-800 transition-colors flex items-center gap-1 cursor-pointer"
+                className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted rounded-xl font-bold hover:bg-zinc-800 transition-colors flex items-center gap-1 cursor-pointer"
               >
                 <Send className="w-4 h-4" /> Send
               </button>

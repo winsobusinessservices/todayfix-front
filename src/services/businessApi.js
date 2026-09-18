@@ -66,6 +66,12 @@ export const businessApi = {
     return response.data;
   },
 
+  // POST /api/business/working-schedules/apply-to-days/ (Apply Slots to Days)
+  applySlotsToDays: async (data) => {
+    const response = await api.post("/api/business/working-schedules/apply-to-days/", data);
+    return response.data;
+  },
+
   // POST /api/business/working-schedules/{uuid}/ (Update Slot)
   updateWorkingSchedule: async ({ id, data }) => {
     const response = await api.post(`/api/business/working-schedules/${id}/`, data);

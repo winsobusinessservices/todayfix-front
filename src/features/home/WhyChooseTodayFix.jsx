@@ -68,7 +68,7 @@ const WhyChooseTodayFix = () => {
             className="max-w-xl text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl md:text-6xl"
           >
             More control,
-            <span className="mt-1 block text-brand-primary dark:text-brand-accent">at every step.</span>
+            <span className="mt-1 block text-primary dark:text-brand-dark">at every step.</span>
           </h2>
 
           <p className="mt-7 max-w-lg text-base leading-7 text-text-secondary md:text-lg md:leading-8">
@@ -78,7 +78,7 @@ const WhyChooseTodayFix = () => {
 
           <Link
             to="/services"
-            className="group mt-9 inline-flex items-center gap-3 rounded-full bg-button-primary px-6 py-3.5 text-sm font-bold text-button-primary-text shadow-lg shadow-brand-primary/20 transition-all duration-300 hover:scale-[1.03] hover:bg-button-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-4 focus:ring-offset-[#f7f4ff] dark:focus:ring-offset-[#17131f]"
+            className="group mt-9 inline-flex items-center gap-3 rounded-full btn-primary px-6 py-3.5 text-sm font-bold text-button-primary-text shadow-lg shadow-brand-primary/20 transition-all duration-300 hover:scale-[1.03] hover:bg-button-primary-hover focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-4 focus:ring-offset-[#f7f4ff] dark:focus:ring-offset-[#17131f]"
           >
             Explore services
             <ArrowUpRight

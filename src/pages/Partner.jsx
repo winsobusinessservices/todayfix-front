@@ -19,7 +19,7 @@ const Partner = () => {
           </span>
           <h1 className="text-5xl md:text-7xl font-black text-text-primary tracking-tighter leading-tight mb-6">
             Grow your business <br className="hidden md:block"/>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-900">
+            <span className="text-primary">
               with TodayFix.
             </span>
           </h1>
@@ -29,7 +29,7 @@ const Partner = () => {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link 
               to="/register" 
-              className="w-full sm:w-auto px-8 py-4 bg-surface-dark text-text-inverted rounded-full font-bold transition-transform active:scale-95 shadow-lg shadow-black/10 text-center"
+              className="btn-primary w-full sm:w-auto px-8 py-4 bg-surface-dark text-text-inverted rounded-full font-bold transition-transform active:scale-95 shadow-lg shadow-black/10 text-center"
             >
               Apply to Partner
             </Link>

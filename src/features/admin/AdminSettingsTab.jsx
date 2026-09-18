@@ -174,7 +174,7 @@ const AdminSettingsTab = () => {
         <button 
           onClick={handleSave}
           disabled={isSaving}
-          className="flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-70"
+          className="btn-primary flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-70"
         >
           {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
           {isSaving ? "Saving..." : "Save Changes"}
@@ -394,7 +394,7 @@ const AdminSettingsTab = () => {
 
               <button 
                 type="submit" 
-                className="px-5 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl text-sm hover:bg-zinc-800 transition-colors cursor-pointer"
+                className="btn-primary px-5 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl text-sm hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 Save Notification Settings
               </button>
@@ -516,7 +516,7 @@ const AdminSettingsTab = () => {
 
               <button 
                 type="submit" 
-                className="px-5 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl text-sm hover:bg-zinc-800 transition-colors cursor-pointer"
+                className="btn-primary px-5 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl text-sm hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 Save Billing Settings
               </button>
@@ -575,7 +575,7 @@ const AdminSettingsTab = () => {
 
               <button 
                 type="submit" 
-                className="px-5 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl text-sm hover:bg-zinc-800 transition-colors cursor-pointer"
+                className="btn-primary px-5 py-2.5 bg-surface-dark text-text-inverted font-bold rounded-xl text-sm hover:bg-zinc-800 transition-colors cursor-pointer"
               >
                 Save Localization Preferences
               </button>
@@ -600,7 +600,7 @@ const AdminSettingsTab = () => {
             </button>
             <button
               onClick={handleAddRole}
-              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer"
+              className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer"
             >
               Create Role
             </button>
@@ -647,7 +647,7 @@ const AdminSettingsTab = () => {
             </button>
             <button
               onClick={handleAddApiKey}
-              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer"
+              className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer"
             >
               Generate Key
             </button>

@@ -56,6 +56,7 @@ import AdminUsersTab from "../features/admin/AdminUsersTab";
 import AdminProvidersTab from "../features/admin/AdminProvidersTab";
 import AdminBusinessesTab from "../features/admin/AdminBusinessesTab";
 import AdminServicesTab from "../features/admin/AdminServicesTab";
+import AdminSubcategoriesTab from "../features/admin/AdminSubcategoriesTab";
 import AdminCategoriesTab from "../features/admin/AdminCategoriesTab";
 import AdminCitiesTab from "../features/admin/AdminCitiesTab";
 import AdminReviewsTab from "../features/admin/AdminReviewsTab";
@@ -83,7 +84,6 @@ function AppRoutes() {
         <Route path="/search" element={<Search />} />
         <Route path="/services" element={<Services />} />
         <Route path="/services/:slug" element={<Service />} />
-        <Route path="/track/instant/:id" element={<InstantBookingTracking />} />
         <Route path="/vendor/:id" element={<Vendor />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -114,6 +114,7 @@ function AppRoutes() {
           <Route path="/list-business" element={<ListBusinessPage />} />
           <Route path="/list-business/documents" element={<BusinessDocumentsPage />} />
           <Route path="/verification-pending" element={<VerificationPendingPage />} />
+          <Route path="/track/instant/:id" element={<InstantBookingTracking />} />
         </Route>
       </Route>
 
@@ -147,8 +148,9 @@ function AppRoutes() {
           
           {/* Operations */}
           <Route path="requests" element={<AdminRequestsTab />} />
-          <Route path="services" element={<AdminServicesTab />} />
           <Route path="categories" element={<AdminCategoriesTab />} />
+          <Route path="subcategories" element={<AdminSubcategoriesTab />} />
+          <Route path="services" element={<AdminServicesTab />} />
           <Route path="cities" element={<AdminCitiesTab />} />
           <Route path="reviews" element={<AdminReviewsTab />} />
           

@@ -16,6 +16,7 @@ import {
   Users,
   UserCheck,
   Clock,
+  TypeIcon,
 } from "lucide-react";
 import Logo from "../components/brand/Logo";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -47,52 +48,33 @@ const TEAM_MANAGEMENT_ITEMS = new Set(["employees", "assignments"]);
 const OwnerDashboard = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [showMockPopup, setShowMockPopup] = useState(false); 
+  const [showMockPopup, setShowMockPopup] = useState(false);
   const [notificationData, setNotificationData] = useState(null);
-  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] = useState(false);
+  const [isNotificationDrawerOpen, setIsNotificationDrawerOpen] =
+    useState(false);
   const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
   const accessToken = useUserStore((state) => state.accessToken);
-  
+
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const refreshToken = useUserStore((state) => state.refreshToken);
   const clearAuth = useUserStore((state) => state.clearAuth);
 
-  // WebSocket Integration for Notifications
-  // useEffect(() => {
-  //   if (!accessToken) return;
-  //   let wsBaseUrl = IMAGE_URL || "http://localhost:8000";
-  //   if (wsBaseUrl.startsWith("https://")) {
-  //     wsBaseUrl = wsBaseUrl.replace("https://", "wss://");
-  //   } else if (wsBaseUrl.startsWith("http://")) {
-  //     wsBaseUrl = wsBaseUrl.replace("http://", "ws://");
-  //   }
-
-  //   const ws = new WebSocket(`${wsBaseUrl}/ws/notifications/?token=${accessToken}`);
-
-  //   ws.onmessage = (event) => {
-  //     try {
-  //       const data = JSON.parse(event.data);
-  //       if (data.type === "new_booking") {
-  //         setNotificationData(data.data);
-  //         setShowMockPopup(true);
-  //       }
-  //     } catch (err) {
-  //       console.error("Error parsing notification ws data:", err);
-  //     }
-  //   };
-
-  //   return () => {
-  //     ws.close();
-  //   };
-  // }, [accessToken]);
-
-  const {data: profilesData, error, isLoading} = useQuery({
+  const {
+    data: profilesData,
+    error,
+    isLoading,
+  } = useQuery({
     queryKey: ["businessProfiles"],
-    queryFn: businessApi.getProfiles
-  })
+    queryFn: businessApi.getProfiles,
+  });
 
-  const profile = Array.isArray(profilesData) ? profilesData[0] : (profilesData?.data?.[0] || profilesData?.results?.[0] || profilesData || {});
+  const profile = Array.isArray(profilesData)
+    ? profilesData[0]
+    : profilesData?.data?.[0] ||
+      profilesData?.results?.[0] ||
+      profilesData ||
+      {};
   const currentBusinessType =
     profile?.business_type?.toUpperCase() || "INDIVIDUAL";
   const sidebarItems = SIDEBAR_ITEMS.filter(
@@ -108,29 +90,43 @@ const OwnerDashboard = () => {
     enabled: !isLoading && currentBusinessType !== "INDIVIDUAL",
     retry: false,
   });
-  const employeesList = Array.isArray(employeesData) ? employeesData : employeesData?.results || [];
-  const ownerEmployeeUuid = employeesList.length > 0 ? employeesList[0].employee_uuid : null;
+  const employeesList = Array.isArray(employeesData)
+    ? employeesData
+    : employeesData?.results || [];
+  const ownerEmployeeUuid =
+    employeesList.length > 0 ? employeesList[0].employee_uuid : null;
 
   // --- Availability Logic ---
-  const { data: availabilityData, isLoading: availabilityLoading, error: availabilityError } = useQuery({
+  const {
+    data: availabilityData,
+    isLoading: availabilityLoading,
+    error: availabilityError,
+  } = useQuery({
     queryKey: ["businessAvailability", ownerEmployeeUuid, currentBusinessType],
-    queryFn: () => businessApi.getAvailability(currentBusinessType === "INDIVIDUAL" ? null : ownerEmployeeUuid),
+    queryFn: () =>
+      businessApi.getAvailability(
+        currentBusinessType === "INDIVIDUAL" ? null : ownerEmployeeUuid,
+      ),
     enabled:
       !isLoading &&
       (currentBusinessType === "INDIVIDUAL" || !!ownerEmployeeUuid),
   });
 
   let currentAvailability = null;
-  const list = Array.isArray(availabilityData) 
-    ? availabilityData 
-    : availabilityData?.data || (availabilityData?.provider_availability_uuid ? [availabilityData] : []);
-    
+  const list = Array.isArray(availabilityData)
+    ? availabilityData
+    : availabilityData?.data ||
+      (availabilityData?.provider_availability_uuid ? [availabilityData] : []);
+
   if (list.length > 0) {
-    currentAvailability = list.find(
-      a => a.employee_uuid === ownerEmployeeUuid || a.employee === ownerEmployeeUuid
-    ) || list[0]; // fallback to the first one if the ID field name is different
+    currentAvailability =
+      list.find(
+        (a) =>
+          a.employee_uuid === ownerEmployeeUuid ||
+          a.employee === ownerEmployeeUuid,
+      ) || list[0]; // fallback to the first one if the ID field name is different
   }
-  
+
   const isAvailable = currentAvailability?.status === "AVAILABLE";
 
   const { mutate: createAvailability, isPending: creatingAvailability } =
@@ -163,15 +159,19 @@ const OwnerDashboard = () => {
       return;
     }
     const newStatus = isAvailable ? "UNAVAILABLE" : "AVAILABLE";
-    
+
     // For INDIVIDUAL, omit employee_uuid
-    const payload = currentBusinessType === "INDIVIDUAL" 
-      ? { status: newStatus } 
-      : { status: newStatus, employee_uuid: ownerEmployeeUuid };
+    const payload =
+      currentBusinessType === "INDIVIDUAL"
+        ? { status: newStatus }
+        : { status: newStatus, employee_uuid: ownerEmployeeUuid };
 
     if (currentAvailability) {
       updateAvailability({
-        id: currentAvailability.provider_availability_uuid || currentAvailability.id || currentAvailability.uuid,
+        id:
+          currentAvailability.provider_availability_uuid ||
+          currentAvailability.id ||
+          currentAvailability.uuid,
         data: payload,
       });
     } else {
@@ -191,7 +191,12 @@ const OwnerDashboard = () => {
     </Link>
   );
 
-  const { mutate, isPending, isError, error: logoutError } = useMutation({
+  const {
+    mutate,
+    isPending,
+    isError,
+    error: logoutError,
+  } = useMutation({
     mutationFn: logout,
     onSuccess: (response) => {
       if (response.success) {
@@ -249,7 +254,7 @@ const OwnerDashboard = () => {
                 onClick={() => setIsMobileMenuOpen(false)}
                 className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl transition-all duration-300 font-bold text-sm ${
                   isActive
-                    ? "sidebar-link-active scale-[0.98]"
+                    ? "btn-primary sidebar-link-active scale-[0.98]"
                     : "text-text-secondary hover:bg-surface-secondary hover:text-text-primary"
                 }`}
               >
@@ -295,18 +300,18 @@ const OwnerDashboard = () => {
             </div>
             <div>
               <h1 className="text-lg md:text-xl font-black text-text-primary tracking-tight">
-                AC Experts
+                {profile?.business_name || "Company Name"}
               </h1>
               <div className="hidden sm:flex items-center gap-1 text-xs font-bold text-zinc-500 mt-0.5">
-                <CheckCircle2 className="w-3 h-3 text-emerald-500" /> Verified
-                Pro Vendor
+                {/* <CheckCircle2 className="w-3 h-3 text-emerald-500" />{" "} */}
+                <TypeIcon size={12} />- {profile?.business_type}
               </div>
             </div>
           </div>
 
           <div className="flex items-center gap-4">
             {/* Store Status Toggle */}
-            <div className="hidden sm:flex items-center gap-3 bg-surface-secondary px-3 py-1.5 rounded-full border border-border-primary shadow-sm mr-2">
+            <div className="sm:flex items-center gap-3 bg-surface-secondary px-3 py-1.5 rounded-full border border-border-primary shadow-sm mr-2">
               <span
                 className={`text-xs font-bold tracking-wide uppercase ${isAvailable ? "text-green-600" : "text-zinc-500"}`}
               >
@@ -364,8 +369,10 @@ const OwnerDashboard = () => {
         onClose={() => setIsNotificationDrawerOpen(false)}
         onUnreadCountChange={setUnreadNotificationCount}
         onRealtimeNotification={(message) => {
-          if (message.type === "new_booking") {
-            setNotificationData(message.data);
+          const notif = message.notification || message;
+          const type = notif.notification_type || message.type;
+          if (type === "new_booking" || type === "INSTANT_BOOKING_OFFER") {
+            setNotificationData(notif);
             setShowMockPopup(true);
           }
         }}
@@ -392,21 +399,32 @@ const OwnerDashboard = () => {
                 </div>
 
                 <h2 className="text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2 animate-pulse">
-                  New Service Request
+                  {notificationData?.notification_type ===
+                  "INSTANT_BOOKING_OFFER"
+                    ? "Instant Booking Offer"
+                    : "New Service Request"}
                 </h2>
                 <h3 className="text-3xl font-black text-text-primary tracking-tight mb-2">
-                  {notificationData?.service_title || "New Service"}
+                  {notificationData?.service_title ||
+                    notificationData?.title ||
+                    "New Service"}
                 </h3>
                 <p className="text-sm font-medium text-zinc-500 mb-8">
-                  {notificationData?.morphed_location || "Location pending"}
+                  {notificationData?.morphed_location ||
+                    notificationData?.message ||
+                    "Location pending"}
                 </p>
 
-                <div className="p-5 mb-8">
-                  <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">
-                    Guaranteed Payout
-                  </p>
-                  <p className="text-5xl font-black text-text-primary">{notificationData?.payout || "---"}</p>
-                </div>
+                {notificationData?.payout && (
+                  <div className="p-5 mb-8">
+                    <p className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-1">
+                      Guaranteed Payout
+                    </p>
+                    <p className="text-5xl font-black text-text-primary">
+                      {notificationData.payout}
+                    </p>
+                  </div>
+                )}
 
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button
@@ -429,24 +447,6 @@ const OwnerDashboard = () => {
           </div>
         )}
       </AnimatePresence>
-
-      {/* Dev Tool: Trigger Mock Popup */}
-      <div className="fixed bottom-4 left-4 z-50 flex flex-col gap-2">
-        {/* <button 
-            onClick={() => setIsVerified(!isVerified)}
-            className={`text-[10px] font-mono px-2 py-1 rounded-md opacity-50 hover:opacity-100 transition-opacity font-bold ${isVerified ? 'bg-orange-500 text-white' : 'bg-emerald-500 text-white'}`}
-            title="Toggle Verification State"
-          >
-            {isVerified ? "Revoke Verification" : "Verify Account"}
-          </button> */}
-        <button
-          onClick={() => setShowMockPopup(true)}
-          className="text-[10px] font-mono bg-zinc-800 text-white px-2 py-1 rounded-md opacity-50 hover:opacity-100 transition-opacity"
-          title="Simulate WebSocket Ping from Admin"
-        >
-          Ping Websocket
-        </button>
-      </div>
     </div>
   );
 };

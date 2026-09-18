@@ -14,7 +14,7 @@ const PricingComponent = () => {
       {/* Header Section */}
       <h2 className="text-4xl md:text-5xl lg:text-[56px] font-extrabold text-center text-text-primary leading-[1.15] tracking-tight mb-10">
         Simple, transparent <br className="hidden sm:block" />
-        <span className="text-brand-primary dark:text-brand-accent">pricing plans.</span>
+        <span className="text-primary">pricing plans.</span>
       </h2>
 
       {/* Toggle Switch */}

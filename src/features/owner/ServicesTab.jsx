@@ -142,23 +142,24 @@ const ServicesTab = () => {
   });
 
   const toggleService = (service) => {
+    const payload = {
+      name: service.name,
+      description: service.description,
+      price: service.price,
+      duration: service.duration,
+      cat_uuid: service.category?.cat_uuid || catUuid,
+      subCat_uuid:
+        service.subcategory?.subCat_uuid || subCategories[0]?.subCat_uuid,
+      is_active: !service.is_active,
+    };
+
+    if (!isIndividual) {
+      payload.required_employees = service.required_employees || 1;
+    }
+
     updateService({
       id: service.service_uuid,
-      data: {
-        name: service.name,
-        description: service.description,
-        price: service.price,
-        duration: service.duration,
-        // The API currently expects this value even though individuals do not
-        // manage staff. Keep it internal and default individual services to 1.
-        required_employees: isIndividual
-          ? 1
-          : service.required_employees || 1,
-        cat_uuid: service.category?.cat_uuid || catUuid,
-        subCat_uuid:
-          service.subcategory?.subCat_uuid || subCategories[0]?.subCat_uuid,
-        is_active: !service.is_active,
-      },
+      data: payload,
     });
   };
 
@@ -201,13 +202,14 @@ const ServicesTab = () => {
       description: formData.description,
       price: formData.price.toString(),
       duration: parseInt(formData.duration),
-      required_employees: isIndividual
-        ? 1
-        : parseInt(formData.required_employees),
       cat_uuid: catUuid,
       subCat_uuid: formData.subCat_uuid,
       is_active: formData.is_active,
     };
+
+    if (!isIndividual) {
+      payload.required_employees = parseInt(formData.required_employees);
+    }
 
     if (editingId) {
       updateService({ id: editingId, data: payload });
@@ -250,7 +252,7 @@ const ServicesTab = () => {
 
         <button
           onClick={openAddModal}
-          className="flex items-center gap-2 px-5 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md cursor-pointer"
+          className="btn-primary flex items-center gap-2 px-5 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md cursor-pointer"
         >
           <Plus size={20} />
           Add New Service
@@ -506,7 +508,7 @@ const ServicesTab = () => {
                   <button
                     type="submit"
                     disabled={isCreating || isUpdating}
-                    className="flex-1 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md disabled:opacity-50 cursor-pointer"
+                    className="btn-primary flex-1 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md disabled:opacity-50 cursor-pointer"
                   >
                     {isCreating || isUpdating ? "Saving..." : "Save Service"}
                   </button>

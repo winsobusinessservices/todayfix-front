@@ -175,7 +175,7 @@ const AdminNotificationsTab = () => {
             </button>
             <button
               onClick={handleCreateCampaign}
-              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer flex items-center gap-2"
+              className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer flex items-center gap-2"
             >
               <Send className="w-4 h-4" /> Send Campaign
             </button>

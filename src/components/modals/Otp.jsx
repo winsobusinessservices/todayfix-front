@@ -28,8 +28,6 @@ const Otp = ({
           <p className="text-sm text-zinc-400 mb-6">
             Ask the customer for the 6-digit PIN displayed on their dashboard to
             mark this job as complete. <br />
-            <br />
-            (Hint for demo: Use 1234)
           </p>
 
           <input
@@ -63,7 +61,7 @@ const Otp = ({
             <button
               onClick={handleVerifyOtp}
               disabled={isLoading}
-              className="flex-1 py-3 text-center bg-surface-dark text-white font-bold rounded-xl hover:opacity-90 transition-colors shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+              className="btn-primary flex-1 py-3 text-center bg-surface-dark text-white font-bold rounded-xl hover:opacity-90 transition-colors shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? "Verifying..." : "Verify"}
             </button>

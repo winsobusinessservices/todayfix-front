@@ -47,7 +47,7 @@ const Blog = () => {
       {/* Header */}
       <section className="pt-32 pb-16 px-6 bg-surface-primary border-b border-border-primary text-center">
         <h1 className="text-4xl md:text-6xl font-black text-text-primary tracking-tight mb-4">
-          TodayFix <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-900">Journal</span>
+          TodayFix <span className="text-primary">Journal</span>
         </h1>
         <p className="text-lg text-text-secondary font-medium max-w-2xl mx-auto">
           Insights on home improvement, pro highlights, and news from our team.

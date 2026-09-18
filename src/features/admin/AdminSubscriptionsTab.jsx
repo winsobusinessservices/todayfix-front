@@ -192,7 +192,7 @@ const AdminSubscriptionsTab = () => {
             </button>
             <button
               onClick={handleCreatePlan}
-              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer flex items-center gap-2"
+              className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer flex items-center gap-2"
             >
               <Plus className="w-4 h-4" /> Create Plan
             </button>
@@ -263,7 +263,7 @@ const AdminSubscriptionsTab = () => {
             </button>
             <button
               onClick={handleSaveEditPlan}
-              className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer"
+              className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold hover:bg-zinc-800 cursor-pointer"
             >
               Save Changes
             </button>

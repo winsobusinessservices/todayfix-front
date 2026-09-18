@@ -513,7 +513,7 @@ const Vendor = () => {
                 <button
                   type="submit"
                   disabled={!newReview.text.trim()}
-                  className="flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform disabled:opacity-50"
+                  className="btn-primary flex-1 px-4 py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform disabled:opacity-50"
                 >
                   Post Review
                 </button>

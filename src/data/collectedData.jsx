@@ -201,14 +201,14 @@ export const servicesData = [
     name: "Fabrication",
     icon: (
       <svg
-        fill="#000000"
+        fill="none"
         viewBox="0 0 512 512"
         enableBackground="new 0 0 512 512"
         id="Screw_x5F_bolts"
         version="1.1"
-        stroke="#000000"
-        strokeWidth="6.656000000000001"
-        className="h-10 w-10"
+        stroke="currentcolor"
+        strokeWidth={1.5}
+        className="h-8 w-8 md:h-10 md:w-10"
       >
         <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
         <g

@@ -15,7 +15,7 @@ const CallToAction = () => {
       >
         <h2 className="text-5xl md:text-6xl lg:text-7xl font-extrabold text-text-primary leading-[1.05] tracking-tight mb-6 z-10 relative">
           Ready to Get Things <br className="hidden md:block" />
-          <span className="text-brand-primary dark:text-brand-accent">Fixed?</span>
+          <span className="text-primary">Fixed?</span>
         </h2>
         <p className="text-lg md:text-xl text-text-secondary max-w-xl leading-relaxed mb-10 z-10 relative">
           Join the most trusted home services platform in India. Book verified

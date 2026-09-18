@@ -556,7 +556,7 @@ const BusinessDocumentsPage = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-surface-dark text-text-inverted font-black text-lg py-5 rounded-xl hover:scale-[0.98] transition-transform shadow-xl disabled:opacity-70 disabled:hover:scale-100"
+            className="btn-primary w-full bg-surface-dark text-text-inverted font-black text-lg py-5 rounded-xl hover:scale-[0.98] transition-transform shadow-xl disabled:opacity-70 disabled:hover:scale-100"
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center gap-3">

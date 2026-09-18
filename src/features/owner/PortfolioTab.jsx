@@ -236,7 +236,16 @@ const PortfolioTab = () => {
       id: 5,
       label: "Location",
       value: details?.location?.includes("<iframe")
-        ? "Map Location Set"
+        ? (
+            <div className="w-full rounded-xl overflow-hidden border border-border-primary mt-2">
+              <div
+                className="w-full h-48"
+                dangerouslySetInnerHTML={{
+                  __html: details.location.replace('height="300"', 'height="100%"'),
+                }}
+              />
+            </div>
+          )
         : details?.location || "Location Not Added",
       editKey: "location",
       icon: <IconLocation className="size-5" />,
@@ -390,7 +399,7 @@ const PortfolioTab = () => {
                       <button
                         onClick={handleSave}
                         disabled={isSaving}
-                        className="flex items-center gap-2 text-sm font-bold text-text-inverted bg-surface-dark hover:bg-zinc-800 transition-colors px-3 py-1.5 rounded-full disabled:opacity-50"
+                        className="btn-primary flex items-center gap-2 text-sm font-bold text-text-inverted bg-surface-dark hover:bg-zinc-800 transition-colors px-3 py-1.5 rounded-full disabled:opacity-50"
                       >
                         {isSaving ? (
                           <Loader2 className="w-4 h-4 animate-spin" />
@@ -403,11 +412,15 @@ const PortfolioTab = () => {
                   )}
                 </div>
 
-                <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-6">
                   {contactInfo.map((info) => (
                     <div
                       key={info.id}
-                      className="flex items-center justify-between"
+                      className={`flex ${
+                        info.editKey === "location"
+                          ? "flex-col items-start gap-3"
+                          : "items-center justify-between"
+                      }`}
                     >
                       <div className="flex items-center gap-3 text-zinc-400">
                         {info.icon}
@@ -418,12 +431,24 @@ const PortfolioTab = () => {
 
                       {isEditing && info.editKey ? (
                         info.editKey === "location" ? (
-                          <button
-                            onClick={() => setIsMapOpen(true)}
-                            className="text-text-primary font-semibold text-[15px] bg-surface-secondary border border-border-primary rounded-lg px-3 py-1 hover:border-text-primary transition-colors text-right w-1/2"
-                          >
-                            Select Map Location
-                          </button>
+                          <div className="flex flex-col items-end gap-2 w-full">
+                            {details?.location?.includes("<iframe") && (
+                              <div className="w-full h-48 rounded-xl overflow-hidden border border-border-primary">
+                                <div
+                                  className="w-full h-full"
+                                  dangerouslySetInnerHTML={{
+                                    __html: details.location.replace('height="300"', 'height="100%"'),
+                                  }}
+                                />
+                              </div>
+                            )}
+                            <button
+                              onClick={() => setIsMapOpen(true)}
+                              className="text-text-primary font-semibold text-[15px] bg-surface-secondary border border-border-primary rounded-lg px-4 py-2 hover:border-text-primary transition-colors text-center w-full"
+                            >
+                              {details?.location?.includes("<iframe") ? "Change Location" : "Select Map Location"}
+                            </button>
+                          </div>
                         ) : (
                           <input
                             type={info.editKey === "email" ? "email" : "text"}
@@ -438,7 +463,7 @@ const PortfolioTab = () => {
                           />
                         )
                       ) : (
-                        <div className="text-text-primary font-semibold text-[15px]">
+                        <div className={`text-text-primary font-semibold text-[15px] ${info.editKey === 'location' ? 'w-full' : ''}`}>
                           {isEditing
                             ? info.editKey === null
                               ? info.value

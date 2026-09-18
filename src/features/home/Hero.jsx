@@ -23,7 +23,7 @@ const Hero = () => {
         <div className="min-w-0 flex flex-col items-start space-y-7 sm:space-y-10">
           <h1 className="max-w-full break-words text-4xl sm:text-6xl md:text-7xl lg:text-[80px] font-extrabold text-text-primary tracking-tight leading-[1.05]">
             Find Verified <br />
-            <div className="relative max-w-full overflow-hidden my-2">
+            <div className="relative max-w-full overflow-hidden my-1">
               <AnimatePresence mode="popLayout">
                 <motion.span
                   key={currentIndex}
@@ -36,7 +36,7 @@ const Hero = () => {
                     stiffness: 120,
                     damping: 20,
                   }}
-                  className="block max-w-full break-words text-brand-primary origin-bottom sm:text-6xl"
+                  className="hero-shimmer-text block max-w-full break-words p-2 origin-bottom sm:text-6xl"
                 >
                   {services?.[currentIndex]?.name}
                 </motion.span>
@@ -85,7 +85,7 @@ const Hero = () => {
             className="absolute w-[320px] h-[320px] rounded-full border border-dashed border-border-tertiary flex items-center justify-center"
           >
             <div className="w-64 h-64 rounded-full border border-border-primary flex items-center justify-center">
-              <div className="w-40 h-40 bg-surface-dark rounded-full flex items-center justify-center shadow-2xl shadow-black/20">
+              <div className="w-40 h-40 btn-primary rounded-full flex items-center justify-center shadow-2xl shadow-black/20">
                 <span className="text-text-inverted font-extrabold tracking-widest uppercase text-sm">
                   TodayFix
                 </span>

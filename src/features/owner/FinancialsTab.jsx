@@ -71,7 +71,7 @@ const FinancialsTab = () => {
           </div>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="w-full py-3 bg-surface-dark text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md relative z-10"
+            className="w-full py-3 btn-primary hover:btn-primary-hover text-text-inverted font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md relative z-10"
           >
             Withdraw Funds
           </button>
@@ -192,7 +192,7 @@ const FinancialsTab = () => {
                 <button 
                   type="submit"
                   disabled={isProcessing || isSuccess || !withdrawAmount || parseInt(withdrawAmount) > balance}
-                  className="w-full py-4 bg-surface-dark text-text-inverted font-bold text-lg rounded-xl hover:scale-[0.98] transition-transform shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
+                  className="btn-primary w-full py-4 hover:btn-primary-hover text-text-inverted font-bold text-lg rounded-xl hover:scale-[0.98] transition-transform shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                 >
                   {isProcessing ? (
                      <span className="w-6 h-6 border-2 border-text-inverted border-t-transparent rounded-full animate-spin"></span>

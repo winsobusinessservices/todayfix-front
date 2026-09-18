@@ -447,7 +447,7 @@ const EmployeesTab = () => {
             <button
               type="submit"
               disabled={isCreating}
-              className="px-6 py-2.5 bg-text-primary text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-lg disabled:opacity-50 cursor-pointer"
+              className="btn-primary px-6 py-2.5 bg-text-primary text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-lg disabled:opacity-50 cursor-pointer"
             >
               {isCreating ? "Adding..." : "Add Employee"}
             </button>
@@ -547,7 +547,7 @@ const EmployeesTab = () => {
               <button
                 type="submit"
                 disabled={isUpdating}
-                className="px-6 py-2.5 bg-text-primary text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-lg disabled:opacity-50 cursor-pointer"
+                className="btn-primary px-6 py-2.5 bg-text-primary text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-lg disabled:opacity-50 cursor-pointer"
               >
                 {isUpdating ? "Saving..." : "Save Changes"}
               </button>

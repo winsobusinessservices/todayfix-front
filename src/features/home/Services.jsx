@@ -62,7 +62,7 @@ const Services = () => {
             className="text-4xl md:text-6xl font-extrabold text-text-primary tracking-tight leading-tight"
           >
             What Do You Need{" "}
-            <span className="text-brand-primary dark:text-brand-accent">
+            <span className="text-primary dark:text-brand-accent">
               Fixed?
             </span>
           </motion.h3>
@@ -185,7 +185,7 @@ const Services = () => {
                       <div className="absolute -right-12 -top-12 h-24 w-24 rounded-full bg-gradient-to-br from-brand-soft to-transparent opacity-50 transition-all duration-500 group-hover:from-brand-primary group-hover:opacity-20" />
 
                       {/* Icon */}
-                      <div className="relative z-10 rounded-xl bg-surface-accent p-3 text-brand-primary shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:bg-button-primary group-hover:text-button-primary-text group-hover:shadow-card sm:rounded-2xl sm:p-4 md:p-5">
+                      <div className="service-icon-hover relative z-10 rounded-xl bg-surface-accent p-3 text-brand-primary shadow-sm transition-all duration-500 group-hover:scale-110 group-hover:text-button-primary-text group-hover:shadow-card sm:rounded-2xl sm:p-4 md:p-5">
                         {/* <Wrench className="w-8 h-8 md:w-10 md:h-10" /> */}
                         {service.icon}
                       </div>

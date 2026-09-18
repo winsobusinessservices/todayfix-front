@@ -45,7 +45,6 @@ const Service = () => {
   });
 
   const services = servicesData?.results || [];
-  // console.log(services);
 
   if (isLoadingCategories) {
     return (
@@ -66,7 +65,7 @@ const Service = () => {
         </p>
         <Link
           to="/services"
-          className="px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-semibold"
+          className="btn-primary px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-semibold"
         >
           Browse All Services
         </Link>

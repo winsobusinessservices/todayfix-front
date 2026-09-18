@@ -94,7 +94,7 @@ const BecomeProfessional = () => {
           <p className="text-text-secondary font-medium mb-8 max-w-lg mx-auto">Create your professional profile today and join the community.</p>
           <Link 
             to="/register" 
-            className="inline-block px-8 py-4 bg-surface-dark text-text-inverted rounded-full font-bold transition-transform active:scale-95 shadow-md"
+            className="btn-primary inline-block px-8 py-4 bg-surface-dark text-text-inverted rounded-full font-bold transition-transform active:scale-95 shadow-md"
           >
             Create Your Account
           </Link>

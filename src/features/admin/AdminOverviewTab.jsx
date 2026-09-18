@@ -198,7 +198,7 @@ const AdminOverviewTab = () => {
           <button
             onClick={handleExportReport}
             disabled={isExporting}
-            className="px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50"
+            className="btn-primary px-4 py-2 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer disabled:opacity-50"
           >
             {isExporting ? "Exporting..." : "Export Report"}
           </button>

@@ -212,7 +212,7 @@ const NotFound = () => {
           >
             <Link
               to="/"
-              className="group relative inline-flex items-center justify-center px-8 py-4 bg-surface-dark text-text-inverted rounded-2xl font-bold text-lg overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl hover:shadow-[0_10px_40px_rgba(0,0,0,0.2)]"
+              className="btn-primary group relative inline-flex items-center justify-center px-8 py-4 bg-surface-dark text-text-inverted rounded-2xl font-bold text-lg overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-xl hover:shadow-[0_10px_40px_rgba(0,0,0,0.2)]"
             >
               {/* Button Hover Shine Effect */}
               <div className="absolute inset-0 -translate-x-full group-hover:animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent z-0"></div>

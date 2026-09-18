@@ -169,7 +169,7 @@ const VerificationPendingPage = () => {
               <button
                 onClick={handleReapply}
                 disabled={isRefreshing}
-                className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-text-primary text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-lg hover:scale-[0.98] cursor-pointer disabled:opacity-50"
+                className="btn-primary w-full flex items-center justify-center gap-2 px-6 py-4 bg-text-primary text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-colors shadow-lg hover:scale-[0.98] cursor-pointer disabled:opacity-50"
               >
                 <RotateCcw size={20} />
                 {isRefreshing ? "Refreshing..." : "Update Details & Re-apply"}

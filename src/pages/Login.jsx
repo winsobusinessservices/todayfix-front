@@ -400,7 +400,7 @@ const Login = () => {
                         value={formData.phone || ""}
                         onChange={handleInputChange}
                         required={loginMethod === "phone"}
-                        placeholder="+1 (555) 000-0000"
+                        placeholder="+91 00000 00000"
                         disabled={otpSent}
                         className={`w-full bg-surface-secondary/50 border border-border-primary text-text-primary rounded-xl py-3 pl-11 pr-4 focus:outline-none focus:border-black focus:ring-4 focus:ring-black/10 transition-all font-medium placeholder-slate-400 ${otpSent ? "opacity-60 cursor-not-allowed" : ""}`}
                       />
@@ -551,7 +551,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isAnyPending}
-                className="w-full mt-6 bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
+                className="btn-primary w-full mt-6 bg-surface-dark text-white font-bold py-3.5 rounded-xl hover:bg-zinc-800 transition-colors shadow-lg shadow-black/10 active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isAnyPending ? (
                   <>

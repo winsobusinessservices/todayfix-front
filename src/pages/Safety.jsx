@@ -32,7 +32,7 @@ const Safety = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-black text-text-primary tracking-tight mb-10">
-              The TodayFix <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-emerald-800">5-Step Check</span>
+              The TodayFix <span className="text-primary">5-Step Check</span>
             </h2>
             <div className="space-y-8">
               {[

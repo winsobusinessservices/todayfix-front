@@ -428,7 +428,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
                   <button
                     type="submit"
                     disabled={isUpdatingProfile}
-                    className="px-8 py-4 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all active:scale-95 flex items-center gap-2 shadow-lg disabled:opacity-70"
+                    className="btn-primary px-8 py-4 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all active:scale-95 flex items-center gap-2 shadow-lg disabled:opacity-70"
                   >
                     {isUpdatingProfile ? "Saving Changes..." : "Save Profile"}
                   </button>
@@ -673,7 +673,7 @@ const ProfileDetails = ({ userData, setUserData }) => {
                     <button
                       onClick={handleSaveNewAddress}
                       disabled={isAddingAddress}
-                      className="px-6 py-3 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all text-sm shadow-md active:scale-95 disabled:opacity-70"
+                      className="btn-primary px-6 py-3 bg-surface-dark text-text-inverted font-black rounded-xl hover:bg-zinc-800 transition-all text-sm shadow-md active:scale-95 disabled:opacity-70"
                     >
                       {isAddingAddress ? "Saving..." : "Save Address"}
                     </button>

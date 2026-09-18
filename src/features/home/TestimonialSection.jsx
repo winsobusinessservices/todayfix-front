@@ -47,7 +47,7 @@ const TestimonialSection = () => {
           {/* Main Title */}
           <h2 className="text-4xl md:text-5xl lg:text-[56px] leading-[1.15] tracking-tight text-text-primary mb-6">
             From our <br className="hidden md:block" />
-            <span className="font-extrabold text-text-muted">community.</span>
+            <span className="font-extrabold text-primary">community.</span>
           </h2>
 
           {/* Subtitle */}

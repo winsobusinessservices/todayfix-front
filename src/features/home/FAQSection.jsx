@@ -32,7 +32,7 @@ const FAQSection = () => {
             transition={{ delay: 0.1 }}
             className="text-4xl md:text-5xl lg:text-[56px] font-extrabold tracking-tight text-text-primary mb-6 leading-[1.15]"
           >
-            Frequently Asked <span className="text-text-muted">Questions.</span>
+            Frequently Asked <span className="text-primary">Questions.</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 10 }}

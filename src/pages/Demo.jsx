@@ -267,9 +267,9 @@ const Demo = () => {
               <div className="space-y-4 relative z-10">
                 <a
                   href="tel:+919939958616"
-                  className="w-full flex items-center justify-between px-6 py-4 bg-surface-dark hover:bg-zinc-800 text-text-inverted font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
+                  className="btn-primary w-full flex items-center justify-between px-6 py-4 bg-surface-dark hover:bg-zinc-800 text-text-inverted font-black rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-md"
                 >
-                  <span>Call Now</span>
+                  <span>Call +91 99399 58616</span>
                   <Phone className="w-5 h-5" />
                 </a>
 
@@ -366,7 +366,7 @@ const Demo = () => {
               ) : (
                 <button
                   type="submit"
-                  className="w-full mt-2 py-4 bg-text-primary text-surface-primary font-black rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-lg flex items-center justify-center gap-2"
+                  className="btn-primary w-full mt-2 py-4 bg-text-primary text-surface-primary font-black rounded-xl hover:scale-[1.02] active:scale-[0.98] transition-transform shadow-lg flex items-center justify-center gap-2"
                 >
                   Find Rides
                   <ArrowRight className="w-5 h-5" />

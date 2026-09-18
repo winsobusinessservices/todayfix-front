@@ -190,7 +190,7 @@ const MapPicker = ({ isOpen, onClose, onConfirm }) => {
             <button
               onClick={handleConfirm}
               disabled={!position}
-              className="w-full sm:w-auto px-6 py-3.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed flex-shrink-0"
+              className="btn-primary w-full sm:w-auto px-6 py-3.5 bg-surface-dark text-text-inverted font-bold rounded-xl hover:bg-zinc-800 transition-all shadow-md active:scale-95 disabled:opacity-50 disabled:active:scale-100 disabled:cursor-not-allowed flex-shrink-0"
             >
               Confirm Location
             </button>

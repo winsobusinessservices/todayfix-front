@@ -232,7 +232,7 @@ const AdvancedSearch = () => {
           {/* Search Button (Mobile Only) */}
           <button
             type="submit"
-            className="btn-primary md:hidden w-full mt-2 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-transform duration-300 active:scale-95 shadow-md shadow-black/20"
+            className="btn-primary text-white md:hidden w-full mt-2 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-transform duration-300 active:scale-95 shadow-md shadow-black/20"
           >
             <svg
               className="w-5 h-5"

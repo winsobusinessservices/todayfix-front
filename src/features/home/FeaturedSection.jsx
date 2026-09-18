@@ -21,7 +21,7 @@ const FeaturedSection = () => {
           <div className="max-w-full flex md:items-center md:justify-between gap-6 flex-col md:flex-row">
             <h2 className="text-4xl text-center md:text-5xl lg:text-6xl font-extrabold text-text-primary  tracking-tight leading-tight">
               Featured
-              <span className="text-brand-primary"> Businesses.</span>
+              <span className="text-primary"> Businesses.</span>
             </h2>
 
              <button

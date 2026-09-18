@@ -14,12 +14,31 @@ import { useUserStore } from "../../store/userStore";
 import { popup } from "../pop-up/pop-up";
 import ThemeToggle from "../ui/ThemeToggle";
 
-
 const MENU_ITEMS = [
-  { label: "My Requests", description: "Track active bookings", icon: ClipboardList, to: "/profile?tab=requests" },
-  { label: "Service History", description: "View completed services", icon: History, to: "/profile?tab=history" },
-  { label: "My Reviews", description: "Manage your feedback", icon: Star, to: "/profile?tab=reviews" },
-  { label: "Profile & Addresses", description: "Update personal details", icon: MapPinHouse, to: "/profile?tab=profile" },
+  {
+    label: "Scheduled Booking",
+    description: "Track active bookings",
+    icon: ClipboardList,
+    to: "/profile?tab=schedule",
+  },
+  {
+    label: "Instant Booking",
+    description: "View completed services",
+    icon: History,
+    to: "/profile?tab=instant",
+  },
+  {
+    label: "My Reviews",
+    description: "Manage your feedback",
+    icon: Star,
+    to: "/profile?tab=reviews",
+  },
+  {
+    label: "Profile & Addresses",
+    description: "Update personal details",
+    icon: MapPinHouse,
+    to: "/profile?tab=profile",
+  },
 ];
 
 const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
@@ -33,7 +52,8 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
   const lastName = user?.lastName || user?.last_name || "Account";
   const email = user?.email || user?.user?.email || "Manage your account";
   const profileImage = user?.profileImage || user?.profile_image;
-  const initials = `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase();
+  const initials =
+    `${firstName?.[0] || ""}${lastName?.[0] || ""}`.toUpperCase();
 
   useEffect(() => {
     if (!open) return undefined;
@@ -82,9 +102,11 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
         aria-label="Open profile menu"
         aria-haspopup="menu"
         aria-expanded={open}
-        className={mobile
-          ? "flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-surface-primary px-4 py-2 text-sm font-bold text-text-primary shadow-sm ring-1 ring-black/5 transition-colors hover:bg-surface-secondary"
-          : "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-text-primary transition-colors hover:bg-surface-secondary"}
+        className={
+          mobile
+            ? "flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-surface-primary px-4 py-2 text-sm font-bold text-text-primary shadow-sm ring-1 ring-black/5 transition-colors hover:bg-surface-secondary"
+            : "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-text-primary transition-colors hover:bg-surface-secondary"
+        }
       >
                           <svg viewBox="0 0 16 16" fill="currentColor" height={30}>
                     <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
@@ -122,8 +144,14 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-full bg-brand-primary text-sm font-black text-text-inverted">
                   {profileImage ? (
-                    <img src={profileImage} alt={`${firstName} ${lastName}`} className="h-full w-full object-cover" />
-                  ) : initials}
+                    <img
+                      src={profileImage}
+                      alt={`${firstName} ${lastName}`}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    initials
+                  )}
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-black text-text-primary">{firstName} {lastName}</p>
@@ -148,36 +176,43 @@ const ProfileMenu = ({ user, mobile = false, onNavigate }) => {
                       <ItemIcon size={17} />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-bold text-text-primary">{item.label}</span>
-                      <span className="block text-xs font-medium text-text-secondary">{item.description}</span>
+                      <span className="block text-sm font-bold text-text-primary">
+                        {item.label}
+                      </span>
+                      <span className="block text-xs font-medium text-text-secondary">
+                        {item.description}
+                      </span>
                     </span>
-                    <ChevronRight size={16} className="text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-text-primary" />
+                    <ChevronRight
+                      size={16}
+                      className="text-zinc-300 transition-transform group-hover:translate-x-0.5 group-hover:text-text-primary"
+                    />
                   </button>
                 );
               })}
             </div>
 
             <div className="border-t border-border-secondary p-2 flex items-center justify-center">
-            <button
-              onClick={handleLogout}
-              disabled={isPending}
-              className="flex cursor-pointer items-center justify-center gap-2 px-4 py-1 font-bold text-red-500 transition-colors disabled:cursor-wait disabled:opacity-50 lg:py-2"
-            >
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+              <button
+                onClick={handleLogout}
+                disabled={isPending}
+                className="flex cursor-pointer items-center justify-center gap-2 px-4 py-1 font-bold text-red-500 transition-colors disabled:cursor-wait disabled:opacity-50 lg:py-2"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2.5}
-                  d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                />
-              </svg>
-              {isPending ? "Logging out..." : "Logout"}
-            </button>
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                  />
+                </svg>
+                {isPending ? "Logging out..." : "Logout"}
+              </button>
             </div>
           </motion.div>
         )}

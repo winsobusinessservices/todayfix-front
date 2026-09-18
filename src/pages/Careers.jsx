@@ -58,7 +58,7 @@ const Careers = () => {
             </span>
             <h1 className="text-5xl md:text-7xl font-black text-text-primary tracking-tighter leading-tight mb-6">
               Build the future of <br className="hidden md:block" />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-zinc-500 to-zinc-900">
+              <span className="text-primary">
                 local services.
               </span>
             </h1>
@@ -137,7 +137,7 @@ const Careers = () => {
                 </div>
                 <Link
                   to="#"
-                  className="px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-bold hover:bg-zinc-800 transition-colors shadow-sm flex items-center justify-center gap-2 shrink-0"
+                  className="btn-primary px-6 py-3 bg-surface-dark text-text-inverted rounded-xl font-bold hover:bg-zinc-800 transition-colors shadow-sm flex items-center justify-center gap-2 shrink-0"
                 >
                   Apply Now
                 </Link>
