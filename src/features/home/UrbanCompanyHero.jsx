@@ -61,32 +61,32 @@ const smartProducts = [
 
 const UrbanCompanyHero = () => {
   return (
-    <div className="w-full bg-surface-primary pt-10 pb-20">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-surface-primary">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid  gap-12 lg:gap-8 items-start">
           {/* Left Column */}
-          <div className="flex flex-col space-y-8 w-full max-w-xl">
+          <div className="flex flex-col w-full max-w-xl">
             {/* <h1 className="text-4xl md:text-5xl lg:text-[56px] font-bold text-text-primary leading-[1.1] tracking-tight">
               Home services at your doorstep
             </h1> */}
 
             {/* Main Card */}
-            <div className="bg-surface-primary border border-border-primary rounded-[24px] p-6 sm:p-8 shadow-sm">
+            <div className="bg-surface-primary sm:border sm:border-border-primary rounded-lg max-md:my-3 sm:p-6 sm:my-6 sm:shadow-sm">
               {/* What are you looking for */}
               <div className="mb-6">
                 {/* <h3 className="text-xl font-bold text-text-primary mb-6">
                   What are you looking for?
                 </h3> */}
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-4 gap-y-6">
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-3 gap-y-3">
                   {services.map((service, idx) => (
                     <Link
                       key={idx}
                       to="#"
-                      className="flex flex-col items-center text-center group cursor-pointer"
+                      className="flex flex-col items-center text-center group cursor-pointer w-full"
                     >
-                      <div className="relative mb-3">
+                      <div className="relative mb-3 w-full">
                         <div
-                          className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl flex items-center justify-center text-3xl sm:text-4xl ${service.bgColor} group-hover:scale-105 transition-transform duration-200`}
+                          className={`w-full h-16 sm:h-20 rounded-lg flex items-center justify-center text-3xl sm:text-4xl ${service.bgColor} group-hover:scale-105 transition-transform duration-200`}
                         >
                           {service.icon}
                         </div>
@@ -109,16 +109,16 @@ const UrbanCompanyHero = () => {
                 <h3 className="text-xl font-bold text-text-primary mb-6">
                   Native Smart Products
                 </h3>
-                <div className="flex gap-4 sm:gap-6">
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-3 gap-y-3">
                   {smartProducts.map((product, idx) => (
                     <Link
                       key={idx}
                       to="#"
-                      className="flex flex-col items-center text-center group cursor-pointer w-24 sm:w-28"
+                      className="flex flex-col items-center text-center group cursor-pointer w-full"
                     >
-                      <div className="relative mb-3">
+                      <div className="relative mb-3 w-full">
                         <div
-                          className={`w-24 h-20 sm:w-28 sm:h-24 rounded-2xl flex items-center justify-center text-4xl ${product.bgColor} group-hover:scale-105 transition-transform duration-200`}
+                          className={`w-full h-16 sm:h-20 rounded-lg flex items-center justify-center text-4xl ${product.bgColor} group-hover:scale-105 transition-transform duration-200`}
                         >
                           {product.icon}
                         </div>

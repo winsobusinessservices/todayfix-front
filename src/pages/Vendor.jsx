@@ -74,7 +74,7 @@ const Vendor = () => {
     businessPortfolioData?.data ||
     businessPortfolioData ||
     {};
-    // console.log(businessPortfolio);
+  // console.log(businessPortfolio);
 
   const handleSubmitReview = async (e) => {
     e.preventDefault();
@@ -583,9 +583,9 @@ const Vendor = () => {
                   (v) => v,
                 ) && (
                   <div className="bg-surface-primary p-5 md:p-6 rounded-2xl border border-border-secondary shadow-sm flex flex-wrap justify-center gap-3">
-                    {businessPortfolio.social_links.facebook_url && (
+                    {businessPortfolio.social_links.facebook && (
                       <a
-                        href={businessPortfolio.social_links.facebook_url}
+                        href={businessPortfolio.social_links.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2.5 bg-surface-secondary text-text-secondary hover:text-text-primary rounded-lg border border-border-secondary transition-colors"
@@ -594,9 +594,9 @@ const Vendor = () => {
                         <IconBrandFacebook className="w-4 h-4" />
                       </a>
                     )}
-                    {businessPortfolio.social_links.instagram_url && (
+                    {businessPortfolio.social_links.instagram && (
                       <a
-                        href={businessPortfolio.social_links.instagram_url}
+                        href={businessPortfolio.social_links.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2.5 bg-surface-secondary text-text-secondary hover:text-text-primary rounded-lg border border-border-secondary transition-colors"
@@ -605,9 +605,9 @@ const Vendor = () => {
                         <IconBrandInstagram className="w-4 h-4" />
                       </a>
                     )}
-                    {businessPortfolio.social_links.twitter_url && (
+                    {businessPortfolio.social_links.twitter && (
                       <a
-                        href={businessPortfolio.social_links.twitter_url}
+                        href={businessPortfolio.social_links.twitter}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2.5 bg-surface-secondary text-text-secondary hover:text-text-primary rounded-lg border border-border-secondary transition-colors"
@@ -616,9 +616,9 @@ const Vendor = () => {
                         <IconBrandTwitter className="w-4 h-4" />
                       </a>
                     )}
-                    {businessPortfolio.social_links.linkedin_url && (
+                    {businessPortfolio.social_links.linkedin && (
                       <a
-                        href={businessPortfolio.social_links.linkedin_url}
+                        href={businessPortfolio.social_links.linkedin}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="p-2.5 bg-surface-secondary text-text-secondary hover:text-text-primary rounded-lg border border-border-secondary transition-colors"

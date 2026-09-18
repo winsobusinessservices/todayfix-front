@@ -21,7 +21,7 @@ const Hero = () => {
         <AnimatedSearchBar />
       </span>
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-        <div className="min-w-0 flex flex-col items-start space-y-7 sm:space-y-10">
+        <div className="min-w-0 flex flex-col items-start space-y-7 sm:space-y-10 max-md:order-2">
           <h1 className="max-w-full break-words text-4xl sm:text-6xl md:text-7xl lg:text-[80px] font-extrabold text-text-primary tracking-tight leading-[1.05]">
             Find Verified <br />
             <div className="relative max-w-full overflow-hidden my-2">
@@ -79,7 +79,7 @@ const Hero = () => {
             </div>
           </div>
         </div>
-        {/* <div className="relative hidden lg:flex w-full h-[600px] items-center justify-center">
+        <div className="relative hidden lg:flex w-full h-[600px] items-center justify-center">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
@@ -273,8 +273,10 @@ const Hero = () => {
               </div>
             </div>
           </motion.div>
-        </div> */}
-        <UrbanCompanyHero />
+        </div>
+        <span className="md:hidden max-md:order-1 md:py-10">
+          <UrbanCompanyHero />
+        </span>
       </div>
     </div>
   );
