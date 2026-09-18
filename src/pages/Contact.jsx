@@ -224,7 +224,7 @@ const Contact = () => {
                 <div>
                   <h4 className="font-bold text-text-primary">Phone</h4>
                   <p className="text-text-secondary text-sm font-medium mt-1">
-                    +91 84949 39493
+                    +91 9939 958616
                   </p>
                   <p className="text-text-muted text-xs mt-1">
                     Mon-Fri, 9am - 6pm IST

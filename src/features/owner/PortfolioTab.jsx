@@ -12,6 +12,10 @@ import {
   ShieldCheck,
   Contact,
   GalleryHorizontal,
+  Info,
+  HelpCircle,
+  Link as LinkIcon,
+  Trash2,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { businessApi } from "../../services/businessApi";
@@ -61,11 +65,78 @@ const PortfolioTab = () => {
     }
   }, [profile]);
 
-  const { mutate: updateProfile, isPending: isSaving } = useMutation({
+  const { data: portfolioData, isLoading: isPortfolioLoading } = useQuery({
+    queryKey: ["businessPortfolio", profileId],
+    queryFn: () => businessApi.businessPortfolio(profileId),
+    enabled: !!profileId,
+    retry: false,
+  });
+
+  const portfolio =
+    portfolioData?.results || portfolioData?.data || portfolioData;
+  // console.log(portfolio);
+
+  const [faqs, setFaqs] = useState([]);
+  const [socialLinks, setSocialLinks] = useState({
+    facebook_url: "",
+    instagram_url: "",
+    twitter_url: "",
+    linkedin_url: "",
+  });
+  const [portfolioDetails, setPortfolioDetails] = useState({
+    established_year: "",
+    starting_price: "",
+    response_time: "",
+  });
+  const [newGalleryImages, setNewGalleryImages] = useState([]);
+
+  useEffect(() => {
+    if (portfolio && !isPortfolioLoading) {
+      if (portfolio.faqs) {
+        try {
+          const parsedFaqs =
+            typeof portfolio.faqs === "string"
+              ? JSON.parse(portfolio.faqs)
+              : portfolio.faqs;
+          setFaqs(Array.isArray(parsedFaqs) ? parsedFaqs : []);
+        } catch (e) {
+          setFaqs([]);
+        }
+      } else {
+        setFaqs([]);
+      }
+
+      setSocialLinks({
+        facebook_url: portfolio.facebook_url || "",
+        instagram_url: portfolio.instagram_url || "",
+        twitter_url: portfolio.twitter_url || "",
+        linkedin_url: portfolio.linkedin_url || "",
+      });
+
+      setPortfolioDetails({
+        established_year: portfolio.established_year || "",
+        starting_price: portfolio.starting_price || "",
+        response_time: portfolio.response_time || "",
+      });
+      if (portfolio.gallery_images) {
+        // if gallery_images is a JSON string of objects, parse it
+        try {
+          const parsedGallery =
+            typeof portfolio.gallery_images === "string"
+              ? JSON.parse(portfolio.gallery_images)
+              : portfolio.gallery_images;
+          setGallery(Array.isArray(parsedGallery) ? parsedGallery : []);
+        } catch (e) {
+          setGallery(portfolio.gallery_images);
+        }
+      }
+    }
+  }, [portfolio, isPortfolioLoading]);
+
+  const { mutate: updateProfile, isPending: isSavingProfile } = useMutation({
     mutationFn: (data) => businessApi.updateProfile(profileId, data),
     onSuccess: () => {
-      toast.success("Profile updated successfully!");
-      setIsEditing(false);
+      // toast.success("Profile updated successfully!");
       queryClient.invalidateQueries(["businessProfiles"]);
       setTimeout(() => queryClient.resetQueries(["businessProfiles"]), 2000);
     },
@@ -74,6 +145,65 @@ const PortfolioTab = () => {
       console.log(error?.response?.data);
     },
   });
+
+  const { mutate: savePortfolio, isPending: isSavingPortfolio } = useMutation({
+    mutationFn: async (data) => {
+      try {
+        if (portfolio?.business_profile_uuid) {
+          return await businessApi.businessUpdatePortfolio(data);
+        } else {
+          return await businessApi.businessCreatePortfolio(data);
+        }
+      } catch (error) {
+        if (error.response?.status === 404) {
+          return await businessApi.businessCreatePortfolio(data);
+        }
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      toast.success("Profile & Portfolio updated successfully!");
+      setIsEditing(false);
+      setNewGalleryImages([]);
+      queryClient.invalidateQueries(["businessPortfolio", profileId]);
+    },
+    onError: (error) => {
+      const errorData = error?.response?.data;
+      if (errorData && typeof errorData === "object") {
+        // Try to show the first specific field error if available
+        const firstErrorKey = Object.keys(errorData)[0];
+        if (firstErrorKey && Array.isArray(errorData[firstErrorKey])) {
+          toast.error(`${firstErrorKey}: ${errorData[firstErrorKey][0]}`);
+        } else {
+          toast.error("Failed to update portfolio. Please check your inputs.");
+        }
+      } else {
+        toast.error("Failed to update portfolio");
+      }
+      console.log(errorData);
+    },
+  });
+
+  const { mutate: deleteImageMutation } = useMutation({
+    mutationFn: (imageId) =>
+      businessApi.businessPortfolioDeleteGalleryImage(imageId),
+    onSuccess: () => {
+      toast.success("Image deleted");
+      queryClient.invalidateQueries(["businessPortfolio", profileId]);
+    },
+    onError: () => toast.error("Failed to delete image"),
+  });
+
+  const { mutate: deleteFaqMutation } = useMutation({
+    mutationFn: (faqId) => businessApi.businessDeletePortfolioFaq(faqId),
+    onSuccess: () => {
+      toast.success("FAQ deleted");
+      queryClient.invalidateQueries(["businessPortfolio", profileId]);
+    },
+    onError: () => toast.error("Failed to delete FAQ"),
+  });
+
+  const isSaving = isSavingProfile || isSavingPortfolio;
 
   const { data: appListData } = useQuery({
     queryKey: ["businessAppList"],
@@ -112,23 +242,77 @@ const PortfolioTab = () => {
       if (details.website) payload.website = details.website;
 
       updateProfile(payload);
+
+      // Prepare Portfolio FormData
+      const formData = new FormData();
+      if (portfolioDetails.established_year)
+        formData.append("established_year", portfolioDetails.established_year);
+      if (portfolioDetails.starting_price)
+        formData.append("starting_price", portfolioDetails.starting_price);
+      if (portfolioDetails.response_time)
+        formData.append("response_time", portfolioDetails.response_time);
+      if (socialLinks.facebook_url)
+        formData.append("facebook_url", socialLinks.facebook_url);
+      if (socialLinks.instagram_url)
+        formData.append("instagram_url", socialLinks.instagram_url);
+      if (socialLinks.twitter_url)
+        formData.append("twitter_url", socialLinks.twitter_url);
+      if (socialLinks.linkedin_url)
+        formData.append("linkedin_url", socialLinks.linkedin_url);
+
+      const faqsToSave = faqs.filter(
+        (faq) => faq.question && faq.answer && !faq.faq_uuid,
+      );
+      if (faqsToSave.length > 0) {
+        formData.append("faqs", JSON.stringify(faqsToSave));
+      }
+
+      newGalleryImages.forEach((file) => {
+        formData.append("gallery_images", file);
+      });
+
+      savePortfolio(formData);
     } else {
       toast.error("No business profile found to update.");
     }
   };
 
-  const deleteImage = (index) => {
-    setGallery(gallery.filter((_, i) => i !== index));
+  const deleteImage = (index, isNew = false, imageId = null) => {
+    if (isNew) {
+      setNewGalleryImages(newGalleryImages.filter((_, i) => i !== index));
+    } else {
+      if (imageId) {
+        deleteImageMutation(imageId);
+      } else {
+        // If it's from INITIAL_GALLERY
+        setGallery(gallery.filter((_, i) => i !== index));
+      }
+    }
   };
 
-  const mockUpload = () => {
-    const newImages = [
-      "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?auto=format&fit=crop&q=80&w=400",
-      "https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?auto=format&fit=crop&q=80&w=400",
-      "https://images.unsplash.com/photo-1527515637-640a3e8bc8ce?auto=format&fit=crop&q=80&w=400",
-    ];
-    const randomImg = newImages[Math.floor(Math.random() * newImages.length)];
-    setGallery([...gallery, randomImg]);
+  const handleImageUpload = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setNewGalleryImages((prev) => [...prev, ...files]);
+    }
+  };
+
+  const handleAddFaq = () => {
+    setFaqs([...faqs, { question: "", answer: "" }]);
+  };
+
+  const handleFaqChange = (index, field, value) => {
+    const newFaqs = [...faqs];
+    newFaqs[index][field] = value;
+    setFaqs(newFaqs);
+  };
+
+  const handleRemoveFaq = (index, faqId = null) => {
+    if (faqId) {
+      deleteFaqMutation(faqId);
+    } else {
+      setFaqs(faqs.filter((_, i) => i !== index));
+    }
   };
 
   const renderDocumentLink = (label, url) => {
@@ -235,18 +419,18 @@ const PortfolioTab = () => {
     {
       id: 5,
       label: "Location",
-      value: details?.location?.includes("<iframe")
-        ? (
-            <div className="w-full rounded-xl overflow-hidden border border-border-primary mt-2">
-              <div
-                className="w-full h-48"
-                dangerouslySetInnerHTML={{
-                  __html: details.location.replace('height="300"', 'height="100%"'),
-                }}
-              />
-            </div>
-          )
-        : details?.location || "Location Not Added",
+      value: details?.location?.includes("<iframe") ? (
+        <div className="w-full rounded-xl overflow-hidden border border-border-primary mt-2">
+          <div
+            className="w-full h-48"
+            dangerouslySetInnerHTML={{
+              __html: details.location.replace('height="300"', 'height="100%"'),
+            }}
+          />
+        </div>
+      ) : (
+        details?.location || "Location Not Added"
+      ),
       editKey: "location",
       icon: <IconLocation className="size-5" />,
     },
@@ -437,7 +621,10 @@ const PortfolioTab = () => {
                                 <div
                                   className="w-full h-full"
                                   dangerouslySetInnerHTML={{
-                                    __html: details.location.replace('height="300"', 'height="100%"'),
+                                    __html: details.location.replace(
+                                      'height="300"',
+                                      'height="100%"',
+                                    ),
                                   }}
                                 />
                               </div>
@@ -446,7 +633,9 @@ const PortfolioTab = () => {
                               onClick={() => setIsMapOpen(true)}
                               className="text-text-primary font-semibold text-[15px] bg-surface-secondary border border-border-primary rounded-lg px-4 py-2 hover:border-text-primary transition-colors text-center w-full"
                             >
-                              {details?.location?.includes("<iframe") ? "Change Location" : "Select Map Location"}
+                              {details?.location?.includes("<iframe")
+                                ? "Change Location"
+                                : "Select Map Location"}
                             </button>
                           </div>
                         ) : (
@@ -463,7 +652,9 @@ const PortfolioTab = () => {
                           />
                         )
                       ) : (
-                        <div className={`text-text-primary font-semibold text-[15px] ${info.editKey === 'location' ? 'w-full' : ''}`}>
+                        <div
+                          className={`text-text-primary font-semibold text-[15px] ${info.editKey === "location" ? "w-full" : ""}`}
+                        >
                           {isEditing
                             ? info.editKey === null
                               ? info.value
@@ -529,6 +720,230 @@ const PortfolioTab = () => {
                     </div>
                   )}
                 </div>
+              </div>
+
+              {/* Portfolio Details Card */}
+              <div className="bg-surface-primary rounded-3xl p-6 md:p-8 shadow-[0_2px_20px_rgb(0,0,0,0.04)] border border-border-primary">
+                <div className="flex items-center gap-1 mb-6">
+                  <Info className="w-5 h-5" />
+                  <h2 className="text-xl font-bold text-text-primary tracking-tight">
+                    Portfolio Details
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <div>
+                    <p className="text-xs font-bold text-zinc-500 mb-1 uppercase tracking-wider">
+                      Established Year
+                    </p>
+                    {isEditing ? (
+                      <input
+                        type="number"
+                        value={portfolioDetails.established_year}
+                        onChange={(e) =>
+                          setPortfolioDetails({
+                            ...portfolioDetails,
+                            established_year: e.target.value,
+                          })
+                        }
+                        className="text-text-primary font-semibold text-[15px] bg-surface-secondary border border-border-primary rounded-lg px-3 py-1 w-full focus:outline-none focus:border-text-primary"
+                        placeholder="e.g. 2015"
+                      />
+                    ) : (
+                      <p className="font-semibold text-text-primary">
+                        {portfolioDetails.established_year || "-"}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-zinc-500 mb-1 uppercase tracking-wider">
+                      Starting Price (₹)
+                    </p>
+                    {isEditing ? (
+                      <input
+                        type="number"
+                        value={portfolioDetails.starting_price}
+                        onChange={(e) =>
+                          setPortfolioDetails({
+                            ...portfolioDetails,
+                            starting_price: e.target.value,
+                          })
+                        }
+                        className="text-text-primary font-semibold text-[15px] bg-surface-secondary border border-border-primary rounded-lg px-3 py-1 w-full focus:outline-none focus:border-text-primary"
+                        placeholder="e.g. 999"
+                      />
+                    ) : (
+                      <p className="font-semibold text-text-primary">
+                        {portfolioDetails.starting_price
+                          ? `₹${portfolioDetails.starting_price}`
+                          : "-"}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-zinc-500 mb-1 uppercase tracking-wider">
+                      Response Time
+                    </p>
+                    {isEditing ? (
+                      <select
+                        value={portfolioDetails.response_time}
+                        onChange={(e) =>
+                          setPortfolioDetails({
+                            ...portfolioDetails,
+                            response_time: e.target.value,
+                          })
+                        }
+                        className="text-text-primary font-semibold text-[15px] bg-surface-secondary border border-border-primary rounded-lg px-3 py-1 w-full focus:outline-none focus:border-text-primary appearance-none cursor-pointer"
+                      >
+                        <option value="">Select response time</option>
+                        <option value="WITHIN_AN_HOUR">Within an hour</option>
+                        <option value="WITHIN_A_FEW_HOURS">
+                          Within a few hours
+                        </option>
+                        <option value="WITHIN_A_DAY">Within a day</option>
+                        <option value="MORE_THAN_A_DAY">More than a day</option>
+                      </select>
+                    ) : (
+                      <p className="font-semibold text-text-primary">
+                        {portfolioDetails.response_time === "WITHIN_AN_HOUR"
+                          ? "Within an hour"
+                          : portfolioDetails.response_time ===
+                              "WITHIN_A_FEW_HOURS"
+                            ? "Within a few hours"
+                            : portfolioDetails.response_time === "WITHIN_A_DAY"
+                              ? "Within a day"
+                              : portfolioDetails.response_time ===
+                                  "MORE_THAN_A_DAY"
+                                ? "More than a day"
+                                : portfolioDetails.response_time || "-"}
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-8 mb-4 border-t border-border-secondary pt-6">
+                  <div className="flex items-center gap-1 mb-4">
+                    <LinkIcon className="w-4 h-4 text-zinc-500" />
+                    <h3 className="text-sm font-bold text-zinc-500 uppercase tracking-wider">
+                      Social Links
+                    </h3>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {Object.entries({
+                      facebook_url: "Facebook",
+                      instagram_url: "Instagram",
+                      twitter_url: "Twitter",
+                      linkedin_url: "LinkedIn",
+                    }).map(([key, label]) => (
+                      <div key={key}>
+                        <p className="text-xs font-bold text-zinc-500 mb-1">
+                          {label}
+                        </p>
+                        {isEditing ? (
+                          <input
+                            type="url"
+                            value={socialLinks[key]}
+                            onChange={(e) =>
+                              setSocialLinks({
+                                ...socialLinks,
+                                [key]: e.target.value,
+                              })
+                            }
+                            className="text-text-primary text-sm bg-surface-secondary border border-border-primary rounded-lg px-3 py-1.5 w-full focus:outline-none focus:border-text-primary"
+                            placeholder={`https://${label.toLowerCase()}.com/...`}
+                          />
+                        ) : (
+                          <a
+                            href={socialLinks[key] || "#"}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`text-sm ${socialLinks[key] ? "text-indigo-500 hover:underline" : "text-zinc-400"}`}
+                          >
+                            {socialLinks[key] || "Not provided"}
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* FAQs Card */}
+              <div className="bg-surface-primary rounded-3xl p-6 md:p-8 shadow-[0_2px_20px_rgb(0,0,0,0.04)] border border-border-primary">
+                <div className="flex justify-between items-center mb-6">
+                  <div className="flex items-center gap-1">
+                    <HelpCircle className="w-5 h-5" />
+                    <h2 className="text-xl font-bold text-text-primary tracking-tight">
+                      Frequently Asked Questions
+                    </h2>
+                  </div>
+                  {isEditing && (
+                    <button
+                      onClick={handleAddFaq}
+                      className="flex items-center gap-1 text-sm font-bold text-text-primary hover:bg-surface-secondary transition-colors border border-border-primary px-3 py-1.5 rounded-full"
+                    >
+                      <Plus className="w-4 h-4" /> Add FAQ
+                    </button>
+                  )}
+                </div>
+
+                {faqs.length === 0 && !isEditing ? (
+                  <p className="text-sm text-zinc-500 text-center py-4">
+                    No FAQs added yet.
+                  </p>
+                ) : (
+                  <div className="space-y-4">
+                    {faqs.map((faq, index) => (
+                      <div
+                        key={faq.faq_uuid || index}
+                        className="p-4 rounded-xl border border-border-secondary bg-surface-secondary/50 relative group"
+                      >
+                        {isEditing ? (
+                          <div className="flex flex-col gap-3 pr-8">
+                            <input
+                              type="text"
+                              value={faq.question}
+                              onChange={(e) =>
+                                handleFaqChange(
+                                  index,
+                                  "question",
+                                  e.target.value,
+                                )
+                              }
+                              className="text-text-primary font-bold text-[15px] bg-surface-primary border border-border-primary rounded-lg px-3 py-2 w-full focus:outline-none focus:border-text-primary"
+                              placeholder="Question"
+                            />
+                            <textarea
+                              value={faq.answer}
+                              onChange={(e) =>
+                                handleFaqChange(index, "answer", e.target.value)
+                              }
+                              className="text-zinc-400 text-[14px] font-medium bg-surface-primary border border-border-primary rounded-lg px-3 py-2 w-full focus:outline-none focus:border-text-primary resize-none"
+                              placeholder="Answer"
+                              rows={2}
+                            />
+                          </div>
+                        ) : (
+                          <div>
+                            <h4 className="font-bold text-text-primary mb-1 pr-6">
+                              {faq.question}
+                            </h4>
+                            <p className="text-sm text-text-secondary">
+                              {faq.answer}
+                            </p>
+                          </div>
+                        )}
+                        {isEditing && (
+                          <button
+                            onClick={() => handleRemoveFaq(index, faq.faq_uuid)}
+                            className="absolute top-4 right-4 p-1.5 text-zinc-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Identity & Verification Card */}
@@ -650,40 +1065,83 @@ const PortfolioTab = () => {
                   </div>
 
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {gallery.map((img, i) => (
+                    {gallery.map((img, i) => {
+                      const isObject = typeof img === "object" && img !== null;
+                      const imgSrc = isObject
+                        ? img.image?.startsWith("http")
+                          ? img.image
+                          : IMAGE_URL + img.image
+                        : img;
+                      const imgId = isObject ? img.gallery_image_uuid : null;
+
+                      return (
+                        <div
+                          key={imgId || i}
+                          className="aspect-square rounded-2xl overflow-hidden relative group"
+                        >
+                          <img
+                            src={imgSrc}
+                            alt={`Gallery ${i}`}
+                            className="w-full h-full object-cover"
+                          />
+                          {isEditing && (
+                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                              <button
+                                onClick={() => deleteImage(i, false, imgId)}
+                                className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+
+                    {newGalleryImages.map((file, i) => (
                       <div
-                        key={i}
-                        className="aspect-square rounded-2xl overflow-hidden relative group"
+                        key={`new-${i}`}
+                        className="aspect-square rounded-2xl overflow-hidden relative group border-2 border-indigo-500"
                       >
                         <img
-                          src={img}
-                          alt={`Gallery ${i}`}
-                          className="w-full h-full object-cover"
+                          src={URL.createObjectURL(file)}
+                          alt={`New Gallery ${i}`}
+                          className="w-full h-full object-cover opacity-70"
                         />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <button
-                            onClick={() => deleteImage(i)}
-                            className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
+                        <div className="absolute top-2 right-2 bg-indigo-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                          New
                         </div>
+                        {isEditing && (
+                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                            <button
+                              onClick={() => deleteImage(i, true)}
+                              className="p-2 bg-red-500 text-white rounded-full hover:scale-110 transition-transform"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
                       </div>
                     ))}
 
-                    {gallery.length < 10 && (
-                      <div
-                        onClick={mockUpload}
-                        className="aspect-square rounded-2xl bg-surface-secondary border-2 border-dashed border-border-primary flex flex-col items-center justify-center cursor-pointer hover:border-text-primary transition-colors group"
-                      >
-                        <div className="p-2 bg-surface-primary rounded-full border border-border-primary mb-2 group-hover:scale-110 transition-transform shadow-sm">
-                          <Plus className="w-5 h-5 text-zinc-400" />
-                        </div>
-                        <span className="text-xs font-bold text-zinc-500 group-hover:text-text-primary transition-colors">
-                          Add Photo
-                        </span>
-                      </div>
-                    )}
+                    {isEditing &&
+                      gallery.length + newGalleryImages.length < 10 && (
+                        <label className="aspect-square rounded-2xl bg-surface-secondary border-2 border-dashed border-border-primary flex flex-col items-center justify-center cursor-pointer hover:border-text-primary transition-colors group">
+                          <input
+                            type="file"
+                            multiple
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                          />
+                          <div className="p-2 bg-surface-primary rounded-full border border-border-primary mb-2 group-hover:scale-110 transition-transform shadow-sm">
+                            <Plus className="w-5 h-5 text-zinc-400" />
+                          </div>
+                          <span className="text-xs font-bold text-zinc-500 group-hover:text-text-primary transition-colors">
+                            Add Photo
+                          </span>
+                        </label>
+                      )}
                   </div>
                 </div>
               </div>

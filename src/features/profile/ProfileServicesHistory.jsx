@@ -449,6 +449,60 @@ const ProfileServicesHistory = () => {
         ))}
       </div>
 
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center gap-2 mt-8">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="p-2 rounded-xl border border-border-primary text-text-primary hover:bg-surface-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            <ChevronRight className="w-5 h-5 rotate-180" />
+          </button>
+          
+          <div className="flex items-center gap-1">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+              // Show limited pages (first, last, and pages around current)
+              if (
+                page === 1 ||
+                page === totalPages ||
+                (page >= currentPage - 1 && page <= currentPage + 1)
+              ) {
+                return (
+                  <button
+                    key={page}
+                    onClick={() => setCurrentPage(page)}
+                    className={`w-10 h-10 rounded-xl text-sm font-bold transition-colors cursor-pointer ${
+                      currentPage === page
+                        ? "bg-text-primary text-surface-primary"
+                        : "text-text-primary hover:bg-surface-secondary"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                );
+              }
+              // Show ellipsis
+              if (
+                page === currentPage - 2 ||
+                page === currentPage + 2
+              ) {
+                return <span key={page} className="px-1 text-zinc-500">...</span>;
+              }
+              return null;
+            })}
+          </div>
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="p-2 rounded-xl border border-border-primary text-text-primary hover:bg-surface-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      )}
+
       <AnimatePresence>
         {/* Details Modal */}
         {detailsModal && (
@@ -521,7 +575,7 @@ const ProfileServicesHistory = () => {
                     onClick={() =>
                       navigate(`/services/${detailsModal.service?.slug || ""}`)
                     }
-                    className="flex-1 px-4 py-3 bg-text-primary text-surface-primary font-bold rounded-xl hover:bg-zinc-800 transition-colors text-sm text-center"
+                  className="btn-primary flex-1 px-4 py-3 font-bold rounded-xl transition-colors text-sm text-center"
                   >
                     Book Again
                   </button>
