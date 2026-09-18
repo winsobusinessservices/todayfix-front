@@ -52,12 +52,12 @@ const BookingTypeSelector = () => {
   return (
     <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
       <div className="mb-6">
-        <h3 className="text-[28px] font-black text-black leading-tight mb-2">
+        <h3 className="text-[28px] font-black text-text-primary leading-tight mb-2">
           How would you like
           <br />
           to book?
         </h3>
-        <p className="text-zinc-500 text-[15px]">
+        <p className="text-text-secondary text-[15px]">
           Choose the option that works best for you.
         </p>
       </div>
@@ -65,51 +65,51 @@ const BookingTypeSelector = () => {
       <div className="space-y-4">
         <button
           onClick={() => handleSelect("SCHEDULED")}
-          className="w-full text-left p-6 rounded-2xl border border-zinc-200 hover:border-zinc-400 transition-colors bg-white flex items-center justify-between gap-4 group shadow-sm"
+          className="w-full text-left p-6 rounded-2xl border border-border-primary hover:border-brand-primary transition-colors bg-card-primary flex items-center justify-between gap-4 group shadow-sm"
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
-              <Calendar className="w-5 h-5 text-black" strokeWidth={1.5} />
+            <div className="w-12 h-12 rounded-full bg-surface-accent flex items-center justify-center shrink-0">
+              <Calendar className="w-5 h-5 text-text-brand" strokeWidth={1.5} />
             </div>
             <div>
-              <h4 className="font-bold text-black text-[15px]">
+              <h4 className="font-bold text-text-primary text-[15px]">
                 Schedule with {vendorName}
               </h4>
-              <p className="text-[13px] text-zinc-500 mt-1 leading-snug pr-4">
+              <p className="text-[13px] text-text-secondary mt-1 leading-snug pr-4">
                 Secure this exact professional at their listed price of ₹
                 {Math.round(selectedService?.price || 0)}.
               </p>
             </div>
           </div>
           <ArrowRight
-            className="w-5 h-5 text-zinc-400 group-hover:text-black shrink-0"
+            className="w-5 h-5 text-text-muted group-hover:text-text-brand shrink-0"
             strokeWidth={1.5}
           />
         </button>
 
         <button
           onClick={() => handleSelect("INSTANT")}
-          className="w-full text-left p-6 rounded-2xl border border-zinc-200 hover:border-zinc-400 transition-colors bg-white flex items-center justify-between gap-4 group shadow-sm"
+          className="w-full text-left p-6 rounded-2xl border border-border-primary hover:border-brand-primary transition-colors bg-card-primary flex items-center justify-between gap-4 group shadow-sm"
         >
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
-              <Clock className="w-5 h-5 text-black" strokeWidth={1.5} />
+            <div className="w-12 h-12 rounded-full bg-surface-accent flex items-center justify-center shrink-0">
+              <Clock className="w-5 h-5 text-text-brand" strokeWidth={1.5} />
             </div>
             <div>
-              <h4 className="font-bold text-black text-[15px]">
+              <h4 className="font-bold text-text-primary text-[15px]">
                 Find Any Professional Instantly
               </h4>
-              <p className="text-[13px] text-zinc-500 mt-1 leading-snug pr-2">
+              <p className="text-[13px] text-text-secondary mt-1 leading-snug pr-2">
                 Broadcast this request to all available vendors.
                 <br />
-                <span className="text-blue-600 font-bold mt-1 block">
+                <span className="text-text-brand font-bold mt-1 block">
                   *Final price may vary based on who accepts.*
                 </span>
               </p>
             </div>
           </div>
           <ArrowRight
-            className="w-5 h-5 text-zinc-400 group-hover:text-black shrink-0"
+            className="w-5 h-5 text-text-muted group-hover:text-text-brand shrink-0"
             strokeWidth={1.5}
           />
         </button>
@@ -117,31 +117,31 @@ const BookingTypeSelector = () => {
 
       <div className="relative py-4">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-zinc-200"></div>
+          <div className="w-full border-t border-border-primary"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-3 bg-surface-primary text-zinc-500 text-[13px]">
+          <span className="px-3 bg-surface-primary text-text-secondary text-[13px]">
             Not sure which to choose?
           </span>
         </div>
       </div>
 
-      <button className="w-full text-left p-4 rounded-2xl bg-zinc-50 flex items-center justify-between group hover:bg-zinc-100 transition-colors border border-border-primary">
+      <button className="w-full text-left p-4 rounded-2xl bg-surface-secondary flex items-center justify-between group hover:bg-surface-accent transition-colors border border-border-primary">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-full border border-zinc-200 bg-white flex items-center justify-center shrink-0">
-            <MessageSquare className="w-4 h-4 text-black" strokeWidth={1.5} />
+          <div className="w-10 h-10 rounded-full border border-border-primary bg-surface-primary flex items-center justify-center shrink-0">
+            <MessageSquare className="w-4 h-4 text-text-brand" strokeWidth={1.5} />
           </div>
           <div>
-            <h4 className="font-bold text-black text-[14px]">
+            <h4 className="font-bold text-text-primary text-[14px]">
               We're here to help
             </h4>
-            <p className="text-[12px] text-zinc-500 mt-0.5">
+            <p className="text-[12px] text-text-secondary mt-0.5">
               Chat with our support team for guidance.
             </p>
           </div>
         </div>
         <ArrowRight
-          className="w-4 h-4 text-zinc-400 group-hover:text-black shrink-0"
+          className="w-4 h-4 text-text-muted group-hover:text-text-brand shrink-0"
           strokeWidth={1.5}
         />
       </button>
@@ -200,7 +200,7 @@ const DateTimeSelector = () => {
           value={schedule.date}
           onChange={handleDateChange}
           min={todayStr}
-          className="w-full bg-surface-secondary border border-border-primary rounded-xl py-3 px-4 font-semibold text-text-primary focus:outline-none focus:border-text-primary transition-colors"
+          className="w-full bg-surface-secondary border border-border-primary rounded-xl py-3 px-4 font-semibold text-text-primary focus:outline-none focus:border-brand-primary transition-colors"
         />
       </div>
 
@@ -232,8 +232,8 @@ const DateTimeSelector = () => {
                         !isAvailable
                           ? "opacity-50 cursor-not-allowed bg-surface-secondary border-border-primary"
                           : isSelected
-                            ? "border-text-primary bg-surface-primary shadow-md"
-                            : "border-border-primary hover:border-text-secondary bg-surface-primary"
+                            ? "border-brand-primary bg-surface-accent shadow-md"
+                            : "border-border-primary hover:border-brand-soft bg-surface-primary"
                       }
                     `}
                   >
@@ -248,7 +248,7 @@ const DateTimeSelector = () => {
                       </div>
                     </div>
                     {isSelected && (
-                      <CheckCircle2 className="text-text-primary" />
+                      <CheckCircle2 className="text-text-brand" />
                     )}
                   </button>
                 );
@@ -523,7 +523,7 @@ const AddressSelector = () => {
                 setMapEmbed(matched.location || "");
               }
             }}
-            icon={<MapPin className="h-5 w-5 text-zinc-500" />}
+            icon={<MapPin className="h-5 w-5 text-text-secondary" />}
             placeholder="Choose an address..."
             variant="transparent"
           />
@@ -545,7 +545,7 @@ const AddressSelector = () => {
                   name="address_type"
                   value={newAddress.address_type}
                   onChange={handleNewAddressChange}
-                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm text-text-primary outline-none focus:border-text-primary"
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm text-text-primary outline-none focus:border-brand-primary"
                 >
                   <option value="HOME">Home</option>
                   <option value="WORK">Work</option>
@@ -560,7 +560,7 @@ const AddressSelector = () => {
                   onChange={handleNewAddressChange}
                   required
                   placeholder="House number, street or building"
-                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-brand-primary"
                 />
               </label>
               <label className="col-span-2 text-xs font-bold uppercase tracking-wider text-text-secondary">
@@ -571,7 +571,7 @@ const AddressSelector = () => {
                   onChange={handleNewAddressChange}
                   required
                   placeholder="Area or locality"
-                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-brand-primary"
                 />
               </label>
               <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">
@@ -581,7 +581,7 @@ const AddressSelector = () => {
                   value={newAddress.city}
                   onChange={handleNewAddressChange}
                   required
-                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-brand-primary"
                 />
               </label>
               <label className="text-xs font-bold uppercase tracking-wider text-text-secondary">
@@ -591,7 +591,7 @@ const AddressSelector = () => {
                   value={newAddress.state}
                   onChange={handleNewAddressChange}
                   required
-                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-brand-primary"
                 />
               </label>
               <label className="col-span-2 text-xs font-bold uppercase tracking-wider text-text-secondary">
@@ -605,7 +605,7 @@ const AddressSelector = () => {
                   pattern="[0-9]{6}"
                   maxLength={6}
                   placeholder="6-digit pincode"
-                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-text-primary"
+                  className="mt-1.5 w-full rounded-xl border border-border-primary bg-surface-primary px-3 py-2.5 text-sm normal-case text-text-primary outline-none focus:border-brand-primary"
                 />
               </label>
             </div>
@@ -635,7 +635,7 @@ const AddressSelector = () => {
                   <button
                     type="button"
                     onClick={() => setIsMapOpen(true)}
-                    className="w-full bg-purple-500/10 text-purple-600 border border-purple-500/20 hover:bg-purple-500/20 hover:border-purple-500/30 rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
+                    className="w-full bg-surface-accent text-text-brand border border-brand-soft hover:bg-button-secondary-hover hover:border-brand-primary rounded-xl px-4 py-4 flex items-center justify-center gap-3 transition-colors font-bold"
                   >
                     <Map className="w-5 h-5" />
                     Select Location on Map
@@ -665,7 +665,7 @@ const AddressSelector = () => {
             </div>
           </form>
         )}
-        <p className="text-xs text-zinc-500 font-medium mt-3 flex items-center gap-1.5">
+        <p className="text-xs text-text-secondary font-medium mt-3 flex items-center gap-1.5">
           <ShieldCheck className="w-4 h-4 text-green-500" />
           Professionals will only see your full address after confirmation.
         </p>
@@ -706,7 +706,7 @@ const AddressSelector = () => {
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder="e.g. 'Ring the bell twice' or 'Issue is in the bedroom'"
-          className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:border-text-primary transition-colors resize-none font-medium"
+          className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors resize-none font-medium"
         />
       </div>
 
@@ -763,7 +763,7 @@ const BookingSuccess = () => {
             navigate("/profile");
           }
         }}
-        className="w-full py-4 bg-surface-dark text-text-inverted font-bold rounded-xl shadow-md"
+        className="btn-primary w-full py-4 font-bold rounded-xl shadow-md"
       >
         {bookingType === "INSTANT" ? "Track My Booking" : "View My Bookings"}
       </button>

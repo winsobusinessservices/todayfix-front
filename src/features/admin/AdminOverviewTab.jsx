@@ -219,7 +219,7 @@ const AdminOverviewTab = () => {
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
               <span
-                className={`text-xs font-bold px-2 py-1 rounded-md ${stat.trend.startsWith("+") ? "bg-emerald-500/10 text-emerald-600" : "bg-rose-50 text-rose-600"}`}
+                className={`text-xs font-bold px-2 py-1 rounded-md ${stat.trend.startsWith("+") ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300" : "bg-rose-500/10 text-rose-700 dark:text-rose-300"}`}
               >
                 {stat.trend}
               </span>

@@ -96,7 +96,7 @@ const Service = () => {
       <div className="w-full bg-surface-secondary pt-12">
         <div className="max-w-6xl mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left">
-            <div className="w-36 h-36 md:w-40 md:h-40 bg-white rounded-3xl shadow-sm border border-border-primary flex items-center justify-center shrink-0">
+            <div className="w-36 h-36 md:w-40 md:h-40 rounded-3xl shadow-sm border border-border-primary flex items-center justify-center shrink-0">
               <img
                 src={IMAGE_URL + currentSubcategory?.image}
                 alt={currentSubcategory?.name}
@@ -250,7 +250,7 @@ const Service = () => {
           {/* Pricing & Booking Panel (Right Sticky Sidebar) */}
           <div className="w-full lg:w-[360px] flex-shrink-0">
             <div className="sticky top-[100px] bg-surface-primary rounded-3xl p-6 border border-border-primary shadow-[0_8px_40px_rgb(0,0,0,0.08)]">
-              <div className="bg-purple-50 rounded-2xl p-5 mb-6 border border-purple-100">
+              <div className="bg-surface-secondary rounded-2xl p-5 mb-6 border border-purple-100">
                 <span className="text-text-secondary font-bold text-xs uppercase tracking-wider block mb-1">
                   Standard Pricing from
                 </span>

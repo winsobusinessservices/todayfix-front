@@ -35,6 +35,7 @@ import { logout } from "../services/authApi";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import NotificationDrawer from "../components/notifications/NotificationDrawer";
 import { userDetails } from "../services/userApi";
+import ThemeToggle from "../components/ui/ThemeToggle";
 
 const SIDEBAR_SECTIONS = [
   {
@@ -324,6 +325,8 @@ const AdminDashboard = () => {
             >
               <Search size={20} />
             </button>
+
+            <ThemeToggle />
 
             <button
               type="button"

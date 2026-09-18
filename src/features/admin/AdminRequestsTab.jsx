@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X, RadioTower, CheckCircle2 } from "lucide-react";
+import { StatusBadge } from "../../components/ui/AdminShared";
 
 // Mock data to simulate incoming user requests
 const INITIAL_REQUESTS = [
@@ -45,13 +46,7 @@ const AdminRequestsTab = () => {
                 </td>
                 <td className="px-6 py-4 text-sm font-medium text-text-primary">{req.user}</td>
                 <td className="px-6 py-4">
-                  <span className={`px-3 py-1 text-xs font-bold rounded-full border ${
-                    req.status === "Pending Broadcast" 
-                      ? "bg-orange-500/10 text-orange-600 border-orange-500/20"
-                      : "bg-green-500/10 text-green-600 border-green-500/20"
-                  }`}>
-                    {req.status}
-                  </span>
+                  <StatusBadge status={req.status} />
                 </td>
                 <td className="px-6 py-4 text-right">
                   <button 

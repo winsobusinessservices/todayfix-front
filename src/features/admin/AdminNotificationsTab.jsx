@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { DataTable, AdminModal } from "../../components/ui/AdminShared";
+import { DataTable, StatusBadge, AdminModal } from "../../components/ui/AdminShared";
 import { Send } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -33,9 +33,7 @@ const AdminNotificationsTab = () => {
       header: "Status", 
       accessor: "status",
       render: (row) => (
-        <span className={`px-2 py-1 text-xs rounded-md font-bold ${row.status === 'Sent' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-surface-secondary text-zinc-500'}`}>
-          {row.status}
-        </span>
+        <StatusBadge status={row.status} />
       )
     },
   ];
@@ -133,9 +131,7 @@ const AdminNotificationsTab = () => {
                 <h4 className="text-lg font-bold">{selectedNotif.title}</h4>
                 <p className="text-xs text-text-secondary">{selectedNotif.id}</p>
               </div>
-              <span className={`px-2 py-1 text-xs rounded-md font-bold ${selectedNotif.status === 'Sent' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-surface-secondary text-zinc-500'}`}>
-                {selectedNotif.status}
-              </span>
+              <StatusBadge status={selectedNotif.status} />
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>

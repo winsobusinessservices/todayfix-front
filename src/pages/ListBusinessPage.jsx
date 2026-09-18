@@ -98,26 +98,27 @@ const ListBusinessPage = () => {
         description="Join thousands of premium professionals on TodayFix. List your services, get verified, and grow your business today."
       />
       {/* --- Header --- */}
-      <div className="bg-surface-dark pt-20 pb-36 px-6 relative overflow-hidden">
+      <div className="relative overflow-hidden border-b border-border-secondary bg-gradient-to-br from-brand-background via-surface-primary to-surface-accent px-6 pb-36 pt-20">
         <div
-          className="absolute inset-0 opacity-[0.05] pointer-events-none"
+          className="pointer-events-none absolute inset-0 opacity-[0.12]"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 2px 2px, white 1px, transparent 0)",
+              "radial-gradient(circle at 2px 2px, var(--color-brand-primary) 1px, transparent 0)",
             backgroundSize: "32px 32px",
           }}
         ></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 blur-[120px] rounded-full pointer-events-none"></div>
+        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-primary/15 blur-[120px]"></div>
+        <div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-brand-accent/15 blur-3xl"></div>
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 mb-6 bg-surface-primary/10 border border-white/20 text-text-inverted text-xs font-bold uppercase tracking-widest rounded-full backdrop-blur-md">
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-brand-soft bg-surface-primary/75 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-text-brand shadow-sm backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             Partner Onboarding
           </span>
-          <h1 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight leading-tight">
+          <h1 className="text-4xl md:text-6xl font-black text-primary mb-6 tracking-tight leading-tight">
             List your business on <span className="opacity-80">Todayfix</span>
           </h1>
-          <p className="text-zinc-400 text-lg md:text-xl max-w-2xl mx-auto font-medium">
+          <p className="mx-auto max-w-2xl text-lg font-medium text-text-secondary md:text-xl">
             Join thousands of premium professionals. Fill out the details below
             to get your verified, cinematic profile live in minutes.
           </p>
@@ -129,7 +130,7 @@ const ListBusinessPage = () => {
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* SECTION 1: Basic Information */}
           {errors && (
-            <div className="bg-red-500/10 border border-red-500/20 text-red-600 rounded-2xl p-4 mb-6 flex items-start gap-3">
+            <div className="mb-6 flex items-start gap-3 rounded-2xl border border-red-500/25 bg-red-500/10 p-4 text-red-700 dark:text-red-300">
               <span className="font-medium text-sm">{errors}</span>
             </div>
           )}
@@ -150,7 +151,7 @@ const ListBusinessPage = () => {
                 <button
                   type="button"
                   onClick={() => setProviderType("COMPANY")}
-                  className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all ${providerType === "COMPANY" ? "border-text-primary bg-surface-secondary shadow-md" : "border-border-secondary bg-surface-primary hover:border-text-primary/50"}`}
+                  className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all ${providerType === "COMPANY" ? "border-brand-primary bg-surface-accent shadow-md" : "border-border-secondary bg-surface-primary hover:border-brand-soft"}`}
                 >
                   <span
                     className={`font-bold text-lg ${providerType === "COMPANY" ? "text-text-primary" : "text-text-secondary"}`}
@@ -161,7 +162,7 @@ const ListBusinessPage = () => {
                 <button
                   type="button"
                   onClick={() => setProviderType("INDIVIDUAL")}
-                  className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all ${providerType === "INDIVIDUAL" ? "border-text-primary bg-surface-secondary shadow-md" : "border-border-secondary bg-surface-primary hover:border-text-primary/50"}`}
+                  className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all ${providerType === "INDIVIDUAL" ? "border-brand-primary bg-surface-accent shadow-md" : "border-border-secondary bg-surface-primary hover:border-brand-soft"}`}
                 >
                   <span
                     className={`font-bold text-lg ${providerType === "INDIVIDUAL" ? "text-text-primary" : "text-text-secondary"}`}
@@ -172,7 +173,7 @@ const ListBusinessPage = () => {
                 <button
                   type="button"
                   onClick={() => setProviderType("INVESTOR")}
-                  className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all ${providerType === "INVESTOR" ? "border-text-primary bg-surface-secondary shadow-md" : "border-border-secondary bg-surface-primary hover:border-text-primary/50"}`}
+                  className={`flex flex-col items-center justify-center p-6 rounded-2xl border-2 transition-all ${providerType === "INVESTOR" ? "border-brand-primary bg-surface-accent shadow-md" : "border-border-secondary bg-surface-primary hover:border-brand-soft"}`}
                 >
                   <span
                     className={`font-bold text-lg ${providerType === "INVESTOR" ? "text-text-primary" : "text-text-secondary"}`}
@@ -208,7 +209,7 @@ const ListBusinessPage = () => {
                   placeholder="https://www.example.com"
                   value={website}
                   onChange={(e) => setWebsite(e.target.value)}
-                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400"
+                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-3.5 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary transition-all font-medium placeholder:text-text-muted"
                 />
               </div>
             </div>
@@ -247,7 +248,7 @@ const ListBusinessPage = () => {
                   <button
                     type="button"
                     onClick={() => setIsMapOpen(true)}
-                    className="w-full text-left bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary focus:border-text-primary transition-all font-medium placeholder-zinc-400 hover:border-text-primary/50"
+                    className="w-full text-left bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-brand-primary transition-all font-medium placeholder:text-text-muted hover:border-brand-soft"
                   >
                     Select your business location on map
                   </button>
@@ -282,7 +283,7 @@ const ListBusinessPage = () => {
                   type="text"
                   value={accountHolderName}
                   onChange={(e) => setAccountHolderName(e.target.value)}
-                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary transition-all font-medium"
+                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all font-medium"
                   required
                 />
               </div>
@@ -295,7 +296,7 @@ const ListBusinessPage = () => {
                   type="text"
                   value={accountNumber}
                   onChange={(e) => setAccountNumber(e.target.value)}
-                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary transition-all font-medium"
+                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all font-medium"
                   required
                 />
               </div>
@@ -308,7 +309,7 @@ const ListBusinessPage = () => {
                   type="text"
                   value={ifscCode}
                   onChange={(e) => setIfscCode(e.target.value)}
-                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary transition-all font-medium uppercase"
+                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all font-medium uppercase"
                   required
                 />
               </div>
@@ -321,7 +322,7 @@ const ListBusinessPage = () => {
                   type="text"
                   value={bankName}
                   onChange={(e) => setBankName(e.target.value)}
-                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary transition-all font-medium"
+                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all font-medium"
                   required
                 />
               </div>
@@ -334,7 +335,7 @@ const ListBusinessPage = () => {
                   type="text"
                   value={branchName}
                   onChange={(e) => setBranchName(e.target.value)}
-                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-text-primary transition-all font-medium"
+                  className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:ring-2 focus:ring-brand-primary transition-all font-medium"
                   required
                 />
               </div>
@@ -344,7 +345,7 @@ const ListBusinessPage = () => {
           <div className="pt-8 pb-10">
             <button
               type="submit"
-              className="btn-primary w-full bg-surface-dark text-text-inverted font-black text-xl py-6 rounded-xl hover:bg-zinc-800 transition-all shadow-xl active:scale-[0.98]"
+              className="btn-primary w-full font-black text-xl py-6 rounded-xl transition-all shadow-xl active:scale-[0.98]"
             >
               Next: Upload Documents
             </button>

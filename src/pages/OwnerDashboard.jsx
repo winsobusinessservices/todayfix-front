@@ -28,6 +28,7 @@ import toast from "react-hot-toast";
 import Icon from "../assets/TF_LIGHT_LOGO_TRANS.png";
 import { IMAGE_URL } from "../services/axiosClient";
 import NotificationDrawer from "../components/notifications/NotificationDrawer";
+import ThemeToggle from "../components/ui/ThemeToggle";
 
 const SIDEBAR_ITEMS = [
   { id: "", label: "Overview", icon: LayoutDashboard },
@@ -310,6 +311,8 @@ const OwnerDashboard = () => {
           </div>
 
           <div className="flex items-center gap-4">
+            <ThemeToggle />
+
             {/* Store Status Toggle */}
             <div className="sm:flex items-center gap-3 bg-surface-secondary px-3 py-1.5 rounded-full border border-border-primary shadow-sm mr-2">
               <span
