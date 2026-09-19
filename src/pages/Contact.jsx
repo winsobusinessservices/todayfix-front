@@ -66,10 +66,7 @@ const Contact = () => {
       <section className="pt-32 pb-16 px-6 bg-surface-primary border-b border-border-primary text-center relative overflow-hidden">
         <div className="relative z-10">
           <h1 className="text-4xl md:text-6xl font-black text-text-primary tracking-tight mb-4">
-            How can we{" "}
-            <span className="text-primary">
-              help?
-            </span>
+            How can we <span className="text-primary">help?</span>
           </h1>
           <p className="text-lg text-text-secondary font-medium max-w-2xl mx-auto">
             Whether you have a question about a booking, need help with your pro
@@ -92,7 +89,10 @@ const Contact = () => {
           <form className="space-y-5" onSubmit={handleSubmit}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-1.5">
-                <label htmlFor="contact-first-name" className="text-sm font-bold text-text-primary">
+                <label
+                  htmlFor="contact-first-name"
+                  className="text-sm font-bold text-text-primary"
+                >
                   First Name
                 </label>
                 <input
@@ -109,7 +109,10 @@ const Contact = () => {
                 />
               </div>
               <div className="space-y-1.5">
-                <label htmlFor="contact-last-name" className="text-sm font-bold text-text-primary">
+                <label
+                  htmlFor="contact-last-name"
+                  className="text-sm font-bold text-text-primary"
+                >
                   Last Name
                 </label>
                 <input
@@ -127,7 +130,10 @@ const Contact = () => {
               </div>
             </div>
             <div className="space-y-1.5">
-              <label htmlFor="contact-email" className="text-sm font-bold text-text-primary">
+              <label
+                htmlFor="contact-email"
+                className="text-sm font-bold text-text-primary"
+              >
                 Email Address
               </label>
               <input
@@ -144,7 +150,10 @@ const Contact = () => {
               />
             </div>
             <div className="space-y-1.5">
-              <label htmlFor="contact-message" className="text-sm font-bold text-text-primary">
+              <label
+                htmlFor="contact-message"
+                className="text-sm font-bold text-text-primary"
+              >
                 Message
               </label>
               <textarea
@@ -223,12 +232,27 @@ const Contact = () => {
                 </div>
                 <div>
                   <h4 className="font-bold text-text-primary">Phone</h4>
-                  <p className="text-text-secondary text-sm font-medium mt-1">
-                    +91 9939 958616
-                  </p>
+                  <a
+                    href="tel:+918041252104"
+                    className="text-text-secondary text-sm font-medium mt-1"
+                  >
+                    080-41252104
+                    {/* +91 9939 958616 */}
+                  </a>
                   <p className="text-text-muted text-xs mt-1">
                     Mon-Fri, 9am - 6pm IST
                   </p>
+                  <div>
+                    <p className="text-text-muted text-xs mt-1">
+                      Contact Support Transport{" "}
+                      <a
+                        href="tel:+919939958616"
+                        className="text-text-secondary text-sm font-medium mt-1"
+                      >
+                        +91 9939 958616
+                      </a>
+                    </p>
+                  </div>
                 </div>
               </div>
 
