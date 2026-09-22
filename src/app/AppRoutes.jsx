@@ -33,6 +33,7 @@ import FAQPage from "../pages/FAQPage";
 import ProFAQ from "../pages/ProFAQ";
 import Search from "../pages/Search";
 import InstantBookingTracking from "../pages/InstantBookingTracking";
+import ThankYou from "../pages/ThankYou";
 
 import JobBoardTab from "../features/owner/JobBoardTab";
 import OverviewTab from "../features/owner/OverviewTab";
@@ -108,6 +109,7 @@ function AppRoutes() {
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/professionals/faq" element={<ProFAQ />} />
         <Route path="/partners/:name" element={<Demo />} />
+        <Route path="/thank-you" element={<ThankYou />} />
         <Route path="*" element={<NotFound />} />
         <Route element={<ProtectedRoute allowedRoles={["USER", "BUSINESS", "OWNER", "ADMIN"]} />}>
           <Route path="/profile" element={<Profile />} />
