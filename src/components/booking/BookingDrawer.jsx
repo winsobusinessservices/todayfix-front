@@ -733,12 +733,26 @@ const BookingSuccess = () => {
 
   useEffect(() => {
     // Fire Google Ads conversion when booking succeeds
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag('event', 'conversion', {
+    if (typeof window !== "undefined") {
+      console.log("Firing Google Ads Conversion...");
+      
+      // We can use dataLayer directly which is more reliable
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        'event': 'conversion',
         'send_to': 'AW-18422514526/Ry8GCIHp6IAdEN6GxdBE',
         'value': selectedService?.price || 1.0,
         'currency': 'INR'
       });
+      
+      // Also try gtag if available as a fallback
+      if (typeof window.gtag === "function") {
+        window.gtag('event', 'conversion', {
+          'send_to': 'AW-18422514526/Ry8GCIHp6IAdEN6GxdBE',
+          'value': selectedService?.price || 1.0,
+          'currency': 'INR'
+        });
+      }
     }
   }, [selectedService]);
 
