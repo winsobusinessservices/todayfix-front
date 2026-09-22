@@ -129,7 +129,10 @@ const BookingTypeSelector = () => {
       <button className="w-full text-left p-4 rounded-2xl bg-surface-secondary flex items-center justify-between group hover:bg-surface-accent transition-colors border border-border-primary">
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-full border border-border-primary bg-surface-primary flex items-center justify-center shrink-0">
-            <MessageSquare className="w-4 h-4 text-text-brand" strokeWidth={1.5} />
+            <MessageSquare
+              className="w-4 h-4 text-text-brand"
+              strokeWidth={1.5}
+            />
           </div>
           <div>
             <h4 className="font-bold text-text-primary text-[14px]">
@@ -247,9 +250,7 @@ const DateTimeSelector = () => {
                             : "4 PM - 8 PM"}
                       </div>
                     </div>
-                    {isSelected && (
-                      <CheckCircle2 className="text-text-brand" />
-                    )}
+                    {isSelected && <CheckCircle2 className="text-text-brand" />}
                   </button>
                 );
               })}
@@ -731,30 +732,30 @@ const BookingSuccess = () => {
     useBookingStore();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Fire Google Ads conversion when booking succeeds
-    if (typeof window !== "undefined") {
-      console.log("Firing Google Ads Conversion...");
-      
-      // We can use dataLayer directly which is more reliable
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        'event': 'conversion',
-        'send_to': 'AW-18422514526/Ry8GCIHp6IAdEN6GxdBE',
-        'value': selectedService?.price || 1.0,
-        'currency': 'INR'
-      });
-      
-      // Also try gtag if available as a fallback
-      if (typeof window.gtag === "function") {
-        window.gtag('event', 'conversion', {
-          'send_to': 'AW-18422514526/Ry8GCIHp6IAdEN6GxdBE',
-          'value': selectedService?.price || 1.0,
-          'currency': 'INR'
-        });
-      }
-    }
-  }, [selectedService]);
+  // useEffect(() => {
+  //   // Fire Google Ads conversion when booking succeeds
+  //   if (typeof window !== "undefined") {
+  //     console.log("Firing Google Ads Conversion...");
+
+  //     // We can use dataLayer directly which is more reliable
+  //     window.dataLayer = window.dataLayer || [];
+  //     window.dataLayer.push({
+  //       event: "conversion",
+  //       send_to: "AW-18422514526/Ry8GCIHp6IAdEN6GxdBE",
+  //       value: selectedService?.price || 1.0,
+  //       currency: "INR",
+  //     });
+
+  //     // Also try gtag if available as a fallback
+  //     if (typeof window.gtag === "function") {
+  //       window.gtag("event", "conversion", {
+  //         send_to: "AW-18422514526/Ry8GCIHp6IAdEN6GxdBE",
+  //         value: selectedService?.price || 1.0,
+  //         currency: "INR",
+  //       });
+  //     }
+  //   }
+  // }, [selectedService]);
 
   return (
     <div className="text-center py-8 animate-in fade-in zoom-in-95 duration-500">

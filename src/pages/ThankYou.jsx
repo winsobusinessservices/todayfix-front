@@ -1,25 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import { Link, useLocation } from "react-router";
 
 const ThankYou = () => {
   const location = useLocation();
 
-  useEffect(() => {
-    // If you prefer to fire the Google Ads conversion directly from code:
-    // Make sure to replace 'YOUR_CONVERSION_LABEL' with the actual label from your Google Ads account
-    if (typeof window !== "undefined" && window.gtag) {
-      window.gtag("event", "conversion", {
-        send_to: "AW-18422514526/YOUR_CONVERSION_LABEL",
-        value: 1.0,
-        currency: "INR",
-      });
-    }
-
-    // Note: If you prefer using Google Tag Manager (GTM-N75HPH85),
-    // you don't need the code above. You can simply create a Trigger in GTM
-    // for "Page View" where Page Path equals "/thank-you".
-  }, []);
+  // No tracking code here to prevent double-firing! 
+  // Tracking is handled exactly at the moment of submission in EnquiryLanding and BookingDrawer.
 
   return (
     <div className="min-h-[80vh] bg-surface-primary flex items-center justify-center p-4">

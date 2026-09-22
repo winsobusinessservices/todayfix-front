@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# If you have a sitemap, it's best practice to link it here
+Sitemap: https://todayfix.in/sitemap.xml

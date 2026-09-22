@@ -27,6 +27,8 @@ export const footerData = [
     title: "Company",
     links: [
       { label: "About TodayFix", path: "/about" },
+      { label: "How to book Service", path: "/enquiry" },
+      { label: "How to book Today Travels", path: "/travels" },
       { label: "Careers", path: "/careers" },
       { label: "Blog", path: "/blog" },
       { label: "Contact Us", path: "/contact" },
