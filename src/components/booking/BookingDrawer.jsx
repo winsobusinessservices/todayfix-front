@@ -731,6 +731,17 @@ const BookingSuccess = () => {
     useBookingStore();
   const navigate = useNavigate();
 
+  useEffect(() => {
+    // Fire Google Ads conversion when booking succeeds
+    if (typeof window !== "undefined" && window.gtag) {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-18422514526/Ry8GCIHp6IAdEN6GxdBE',
+        'value': selectedService?.price || 1.0,
+        'currency': 'INR'
+      });
+    }
+  }, [selectedService]);
+
   return (
     <div className="text-center py-8 animate-in fade-in zoom-in-95 duration-500">
       <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-green-100">
