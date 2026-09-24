@@ -235,7 +235,7 @@ const Service = () => {
 
                     <div className="md:hidden mt-4 pt-4 border-t border-border-secondary">
                       <Link
-                        to={`/vendor/${vendor?.business_profile_uuid}`}
+                        to={`/vendor/${vendor?.business_name}/bengaluru/${vendor?.business_profile_uuid}`}
                         className="w-full text-center block px-5 py-2.5 bg-surface-secondary text-text-primary font-bold rounded-xl text-sm"
                       >
                         View Profile
