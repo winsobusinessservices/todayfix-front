@@ -12,6 +12,7 @@ export const useBookingStore = create((set) => ({
   address_uuid: "",
   notes: "",
   bookingId: null,
+  bookingData: null,
 
   openBooking: (service) =>
     set({
@@ -23,6 +24,7 @@ export const useBookingStore = create((set) => ({
       address_uuid: "",
       notes: "",
       bookingId: null,
+      bookingData: null,
     }),
 
   closeBooking: () => set({ isOpen: false }),
@@ -39,6 +41,8 @@ export const useBookingStore = create((set) => ({
   setNotes: (notes) => set({ notes }),
 
   setBookingId: (id) => set({ bookingId: id }),
+
+  setBookingData: (data) => set({ bookingData: data }),
 
   nextStep: () => set((state) => ({ step: state.step + 1 })),
   prevStep: () => set((state) => ({ step: Math.max(1, state.step - 1) })),

@@ -87,7 +87,7 @@ function AppRoutes() {
         <Route path="/search" element={<Search />} />
         <Route path="/services" element={<Services />} />
         <Route path="/services/:slug" element={<Service />} />
-        <Route path="/vendor/:id" element={<Vendor />} />
+        <Route path="/vendor/:name/bengaluru/:id" element={<Vendor />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-email" element={<VerificationSuccess />} />

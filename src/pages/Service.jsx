@@ -152,7 +152,7 @@ const Service = () => {
 
             {/* Vendors List (Mock Data) */}
             <div className="flex flex-col gap-4">
-              {businesses.map((vendor) => (
+              {businesses?.map((vendor) => (
                 <div
                   key={vendor?.business_profile_uuid}
                   className="bg-surface-primary rounded-2xl p-5 border border-border-primary hover:border-black/30 shadow-sm transition-all duration-300 flex flex-col md:flex-row gap-6"
@@ -161,10 +161,10 @@ const Service = () => {
                     <div className="w-20 h-20 md:w-28 md:h-28 rounded-2xl overflow-hidden bg-surface-secondary border border-border-secondary shrink-0">
                       <img
                         src={
-                          vendor?.icon ||
+                          vendor?.business_icon ||
                           "https://api.dicebear.com/7.x/shapes/svg?seed=Aura&backgroundColor=0284c7"
                         }
-                        alt={vendor?.name}
+                        alt={vendor?.business_name}
                         className="w-full h-full object-cover p-2"
                       />
                     </div>
@@ -174,7 +174,7 @@ const Service = () => {
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-2 mb-2">
                       <div>
                         <h3 className="text-xl font-bold text-text-primary flex items-center gap-2">
-                          {vendor?.name}
+                          {vendor?.business_name}
                           {vendor?.is_active && (
                             <Icons.BadgeCheck className="w-5 h-5 text-blue-500" />
                           )}
@@ -182,9 +182,9 @@ const Service = () => {
                         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-text-secondary mt-1">
                           <div className="flex items-center gap-1 font-bold text-text-primary">
                             <Icons.Star className="w-4 h-4 text-yellow-500 fill-yellow-500" />
-                            {vendor?.rating || 0}{" "}
+                            {vendor?.average_rating || 0}{" "}
                             <span className="font-normal text-text-muted">
-                              ({vendor?.number_of_reviews || 0})
+                              ({vendor?.review_count || 0})
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
@@ -196,7 +196,7 @@ const Service = () => {
 
                       <div className="hidden md:block">
                         <Link
-                          to={`/vendor/${vendor?.business_profile_uuid}`}
+                          to={`/vendor/${vendor?.business_name}/bengaluru/${vendor?.business_profile_uuid}`}
                           className="px-5 py-2 btn-primary font-bold rounded-xl text-sm transition-colors"
                         >
                           View Profile
@@ -210,7 +210,7 @@ const Service = () => {
                     </p>
 
                     <div className="flex flex-wrap gap-2">
-                      {!vendor?.services?.length > 0
+                      {vendor?.services?.length < 0
                         ? [
                             "Free Consultation",
                             "Modular Kitchens",
@@ -228,7 +228,7 @@ const Service = () => {
                               key={idx}
                               className="bg-surface-secondary text-text-secondary px-2.5 py-1 rounded-md text-xs font-semibold uppercase tracking-wider"
                             >
-                              {service?.service_name}
+                              {service?.name}
                             </span>
                           ))}
                     </div>

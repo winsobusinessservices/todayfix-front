@@ -434,7 +434,7 @@ const OwnerDashboard = () => {
                     onClick={() => setShowMockPopup(false)}
                     className="flex-1 py-4 text-center bg-surface-primary border border-border-primary text-text-primary font-bold rounded-xl hover:bg-surface-secondary transition-colors cursor-pointer"
                   >
-                    Decline
+                    Ignore
                   </button>
                   <Link
                     to="/owner-dashboard/job-board"

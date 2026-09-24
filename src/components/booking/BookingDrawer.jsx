@@ -24,7 +24,7 @@ import { instantBookingApi } from "../../services/instantBookingApi";
 import CustomDropdown from "../ui/CustomDropdown";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
-import { Map, MessageSquare } from "lucide-react";
+import { Map, MessageSquare, Search } from "lucide-react";
 import MapPicker from "../modals/MapPicker";
 
 const ADD_ADDRESS_OPTION = "+ Add New Address";
@@ -43,11 +43,83 @@ const emptyAddressForm = {
 const BookingTypeSelector = () => {
   const { setBookingType, nextStep, selectedService } = useBookingStore();
   const vendorName = selectedService?.business?.name || "Professional";
+  const [showGuide, setShowGuide] = useState(false);
 
   const handleSelect = (type) => {
     setBookingType(type);
     nextStep();
   };
+
+  if (showGuide) {
+    return (
+      <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-300">
+        <div className="mb-6">
+          <h3 className="text-[24px] font-black text-text-primary leading-tight mb-2">
+            How to Book
+          </h3>
+          <p className="text-text-secondary text-[14px]">
+            Follow these 3 simple steps to get your service done.
+          </p>
+        </div>
+
+        <div className="space-y-6 relative">
+          <div className="absolute left-6 top-6 bottom-6 w-px bg-border-primary"></div>
+
+          <div className="flex gap-4 relative z-10">
+            <div className="w-12 h-12 rounded-full bg-surface-accent flex items-center justify-center shrink-0 border border-border-primary">
+              <span className="font-bold text-text-brand">1</span>
+            </div>
+            <div className="pt-2">
+              <h4 className="font-bold text-text-primary text-[15px]">
+                Choose booking type
+              </h4>
+              <p className="text-[13px] text-text-secondary mt-1 leading-relaxed">
+                Select "Schedule" to pick a specific date and time, or "Instant"
+                to find someone right now.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4 relative z-10">
+            <div className="w-12 h-12 rounded-full bg-surface-primary flex items-center justify-center shrink-0 border border-border-primary shadow-sm">
+              <span className="font-bold text-text-primary">2</span>
+            </div>
+            <div className="pt-2">
+              <h4 className="font-bold text-text-primary text-[15px]">
+                Provide location
+              </h4>
+              <p className="text-[13px] text-text-secondary mt-1 leading-relaxed">
+                Enter your address so we can find the best professionals near
+                your exact location.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex gap-4 relative z-10">
+            <div className="w-12 h-12 rounded-full bg-surface-primary flex items-center justify-center shrink-0 border border-border-primary shadow-sm">
+              <span className="font-bold text-text-primary">3</span>
+            </div>
+            <div className="pt-2">
+              <h4 className="font-bold text-text-primary text-[15px]">
+                Job Done
+              </h4>
+              <p className="text-[13px] text-text-secondary mt-1 leading-relaxed">
+                Our system confirms your booking and assigns a trusted, verified
+                professional to the job.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setShowGuide(false)}
+          className="w-full mt-8 py-4 rounded-xl bg-text-primary text-surface-primary font-bold flex items-center justify-center hover:opacity-90 transition-opacity shadow-md"
+        >
+          Got it, let's book!
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4 animate-in fade-in zoom-in-95 duration-300">
@@ -126,7 +198,10 @@ const BookingTypeSelector = () => {
         </div>
       </div>
 
-      <button className="w-full text-left p-4 rounded-2xl bg-surface-secondary flex items-center justify-between group hover:bg-surface-accent transition-colors border border-border-primary">
+      <button
+        onClick={() => setShowGuide(true)}
+        className="w-full text-left p-4 rounded-2xl bg-surface-secondary flex items-center justify-between group hover:bg-surface-accent transition-colors border border-border-primary"
+      >
         <div className="flex items-center gap-4">
           <div className="w-10 h-10 rounded-full border border-border-primary bg-surface-primary flex items-center justify-center shrink-0">
             <MessageSquare
@@ -139,7 +214,7 @@ const BookingTypeSelector = () => {
               We're here to help
             </h4>
             <p className="text-[12px] text-text-secondary mt-0.5">
-              Chat with our support team for guidance.
+              Guide to book a Service.
             </p>
           </div>
         </div>
@@ -282,6 +357,7 @@ const AddressSelector = () => {
     bookingType,
     nextStep,
     setBookingId,
+    setBookingData,
     notes,
     setNotes,
   } = useBookingStore();
@@ -408,6 +484,8 @@ const AddressSelector = () => {
     },
     onSuccess: (data) => {
       // Handle the case where the backend returns success: true, but no provider is available
+      // console.log(data);
+
       if (
         data?.data?.status === "NO_PROVIDER" ||
         data?.message?.toLowerCase().includes("no provider")
@@ -422,6 +500,7 @@ const AddressSelector = () => {
       setBookingId(
         data?.data?.uuid || data?.data?.instant_booking_uuid || "TF-SUCCESS",
       );
+      setBookingData(data?.data);
       nextStep();
     },
     onError: (error) => {
@@ -728,40 +807,43 @@ const AddressSelector = () => {
 
 // Step 4: Success
 const BookingSuccess = () => {
-  const { bookingId, closeBooking, selectedService, bookingType } =
+  const { bookingId, bookingData, closeBooking, selectedService, bookingType } =
     useBookingStore();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   // Fire Google Ads conversion when booking succeeds
-  //   if (typeof window !== "undefined") {
-  //     console.log("Firing Google Ads Conversion...");
+  // Helper to format date
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const options = { weekday: "short", month: "short", day: "numeric" };
+    return new Date(dateString).toLocaleDateString("en-US", options);
+  };
 
-  //     // We can use dataLayer directly which is more reliable
-  //     window.dataLayer = window.dataLayer || [];
-  //     window.dataLayer.push({
-  //       event: "conversion",
-  //       send_to: "AW-18422514526/Ry8GCIHp6IAdEN6GxdBE",
-  //       value: selectedService?.price || 1.0,
-  //       currency: "INR",
-  //     });
-
-  //     // Also try gtag if available as a fallback
-  //     if (typeof window.gtag === "function") {
-  //       window.gtag("event", "conversion", {
-  //         send_to: "AW-18422514526/Ry8GCIHp6IAdEN6GxdBE",
-  //         value: selectedService?.price || 1.0,
-  //         currency: "INR",
-  //       });
-  //     }
-  //   }
-  // }, [selectedService]);
+  // Helper to format time slot
+  const formatTimeSlot = (timeString) => {
+    if (!timeString) return "";
+    return (
+      timeString.charAt(0).toUpperCase() + timeString.slice(1).toLowerCase()
+    );
+  };
 
   return (
     <div className="text-center py-8 animate-in fade-in zoom-in-95 duration-500">
-      <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-green-100">
-        <CheckCircle2 className="w-10 h-10 text-green-500" />
-      </div>
+      {bookingType === "INSTANT" ? (
+        // Radar/Pulse animation for Instant
+        <div className="relative w-24 h-24 mx-auto mb-8 flex items-center justify-center">
+          <div className="absolute inset-0 bg-brand-primary/20 rounded-full animate-ping [animation-duration:2s]"></div>
+          <div className="absolute inset-2 bg-brand-primary/30 rounded-full animate-ping [animation-duration:2s] [animation-delay:0.5s]"></div>
+          <div className="relative w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center shadow-lg shadow-brand-primary/40">
+            <Search className="w-5 h-5 text-surface-primary animate-pulse" />
+          </div>
+        </div>
+      ) : (
+        // Checkmark for Scheduled
+        <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-green-100">
+          <CheckCircle2 className="w-10 h-10 text-green-500" />
+        </div>
+      )}
+
       <h2 className="text-2xl font-black text-text-primary mb-2">
         {bookingType === "INSTANT"
           ? "Request Broadcasted!"
@@ -770,16 +852,159 @@ const BookingSuccess = () => {
       <p className="text-text-secondary mb-6">
         {bookingType === "INSTANT"
           ? `Searching for a provider for ${selectedService?.name}...`
-          : `Your request for ${selectedService?.name} is placed.`}
+          : `Your request for ${selectedService?.name} is successfully placed.`}
       </p>
-      <div className="bg-surface-secondary rounded-xl p-4 mb-8">
-        <p className="text-xs text-text-muted font-bold uppercase mb-1">
-          Booking ID
-        </p>
-        <p className="text-lg font-black text-text-primary uppercase">
-          {bookingId.split("-")[0]}
-        </p>
-      </div>
+
+      {/* Detailed Card for Scheduled Bookings */}
+      {bookingType !== "INSTANT" && bookingData && (
+        <div className="bg-surface-secondary rounded-2xl p-5 mb-8 border border-border-primary text-left">
+          <div className="flex justify-between items-center pb-4 border-b border-border-primary/50 mb-4">
+            <div>
+              <p className="text-[11px] text-text-muted font-bold uppercase tracking-wider mb-1">
+                Booking ID
+              </p>
+              <p className="text-sm font-black text-text-primary uppercase">
+                {bookingId.split("-")[0]}
+              </p>
+            </div>
+            {bookingData.price && (
+              <div className="text-right">
+                <p className="text-[11px] text-text-muted font-bold uppercase tracking-wider mb-1">
+                  Est. Price
+                </p>
+                <p className="text-sm font-black text-text-brand">
+                  ₹{Math.round(bookingData.price)}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            {(bookingData.scheduled_date || bookingData.slot_type) && (
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-surface-primary border border-border-primary flex items-center justify-center shrink-0">
+                  <Calendar className="w-4 h-4 text-text-secondary" />
+                </div>
+                <div>
+                  <p className="text-xs text-text-muted font-medium mb-0.5">
+                    Date & Time
+                  </p>
+                  <p className="text-sm font-bold text-text-primary">
+                    {formatDate(bookingData.scheduled_date)} •{" "}
+                    {formatTimeSlot(bookingData.slot_type)}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {bookingData.business?.name && (
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-surface-primary border border-border-primary flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-4 h-4 text-text-secondary" />
+                </div>
+                <div>
+                  <p className="text-xs text-text-muted font-medium mb-0.5">
+                    Professional
+                  </p>
+                  <p className="text-sm font-bold text-text-primary">
+                    {bookingData.business.name}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {bookingData.address && (
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-surface-primary border border-border-primary flex items-center justify-center shrink-0">
+                  <MapPin className="w-4 h-4 text-text-secondary" />
+                </div>
+                <div>
+                  <p className="text-xs text-text-muted font-medium mb-0.5">
+                    Location
+                  </p>
+                  <p className="text-sm font-bold text-text-primary line-clamp-1">
+                    {bookingData.address.locality || bookingData.address.city}
+                  </p>
+                  <p className="text-xs text-text-secondary line-clamp-1 mt-0.5">
+                    {bookingData.address.address_line}
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Detailed Card for Instant Bookings */}
+      {bookingType === "INSTANT" && bookingData && (
+        <div className="bg-surface-secondary rounded-2xl p-5 mb-8 border border-border-primary text-left">
+          <div className="flex justify-between items-center pb-4 border-b border-border-primary/50 mb-4">
+            <div>
+              <p className="text-[11px] text-text-muted font-bold uppercase tracking-wider mb-1">
+                Booking ID
+              </p>
+              <p className="text-sm font-black text-text-primary uppercase">
+                {bookingId.split("-")[0]}
+              </p>
+            </div>
+            {bookingData.average_service_price && (
+              <div className="text-right">
+                <p className="text-[11px] text-text-muted font-bold uppercase tracking-wider mb-1">
+                  Est. Price
+                </p>
+                <p className="text-sm font-black text-text-brand">
+                  ₹{Math.round(bookingData.average_service_price)}
+                </p>
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-4">
+            {bookingData.requested_service_name && (
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-surface-primary border border-border-primary flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-4 h-4 text-text-secondary" />
+                </div>
+                <div>
+                  <p className="text-xs text-text-muted font-medium mb-0.5">
+                    Requested Service
+                  </p>
+                  <p className="text-sm font-bold text-text-primary">
+                    {bookingData.requested_service_name}
+                  </p>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-surface-primary border border-border-primary flex items-center justify-center shrink-0">
+                <MapPin className="w-4 h-4 text-text-secondary" />
+              </div>
+              <div>
+                <p className="text-xs text-text-muted font-medium mb-0.5">
+                  Status
+                </p>
+                <p className="text-sm font-bold text-text-brand flex items-center gap-2">
+                  <span className="w-2 h-2 rounded-full bg-brand-primary animate-pulse"></span>
+                  {bookingData.status || "SEARCHING"}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fallback Simple Card for missing data */}
+      {!bookingData && (
+        <div className="bg-surface-secondary rounded-xl p-4 mb-8 border border-border-primary">
+          <p className="text-[11px] text-text-muted font-bold uppercase tracking-wider mb-1">
+            Booking ID
+          </p>
+          <p className="text-lg font-black text-text-primary uppercase">
+            {bookingId.split("-")[0]}
+          </p>
+        </div>
+      )}
       <button
         onClick={() => {
           closeBooking();

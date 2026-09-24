@@ -14,7 +14,7 @@ const Profile = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const requestedTab = searchParams.get("tab");
-  const activeTab = ["schedule", "profile", "instant", "reviews"].includes(
+  const activeTab = ["profile", "schedule", "instant", "reviews"].includes(
     requestedTab,
   )
     ? requestedTab
@@ -208,7 +208,7 @@ const Profile = () => {
 
         {/* --- Navigation Tabs --- */}
         <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-10 bg-surface-primary border border-border-primary p-2 rounded-2xl shadow-sm">
-          {["schedule", "profile", "instant", "reviews"].map((tab) => (
+          {["profile", "schedule", "instant", "reviews"].map((tab) => (
             <button
               key={tab}
               onClick={() => setSearchParams({ tab })}
@@ -218,22 +218,21 @@ const Profile = () => {
                   : "text-text-secondary hover:text-text-primary hover:bg-surface-secondary"
               }`}
             >
-              {tab === "schedule" && "Schedule Booking"}
               {tab === "profile" && "Profile"}
+              {tab === "schedule" && "Schedule Booking"}
               {tab === "instant" && "Instant Booking"}
               {tab === "reviews" && "My Reviews"}
             </button>
           ))}
-
         </div>
 
         {/* --- Tab Content Area --- */}
         <div className="bg-surface-primary border border-border-primary rounded-2xl p-8 md:p-12 shadow-2xl shadow-black/5 min-h-[500px]">
-          {activeTab === "schedule" && (
-            <ProfileRequests addresses={userData?.addresses} />
-          )}
           {activeTab === "profile" && (
             <ProfileDetails userData={userData} setUserData={setUserData} />
+          )}
+          {activeTab === "schedule" && (
+            <ProfileRequests addresses={userData?.addresses} />
           )}
           {activeTab === "instant" && <ProfileServicesHistory />}
           {activeTab === "reviews" && <ProfileReviews />}
