@@ -9,6 +9,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import ForgotPassword from "../pages/ForgotPassword";
 import ResetPassword from "../pages/ResetPassword";
+import VerifyEmailUpdate from "../pages/VerifyEmailUpdate";
 import Pricing from "../pages/Pricing";
 import Area from "../pages/Area";
 import AboutUs from "../pages/AboutUs";
@@ -91,6 +92,7 @@ function AppRoutes() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verify-email" element={<VerificationSuccess />} />
+        <Route path="/verify-email-update" element={<VerifyEmailUpdate />} />
         {/* <Route path="/otp" element={<VerificationPage/>} /> */}
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />

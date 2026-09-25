@@ -58,6 +58,15 @@ export const instantBookingApi = {
     return response.data;
   },
 
+  // GET /api/instant-bookings/provider/completed/ (Completed Instant Bookings)
+  completedInstantBooking: async (params) => {
+    const response = await api.get(
+      `/api/instant-bookings/provider/completed/`,
+      { params },
+    );
+    return response.data;
+  },
+
   // POST /api/instant-bookings/<uuid>/start/ (Start Instant Booking)
   startInstantBooking: async (bookingId) => {
     const response = await api.post(
@@ -69,7 +78,7 @@ export const instantBookingApi = {
   // POST /api/instant-bookings/<uuid>/complete/ (Complete Instant Booking, Generates OTP)
   completeInstantBooking: async (bookingId) => {
     const response = await api.post(
-      `/api/instant-bookings/${bookingId}/complete/`
+      `/api/instant-bookings/${bookingId}/complete/`,
     );
     return response.data;
   },
@@ -78,7 +87,7 @@ export const instantBookingApi = {
   completeInstantBookingVerify: async ({ bookingId, otp }) => {
     const response = await api.post(
       `/api/instant-bookings/${bookingId}/complete/verify/`,
-      { otp }
+      { otp },
     );
     return response.data;
   },

@@ -50,7 +50,7 @@ export default function Navbar() {
   });
 
   const navItems = [
-    { name: "Services", link: "/services?term=all categories" },
+    { name: "Services", link: "/services" },
     { name: "Pricing", link: "/pricing" },
     {
       name: "Areas",

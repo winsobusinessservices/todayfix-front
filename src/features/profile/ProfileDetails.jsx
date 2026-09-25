@@ -11,7 +11,12 @@ import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "motion/react";
 import { AlertCircle } from "lucide-react";
 import { updateProfile } from "../../services/userApi";
-import { verifyProfilePhone } from "../../services/authApi";
+import {
+  verifyProfilePhone,
+  requestAccountDeletion,
+  verifyAccountDeletion,
+} from "../../services/authApi";
+import { useUserStore } from "../../store/userStore";
 import { validatePhone } from "../../utils/phoneValidator";
 import { Map } from "lucide-react";
 import MapPicker from "../../components/modals/MapPicker";
@@ -30,6 +35,15 @@ const ProfileDetails = ({ userData, setUserData }) => {
   const [otpError, setOtpError] = useState(false);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [mapMode, setMapMode] = useState(null);
+
+  const clearAuth = useUserStore((state) => state.clearAuth);
+
+  // Account Deletion States
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletePassword, setDeletePassword] = useState("");
+  const [showDeleteOtpModal, setShowDeleteOtpModal] = useState(false);
+  const [deleteOtpValue, setDeleteOtpValue] = useState("");
+  const [deleteOtpError, setDeleteOtpError] = useState(false);
 
   useEffect(() => {
     if (userData && !initialData) {
@@ -113,14 +127,26 @@ const ProfileDetails = ({ userData, setUserData }) => {
   } = useMutation({
     mutationFn: updateProfile,
     onSuccess: (data) => {
-      toast.success(data?.message);
+      if (data?.data?.email_verification_required) {
+        toast.success(
+          "Verification email sent! Please check your inbox and click the link to verify your new email address.",
+          { duration: 6000 },
+        );
+      } else {
+        toast.success(data?.message);
+      }
+
       setInitialData({
         firstName: userData.firstName,
         lastName: userData.lastName,
         phone: userData.phone,
-        email: userData.email,
+        email: initialData?.email || "", // Keep old email in UI until verified
         profileImage: userData.profileImage,
       });
+      setUserData((prev) => ({
+        ...prev,
+        email: initialData?.email || "",
+      }));
       setIsEditingProfile(false);
       queryClient.invalidateQueries(["user"]);
     },
@@ -147,6 +173,59 @@ const ProfileDetails = ({ userData, setUserData }) => {
         );
       },
     });
+
+  const { mutate: requestDeletionMutate, isPending: isRequestingDeletion } =
+    useMutation({
+      mutationFn: requestAccountDeletion,
+      onSuccess: () => {
+        toast.success(
+          "Account deletion initiated. Please check your email or phone for OTP.",
+        );
+        setShowDeleteModal(false);
+        setDeletePassword("");
+        setShowDeleteOtpModal(true);
+      },
+      onError: (err) => {
+        toast.error(
+          err?.response?.data?.message ||
+            err?.response?.data?.detail ||
+            "Failed to request account deletion. Check your password.",
+        );
+      },
+    });
+
+  const { mutate: verifyDeletionMutate, isPending: isVerifyingDeletion } =
+    useMutation({
+      mutationFn: verifyAccountDeletion,
+      onSuccess: () => {
+        toast.success(
+          "Your account deletion request has been verified and submitted.",
+        );
+        setShowDeleteOtpModal(false);
+        setDeleteOtpValue("");
+        setDeleteOtpError(false);
+        // Clean up and logout since the account is now pending deletion
+        clearAuth();
+        queryClient.clear();
+        window.location.href = "/";
+      },
+      onError: (err) => {
+        setDeleteOtpError(true);
+        toast.error(
+          err?.response?.data?.message ||
+            err?.response?.data?.error ||
+            "Invalid OTP for account deletion",
+        );
+      },
+    });
+
+  const handleVerifyDeleteOtp = () => {
+    if (!deleteOtpValue || deleteOtpValue.length < 4) {
+      setDeleteOtpError(true);
+      return;
+    }
+    verifyDeletionMutate(deleteOtpValue);
+  };
 
   const handleGetCurrentLocation = (formSetter) => {
     if ("geolocation" in navigator) {
@@ -301,6 +380,64 @@ const ProfileDetails = ({ userData, setUserData }) => {
             isLoading={isVerifyingPhone}
           />
         )}
+
+        {showDeleteOtpModal && (
+          <Otp
+            otpValue={deleteOtpValue}
+            setOtpValue={setDeleteOtpValue}
+            otpError={deleteOtpError}
+            setOtpError={setDeleteOtpError}
+            handleVerifyOtp={handleVerifyDeleteOtp}
+            setActiveModal={() => setShowDeleteOtpModal(false)}
+            isLoading={isVerifyingDeletion}
+          />
+        )}
+        {showDeleteModal && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm border">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="bg-surface-primary border border-border-primary rounded-3xl p-6 max-w-sm w-full shadow-2xl"
+            >
+              <div className="flex items-center gap-3 mb-4 text-red-500">
+                <AlertCircle size={24} />
+                <h3 className="text-xl font-bold text-text-primary">
+                  Delete Account
+                </h3>
+              </div>
+              <p className="text-text-secondary text-sm mb-4 leading-relaxed">
+                Please enter your password to confirm that you want to delete
+                your account. This action cannot be undone.
+              </p>
+              <input
+                type="password"
+                placeholder="Enter your password"
+                value={deletePassword}
+                onChange={(e) => setDeletePassword(e.target.value)}
+                className="w-full bg-surface-secondary border border-border-secondary text-text-primary rounded-xl px-4 py-3 mb-6 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition-all font-semibold text-sm"
+              />
+              <div className="flex gap-3">
+                <button
+                  onClick={() => {
+                    setShowDeleteModal(false);
+                    setDeletePassword("");
+                  }}
+                  className="flex-1 px-4 py-2.5 bg-surface-secondary text-text-primary font-bold rounded-xl hover:bg-zinc-200 transition-colors cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => requestDeletionMutate(deletePassword)}
+                  disabled={!deletePassword || isRequestingDeletion}
+                  className="flex-1 px-4 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition-colors shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isRequestingDeletion ? "Requesting..." : "Confirm"}
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </AnimatePresence>
       <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
         <div className="mb-14">
@@ -403,9 +540,9 @@ const ProfileDetails = ({ userData, setUserData }) => {
                 name="phone"
                 value={userData?.phone || ""}
                 onChange={handleInputChange}
-                disabled={!isEditingProfile}
+                disabled={!isEditingProfile || !!initialData?.phone}
                 className={`w-full md:w-1/2 bg-surface-secondary border border-border-secondary text-text-primary rounded-2xl px-5 py-4 focus:outline-none focus:border-text-primary focus:ring-1 focus:ring-text-primary transition-all font-semibold ${
-                  !isEditingProfile
+                  !isEditingProfile || !!initialData?.phone
                     ? "opacity-50 cursor-not-allowed select-none"
                     : ""
                 }`}
@@ -621,10 +758,15 @@ const ProfileDetails = ({ userData, setUserData }) => {
                       </label>
                       {addressForm.location ? (
                         <div className="relative">
-                          {addressForm.location.includes('<iframe') ? (
+                          {addressForm.location.includes("<iframe") ? (
                             <div
                               className="w-full h-32 rounded-xl overflow-hidden border border-border-primary"
-                              dangerouslySetInnerHTML={{ __html: addressForm.location.replace(/height="\d+"/, 'height="100%"') }}
+                              dangerouslySetInnerHTML={{
+                                __html: addressForm.location.replace(
+                                  /height="\d+"/,
+                                  'height="100%"',
+                                ),
+                              }}
                             />
                           ) : (
                             <div className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3 text-text-primary text-sm font-semibold">
@@ -927,10 +1069,15 @@ const ProfileDetails = ({ userData, setUserData }) => {
                         </label>
                         {editForm.location ? (
                           <div className="relative">
-                            {editForm.location.includes('<iframe') ? (
+                            {editForm.location.includes("<iframe") ? (
                               <div
                                 className="w-full h-32 rounded-xl overflow-hidden border border-border-primary"
-                                dangerouslySetInnerHTML={{ __html: editForm.location.replace(/height="\d+"/, 'height="100%"') }}
+                                dangerouslySetInnerHTML={{
+                                  __html: editForm.location.replace(
+                                    /height="\d+"/,
+                                    'height="100%"',
+                                  ),
+                                }}
                               />
                             ) : (
                               <div className="w-full bg-surface-secondary border border-border-secondary rounded-xl px-4 py-3 text-text-primary text-sm font-semibold">
@@ -1033,15 +1180,40 @@ const ProfileDetails = ({ userData, setUserData }) => {
             </div>
           )}
         </AnimatePresence>
+
+        <div className="w-full h-px bg-border-primary my-12"></div>
+        <div className="max-w-4xl ml-0 md:ml-11 mb-10">
+          <h2 className="text-2xl font-black mb-6 text-red-500 flex items-center gap-2">
+            <AlertCircle className="w-6 h-6" />
+            Danger Zone
+          </h2>
+          <div className="bg-red-500/10 border border-red-500/20 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div>
+              <h3 className="font-bold text-text-primary mb-2">
+                Delete Account
+              </h3>
+              <p className="text-sm text-text-secondary">
+                Once you delete your account, there is no going back. Please be
+                certain.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-colors shadow-sm whitespace-nowrap active:scale-95 flex-shrink-0"
+            >
+              Delete Account
+            </button>
+          </div>
+        </div>
       </div>
       <MapPicker
         isOpen={!!mapMode}
         onClose={() => setMapMode(null)}
         onConfirm={(iframe) => {
           if (mapMode === "ADD") {
-            setAddressForm(prev => ({ ...prev, location: iframe }));
+            setAddressForm((prev) => ({ ...prev, location: iframe }));
           } else if (mapMode === "EDIT") {
-            setEditForm(prev => ({ ...prev, location: iframe }));
+            setEditForm((prev) => ({ ...prev, location: iframe }));
           }
         }}
       />

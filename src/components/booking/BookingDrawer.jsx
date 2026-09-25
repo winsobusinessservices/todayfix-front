@@ -21,6 +21,7 @@ import {
 } from "../../services/addressApi";
 import { bookingApi } from "../../services/bookingApi";
 import { instantBookingApi } from "../../services/instantBookingApi";
+import { fixCoinsApi } from "../../services/fixCoinsApi";
 import CustomDropdown from "../ui/CustomDropdown";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router";
@@ -369,6 +370,13 @@ const AddressSelector = () => {
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [showAddAddress, setShowAddAddress] = useState(false);
   const [newAddress, setNewAddress] = useState(emptyAddressForm);
+  const [applyCoins, setApplyCoins] = useState(false);
+
+  const { data: balanceData } = useQuery({
+    queryKey: ["fixCoinsBalance"],
+    queryFn: fixCoinsApi.getBalance,
+  });
+  const coinsBalance = balanceData?.data;
 
   const handleGetCurrentLocation = () => {
     setIsLoadingLocation(true);
@@ -540,6 +548,7 @@ const AddressSelector = () => {
         address_uuid,
         requested_service_name: selectedService?.name,
         customer_note: notes,
+        apply_coins: applyCoins,
       };
     } else {
       payload = {
@@ -549,6 +558,7 @@ const AddressSelector = () => {
         scheduled_date: schedule.date,
         slot_type: schedule.timeSlot,
         business_uuid: selectedService?.business?.business_profile_uuid,
+        apply_coins: applyCoins,
       };
     }
 
@@ -788,6 +798,47 @@ const AddressSelector = () => {
           placeholder="e.g. 'Ring the bell twice' or 'Issue is in the bedroom'"
           className="w-full bg-surface-secondary border border-border-primary text-text-primary rounded-xl px-4 py-3 focus:outline-none focus:border-brand-primary transition-colors resize-none font-medium"
         />
+      </div>
+
+      {/* Rewards & Summary Section */}
+      <div className="bg-surface-secondary border border-border-primary rounded-xl p-4">
+        <h4 className="text-sm font-bold text-text-primary mb-3">Cost Summary</h4>
+        <div className="flex justify-between items-center text-sm mb-2">
+          <span className="text-text-secondary">Service Est. Price</span>
+          <span className="font-bold text-text-primary">₹{Math.round(selectedService?.price || 0)}</span>
+        </div>
+        
+        {coinsBalance && coinsBalance.available_coins > 0 && (
+          <div className="flex justify-between items-center py-3 border-t border-b border-border-primary my-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
+                <span className="text-amber-500 font-bold text-xs">F©</span>
+              </div>
+              <div>
+                <p className="text-sm font-bold text-text-primary">Apply Fix-Coins</p>
+                <p className="text-xs text-text-secondary">
+                  Balance: {coinsBalance.available_coins} (Worth ₹{coinsBalance.coin_value_rupees})
+                </p>
+              </div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                checked={applyCoins}
+                onChange={() => setApplyCoins(!applyCoins)}
+              />
+              <div className="w-11 h-6 bg-zinc-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+            </label>
+          </div>
+        )}
+        
+        <div className="flex justify-between items-center mt-3 pt-3">
+          <span className="text-base font-bold text-text-primary">Total Payable</span>
+          <span className="text-lg font-black text-text-brand">
+            ₹{applyCoins ? Math.max(0, Math.round(selectedService?.price || 0) - parseFloat(coinsBalance.coin_value_rupees)) : Math.round(selectedService?.price || 0)}
+          </span>
+        </div>
       </div>
 
       <button

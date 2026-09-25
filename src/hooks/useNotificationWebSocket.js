@@ -147,7 +147,10 @@ export const useNotificationWebSocket = (onMessage) => {
             refreshNotifications(false);
           }
         } catch (error) {
-          console.error("Unable to process notification WebSocket message:", error);
+          console.error(
+            "Unable to process notification WebSocket message:",
+            error,
+          );
         }
       };
 

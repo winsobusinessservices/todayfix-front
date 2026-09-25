@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
-import { api } from "../api";
+import { serviceApi } from "../services/serviceApi";
+import { categoryApi } from "../services/categoryApi";
 import SEO from "../components/seo/SEO";
 
 const Area = () => {
@@ -10,18 +11,53 @@ const Area = () => {
   const navigate = useNavigate();
   const area = window.location.pathname.split("/")[2]; // Extract city from URL
 
+  const [categories, setCategories] = useState([]);
+  const [servicesData, setServicesData] = useState([]);
+
   useEffect(() => {
-    const fetchVendors = async () => {
+    const fetchData = async () => {
       try {
-        const data = await api.getAllVendors();
-        setLocalVendors(data);
+        const [servicesRes, categoriesRes] = await Promise.all([
+          serviceApi.searchServices({}),
+          categoryApi.getCategories()
+        ]);
+        
+        const fetchedServices = servicesRes.results || [];
+        setServicesData(fetchedServices);
+        
+        const fetchedCategories = categoriesRes.data || categoriesRes || [];
+        setCategories(Array.isArray(fetchedCategories) ? fetchedCategories : []);
+        
+        // Extract unique businesses from services
+        const uniqueBusinesses = Array.from(
+          new Map(
+            fetchedServices
+              .filter(s => s.business)
+              .map(s => [
+                s.business.business_profile_uuid || s.business.id,
+                {
+                  id: s.business.business_profile_uuid || s.business.id,
+                  name: s.business.business_name || s.business.name || "Independent Pro",
+                  logo: s.business.logo_url || s.business.logo,
+                  service: s.name,
+                  distance: "1.2 km away", // Placeholder for ad campaign
+                  status: "APPROVED",
+                  rating: s.business.rating || "4.8",
+                  reviews: s.business.reviews || "120",
+                  tags: [s.category?.name, "Verified"].filter(Boolean)
+                }
+              ])
+          ).values()
+        );
+        
+        setLocalVendors(uniqueBusinesses);
       } catch (error) {
-        console.error("Failed to fetch vendors", error);
+        console.error("Failed to fetch data", error);
       } finally {
         setIsLoading(false);
       }
     };
-    fetchVendors();
+    fetchData();
   }, []);
 
   // Mock data for the specific Area
@@ -40,12 +76,7 @@ const Area = () => {
 
   const popularServices = [
     "All",
-    "Home Cleaning",
-    "Plumbing",
-    "Interior Design",
-    "Electricians",
-    "Appliance Repair",
-    "Packers & Movers",
+    ...categories.map(c => c.name)
   ];
 
 
@@ -182,7 +213,9 @@ const Area = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {isLoading && <div className="col-span-2 text-center text-text-muted py-10">Loading local professionals...</div>}
-          {!isLoading && localVendors.map((vendor) => (
+          {!isLoading && localVendors
+            .filter((vendor) => activeService === "All" || vendor.tags.includes(activeService))
+            .map((vendor) => (
             <div
               key={vendor.id}
               className="bg-surface-primary rounded-md p-6 border border-border-primary hover:shadow-xl hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:border-black transition-all duration-300 group flex flex-col sm:flex-row gap-6"
@@ -257,11 +290,11 @@ const Area = () => {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2 mt-4 pt-4 border-t border-border-secondary">
-                  <button className="btn-primary flex-1 rounded-xl py-2.5 text-sm font-bold shadow-md transition-colors active:scale-95">
+                  {/* <button className="btn-primary flex-1 rounded-xl py-2.5 text-sm font-bold shadow-md transition-colors active:scale-95">
                     Contact
-                  </button>
+                  </button> */}
                   <button
-                    onClick={() => navigate(`/vendor/${vendor.id}`)}
+                    onClick={() => navigate(`/vendor/${vendor?.business_name}/bengaluru/${vendor.id}`)}
                     className="flex-1 bg-surface-primary hover:bg-surface-secondary border border-border-primary text-text-primary py-2.5 rounded-xl text-sm font-semibold transition-colors active:scale-95"
                   >
                     View Profile

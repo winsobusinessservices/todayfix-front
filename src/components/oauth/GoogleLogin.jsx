@@ -4,23 +4,26 @@ import { googleLogin } from "../../services/authApi";
 import { popup } from "../pop-up/pop-up";
 import { useNavigate } from "react-router";
 import saveLoginCredentials from "../../utils/saveLoginCredentials";
+import toast from "react-hot-toast";
 
-const GoogleLogin = () => {
-  const navigate = useNavigate();
-
+const GoogleLogin = ({ onLoginSuccess }) => {
   const { mutate, isError, error, isPending, isSuccess } = useMutation({
     mutationFn: googleLogin,
     onSuccess: (response) => {
       const result = response;
-      // console.log(result);
       if (result.success && result.data) {
-        saveLoginCredentials(result);
-        popup(
-          "Login Successful",
-          "Welcome back! You've successfully logged in.",
-          "login",
-        );
-        navigate("/");
+        if (onLoginSuccess) {
+          onLoginSuccess(result);
+        } else {
+          saveLoginCredentials(result);
+          // popup(
+          //   "Login Successful",
+          //   "Welcome back! You've successfully logged in.",
+          //   "login",
+          // );
+          toast.success("Welcome back! You've successfully logged in.");
+          window.location.href = "/";
+        }
       }
     },
     onError: (error) => {

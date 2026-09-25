@@ -9,10 +9,12 @@ import {
   Building2,
   ArrowUpRight,
   Clock,
+  AlertTriangle,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { businessApi } from "../../services/businessApi";
 import BusinessUpgradeModal from "../../components/modals/BusinessUpgradeModal";
+import SwitchToUserModal from "../../components/modals/SwitchToUserModal";
 
 const SettingsToggle = ({ title, description, active, onToggle }) => (
   <div className="flex items-center justify-between py-4 border-b border-border-primary last:border-0">
@@ -43,6 +45,7 @@ const SettingsTab = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [isSwitchModalOpen, setIsSwitchModalOpen] = useState(false);
 
   // Queries for Account & Plan
   const { data: profilesData } = useQuery({
@@ -58,10 +61,13 @@ const SettingsTab = () => {
   const profile = profilesData?.data?.[0] || profilesData?.[0] || {};
   const currentBusinessType = profile?.business_type || "INDIVIDUAL";
 
-  const upgradeRequests = upgradeRequestsData?.data || upgradeRequestsData?.results || [];
+  const upgradeRequests =
+    upgradeRequestsData?.data || upgradeRequestsData?.results || [];
   const latestRequest = upgradeRequests[0];
-  const pendingUpgrade = latestRequest?.status === "PENDING" ? latestRequest : null;
-  const rejectedUpgrade = latestRequest?.status === "REJECTED" ? latestRequest : null;
+  const pendingUpgrade =
+    latestRequest?.status === "PENDING" ? latestRequest : null;
+  const rejectedUpgrade =
+    latestRequest?.status === "REJECTED" ? latestRequest : null;
   // console.log(profilesData);
 
   const toggle = (key) => {
@@ -192,15 +198,21 @@ const SettingsTab = () => {
               Your business type determines your account capabilities and
               verification requirements.
             </p>
-            {rejectedUpgrade && !pendingUpgrade && rejectedUpgrade.rejection_reason && (
-              <div className="mt-3 p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
-                <p className="text-xs font-bold text-red-500 mb-1">Rejection Reason:</p>
-                <p className="text-sm text-text-primary">{rejectedUpgrade.rejection_reason}</p>
-              </div>
-            )}
+            {rejectedUpgrade &&
+              !pendingUpgrade &&
+              rejectedUpgrade.rejection_reason && (
+                <div className="mt-3 p-3 bg-red-500/5 border border-red-500/10 rounded-xl">
+                  <p className="text-xs font-bold text-red-500 mb-1">
+                    Rejection Reason:
+                  </p>
+                  <p className="text-sm text-text-primary">
+                    {rejectedUpgrade.rejection_reason}
+                  </p>
+                </div>
+              )}
           </div>
 
-          { !pendingUpgrade && (
+          {!pendingUpgrade && (
             <button
               onClick={() => setIsUpgradeModalOpen(true)}
               className="shrink-0 px-5 py-2.5 bg-text-primary text-surface-primary font-bold rounded-xl hover:scale-[0.98] transition-transform shadow-md flex items-center gap-2"
@@ -269,10 +281,43 @@ const SettingsTab = () => {
         </form>
       </div>
 
+      {/* Danger Zone */}
+      <div className="bg-red-50/50 rounded-3xl border border-red-200 p-6 shadow-2xl shadow-red-900/5">
+        <div className="flex items-center gap-3 mb-6 pb-6 border-b border-red-200">
+          <AlertTriangle className="text-red-500" />
+          <h2 className="text-xl font-bold tracking-tight text-red-600">
+            Danger Zone
+          </h2>
+        </div>
+
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div>
+            <h4 className="font-bold text-red-700 mb-1">
+              Switch to User Account
+            </h4>
+            <p className="text-sm text-red-600/80 mt-1 max-w-lg">
+              Downgrading to a standard user will immediately deactivate your
+              business profile. You cannot have any pending or active bookings.
+            </p>
+          </div>
+          <button
+            onClick={() => setIsSwitchModalOpen(true)}
+            className="shrink-0 px-5 py-2.5 bg-red-600 text-white font-bold rounded-xl hover:bg-red-700 transition-colors shadow-md"
+          >
+            Deactivate Business
+          </button>
+        </div>
+      </div>
+
       <BusinessUpgradeModal
         isOpen={isUpgradeModalOpen}
         onClose={() => setIsUpgradeModalOpen(false)}
         currentType={currentBusinessType}
+      />
+
+      <SwitchToUserModal
+        isOpen={isSwitchModalOpen}
+        onClose={() => setIsSwitchModalOpen(false)}
       />
     </div>
   );

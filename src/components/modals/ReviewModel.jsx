@@ -11,6 +11,7 @@ const ReviewModel = ({
   setReviewModalOpen,
   existingReview,
 }) => {
+  // console.log(selectedBookingForReview);
   const [rating, setRating] = useState(existingReview?.rating || 0);
   const [hoverRating, setHoverRating] = useState(0);
   const [reviewText, setReviewText] = useState(existingReview?.message || "");
@@ -98,7 +99,12 @@ const ReviewModel = ({
         selectedBookingForReview.uuid ||
         selectedBookingForReview.instant_booking_uuid ||
         selectedBookingForReview.id;
-      formData.append("booking_uuid", targetId);
+      const bookingType = selectedBookingForReview.booking_type;
+      if (bookingType === "INSTANT") {
+        formData.append("instant_booking_uuid", targetId);
+      } else {
+        formData.append("booking_uuid", targetId);
+      }
     }
 
     formData.append("rating", rating);

@@ -26,15 +26,9 @@ import { dateMonthYearFormater } from "../../utils/dateFormater";
 import { IconLocation } from "@tabler/icons-react";
 import MapPicker from "../../components/modals/MapPicker";
 
-const INITIAL_GALLERY = [
-  "https://images.unsplash.com/photo-1581094288338-2314dddb7ece?auto=format&fit=crop&q=80&w=400",
-  "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&q=80&w=400",
-  "https://images.unsplash.com/photo-1599839619722-39751411ea63?auto=format&fit=crop&q=80&w=400",
-];
-
 const PortfolioTab = () => {
   const queryClient = useQueryClient();
-  const [gallery, setGallery] = useState(INITIAL_GALLERY);
+  const [gallery, setGallery] = useState([]);
   const [profileId, setProfileId] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
   const [isMapOpen, setIsMapOpen] = useState(false);
@@ -453,9 +447,9 @@ const PortfolioTab = () => {
             <div className="w-full flex flex-col gap-6">
               <div className="bg-surface-primary rounded-2xl overflow-hidden shadow-[0_2px_20px_rgb(0,0,0,0.04)] border border-border-primary">
                 <div className="h-48 w-full relative rounded-2xl overflow-hidden">
-                  {firstApp?.identity?.banner ? (
+                  {gallery.length > 0 ? (
                     <img
-                      src={IMAGE_URL + firstApp.identity.banner}
+                      src={gallery[0].image}
                       alt="Profile Banner"
                       className="w-full h-full object-cover absolute top-0 left-0 opacity-80"
                     />

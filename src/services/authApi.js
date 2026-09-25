@@ -90,3 +90,41 @@ export const verifyProfilePhone = async (data) => {
     })
     .then((res) => res.data);
 };
+
+export const requestAccountDeletion = async (password) => {
+  return await api
+    .post("/api/auth/profile/delete/request/", { password })
+    .then((res) => res.data);
+};
+
+export const verifyProfileEmail = async (data) => {
+  return await api
+    .post("/api/auth/profile/verify-email/", {
+      email_update_verification_uuid: data.email_update_verification_uuid,
+      token: data.token,
+    })
+    .then((res) => res.data);
+};
+
+export const verifyAccountDeletion = async (otp) => {
+  return await api
+    .post("/api/auth/profile/delete/verify/", { otp })
+    .then((res) => res.data);
+};
+
+// These two need an explicit token passed because they run before the user is fully logged in
+export const getAccountDeletionStatus = async (token) => {
+  return await axios
+    .get(`${API_URL}/api/auth/profile/delete/status/`, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((res) => res.data);
+};
+
+export const cancelAccountDeletion = async (token) => {
+  return await axios
+    .post(`${API_URL}/api/auth/profile/delete/cancel/`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+    .then((res) => res.data);
+};

@@ -32,10 +32,24 @@ export const reviewApi = {
     return (await api.get(`/api/reviews/booking/${booking_uuid}/`)).data;
   },
 
+  instantBookingReview: async (instant_booking_uuid) => {
+    return (
+      await api.get(`/api/reviews/instant-booking/${instant_booking_uuid}/`)
+    ).data;
+  },
+
   // GET - /api/reviews/booking/{booking_uuid}/eligibility/
   eligibilityReview: async (booking_uuid) => {
     return (await api.get(`/api/reviews/booking/${booking_uuid}/eligibility/`))
       .data;
+  },
+
+  instantBookingEligiblityReview: async (instant_booking_uuid) => {
+    return (
+      await api.get(
+        `/api/reviews/instant-booking/${instant_booking_uuid}/eligibility/`,
+      )
+    ).data;
   },
 
   // GET - /api/reviews/my/

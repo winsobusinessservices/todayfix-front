@@ -227,6 +227,36 @@ const AboutUs = () => {
         </div>
       </section>
 
+      {/* Winso Business Services Section */}
+      <section className="py-24 px-6 max-w-6xl mx-auto">
+        <div className="bg-surface-primary rounded-[2rem] p-10 md:p-16 border border-border-primary shadow-[0_8px_30px_rgb(0,0,0,0.04)] relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none">
+             <svg width="200" height="200" viewBox="0 0 24 24" fill="currentColor">
+               <path d="M12 2L2 22h20L12 2zm0 3.83L17.17 16H6.83L12 5.83z" />
+             </svg>
+          </div>
+          <div className="relative z-10 max-w-3xl">
+            <span className="inline-block py-1 px-3 rounded-full bg-surface-secondary border border-border-primary text-xs font-bold uppercase tracking-widest text-text-secondary mb-6 shadow-sm">
+              Our Parent Company
+            </span>
+            <h2 className="text-3xl md:text-5xl font-black text-text-primary tracking-tight mb-6 leading-tight">
+              A Product by Winso Business Services
+            </h2>
+            <div className="space-y-6 text-text-secondary text-lg leading-relaxed font-medium">
+              <p>
+                <strong>TodayFix</strong> is a digital services marketplace developed by <strong>Winso Business Services Pvt Ltd</strong>, built to make it easier for customers to discover, compare, and connect with trusted local service providers.
+              </p>
+              <p>
+                From home services and repairs to professional and business services, TodayFix brings multiple service categories together in one convenient platform. Customers can find relevant providers based on their location and requirements, while service providers can showcase their businesses and connect with potential customers.
+              </p>
+              <p>
+                Winso Business Services is a Bangalore-based company providing solutions across software, IT services, digital marketing, web design, business registration, GST services, and related business solutions. TodayFix brings Winso's experience in technology and business services into a digital marketplace platform, with a focus on simplicity, accessibility, local discovery, and direct customer-provider connections.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Core Values */}
       <section className="bg-surface-primary border-y border-border-primary py-24 px-6 shadow-sm">
         <div className="max-w-6xl mx-auto">

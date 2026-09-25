@@ -7,9 +7,28 @@ export const adminApi = {
     return response.data;
   },
 
+  getBusinessApplicationAccepted: async () => {
+    const response = await api.get(
+      "/api/business/admin/applications/accepted/",
+    );
+    return response.data;
+  },
+
   // PATCH /api/business/admin/profiles/<uuid>/rank/ (Update Business Rank)
   updateBusinessRank: async (profileId, rank) => {
-    const response = await api.patch(`/api/business/admin/profiles/${profileId}/rank/`, { rank });
+    const response = await api.patch(
+      `/api/business/admin/profiles/${profileId}/rank/`,
+      { rank },
+    );
+    return response.data;
+  },
+
+  // PATCH /api/business/admin/profiles/<uuid>/update/ (Update Business Details)
+  updateBusinessProfile: async (profileId, data) => {
+    const response = await api.patch(
+      `/api/business/admin/profiles/${profileId}/update/`,
+      data,
+    );
     return response.data;
   },
 
@@ -20,40 +39,61 @@ export const adminApi = {
   },
 
   getAcceptedApplications: async () => {
-    const response = await api.get("/api/business/admin/applications/accepted/");
+    const response = await api.get(
+      "/api/business/admin/applications/accepted/",
+    );
     return response.data;
   },
 
   getRejectedApplications: async () => {
-    const response = await api.get("/api/business/admin/applications/rejected/");
+    const response = await api.get(
+      "/api/business/admin/applications/rejected/",
+    );
     return response.data;
   },
 
   // POST /api/business/admin/applications/<uuid>/approve/ (Approve Application)
   approveApplication: async (applicationId) => {
-    const response = await api.post(`/api/business/admin/applications/${applicationId}/approve/`);
+    const response = await api.post(
+      `/api/business/admin/applications/${applicationId}/approve/`,
+    );
     return response.data;
   },
 
   // POST /api/business/admin/applications/<uuid>/reject/ (Reject Application)
   rejectApplication: async (applicationId, reason) => {
-    const response = await api.post(`/api/business/admin/applications/${applicationId}/reject/`, { reason });
+    const response = await api.post(
+      `/api/business/admin/applications/${applicationId}/reject/`,
+      { reason },
+    );
     return response.data;
   },
 
   // Upgrade Requests
   getUpgradeRequests: async (status) => {
-    const response = await api.get(`/api/business/admin/upgrade-requests/`, { params: { status } });
+    const response = await api.get(`/api/business/admin/upgrade-requests/`, {
+      params: { status },
+    });
     return response.data;
   },
 
   approveUpgradeRequest: async (id) => {
-    const response = await api.post(`/api/business/admin/upgrade-requests/${id}/approve/`);
+    const response = await api.post(
+      `/api/business/admin/upgrade-requests/${id}/approve/`,
+    );
     return response.data;
   },
 
   rejectUpgradeRequest: async (id, reason) => {
-    const response = await api.post(`/api/business/admin/upgrade-requests/${id}/reject/`, { reason });
+    const response = await api.post(
+      `/api/business/admin/upgrade-requests/${id}/reject/`,
+      { reason },
+    );
+    return response.data;
+  },
+
+  updateServicesDetails: async ({ id, data }) => {
+    const response = await api.patch(`/api/services/admin/${id}/update/`, data);
     return response.data;
   },
 };

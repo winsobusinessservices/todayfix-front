@@ -119,7 +119,7 @@ const Vendor = () => {
     gallery.length > 0
       ? gallery[0].image || gallery[0]
       : "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80";
-  const avatarImage = `https://api.dicebear.com/7.x/shapes/svg?seed=${businessPortfolio?.name || "Vendor"}&backgroundColor=0284c7`;
+  const avatarImage =  `https://api.dicebear.com/7.x/shapes/svg?seed=${businessPortfolio?.name || "Vendor"}&backgroundColor=0284c7`;
 
   // Format Working Hours
   const formatWorkingHours = (hoursArray) => {
@@ -393,7 +393,7 @@ const Vendor = () => {
                 </h2>
                 <button
                   onClick={() => setIsReviewModalOpen(true)}
-                className="btn-primary px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                  className="btn-primary px-4 py-1.5 rounded-lg text-sm font-medium transition-colors"
                 >
                   Write a Review
                 </button>

@@ -48,6 +48,14 @@ const SlotsTab = () => {
   const [editingSlot, setEditingSlot] = useState(null);
   const [deleteId, setDeleteId] = useState(null);
 
+  // Search and Filter State
+  const [filters, setFilters] = useState({
+    employee_uuid: "ALL",
+    day_of_week: "ALL",
+    slot_type: "ALL",
+    status: "ALL",
+  });
+
   // Form State
   const [formData, setFormData] = useState({
     employee_uuid: "",
@@ -154,11 +162,40 @@ const SlotsTab = () => {
 
   const allEmployees = Array.isArray(employeesData)
     ? employeesData
-    : employeesData?.results.filter((emp) => emp.is_active) || [];
+    : employeesData?.results?.filter((emp) => emp.is_active) || [];
 
   const allSchedules = Array.isArray(schedulesData)
     ? schedulesData
     : schedulesData?.results || [];
+
+  const filteredSchedules = allSchedules.filter((slot) => {
+    if (
+      filters.day_of_week !== "ALL" &&
+      slot.day_of_week !== filters.day_of_week
+    )
+      return false;
+    if (filters.slot_type !== "ALL" && slot.slot_type !== filters.slot_type)
+      return false;
+
+    if (filters.status !== "ALL") {
+      const isActive = filters.status === "ACTIVE";
+      if (slot.is_active !== isActive) return false;
+    }
+
+    if (filters.employee_uuid !== "ALL") {
+      if (filters.employee_uuid === "BUSINESS") {
+        if (slot.employee_uuid || slot.employee) return false;
+      } else {
+        if (
+          !slot.employee ||
+          slot.employee.employee_uuid !== filters.employee_uuid
+        )
+          return false;
+      }
+    }
+
+    return true;
+  });
 
   // Employee Management Check
   if (
@@ -214,9 +251,14 @@ const SlotsTab = () => {
     if (currentBusinessType !== "INDIVIDUAL" && !copyFormData.employee_uuid) {
       return toast.error("Please select an employee");
     }
-    
-    if (!copyFormData.apply_to_all_days && copyFormData.target_days.length === 0) {
-      return toast.error("Please select at least one target day, or check 'Apply to all days'");
+
+    if (
+      !copyFormData.apply_to_all_days &&
+      copyFormData.target_days.length === 0
+    ) {
+      return toast.error(
+        "Please select at least one target day, or check 'Apply to all days'",
+      );
     }
 
     const payload = {
@@ -298,9 +340,9 @@ const SlotsTab = () => {
   };
 
   return (
-    <div className="space-y-6 min-h-[60vh]">
+    <div className="space-y-6 min-h-[60vh] animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* Header */}
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
           <h2 className="text-2xl font-black tracking-tight text-text-primary flex items-center gap-2">
             <CalendarDays className="text-zinc-500" /> Working Schedules
@@ -325,7 +367,7 @@ const SlotsTab = () => {
         </div>
       </div>
 
-      {/* Grid of Slots */}
+      {/* Grid of Slots / Table */}
       {allSchedules.length === 0 ? (
         <div className="text-center py-16 bg-surface-primary rounded-3xl border border-border-primary border-dashed">
           <Clock className="w-12 h-12 text-zinc-300 mx-auto mb-4" />
@@ -344,89 +386,174 @@ const SlotsTab = () => {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {allSchedules.map((slot) => {
-            return (
-              <div
-                key={
-                  slot.employee_working_schedule_uuid ||
-                  slot.working_schedule_uuid ||
-                  slot.uuid ||
-                  slot.id
+        <div className="bg-surface-primary border border-border-primary rounded-2xl shadow-sm overflow-hidden">
+          {/* Filters Bar */}
+          <div className="p-4 border-b border-border-primary flex flex-wrap gap-4 items-center bg-surface-secondary/20">
+            {currentBusinessType !== "INDIVIDUAL" && (
+              <select
+                value={filters.employee_uuid}
+                onChange={(e) =>
+                  setFilters({ ...filters, employee_uuid: e.target.value })
                 }
-                className="bg-surface-primary border border-border-primary rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow relative group"
+                className="flex-1 min-w-[140px] px-4 py-2 bg-surface-primary border border-border-secondary rounded-xl text-sm font-bold text-text-primary focus:outline-none focus:border-zinc-400 transition-colors appearance-none cursor-pointer"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-surface-secondary flex items-center justify-center border border-border-secondary shrink-0">
-                      <User size={18} className="text-zinc-500" />
-                    </div>
-                    <div>
-                      <h4 className="font-bold text-text-primary text-sm line-clamp-1">
-                        {slot?.employee
-                          ? `${slot?.employee?.name}`
-                          : "Business Hours"}
-                      </h4>
-                      <span
-                        className={`text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full ${
-                          slot.is_active
-                            ? "bg-green-500/10 text-green-600"
-                            : "bg-zinc-100 text-zinc-500"
-                        }`}
-                      >
-                        {slot.is_active ? "Active" : "Inactive"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex gap-1">
-                    <button
-                      onClick={() => openModalForEdit(slot)}
-                      className="p-1.5 text-zinc-400 hover:text-text-primary hover:bg-surface-secondary rounded-lg transition-colors cursor-pointer"
-                      title="Edit"
-                    >
-                      <Edit2 size={14} />
-                    </button>
-                    <button
-                      onClick={() =>
-                        setDeleteId(
-                          slot.employee_working_schedule_uuid ||
-                            slot.working_schedule_uuid ||
-                            slot.uuid ||
-                            slot.id,
-                        )
-                      }
-                      className="p-1.5 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
-                      title="Delete"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </div>
+                <option value="ALL">All Employees</option>
+                <option value="BUSINESS">Business Hours</option>
+                {allEmployees.map((emp) => (
+                  <option key={emp.employee_uuid} value={emp.employee_uuid}>
+                    {emp.name}
+                  </option>
+                ))}
+              </select>
+            )}
 
-                <div className="space-y-3 bg-surface-secondary/50 rounded-xl p-4 border border-border-secondary">
-                  <div className="flex justify-start gap-3 items-center text-sm">
-                    <span className="text-zinc-500 font-medium">Day</span>
-                    <span className="font-bold text-text-primary">
-                      {slot.day_of_week}
-                    </span>
-                  </div>
-                  <div className="flex justify-start gap-3 items-center text-sm">
-                    <span className="text-zinc-500 font-medium">Type</span>
-                    <span className="font-bold text-text-primary">
-                      {slot.slot_type}
-                    </span>
-                  </div>
-                  <div className="flex justify-start gap-3 items-center text-sm">
-                    <span className="text-zinc-500 font-medium">Time</span>
-                    <span className="font-bold text-text-primary">
-                      {slot.start_time?.substring(0, 5)} -{" "}
-                      {slot.end_time?.substring(0, 5)}
-                    </span>
-                  </div>
-                </div>
+            <select
+              value={filters.day_of_week}
+              onChange={(e) =>
+                setFilters({ ...filters, day_of_week: e.target.value })
+              }
+              className="flex-1 min-w-[140px] px-4 py-2 bg-surface-primary border border-border-secondary rounded-xl text-sm font-bold text-text-primary focus:outline-none focus:border-zinc-400 transition-colors appearance-none cursor-pointer"
+            >
+              <option value="ALL">All Days</option>
+              {DAYS_OF_WEEK.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filters.slot_type}
+              onChange={(e) =>
+                setFilters({ ...filters, slot_type: e.target.value })
+              }
+              className="flex-1 min-w-[140px] px-4 py-2 bg-surface-primary border border-border-secondary rounded-xl text-sm font-bold text-text-primary focus:outline-none focus:border-zinc-400 transition-colors appearance-none cursor-pointer"
+            >
+              <option value="ALL">All Times</option>
+              {SLOT_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filters.status}
+              onChange={(e) =>
+                setFilters({ ...filters, status: e.target.value })
+              }
+              className="flex-1 min-w-[140px] px-4 py-2 bg-surface-primary border border-border-secondary rounded-xl text-sm font-bold text-text-primary focus:outline-none focus:border-zinc-400 transition-colors appearance-none cursor-pointer"
+            >
+              <option value="ALL">All Statuses</option>
+              <option value="ACTIVE">Active</option>
+              <option value="INACTIVE">Inactive</option>
+            </select>
+          </div>
+
+          {/* Table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm whitespace-nowrap">
+              <thead className="bg-surface-secondary/30 text-zinc-500 border-b border-border-primary">
+                <tr>
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-[11px]">
+                    Employee
+                  </th>
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-[11px]">
+                    Day
+                  </th>
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-[11px]">
+                    Time
+                  </th>
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-[11px]">
+                    Type
+                  </th>
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-[11px]">
+                    Status
+                  </th>
+                  <th className="px-6 py-4 font-bold tracking-wider uppercase text-[11px] text-right">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border-primary">
+                {filteredSchedules.map((slot) => {
+                  const slotId =
+                    slot.employee_working_schedule_uuid ||
+                    slot.working_schedule_uuid ||
+                    slot.uuid ||
+                    slot.id;
+                  return (
+                    <tr
+                      key={slotId}
+                      className="hover:bg-surface-secondary/30 transition-colors group"
+                    >
+                      <td className="px-6 py-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-surface-secondary flex items-center justify-center border border-border-secondary shrink-0">
+                            <User size={14} className="text-zinc-500" />
+                          </div>
+                          <span className="font-bold text-text-primary">
+                            {slot?.employee
+                              ? slot.employee.name
+                              : "Business Hours"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 font-bold text-text-primary">
+                        {slot.day_of_week}
+                      </td>
+                      <td className="px-6 py-4 font-medium text-text-secondary">
+                        {slot.start_time?.substring(0, 5)} -{" "}
+                        {slot.end_time?.substring(0, 5)}
+                      </td>
+                      <td className="px-6 py-4">
+                        <span className="px-2.5 py-1 bg-surface-secondary border border-border-secondary rounded-lg text-xs font-bold text-zinc-600">
+                          {slot.slot_type}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <span
+                          className={`text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full ${
+                            slot.is_active
+                              ? "bg-green-500/10 text-green-600"
+                              : "bg-zinc-100 text-zinc-500"
+                          }`}
+                        >
+                          {slot.is_active ? "Active" : "Inactive"}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-right">
+                        <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button
+                            onClick={() => openModalForEdit(slot)}
+                            className="p-2 text-zinc-400 hover:text-text-primary hover:bg-surface-secondary rounded-lg transition-colors cursor-pointer"
+                            title="Edit"
+                          >
+                            <Edit2 size={16} />
+                          </button>
+                          <button
+                            onClick={() => setDeleteId(slotId)}
+                            className="p-2 text-red-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                            title="Delete"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+
+            {filteredSchedules.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-zinc-500 font-medium">
+                  No schedules found matching your filters.
+                </p>
               </div>
-            );
-          })}
+            )}
+          </div>
         </div>
       )}
 
@@ -619,7 +746,10 @@ const SlotsTab = () => {
                       required
                     >
                       {allEmployees.map((emp) => (
-                        <option key={emp.employee_uuid} value={emp.employee_uuid}>
+                        <option
+                          key={emp.employee_uuid}
+                          value={emp.employee_uuid}
+                        >
                           {emp.name}
                         </option>
                       ))}
@@ -677,7 +807,7 @@ const SlotsTab = () => {
                     </label>
                     <div className="grid grid-cols-2 gap-3 mt-2">
                       {DAYS_OF_WEEK.filter(
-                        (day) => day !== copyFormData.source_day_of_week
+                        (day) => day !== copyFormData.source_day_of_week,
                       ).map((day) => (
                         <label
                           key={day}
@@ -690,13 +820,16 @@ const SlotsTab = () => {
                               if (e.target.checked) {
                                 setCopyFormData({
                                   ...copyFormData,
-                                  target_days: [...copyFormData.target_days, day],
+                                  target_days: [
+                                    ...copyFormData.target_days,
+                                    day,
+                                  ],
                                 });
                               } else {
                                 setCopyFormData({
                                   ...copyFormData,
                                   target_days: copyFormData.target_days.filter(
-                                    (d) => d !== day
+                                    (d) => d !== day,
                                   ),
                                 });
                               }

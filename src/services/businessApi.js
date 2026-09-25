@@ -169,4 +169,16 @@ export const businessApi = {
     const response = await api.delete(`/api/business/portfolio/gallery/${galleryId}/delete/`);
     return response.data;
   },
+
+  // POST /api/business/switch-to-user/request/
+  requestSwitchToUser: async (data) => {
+    const response = await api.post(`/api/business/switch-to-user/request/`, data);
+    return response.data;
+  },
+
+  // POST /api/business/switch-to-user/verify/
+  verifySwitchToUser: async (data) => {
+    const response = await api.post(`/api/business/switch-to-user/verify/`, data);
+    return response.data;
+  },
 };

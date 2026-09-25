@@ -7,7 +7,7 @@ import {
   IconBrandLinkedin,
 } from "@tabler/icons-react";
 import Logo from "../brand/Logo";
-import Icon from "../../assets/TF_LIGHT_LOGO_TRANS.png"
+import Icon from "../../assets/TF_LIGHT_LOGO_TRANS.png";
 import { footerData as footerLinkColumns } from "../../data/footerData";
 
 const Footer = () => {
@@ -19,20 +19,20 @@ const Footer = () => {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <span className="text-3xl font-extrabold text-text-primary tracking-tight">
-            <Link
-              to="/"
-              className="relative z-20 mr-2 flex shrink-0 items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary sm:mr-4"
-            >
-              <img src={Icon} alt="logo" width={55} height={55} />
-              {/* <video src="logo-vid.mp4" autoPlay muted loop height={55} width={55} className="rounded-md"></video> */}
-              <Logo />
-            </Link>            
+              <Link
+                to="/"
+                className="relative z-20 mr-2 flex shrink-0 items-center space-x-2 px-2 py-1 text-sm font-normal text-text-primary sm:mr-4"
+              >
+                <img src={Icon} alt="logo" width={55} height={55} />
+                {/* <video src="logo-vid.mp4" autoPlay muted loop height={55} width={55} className="rounded-md"></video> */}
+                <Logo />
+              </Link>
             </span>
           </div>
 
           <p className="text-text-secondary text-sm max-w-xs leading-relaxed">
-            Subscribe for home maintenance tips, seasonal guides, and exclusive
-            local offers.
+            Find local businesses and service professionals for your everyday
+            needs.
           </p>
 
           {/* Email Input Group */}
@@ -55,10 +55,23 @@ const Footer = () => {
           </form>
 
           {/* Disclaimer */}
-          <p className="text-[11px] text-text-muted leading-relaxed max-w-[320px] mt-1">
+          <p className="text-[11px] text-text-muted leading-relaxed max-w-[320px] mt-1 mb-4">
             By subscribing you agree to our Privacy Policy and consent to
             receive updates from TodayFix.
           </p>
+
+          <div className="flex flex-col text-sm text-text-secondary font-medium pt-4 border-t border-border-primary">
+            <span className="font-bold text-text-primary mb-1">
+              A Product by
+            </span>
+            <span className="font-bold text-text-primary text-base">
+              Winso Business Services Pvt Ltd
+            </span>
+            <span className="text-xs text-text-muted mt-1 leading-relaxed max-w-[280px]">
+              SY No. 112, Ground Floor, Hirandahall Opp GHP School, Virgonagar,
+              Bangalore – 560049
+            </span>
+          </div>
         </div>
 
         {/* Right Section: Links Grid */}
@@ -94,25 +107,25 @@ const Footer = () => {
             {/* Social Media links */}
             <div className="flex items-center gap-4 mt-1">
               <Link
-                to="#"
+                to="https://www.facebook.com/todayfix26"
                 className="text-text-muted hover:text-text-primary hover:scale-110 transition-all duration-300"
               >
                 <IconBrandFacebook size={24} stroke={2} />
               </Link>
               <Link
-                to="#"
+                to="https://x.com/TodayFix26"
                 className="text-text-muted hover:text-text-primary hover:scale-110 transition-all duration-300"
               >
                 <IconBrandTwitter size={24} stroke={2} />
               </Link>
               <Link
-                to="#"
+                to="https://www.instagram.com/todayfix26/"
                 className="text-text-muted hover:text-text-primary hover:scale-110 transition-all duration-300"
               >
                 <IconBrandInstagram size={24} stroke={2} />
               </Link>
               <Link
-                to="#"
+                to="https://www.linkedin.com/in/todayfix26/"
                 className="text-text-muted hover:text-text-primary hover:scale-110 transition-all duration-300"
               >
                 <IconBrandLinkedin size={24} stroke={2} />
@@ -130,7 +143,10 @@ const Footer = () => {
           </p>
           <span className="hidden md:block text-border-tertiary">•</span>
           <p className="text-sm text-text-secondary font-medium">
-            Designed and Developed By <span className="font-bold text-text-primary">Winso Business Services Private Limited</span>
+            Designed and Developed By{" "}
+            <a href="https://www.winsobusiness.com/" className="font-bold text-text-primary">
+              Winso Business Services Private Limited
+            </a>
           </p>
         </div>
         <div className="flex gap-6 text-sm text-text-muted font-medium">

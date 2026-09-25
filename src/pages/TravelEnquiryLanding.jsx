@@ -10,6 +10,7 @@ import {
   Car
 } from "lucide-react";
 import toast from "react-hot-toast";
+import SEO from "../components/seo/SEO";
 
 const TravelEnquiryLanding = () => {
   const navigate = useNavigate();
@@ -86,9 +87,14 @@ const TravelEnquiryLanding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-surface-primary flex flex-col md:flex-row">
-      {/* Left Side: Guide Info */}
-      <div className="flex-1 bg-surface-dark p-8 md:p-16 lg:p-24 flex flex-col justify-center relative overflow-hidden">
+    <>
+      <SEO 
+        title="Book Cabs & Travels"
+        description="Book your next ride with Today Travels. Request an airport transfer, outstation trip, or local drop. Instant confirmation and safe journeys."
+      />
+      <div className="min-h-screen bg-surface-primary flex flex-col md:flex-row">
+        {/* Left Side: Guide Info */}
+        <div className="flex-1 bg-surface-dark p-8 md:p-16 lg:p-24 flex flex-col justify-center relative overflow-hidden">
         {/* Background decorations */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-brand-primary opacity-10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
         <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500 opacity-10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2"></div>
@@ -280,6 +286,7 @@ const TravelEnquiryLanding = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

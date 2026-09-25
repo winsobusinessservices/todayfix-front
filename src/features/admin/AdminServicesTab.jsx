@@ -4,12 +4,20 @@ import {
   StatusBadge,
   AdminModal,
 } from "../../components/ui/AdminShared";
-import { Plus, Settings, IndianRupee, Clock, Users, Wrench } from "lucide-react";
+import {
+  Plus,
+  Settings,
+  IndianRupee,
+  Clock,
+  Users,
+  Wrench,
+} from "lucide-react";
 import toast from "react-hot-toast";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { categoryApi } from "../../services/categoryApi";
 import { serviceApi } from "../../services/serviceApi";
 import CustomDropdown from "../../components/ui/CustomDropdown";
+import { adminApi } from "../../services/adminApi";
 
 const AdminServicesTab = () => {
   const queryClient = useQueryClient();
@@ -58,12 +66,15 @@ const AdminServicesTab = () => {
   const subcategories = subcategoriesData?.data || [];
 
   // Fetch services for the selected subcategory
-  const { data: servicesData, isLoading: isLoadingServices } =
-    useQuery({
-      queryKey: ["adminServices", selectedSubCatUuid],
-      queryFn: () => serviceApi.getServicesBySubcategory(selectedSubCatUuid, { page: 1, limit: 100 }), // We might need to adjust pagination or params
-      enabled: !!selectedSubCatUuid,
-    });
+  const { data: servicesData, isLoading: isLoadingServices } = useQuery({
+    queryKey: ["adminServices", selectedSubCatUuid],
+    queryFn: () =>
+      serviceApi.getServicesBySubcategory(selectedSubCatUuid, {
+        page: 1,
+        limit: 100,
+      }), // We might need to adjust pagination or params
+    enabled: !!selectedSubCatUuid,
+  });
 
   const services = servicesData?.data || servicesData?.results || [];
 
@@ -86,7 +97,7 @@ const AdminServicesTab = () => {
   });
 
   const { mutate: updateService, isPending: isUpdating } = useMutation({
-    mutationFn: serviceApi.updateService,
+    mutationFn: adminApi.updateServicesDetails,
     onSuccess: () => {
       toast.success("Service updated successfully!");
       queryClient.invalidateQueries(["adminServices", selectedSubCatUuid]);
@@ -141,8 +152,12 @@ const AdminServicesTab = () => {
       accessor: "duration",
       render: (row) => (
         <div className="flex flex-col gap-1 text-xs text-zinc-500 font-medium">
-          <span className="flex items-center gap-1"><Clock className="w-3 h-3"/> {row.duration} mins</span>
-          <span className="flex items-center gap-1"><Users className="w-3 h-3"/> {row.required_employees || 1} staff</span>
+          <span className="flex items-center gap-1">
+            <Clock className="w-3 h-3" /> {row.duration} mins
+          </span>
+          <span className="flex items-center gap-1">
+            <Users className="w-3 h-3" /> {row.required_employees || 1} staff
+          </span>
         </div>
       ),
     },
@@ -215,7 +230,7 @@ const AdminServicesTab = () => {
           >
             <Settings className="w-5 h-5" />
           </button>
-          <button
+          {/* <button
             onClick={() => {
               if (!selectedCategoryUuid || !selectedSubCatUuid) {
                 toast.error("Please select a subcategory first");
@@ -226,7 +241,7 @@ const AdminServicesTab = () => {
             className="flex items-center gap-2 px-4 py-2.5 bg-surface-dark text-text-inverted rounded-xl text-sm font-bold shadow-sm hover:bg-zinc-800 transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" /> Add Service
-          </button>
+          </button> */}
         </div>
       </div>
 
@@ -270,7 +285,7 @@ const AdminServicesTab = () => {
               options={subcategories.map((sub) => sub.name)}
               value={
                 subcategories.find(
-                  (sub) => sub.subCat_uuid === selectedSubCatUuid
+                  (sub) => sub.subCat_uuid === selectedSubCatUuid,
                 )?.name || ""
               }
               onChange={(name) => {
@@ -299,7 +314,8 @@ const AdminServicesTab = () => {
             No Subcategory Selected
           </h3>
           <p className="text-sm text-text-secondary mt-1">
-            Please select a category and subcategory from the dropdowns above to view and manage services.
+            Please select a category and subcategory from the dropdowns above to
+            view and manage services.
           </p>
         </div>
       ) : isLoadingServices ? (
@@ -386,7 +402,11 @@ const AdminServicesTab = () => {
                     });
                     toast("Deactivating service...");
                   } else if (action === "Delete Service") {
-                    if (window.confirm("Are you sure you want to delete this service?")) {
+                    if (
+                      window.confirm(
+                        "Are you sure you want to delete this service?",
+                      )
+                    ) {
                       deleteService(selectedRow.service_uuid);
                     }
                   }
@@ -427,7 +447,7 @@ const AdminServicesTab = () => {
                   className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500 min-h-[80px]"
                 />
               </div>
-              
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-zinc-500 uppercase">
@@ -454,7 +474,10 @@ const AdminServicesTab = () => {
                     placeholder="e.g. 60"
                     value={editService.duration}
                     onChange={(e) =>
-                      setEditService({ ...editService, duration: e.target.value })
+                      setEditService({
+                        ...editService,
+                        duration: e.target.value,
+                      })
                     }
                     className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500"
                   />
@@ -472,7 +495,10 @@ const AdminServicesTab = () => {
                     placeholder="e.g. 1"
                     value={editService.required_employees}
                     onChange={(e) =>
-                      setEditService({ ...editService, required_employees: e.target.value })
+                      setEditService({
+                        ...editService,
+                        required_employees: e.target.value,
+                      })
                     }
                     className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500"
                   />
@@ -534,7 +560,7 @@ const AdminServicesTab = () => {
                     Duration
                   </p>
                   <p className="font-semibold flex items-center gap-1 mt-1">
-                    <Clock className="w-3.5 h-3.5"/>
+                    <Clock className="w-3.5 h-3.5" />
                     {selectedRow.duration} mins
                   </p>
                 </div>
@@ -543,7 +569,7 @@ const AdminServicesTab = () => {
                     Required Staff
                   </p>
                   <p className="font-semibold flex items-center gap-1 mt-1">
-                    <Users className="w-3.5 h-3.5"/>
+                    <Users className="w-3.5 h-3.5" />
                     {selectedRow.required_employees || 1}
                   </p>
                 </div>
@@ -614,7 +640,7 @@ const AdminServicesTab = () => {
               className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500 min-h-[80px]"
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-1">
               <label className="text-xs font-bold text-zinc-500 uppercase">
@@ -659,7 +685,10 @@ const AdminServicesTab = () => {
                 placeholder="e.g. 1"
                 value={newService.required_employees}
                 onChange={(e) =>
-                  setNewService({ ...newService, required_employees: e.target.value })
+                  setNewService({
+                    ...newService,
+                    required_employees: e.target.value,
+                  })
                 }
                 className="w-full px-4 py-2.5 bg-surface-secondary border border-border-primary rounded-xl text-sm text-text-primary focus:outline-none focus:border-purple-500"
               />

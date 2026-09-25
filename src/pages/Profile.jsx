@@ -2,6 +2,7 @@ import ProfileDetails from "../features/profile/ProfileDetails";
 import ProfileServicesHistory from "../features/profile/ProfileServicesHistory";
 import ProfileReviews from "../features/profile/ProfileReviews";
 import ProfileRequests from "../features/profile/ProfileRequests";
+import ProfileTokensTab from "../features/profile/ProfileTokensTab";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { logout } from "../services/authApi";
 import { userDetails, userProfile } from "../services/userApi";
@@ -14,7 +15,7 @@ const Profile = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const requestedTab = searchParams.get("tab");
-  const activeTab = ["profile", "schedule", "instant", "reviews"].includes(
+  const activeTab = ["profile", "schedule", "instant", "reviews", "coins"].includes(
     requestedTab,
   )
     ? requestedTab
@@ -208,7 +209,7 @@ const Profile = () => {
 
         {/* --- Navigation Tabs --- */}
         <div className="flex overflow-x-auto hide-scrollbar gap-2 mb-10 bg-surface-primary border border-border-primary p-2 rounded-2xl shadow-sm">
-          {["profile", "schedule", "instant", "reviews"].map((tab) => (
+          {["profile", "schedule", "instant", "reviews", "coins"].map((tab) => (
             <button
               key={tab}
               onClick={() => setSearchParams({ tab })}
@@ -222,6 +223,7 @@ const Profile = () => {
               {tab === "schedule" && "Schedule Booking"}
               {tab === "instant" && "Instant Booking"}
               {tab === "reviews" && "My Reviews"}
+              {tab === "coins" && "My Rewards"}
             </button>
           ))}
         </div>
@@ -236,6 +238,7 @@ const Profile = () => {
           )}
           {activeTab === "instant" && <ProfileServicesHistory />}
           {activeTab === "reviews" && <ProfileReviews />}
+          {activeTab === "coins" && <ProfileTokensTab />}
         </div>
       </div>
     </div>
